@@ -1,0 +1,9 @@
+
+[Global]
+Buildorder=1000
+Version=1
+Lock=asim-ofdm
+Description=Description of ofdm
+Name=ofdm
+Tag=HEAD
+CSN=CSN-ofdm-0
