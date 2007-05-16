@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM WiMAX decoder module
+%desc OFDM WiMAX decoder module
+%provides ofdm_decoder
+
+%requires ofdm_depuncturer
+%requires ofdm_viterbi
+%requires ofdm_reed_decoder
+
+%attributes wimax
+
+%public WiMAXDecoder.bsv
+
+%AWB_END

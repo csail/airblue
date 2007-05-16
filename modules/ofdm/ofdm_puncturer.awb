@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM puncturer module
+%desc OFDM puncturer module
+%provides ofdm_puncturer
+
+%attributes ofdm
+
+%public Puncturer.bsv
+
+%AWB_END

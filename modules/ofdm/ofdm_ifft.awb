@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM IFFT module
+%desc OFDM IFFT module
+%provides ofdm_ifft
+
+%attributes ofdm
+
+%public FFTIFFT.bsv
+
+%AWB_END

@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM Reed-Solomon encoder module
+%desc OFDM Reed-Solomon encoder module
+%provides ofdm_reed_encoder
+
+%attributes ofdm
+
+%public ReedEncoder.bsv
+
+%AWB_END

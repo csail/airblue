@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM shared library
+%desc OFDM shared library
+%provides ofdm_common
+
+%attributes ofdm
+
+%public Arith.bsv     BRAMFIFOTest.bsv    Controls.bsv   FFTIFFT_Library.bsv  FixedPointLibrary.bsv  Permute.bsv    RandomGen.bsv   VectorLibrary.bsv BRAM.bsv    CORDIC.bsv          DataTypes.bsv  FIFOD.bsv            Interfaces.bsv         Pipeline2.bsv  ShiftRegs.bsv   ofdm_common.awb BRAMFIFO.bsv  ComplexLibrary.bsv  EHRReg.bsv     FPComplex.bsv        LibraryFunctions.bsv   Pipelines.bsv  StreamFIFO.bsv FParams.bsv SParams.bsv VParams.bsv IViterbi.bsv Traceback.bsv VRegFile.bsv
+
+%AWB_END

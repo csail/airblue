@@ -1,0 +1,18 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM WiFi encoder module
+%desc OFDM WiFi encoder module
+%provides ofdm_encoder
+
+%requires ofdm_conv_encoder
+%requires ofdm_puncturer
+
+%attributes wifi
+
+%public WiFiEncoder.bsv
+
+%AWB_END

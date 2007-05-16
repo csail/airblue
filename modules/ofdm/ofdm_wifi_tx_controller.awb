@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM WiFi transmitter controller module
+%desc OFDM WiFi transmitter controller module
+%provides ofdm_tx_controller
+
+%attributes wifi
+
+%public WiFiTXController.bsv
+
+%AWB_END

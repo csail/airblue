@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM WiFi preambles
+%desc OFDM WiFi preambles
+%provides ofdm_preambles
+
+%attributes wifi
+
+%public WiFiPreambles.bsv
+
+%AWB_END

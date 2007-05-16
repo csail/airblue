@@ -1,0 +1,23 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM receiver module
+%desc OFDM receiver module
+%provides ofdm_receiver
+
+%requires ofdm_synchronizer
+%requires ofdm_serial_to_parallel
+%requires ofdm_fft
+%requires ofdm_channel_estimator
+%requires ofdm_demapper
+%requires ofdm_decoder
+%requires ofdm_descrambler
+
+%attributes ofdm
+
+%public Receiver.bsv
+
+%AWB_END

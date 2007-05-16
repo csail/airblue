@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM WiMAX transmitter controller module
+%desc OFDM WiMAX transmitter controller module
+%provides ofdm_tx_controller
+
+%attributes wimax
+
+%public WiMAXTXController.bsv
+
+%AWB_END

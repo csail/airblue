@@ -1,0 +1,110 @@
+import Complex::*;
+import Controls::*;
+import DataTypes::*;
+import GetPut::*;
+import Interfaces::*;
+import LibraryFunctions::*;
+import PilotInsert::*;
+import Vector::*;
+import ChannelEstimator::*;
+
+function t idFunc (t in);
+   return in;
+endfunction
+
+function Symbol#(64,2,14) pilotAdder(Symbol#(48,2,14) x, 
+				     Bit#(1) ppv);
+   
+   Integer i =0, j = 0;
+   // assume all guards initially
+   Symbol#(64,2,14) syms = replicate(cmplx(0,0));
+   
+   // data subcarriers
+   for(i = 6; i < 11; i = i + 1, j = j + 1)
+      syms[i] = x[j];
+   for(i = 12; i < 25; i = i + 1, j = j + 1)
+      syms[i] = x[j]; 
+   for(i = 26; i < 32 ; i = i + 1, j = j + 1)
+      syms[i] = x[j];  
+   for(i = 33; i < 39 ; i = i + 1, j = j + 1)
+      syms[i] = x[j];   
+   for(i = 40; i < 53 ; i = i + 1, j = j + 1)
+      syms[i] = x[j];
+   for(i = 54; i < 59 ; i = i + 1, j = j + 1)
+      syms[i] = x[j];
+
+   //pilot subcarriers
+   syms[11] = mapBPSK(False, ppv); // map 1 to -1, 0 to 1
+   syms[25] = mapBPSK(False, ppv); // map 1 to -1, 0 to 1
+   syms[39] = mapBPSK(False, ppv); // map 1 to -1, 0 to 1
+   syms[53] = mapBPSK(True,  ppv); // map 0 to -1, 1 to 1
+   
+   return syms;
+endfunction
+
+function Symbol#(48,2,14) pilotRemover(Symbol#(64,2,14) x);   
+   Integer i =0, j = 0;
+   // assume all guards initially
+   Symbol#(48,2,14) syms = newVector;
+   
+   // data subcarriers
+   for(i = 6; i < 11; i = i + 1, j = j + 1)
+      syms[j] = x[i];
+   for(i = 12; i < 25; i = i + 1, j = j + 1)
+      syms[j] = x[i]; 
+   for(i = 26; i < 32 ; i = i + 1, j = j + 1)
+      syms[j] = x[i];  
+   for(i = 33; i < 39 ; i = i + 1, j = j + 1)
+      syms[j] = x[i];   
+   for(i = 40; i < 53 ; i = i + 1, j = j + 1)
+      syms[j] = x[i];
+   for(i = 54; i < 59 ; i = i + 1, j = j + 1)
+      syms[j] = x[i];
+   
+   return syms;
+endfunction
+
+(* synthesize *)
+module mkChannelEstimatorTest(Empty);
+   
+   PilotInsert#(PilotInsertCtrl,48,64,2,14) pilotInsert;
+   pilotInsert <- mkPilotInsert(idFunc,
+				pilotAdder,
+				7'b1001000,
+				7'b1111111);
+   ChannelEstimator#(PilotInsertCtrl,64,48,2,14) channelEstimator;
+   channelEstimator <- mkChannelEstimator(pilotRemover);
+   Reg#(Bit#(32)) cycle <- mkReg(0);
+   
+   rule putIntput(True);
+      PilotInsertMesg#(PilotInsertCtrl,48,2,14) iMesg;
+      iMesg = Mesg{ control: (cycle[2:0] == 0) ? 
+		              PilotRst : 
+		              PilotNorm,
+		   data: replicate(cmplx(1,1))};
+      pilotInsert.in.put(iMesg);
+      $display("Pilot Insert Input: %h",iMesg.data);
+   endrule
+  
+   rule putChannel(True);
+      let oMesg <- pilotInsert.out.get;
+      channelEstimator.in.put(oMesg);
+      $display("Pilot Insert Output: %h",oMesg.data);
+   endrule
+   
+   rule getOutput(True);
+      let oMesg <- channelEstimator.out.get;
+      $display("Channel Estimator Output: %h",oMesg.data);
+   endrule
+   
+   rule tick(True);
+      cycle <= cycle + 1;
+      if (cycle == 100000)
+	 $finish;
+      $display("Cycle: %d",cycle);
+   endrule
+   
+endmodule
+
+
+
