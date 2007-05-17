@@ -1,6 +1,9 @@
-import BRAM::*;
-import EHRReg::*;
 import FIFO::*;
+
+import ofdm_base::*;
+
+// import BRAM::*;
+// import EHRReg::*;
 
 module mkBRAMFIFO#(index_t lo_index, index_t hi_index) 
    (FIFO#(data_t))

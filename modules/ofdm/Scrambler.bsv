@@ -1,10 +1,11 @@
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
 import FIFO::*;
 import GetPut::*;
-import LibraryFunctions::*;
 import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
 
 function a choose(Bool b, a x, a y);
    return b ? x : y;

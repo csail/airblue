@@ -159,3 +159,86 @@ Directory modules/ofdm
  ofdm_wimax_rx_controller.awb Locally Added               0 
 
 add bsv files
+----------
+mcn02       Date: Thu May 17 01:04:21 EDT 2007  CSN: CSN-ofdm-5
+                  Thu May 17 05:04:21 UTC 2007
+
+
+Directory config/pm/ofdm
+ wimax_testbench.apm       Locally Modified            4 
+ wifi_testbench.apm        Locally Modified            4 
+
+Directory modules/ofdm
+ FFTIFFT.bsv               Locally Modified            4 
+ ofdm_wimax_model.awb      Locally Removed             4 
+ Depuncturer.bsv           Locally Modified            4 
+ ofdm_fft.awb              Locally Modified            4 
+ ConvEncoder.bsv           Locally Modified            4 
+ PilotInsert.bsv           Locally Modified            4 
+ WiFiParameters.bsv        Locally Modified            4 
+ Puncturer.bsv             Locally Modified            4 
+ WiFiPreambles.bsv         Locally Modified            4 
+ Synchronizer.bsv          Locally Modified            4 
+ DataTypes.bsv             Locally Removed             4 
+ Types.bsv                 Locally Added               0 
+ SParams.bsv               Locally Modified            4 
+ WiMAXParameters.bsv       Locally Modified            4 
+ Transmitter.bsv           Locally Modified            4 
+ FFTIFFT_Library.bsv       Locally Modified            4 
+ ofdm_wimax_system.awb     Locally Added               0 
+ ofdm_arith_library.awb    Locally Added               0 
+ Permute.bsv               Locally Modified            4 
+ ofdm_data_types.awb       Locally Added               0 
+ Descrambler.bsv           Locally Modified            4 
+ ofdm_viterbi.awb          Locally Modified            4 
+ Demapper.bsv              Locally Modified            4 
+ LibraryFunctions.bsv      Locally Modified            4 
+ WiFiEncoder.bsv           Locally Modified            4 
+ Makefile.top.template     Locally Removed             4 
+ WiMAXTXController.bsv     Locally Modified            4 
+ ReedDecoder.bsv           Locally Modified            4 
+ ofdm_descrambler.awb      Locally Modified            4 
+ Scrambler.bsv             Locally Modified            4 
+ WiMAXDecoder.bsv          Locally Modified            4 
+ IViterbi.bsv              Locally Modified            4 
+ Traceback.bsv             Locally Modified            4 
+ WiMAXPreambles.bsv        Locally Modified            4 
+ Makefile.include.template Locally Removed             4 
+ StreamFIFO.bsv            Locally Modified            4 
+ ofdm_interfaces.awb       Locally Added               0 
+ ofdm_controls_types.awb   Locally Added               0 
+ Unserializer.bsv          Locally Modified            4 
+ WiFiTXController.bsv      Locally Modified            4 
+ BRAMFIFO.bsv              Locally Modified            4 
+ Pipeline2.bsv             Locally Modified            4 
+ CPInsert.bsv              Locally Modified            4 
+ ofdm_types.awb            Locally Added               0 
+ WiMAXRXController.bsv     Locally Modified            4 
+ Controls.bsv              Locally Removed             4 
+ CORDIC.bsv                Locally Modified            4 
+ SynchronizerLibrary.bsv   Locally Modified            4 
+ Makefile.sub.template     Locally Removed             4 
+ ofdm_base.awb             Locally Added               0 
+ Receiver.bsv              Locally Modified            4 
+ Viterbi.bsv               Locally Modified            4 
+ WiFiRXController.bsv      Locally Modified            4 
+ ReedEncoder.bsv           Locally Modified            4 
+ ofdm_types                Locally Added               0 
+ Mapper.bsv                Locally Modified            4 
+ WiMAXEncoder.bsv          Locally Modified            4 
+ FIFOD.bsv                 Locally Modified            4 
+ FPComplex.bsv             Locally Modified            4 
+ ChannelEstimator.bsv      Locally Modified            4 
+ ofdm_common.awb           Locally Modified            4 
+ ofdm_synchronizer.awb     Locally Modified            4 
+ WiFiDecoder.bsv           Locally Modified            4 
+ ofdm_wifi_system.awb      Locally Added               0 
+ FParams.bsv               Locally Modified            4 
+ WiMAXTransceiver.bsv      Locally Modified            4 
+ WiFiTransceiver.bsv       Locally Modified            4 
+ VParams.bsv               Locally Modified            4 
+ ofdm_ifft.awb             Locally Modified            4 
+ Interleaver.bsv           Locally Modified            4 
+ Interfaces.bsv            Locally Removed             4 
+
+newest version

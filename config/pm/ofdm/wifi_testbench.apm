@@ -1,8 +1,4 @@
 
-[WiFi Model Foundation]
-File=modules/ofdm/ofdm_wifi_model.awb
-Packagehint=ofdm
-
 [Global]
 Type=HAsim
 Version=2.0
@@ -12,8 +8,8 @@ Description=WiFi Transceiver Testbench
 Name=WiFi Transceiver Testbench
 
 [Model]
-DefaultAttributes=ofdm wifi
-model=WiFi Model Foundation
+DefaultAttributes=wifi ofdm bluespec
+model=Pure Bluespec Model Foundation
 
 [OFDM WiFi transmitter controller module]
 File=modules/ofdm/ofdm_wifi_tx_controller.awb
@@ -26,15 +22,6 @@ Packagehint=ofdm
 [OFDM WiFi parameters]
 File=modules/ofdm/ofdm_wifi_parameters.awb
 Packagehint=ofdm
-
-[WiFi Model Foundation/Requires]
-ofdm_preambles=OFDM WiFi preambles
-ofdm_parameters=OFDM WiFi parameters
-ofdm_tx_controller=OFDM WiFi transmitter controller module
-ofdm_transmitter=OFDM transmitter module
-ofdm_rx_controller=OFDM WiFi receiver controller module
-ofdm_receiver=OFDM receiver module
-ofdm_common=OFDM shared library
 
 [OFDM WiFi encoder module]
 File=modules/ofdm/ofdm_wifi_encoder.awb
@@ -148,4 +135,50 @@ Packagehint=ofdm
 
 [OFDM depuncturer module]
 File=modules/ofdm/ofdm_depuncturer.awb
+Packagehint=ofdm
+
+[Pure Bluespec Model Foundation]
+File=modules/bluespec/model/pure-bluespec/pure_bluespec_model.awb
+Packagehint=hasim
+
+[Bluespec Null Library]
+File=modules/bluespec/common/null/bluespec_null.awb
+Packagehint=hasim
+
+[Pure Bluespec Model Foundation/Requires]
+bluespec_common=Bluespec Null Library
+bluespec_system=WiFi System
+
+
+[OFDM shared library/Requires]
+ofdm_types=OFDM Types Definitions
+ofdm_base=OFDM basic share library
+ofdm_arith_library=OFDM Arithmetic library
+
+
+[OFDM basic share library]
+File=modules/ofdm/ofdm_base.awb
+Packagehint=ofdm
+
+[WiFi System]
+File=modules/ofdm/ofdm_wifi_system.awb
+Packagehint=ofdm
+
+
+
+[OFDM Types Definitions]
+File=modules/ofdm/ofdm_types.awb
+Packagehint=ofdm
+
+[WiFi System/Requires]
+ofdm_preambles=OFDM WiFi preambles
+ofdm_rx_controller=OFDM WiFi receiver controller module
+ofdm_parameters=OFDM WiFi parameters
+ofdm_transmitter=OFDM transmitter module
+ofdm_tx_controller=OFDM WiFi transmitter controller module
+ofdm_receiver=OFDM receiver module
+ofdm_common=OFDM shared library
+
+[OFDM Arithmetic library]
+File=modules/ofdm/ofdm_arith_library.awb
 Packagehint=ofdm

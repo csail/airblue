@@ -1,8 +1,14 @@
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
 import FIFO::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Interfaces::*;
+// import DataTypes::*;
+// import Controls::*;
 
 module mkChannelEstimator#(function Symbol#(out_n,i_prec,f_prec) pilotRemover(Symbol#(in_n,i_prec, f_prec) in))
    (ChannelEstimator#(ctrl_t,in_n,out_n,i_prec,f_prec))

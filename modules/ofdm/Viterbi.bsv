@@ -1,12 +1,20 @@
-import Interfaces::*;
 import FIFO::*;
 import Vector::*;
 import Monad::*;
+import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
 import VParams::*;
 import IViterbi::*;
-import DataTypes::*;
-import GetPut::*;
-import Parameters::*;
+
+// import Interfaces::*;
+// import Parameters::*;
+// import DataTypes::*;
 
 //`define isDebug True // uncomment this line to display error
 

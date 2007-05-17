@@ -1,18 +1,32 @@
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
-import Scrambler::*;
-import Encoder::*;
-import Interleaver::*;
-import Mapper::*;
-import PilotInsert::*;
-import FFTIFFT::*;
-import CPInsert::*;
-import Preambles::*;
 import Connectable::*;
 import GetPut::*;
-import LibraryFunctions::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_scrambler::*;
+import ofdm_encoder::*;
+import ofdm_interleaver::*;
+import ofdm_mapper::*;
+import ofdm_pilot_insert::*;
+import ofdm_ifft::*;
+import ofdm_cp_insert::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import Scrambler::*;
+// import Encoder::*;
+// import Interleaver::*;
+// import Mapper::*;
+// import PilotInsert::*;
+// import FFTIFFT::*;
+// import CPInsert::*;
+// import Preambles::*;
+// import LibraryFunctions::*;
 
 (* synthesize *)
 module mkScramblerInstance

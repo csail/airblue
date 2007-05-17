@@ -3,10 +3,16 @@ import FIFO::*;
 import GetPut::*;
 import Vector::*;
 
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
 
 interface WiFiRXController;
    interface Put#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 

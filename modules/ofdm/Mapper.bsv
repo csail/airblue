@@ -1,13 +1,19 @@
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
-import FPComplex::*;
 import Complex::*;
 import FixedPoint::*;
-import LibraryFunctions::*;
 import Vector::*;
 import FIFO::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
+// import FPComplex::*;
+// import LibraryFunctions::*;
 
 // mkMapper definition, 
 // i_n must be multiple of 12

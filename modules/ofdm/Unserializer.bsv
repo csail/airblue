@@ -1,11 +1,17 @@
 import Complex::*;
-import DataTypes::*;
 import FIFO::*;
 import FixedPoint::*;
-import Interfaces::*;
-import Vector::*;
-import Controls::*;
 import GetPut::*;
+import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
 
 //`define debug_mode True // uncomment this line for displaying text
 

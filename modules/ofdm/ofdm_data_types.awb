@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name OFDM viterbi module
-%desc OFDM viterbi module
-%provides ofdm_viterbi
+%name OFDM Data Types Definitions
+%desc OFDM Data Types Definitions
+%provides ofdm_data_types
 
 %attributes ofdm
 
-%public Viterbi.bsv IViterbi.bsv VParams.bsv VRegFile.bsv Traceback.bsv
+%public DataTypes.bsv
 
 %AWB_END

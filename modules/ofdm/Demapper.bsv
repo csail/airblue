@@ -1,13 +1,19 @@
 import Complex::*;
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import FixedPoint::*;
-import FPComplex::*;
-import Interfaces::*;
 import Vector::*;
 import GetPut::*;
-import VectorLibrary::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import VectorLibrary::*;
 
 // assume no overflow
 function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)

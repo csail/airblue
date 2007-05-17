@@ -1,9 +1,10 @@
 import Vector::*;
-import FPComplex::*;
 import Complex::*;
 import FixedPoint::*;
 import GetPut::*;
 import Connectable::*;
+
+import ofdm_base::*;
 
 //Given a Bit#(n) returns it's parity
 function Bit#(1) getParity(Bit#(n) v) provisos(Add#(1, k, n));

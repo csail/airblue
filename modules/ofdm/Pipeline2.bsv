@@ -4,7 +4,10 @@ import GetPut::*;
 import List::*;
 import RWire::*;
 import Vector::*;
-import EHRReg::*;
+
+import ofdm_base::*;
+
+// import EHRReg::*;
 
 interface Pipeline2#(type a);
   interface Put#(a) in;

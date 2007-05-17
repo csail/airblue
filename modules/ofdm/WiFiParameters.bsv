@@ -1,13 +1,19 @@
 // WiFi 802.11a Parameters
-import Controls::*;
-import Vector::*;
-import FPComplex::*;
-import LibraryFunctions::*;
 import Complex::*;
-import DataTypes::*;
-import Interfaces::*;
-import GetPut::*;
 import Connectable::*;
+import GetPut::*;
+import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
 
 // Global Parameters:
 typedef enum {

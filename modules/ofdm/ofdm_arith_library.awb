@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name OFDM viterbi module
-%desc OFDM viterbi module
-%provides ofdm_viterbi
+%name OFDM Arithmetic library
+%desc OFDM Arithmetic library
+%provides ofdm_arith_library
 
 %attributes ofdm
 
-%public Viterbi.bsv IViterbi.bsv VParams.bsv VRegFile.bsv Traceback.bsv
+%public ComplexLibrary.bsv FixedPointLibrary.bsv
 
 %AWB_END

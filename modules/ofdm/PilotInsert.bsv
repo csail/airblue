@@ -1,9 +1,15 @@
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import LibraryFunctions::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
 
 module mkPilotInsert#(function PilotInsertCtrl 
 			 mapCtrl(ctrl_t ctrl), 

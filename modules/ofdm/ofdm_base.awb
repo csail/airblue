@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name OFDM viterbi module
-%desc OFDM viterbi module
-%provides ofdm_viterbi
+%name OFDM basic share library
+%desc OFDM basic share Library
+%provides ofdm_base
 
 %attributes ofdm
 
-%public Viterbi.bsv IViterbi.bsv VParams.bsv VRegFile.bsv Traceback.bsv
+%public RandomGen.bsv VectorLibrary.bsv BRAM.bsv ShiftRegs.bsv EHRReg.bsv FPComplex.bsv Pipelines.bsv
 
 %AWB_END

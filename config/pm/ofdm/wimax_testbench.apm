@@ -8,12 +8,8 @@ Description=WiMAX Transceiver Testbench
 Name=WiMAX Transceiver Testbench
 
 [Model]
-DefaultAttributes=ofdm wimax
-model=WiMAX Model Foundation
-
-
-
-
+DefaultAttributes=wimax ofdm bluespec
+model=Pure Bluespec Model Foundation
 
 [OFDM interleaver module]
 File=modules/ofdm/ofdm_interleaver.awb
@@ -22,7 +18,6 @@ Packagehint=ofdm
 [OFDM puncturer module]
 File=modules/ofdm/ofdm_puncturer.awb
 Packagehint=ofdm
-
 
 [OFDM scrambler module]
 File=modules/ofdm/ofdm_scrambler.awb
@@ -57,7 +52,6 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_mapper.awb
 Packagehint=ofdm
 
-
 [OFDM CPInsert module]
 File=modules/ofdm/ofdm_cp_insert.awb
 Packagehint=ofdm
@@ -83,7 +77,6 @@ ofdm_descrambler=OFDM descrambler module
 File=modules/ofdm/ofdm_receiver.awb
 Packagehint=ofdm
 
-
 [OFDM demapper module]
 File=modules/ofdm/ofdm_demapper.awb
 Packagehint=ofdm
@@ -104,7 +97,6 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_descrambler.awb
 Packagehint=ofdm
 
-
 [OFDM viterbi module]
 File=modules/ofdm/ofdm_viterbi.awb
 Packagehint=ofdm
@@ -123,7 +115,7 @@ ofdm_receiver=OFDM receiver module
 ofdm_common=OFDM shared library
 
 [WiMAX Model Foundation]
-File=modules/ofdm/ofdm_wimax_model.awb
+File=modules/ofdm/ofdm_wimax_system.awb
 Packagehint=ofdm
 
 [OFDM WiMAX parameters]
@@ -167,3 +159,15 @@ Packagehint=ofdm
 [OFDM Reed-Solomon encoder module]
 File=modules/ofdm/ofdm_reed_encoder.awb
 Packagehint=ofdm
+
+[Pure Bluespec Model Foundation]
+File=modules/bluespec/model/pure-bluespec/pure_bluespec_model.awb
+Packagehint=hasim
+
+[Bluespec Null Library]
+File=modules/bluespec/common/null/bluespec_null.awb
+Packagehint=hasim
+
+[Pure Bluespec Model Foundation/Requires]
+bluespec_common=Bluespec Null Library
+bluespec_system=WiMAX Model Foundation

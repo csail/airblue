@@ -1,7 +1,176 @@
-import DataTypes::*;
-import FPComplex::*;
 import GetPut::*;
 import Vector::*;
+
+import ofdm_base::*;
+
+// import Controls::*;
+// import FPComplex::*;
+
+// Controls Definitions for Generic OFDM Designs
+typedef struct {
+    Bit#(n) bypass; // bypass mask, scrambling state still go on
+    Maybe#(Bit#(ssz)) seed; // set new seed if valid
+} ScramblerCtrl#(numeric type n, numeric type ssz) deriving(Eq, Bits);
+
+typedef struct {
+    Bit#(sz) in;    // input size (in bytes)
+    Bit#(sz) out;   // output size (in bytes)
+} ReedSolomonCtrl#(numeric type sz);
+
+// Modulation Schemes // used as control for mapper, demapper, interleaver and deinterleaver
+typedef enum{ 
+   BPSK = 1, 
+   QPSK = 2, 
+   QAM_16 = 4,
+   QAM_64 = 8 
+} Modulation deriving (Eq, Bits);
+
+// Descrambler Controls
+typedef enum{ Bypass, FixRst, DynRst, Norm } DescramblerCtrl deriving (Eq, Bits);
+
+// Puncturer Controls  
+
+typedef enum{
+//   Same        = 1,	// control same as last data    
+   Half        = 1,     // set to rate 1/2
+   TwoThird    = 2,     // set to rate 2/3
+   ThreeFourth = 4,     // set to rate 3/4
+   FiveSixth   = 8      // set to rate 5/6
+} PuncturerCtrl deriving(Eq, Bits);
+
+typedef enum{
+   CP0 = 1,     // cp size = 1/4
+   CP1 = 2,     // cp size = 1/8
+   CP2 = 4,     // cp size = 1/16
+   CP3 = 8      // cp size = 1/32
+} CPSizeCtrl deriving(Eq, Bits);
+
+typedef enum{
+   SendNone = 1, // do not send preamble
+   SendBoth = 2, // send both short and long preamble
+   SendLong = 4  // send long preamble only
+} PreCtrl deriving(Eq, Bits);  
+
+typedef Tuple2#(PreCtrl, CPSizeCtrl) CPInsertCtrl; // first specify addPremable? 
+
+typedef enum{
+   PilotRst,  // reset pilot
+   PilotNorm  // normal operation
+} PilotInsertCtrl deriving (Bits, Eq); 
+	     
+// not used
+typedef struct{
+   Bool        isNewPacket;
+   CPSizeCtrl  cpSize;
+} SyncCtrl deriving (Eq, Bits);
+
+// Data types definition
+// Generic OFDM Message
+typedef struct{
+  ctrl_t control;
+  data_t data;
+} Mesg#(type ctrl_t, type data_t) deriving (Eq, Bits);
+
+// OFDM symbol
+typedef Vector#(n, FPComplex#(i_prec, f_prec)) 
+        Symbol#(numeric type n, 
+		numeric type i_prec, 
+		numeric type f_prec); 
+
+// Viterbi Metric
+typedef Bit#(3) ViterbiMetric;
+
+typedef Vector#(o_sz,ViterbiMetric)
+   DepunctData#(numeric type o_sz);
+
+// Transmitter Mesg Types
+typedef Mesg#(ctrl_t, Bit#(n)) 
+	ScramblerMesg#(type ctrl_t, 
+		       numeric type n);
+
+typedef Mesg#(ctrl_t, Bit#(n)) 
+        EncoderMesg#(type ctrl_t, 
+		     numeric type n);
+
+typedef Mesg#(ctrl_t, Bit#(n)) 
+        InterleaverMesg#(type ctrl_t, 
+			 numeric type n);
+
+typedef Mesg#(ctrl_t, Bit#(n)) 
+        MapperMesg#(type ctrl_t, 
+		    numeric type n);
+
+typedef Mesg#(ctrl_t, Symbol#(n,i_prec,f_prec))
+        PilotInsertMesg#(type ctrl_t, 
+			 numeric type n,
+			 numeric type i_prec,
+			 numeric type f_prec);
+
+typedef Mesg#(ctrl_t, Symbol#(n,i_prec,f_prec)) 
+        IFFTMesg#(type ctrl_t, 
+		  numeric type n, 
+		  numeric type i_prec, 
+		  numeric type f_prec);
+
+typedef Mesg#(ctrl_t, Symbol#(n,i_prec,f_prec))
+	CPInsertMesg#(type ctrl_t,
+		      numeric type n,
+		      numeric type i_prec,
+		      numeric type f_prec);
+
+typedef FPComplex#(i_prec,f_prec)
+	DACMesg#(numeric type i_prec,
+		 numeric type f_prec);	       	   
+
+// Receiver Mesg Types
+typedef FPComplex#(i_prec,f_prec)
+	SynchronizerMesg#(numeric type i_prec,
+			  numeric type f_prec);
+
+typedef Mesg#(SyncCtrl, FPComplex#(i_prec,f_prec))
+	UnserializerMesg#(numeric type i_prec,
+			  numeric type f_prec);
+// Bool = isNewPacket
+typedef Mesg#(Bool, Symbol#(n,i_prec,f_prec)) 
+        SPMesgFromSync#(numeric type n,
+			numeric type i_prec,
+			numeric type f_prec);
+
+typedef ctrl_t 
+        SPMesgFromRXController#(type ctrl_t); 
+		
+typedef Mesg#(ctrl_t, Symbol#(n,i_prec,f_prec)) 
+        FFTMesg#(type ctrl_t, 
+		 numeric type n, 
+		 numeric type i_prec, 
+		 numeric type f_prec);
+
+typedef Mesg#(ctrl_t, Symbol#(n,i_prec,f_prec)) 
+        ChannelEstimatorMesg#(type ctrl_t, 
+			      numeric type n, 
+			      numeric type i_prec, 
+			      numeric type f_prec);
+
+	      
+typedef Mesg#(ctrl_t, Symbol#(n, i_prec, f_prec))    
+        DemapperMesg#(type ctrl_t, 
+		      numeric type n,
+		      numeric type i_prec, 
+		      numeric type f_prec);
+
+typedef Mesg#(ctrl_t, Vector#(n, decode_t))
+	DeinterleaverMesg#(type ctrl_t,
+			   numeric type n,
+			   type decode_t);
+
+typedef Mesg#(ctrl_t, Vector#(n, decode_t)) 
+        DecoderMesg#(type ctrl_t, 
+		     numeric type n,
+		     type decode_t);			
+
+typedef ScramblerMesg#(ctrl_t, n)                  
+        DescramblerMesg#(type ctrl_t, 
+			 numeric type n);
 
 // Generic OFDM Module Interface
 interface Block#(type in_t, type out_t);
@@ -206,5 +375,3 @@ typedef Scrambler#(ctrl_t,Bit#(0),i_n,o_n)
 		     numeric type i_n,
 		     numeric type o_n);
 	   
-		     
-

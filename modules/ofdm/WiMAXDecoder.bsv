@@ -1,12 +1,22 @@
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
 import GetPut::*;
 import Connectable::*;
-import Viterbi::*;
-import Depuncturer::*;
-import ReedDecoder::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_depuncturer::*;
+import ofdm_reed_decoder::*;
+import ofdm_viterbi::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import Viterbi::*;
+// import Depuncturer::*;
+// import ReedDecoder::*;
 
 (* synthesize *)
 module mkDepuncturerInstance

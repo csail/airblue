@@ -1,9 +1,15 @@
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
-import Interfaces::*;
-import LibraryFunctions::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
 
 // auxiliary function
 function Tuple2#(Bit#(n), Bit#(sRegSz)) scramble(Bit#(n) inBit, Bit#(sRegSz) sReg, Bit#(sRegSz) mask)

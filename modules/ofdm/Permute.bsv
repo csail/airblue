@@ -1,6 +1,9 @@
 import Vector::*;
-import Parameters::*;
 import Controls::*;
+
+import ofdm_parameters::*;
+
+// import Parameters::*;
 
 function Vector#(sz, data_t) permute(function Integer getIdx(Integer k), Vector#(sz, data_t) inVec);
       Vector#(sz, data_t) outVec = newVector;

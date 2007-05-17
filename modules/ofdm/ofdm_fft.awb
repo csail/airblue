@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public FFTIFFT.bsv
+%public FFTIFFT.bsv FParams.bsv FFTIFFT_Library.bsv
 
 %AWB_END

@@ -1,8 +1,14 @@
 import Complex::*;
 import FixedPoint::*;
-import FPComplex::*;
 import Vector::*;
-import Parameters::*;
+
+import ofdm_parameters::*;
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Parameters::*;
 
 //  ////////////////////////////////////////
 //  // Synchronizer parameters (changable)

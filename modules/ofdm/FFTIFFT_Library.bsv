@@ -7,18 +7,18 @@
  */
 
 import Complex::*;
-import FPComplex::*;
-import DataTypes::*;
-import CORDIC::*;
 import FixedPoint::*;
 import Vector::*;
 import FIFO::*;
 import FIFOF::*;
-import FParams::*;
 import List::*;
-import LibraryFunctions::*;
-import Pipeline2::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+import FParams::*;
 
 function FFTData genOmega(Integer idx);
       Nat shift_sz = fromInteger(valueOf(LogFFTSz));

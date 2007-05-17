@@ -10,8 +10,11 @@
 
 import FIFO::*;
 import FixedPoint::*;
-import Pipelines::*;
 import Vector::*;
+
+import ofdm_base::*;
+
+// import Pipelines::*;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Begin of Data Types

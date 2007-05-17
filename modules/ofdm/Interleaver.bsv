@@ -1,10 +1,15 @@
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
-import LibraryFunctions::*;
 import Vector::*;
 import FIFO::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
 
 function Vector#(sz,data_t) permute(function Integer getIdx(Integer k), 
 				    Vector#(sz,data_t) inVec)

@@ -1,20 +1,28 @@
-import Controls::*;
 import Complex::*;
-import CORDIC::*;
-import DataTypes::*;
 import FIFO::*;
 import FIFOF::*;
 import FixedPoint::*;
-import FixedPointLibrary::*;
-import Interfaces::*;
-import Preambles::*;
-import ShiftRegs::*;
+import GetPut::*;
+import Vector::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_preambles::*;
 import SParams::*;
 import SynchronizerLibrary::*;
-import Vector::*;
-import FPComplex::*;
-import GetPut::*;
-import Parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import CORDIC::*;
+// import DataTypes::*;
+// import FixedPointLibrary::*;
+// import Interfaces::*;
+// import Preambles::*;
+// import ShiftRegs::*;
+// import FPComplex::*;
+// import Parameters::*;
 
 //`define debug_mode True // uncomment this line for displaying text 
 

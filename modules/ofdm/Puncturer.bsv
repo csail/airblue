@@ -1,10 +1,16 @@
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import StreamFIFO::*;
 import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import StreamFIFO::*;
 
 // for generating parallel functions
 function Vector#(f_sz, Bit#(o_sz)) 

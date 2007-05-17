@@ -1,18 +1,32 @@
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
-import Synchronizer::*;
-import Unserializer::*;
-import FFTIFFT::*;
-import ChannelEstimator::*;
-import Demapper::*;
-import Interleaver::*;
-import Decoder::*;
-import Scrambler::*;
 import Connectable::*;
 import GetPut::*;
-import LibraryFunctions::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_synchronizer::*;
+import ofdm_serial_to_parallel::*;
+import ofdm_fft::*;
+import ofdm_channel_estimator::*;
+import ofdm_demapper::*;
+import ofdm_decoder::*;
+import ofdm_descrambler::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import Synchronizer::*;
+// import Unserializer::*;
+// import FFTIFFT::*;
+// import ChannelEstimator::*;
+// import Demapper::*;
+// import Interleaver::*;
+// import Decoder::*;
+// import Scrambler::*;
+// import LibraryFunctions::*;
 
 (* synthesize *)
 module mkSynchronizerInstance

@@ -8,8 +8,12 @@
 %desc OFDM shared library
 %provides ofdm_common
 
+%requires ofdm_base
+%requires ofdm_types
+%requires ofdm_arith_library
+
 %attributes ofdm
 
-%public Arith.bsv     BRAMFIFOTest.bsv    Controls.bsv   FFTIFFT_Library.bsv  FixedPointLibrary.bsv  Permute.bsv    RandomGen.bsv   VectorLibrary.bsv BRAM.bsv    CORDIC.bsv          DataTypes.bsv  FIFOD.bsv            Interfaces.bsv         Pipeline2.bsv  ShiftRegs.bsv   ofdm_common.awb BRAMFIFO.bsv  ComplexLibrary.bsv  EHRReg.bsv     FPComplex.bsv        LibraryFunctions.bsv   Pipelines.bsv  StreamFIFO.bsv FParams.bsv SParams.bsv VParams.bsv IViterbi.bsv Traceback.bsv VRegFile.bsv
+%public CORDIC.bsv FIFOD.bsv Pipeline2.bsv BRAMFIFO.bsv LibraryFunctions.bsv StreamFIFO.bsv
 
 %AWB_END

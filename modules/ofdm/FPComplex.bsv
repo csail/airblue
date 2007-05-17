@@ -6,10 +6,9 @@
 /////////////////////////////////////////////////////////
 
 import Complex::*;
-import ComplexLibrary::*;
 import FixedPoint::*;
-import FixedPointLibrary::*;
 
+import ofdm_arith_library::*;
 
 typedef Complex#(FixedPoint#(i,f)) FPComplex#(type i, type f);
 

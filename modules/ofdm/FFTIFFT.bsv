@@ -8,22 +8,28 @@
 
 import Connectable::*;
 import Complex::*;
-import ComplexLibrary::*;
-import FPComplex::*;
-import DataTypes::*;
-import CORDIC::*;
 import FixedPoint::*;
-import FixedPointLibrary::*;
 import Vector::*;
 import FIFO::*;
 import FIFOF::*;
+import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
 import FParams::*;
 import FFTIFFT_Library::*;
-import GetPut::*;
-import LibraryFunctions::*;
-import Pipeline2::*;
-import Controls::*;
-import Interfaces::*;
+
+// import ComplexLibrary::*;
+// import FPComplex::*;
+// import DataTypes::*;
+// import CORDIC::*;
+// import Pipeline2::*;
+// import Controls::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
+// import FixedPointLibrary::*;
 
 interface FFTIFFT;
 	// input

@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Synchronizer.bsv
+%public Synchronizer.bsv SParams.bsv SynchronizerLibrary.bsv
 
 %AWB_END

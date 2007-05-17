@@ -3,12 +3,18 @@ import FIFO::*;
 import GetPut::*;
 import Vector::*;
 
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import LibraryFunctions::*;
-import Parameters::*;
-import StreamFIFO::*;
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
+// import Parameters::*;
+// import StreamFIFO::*;
 
 typedef struct{
    Bit#(12) length;  // data to send in bytes

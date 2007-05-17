@@ -1,10 +1,14 @@
 import Complex::*;
-import CORDIC::*;
-import DataTypes::*;
 import FixedPoint::*;
-import FPComplex::*;
 import Vector::*;
-import Parameters::*;
+
+import ofdm_parameters::*;
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_base::*;
+import ofdm_arith_library::*;
+
+// import Parameters::*;
 
 // from parameters file
 typedef FFTIFFTSz      FFTSz;

@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Descrambler.bsv
+%public Scrambler.bsv
 
 %AWB_END

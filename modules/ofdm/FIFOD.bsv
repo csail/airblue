@@ -1,5 +1,8 @@
-import EHRReg::*;
 import Vector::*;
+
+import ofdm_base::*;
+
+// import EHRReg::*;
 
 interface FIFOD#(numeric type sz,   // buffer size
 		 numeric type i_sz, // input size

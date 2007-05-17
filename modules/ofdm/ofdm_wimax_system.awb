@@ -4,9 +4,9 @@
 
 %AWB_START
 
-%name WiMAX Model Foundation
-%desc WiMAX Model Foundation
-%provides model
+%name WiMAX System
+%desc WiMAX System
+%provides bluespec_system
 
 %requires ofdm_parameters
 %requires ofdm_preambles
@@ -16,10 +16,8 @@
 %requires ofdm_receiver
 %requires ofdm_common
 
-%attributes model wimax
+%attributes wimax
 
 %public WiMAXTransceiver.bsv
-
-%makefile Makefile.include.template Makefile.top.template Makefile.sub.template
 
 %AWB_END

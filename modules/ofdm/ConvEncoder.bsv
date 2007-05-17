@@ -1,9 +1,14 @@
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import LibraryFunctions::*;
 import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import DataTpyes::*;
+// import Interfaces::*;
 
 module mkConvEncoder#(Bit#(h_n) g1, Bit#(h_n) g2)
    (ConvEncoder#(ctrl_t,i_n,o_n))

@@ -1,10 +1,21 @@
-import List::*;
-import Vector::*;
 import Complex::*;
-import DataTypes::*;
-import RegFile::*;
 import FixedPoint::*;
-import FPComplex::*;
+import List::*;
+import RegFile::*;
+import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import List::*;
+// import Vector::*;
+// import Complex::*;
+// import DataTypes::*;
+// import RegFile::*;
+// import FixedPoint::*;
+// import FPComplex::*;
 
 // function to generate short training sequence
 function Vector#(256, FPComplex#(2,14)) getShortPreambles();

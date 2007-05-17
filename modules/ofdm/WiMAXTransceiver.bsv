@@ -3,14 +3,24 @@ import FIFO::*;
 import GetPut::*;
 import Vector::*;
 
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
-import Receiver::*;
-import Transmitter::*;
-import WiMAXRXController::*;
-import WiMAXTXController::*;
+import ofdm_parameters::*;
+import ofdm_preambles::*;
+import ofdm_tx_controller::*;
+import ofdm_transmitter::*;
+import ofdm_rx_controller::*;
+import ofdm_receiver::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import Receiver::*;
+// import Transmitter::*;
+// import WiMAXRXController::*;
+// import WiMAXTXController::*;
 
 interface WiMAXTransmitter;
    method Action txStart(TXVector txVec);    // fromMAC 
@@ -69,6 +79,14 @@ module mkWiMAXReceiver(WiMAXReceiver);
    interface in = receiver_preFFT.in;
    interface outLength = rx_controller.outLength;
    interface outData = rx_controller.outData;
+endmodule
+
+(* synthesize *)
+module mkSystem (Empty);
+   
+   let transmitter <- mkWiFiTransmitter;
+   let receiver    <- mkWiFiReceiver;
+   
 endmodule
 
 

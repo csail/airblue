@@ -1,6 +1,9 @@
-import EHRReg::*;
 import Vector::*;
 
+import ofdm_base::*;
+
+//
+// import EHRReg::*;
 /////////////////////////////////////////////////////////////
 // Interface
 // Name: StreamFIFO

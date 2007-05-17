@@ -1,10 +1,16 @@
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
-import FPComplex::*;
 import GetPut::*;
-import Interfaces::*;
 import Vector::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
 
 typedef enum{
    ProcNew,    // process new symbol

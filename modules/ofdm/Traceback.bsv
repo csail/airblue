@@ -1,8 +1,16 @@
 import FIFO::*;
 import Vector::*;
+
+import ofdm_common::*;
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
 import VParams::*;
-import ShiftRegs::*;
-import Parameters::*;
+
+// import ShiftRegs::*;
+
+// import Parameters::*;
 
 //This is a pipelined implementation of the traceback logic
 //Parameters:

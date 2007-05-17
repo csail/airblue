@@ -1,9 +1,15 @@
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
 import FIFO::*;
 import Vector::*;
 import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
 
 module mkReedDecoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    (ReedDecoder#(ctrl_t,sz,sz))

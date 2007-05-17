@@ -1,11 +1,16 @@
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import StreamFIFO::*;
 import Vector::*;
-import VectorLibrary::*;
+
+import ofdm_common::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import StreamFIFO::*;
 
 typedef Vector#(r_sz,DepunctData#(c_sz))
    Depunct2DVec#(numeric type r_sz,

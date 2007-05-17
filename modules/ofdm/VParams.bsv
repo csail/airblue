@@ -1,5 +1,11 @@
-import Parameters::*;
 import Vector::*;
+
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Parameters::*;
 
 //  ////////////////////////////////////////
 //  // Viterbi parameters

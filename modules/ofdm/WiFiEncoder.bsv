@@ -1,11 +1,20 @@
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
-import GetPut::*;
 import Connectable::*;
-import ConvEncoder::*;
-import Puncturer::*;
+import GetPut::*;
+
+import ofdm_common::*;
+import ofdm_conv_encoder::*;
+import ofdm_puncturer::*;
+import ofdm_parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import ConvEncoder::*;
+// import Puncturer::*;
 
 (* synthesize *)
 module mkConvEncoderInstance(ConvEncoder#(TXGlobalCtrl,ConvEncoderInDataSz,

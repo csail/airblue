@@ -2,14 +2,25 @@ import Connectable::*;
 import FIFO::*;
 import GetPut::*;
 
-import Controls::*;
-import DataTypes::*;
-import Interfaces::*;
-import Parameters::*;
-import Receiver::*;
-import Transmitter::*;
-import WiFiTXController::*;
-import WiFiRXController::*;
+import ofdm_parameters::*;
+import ofdm_preambles::*;
+import ofdm_tx_controller::*;
+import ofdm_transmitter::*;
+import ofdm_rx_controller::*;
+import ofdm_receiver::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Parameters::*;
+// import Receiver::*;
+// import Transmitter::*;
+// import WiFiTXController::*;
+// import WiFiRXController::*;
 
 interface WiFiTransmitter;
    method Action txStart(TXVector txVec);    // fromMAC 
@@ -70,4 +81,10 @@ module mkWiFiReceiver(WiFiReceiver);
    interface outData = rx_controller.outData;
 endmodule
 
-
+(* synthesize *)
+module mkSystem (Empty);
+   
+   let transmitter <- mkWiFiTransmitter;
+   let receiver    <- mkWiFiReceiver;
+   
+endmodule

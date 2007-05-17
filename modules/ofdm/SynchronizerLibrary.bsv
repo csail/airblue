@@ -1,15 +1,22 @@
 import Complex::*;
-import ComplexLibrary::*;
-import CORDIC::*;
-import DataTypes::*;
 import FIFOF::*;
 import FixedPoint::*;
-import FixedPointLibrary::*;
-import FPComplex::*;
+import ofdm_common::*;
+import ofdm_parameters::*;
 import SParams::*;
-import ShiftRegs::*;
-import Vector::*;
-import Parameters::*;
+import ofdm_types::*;
+import ofdm_arith_library::*;
+import ofdm_base::*;
+
+// import ComplexLibrary::*;
+// import CORDIC::*;
+// import DataTypes::*;
+// import FixedPointLibrary::*;
+// import FPComplex::*;
+// import ShiftRegs::*;
+// import Vector::*;
+
+// import Parameters::*;
 
 // convert FPComplex to single bit complex
 function Complex#(Bit#(1)) toSingleBitCmplx(FPComplex#(ai,af) a)
