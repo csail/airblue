@@ -4,15 +4,15 @@
 
 %AWB_START
 
-%name OFDM viterbi module
-%desc OFDM viterbi module
-%provides ofdm_viterbi
+%name OFDM FFT module
+%desc OFDM FFT module
+%provides ofdm_fft
 
-%requires ofdm_viterbi_params
-%requires ofdm_viterbi_core
+%requires ofdm_fftifft_params
+%requires ofdm_fftifft_library
 
 %attributes ofdm
 
-%public Viterbi.bsv
+%public FFTIFFT.bsv
 
 %AWB_END

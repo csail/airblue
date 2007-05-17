@@ -96,6 +96,7 @@ ofdm_decoder=OFDM WiFi decoder module
 ofdm_demapper=OFDM demapper module
 ofdm_channel_estimator=OFDM channel estimator module
 ofdm_descrambler=OFDM descrambler module
+ofdm_deinterleaver=OFDM deinterleaver module
 
 [OFDM receiver module]
 File=modules/ofdm/ofdm_receiver.awb
@@ -114,7 +115,7 @@ File=modules/ofdm/ofdm_channel_estimator.awb
 Packagehint=ofdm
 
 [OFDM FFT module]
-File=modules/ofdm/ofdm_fft.awb
+File=modules/ofdm/ofdm_fftifft.awb
 Packagehint=ofdm
 
 [OFDM shared library]
@@ -149,12 +150,10 @@ Packagehint=hasim
 bluespec_common=Bluespec Null Library
 bluespec_system=WiFi System
 
-
 [OFDM shared library/Requires]
 ofdm_types=OFDM Types Definitions
 ofdm_base=OFDM basic share library
 ofdm_arith_library=OFDM Arithmetic library
-
 
 [OFDM basic share library]
 File=modules/ofdm/ofdm_base.awb
@@ -163,8 +162,6 @@ Packagehint=ofdm
 [WiFi System]
 File=modules/ofdm/ofdm_wifi_system.awb
 Packagehint=ofdm
-
-
 
 [OFDM Types Definitions]
 File=modules/ofdm/ofdm_types.awb
@@ -181,4 +178,56 @@ ofdm_common=OFDM shared library
 
 [OFDM Arithmetic library]
 File=modules/ofdm/ofdm_arith_library.awb
+Packagehint=ofdm
+
+[OFDM viterbi core module/Requires]
+ofdm_viterbi_memory=OFDM viterbi memory module
+ofdm_viterbi_traceback=OFDM viterbi traceback module
+
+[OFDM viterbi traceback module]
+File=modules/ofdm/ofdm_viterbi_traceback.awb
+Packagehint=ofdm
+
+[OFDM FFT module/Requires]
+ofdm_fftifft_params=OFDM FFT/IFFT parameters
+ofdm_fftifft_library=OFDM FFT/IFFT library
+
+[OFDM viterbi module/Requires]
+ofdm_viterbi_params=OFDM viterbi parameters
+ofdm_viterbi_core=OFDM viterbi core module
+
+[OFDM FFT/IFFT library]
+File=modules/ofdm/ofdm_fftifft_library.awb
+Packagehint=ofdm
+
+[OFDM synchronizer module/Requires]
+ofdm_synchronizer_library=OFDM synchronizer library
+ofdm_synchronizer_params=OFDM synchronizer parameters
+
+[OFDM synchronizer library]
+File=modules/ofdm/ofdm_synchronizer_library.awb
+Packagehint=ofdm
+
+[OFDM viterbi core module]
+File=modules/ofdm/ofdm_viterbi_core.awb
+Packagehint=ofdm
+
+[OFDM viterbi parameters]
+File=modules/ofdm/ofdm_viterbi_params.awb
+Packagehint=ofdm
+
+[OFDM viterbi memory module]
+File=modules/ofdm/ofdm_viterbi_memory.awb
+Packagehint=ofdm
+
+[OFDM FFT/IFFT parameters]
+File=modules/ofdm/ofdm_fftifft_params.awb
+Packagehint=ofdm
+
+[OFDM deinterleaver module]
+File=modules/ofdm/ofdm_deinterleaver.awb
+Packagehint=ofdm
+
+[OFDM synchronizer parameters]
+File=modules/ofdm/ofdm_synchronizer_params.awb
 Packagehint=ofdm

@@ -18,7 +18,7 @@ import ofdm_common::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
-import FParams::*;
+import ofdm_fftifft_params::*;
 
 function FFTData genOmega(Integer idx);
       Nat shift_sz = fromInteger(valueOf(LogFFTSz));

@@ -6,7 +6,7 @@ import ofdm_parameters::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
-import VParams::*;
+import ofdm_viterbi_params::*;
 
 // import ShiftRegs::*;
 

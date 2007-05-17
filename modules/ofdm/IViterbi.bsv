@@ -7,9 +7,9 @@ import ofdm_parameters::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
-import VParams::*;
-import VRegFile::*;
-import Traceback::*;
+import ofdm_viterbi_params::*;
+import ofdm_viterbi_memory::*;
+import ofdm_viterbi_traceback::*;
 
 // import Parameters::*;
 

@@ -8,6 +8,7 @@ import ofdm_serial_to_parallel::*;
 import ofdm_fft::*;
 import ofdm_channel_estimator::*;
 import ofdm_demapper::*;
+import ofdm_deinterleaver::*;
 import ofdm_decoder::*;
 import ofdm_descrambler::*;
 import ofdm_types::*;
@@ -135,9 +136,8 @@ module mkDescramblerInstance
 		 DescramblerDataSz,DescramblerDataSz));
    Descrambler#(RXDescramblerAndGlobalCtrl,
 		DescramblerDataSz,DescramblerDataSz) block;
-   block <- mkScrambler(descramblerMapCtrl,
-			descramblerConvertCtrl,
-			descramblerGenPoly);
+   block <- mkDescrambler(descramblerMapCtrl,
+			  descramblerGenPoly);
    return block;
 endmodule
 

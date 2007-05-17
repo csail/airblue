@@ -242,3 +242,49 @@ Directory modules/ofdm
  Interfaces.bsv            Locally Removed             4 
 
 newest version
+----------
+mcn02       Date: Thu May 17 15:48:27 EDT 2007  CSN: CSN-ofdm-6
+                  Thu May 17 19:48:27 UTC 2007
+
+
+Directory config/pm/ofdm
+ wifi_testbench.apm        Locally Modified            5 
+
+Directory modules/ofdm
+ FFTIFFT.bsv               Locally Modified            5 
+ ofdm_fft.awb              Locally Removed             5 
+ Deinterleaver.bsv         Locally Added               0 
+ Synchronizer.bsv          Locally Modified            5 
+ ofdm_viterbi_core.awb     Locally Added               0 
+ ofdm_fftifft_params.bsv   Locally Added               0 
+ Decoder.bsv               Locally Removed             5 
+ ofdm_synchronizer_library.awb Locally Added               0 
+ Transmitter.bsv           Locally Modified            5 
+ FFTIFFT_Library.bsv       Locally Modified            5 
+ Descrambler.bsv           Locally Modified            5 
+ ofdm_synchronizer_params.awb Locally Added               0 
+ ofdm_viterbi.awb          Locally Modified            5 
+ ofdm_descrambler.awb      Locally Modified            5 
+ ofdm_fftifft.awb          Locally Added               0 
+ IViterbi.bsv              Locally Modified            5 
+ ofdm_fftifft_params.awb   Locally Added               0 
+ Traceback.bsv             Locally Modified            5 
+ ofdm_viterbi_traceback.awb Locally Added               0 
+ ofdm_deinterleaver.awb    Locally Modified            5 
+ ofdm_wifi_model.awb       Locally Removed             5 
+ Encoder.bsv               Locally Removed             5 
+ SynchronizerLibrary.bsv   Locally Modified            5 
+ ofdm_fftifft_library.awb  Locally Added               0 
+ Receiver.bsv              Locally Modified            5 
+ Viterbi.bsv               Locally Modified            5 
+ Preambles.bsv             Locally Removed             5 
+ ofdm_types                Locally Removed             5 
+ ofdm_viterbi_memory.awb   Locally Added               0 
+ ofdm_viterbi_params.awb   Locally Added               0 
+ Parameters.bsv            Locally Removed             5 
+ ofdm_synchronizer.awb     Locally Modified            5 
+ IFFT.bsv                  Locally Added               0 
+ ofdm_receiver.awb         Locally Modified            5 
+ ofdm_ifft.awb             Locally Modified            5 
+ Interleaver.bsv           Locally Modified            5 
+

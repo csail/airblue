@@ -4,15 +4,12 @@
 
 %AWB_START
 
-%name OFDM viterbi module
-%desc OFDM viterbi module
-%provides ofdm_viterbi
-
-%requires ofdm_viterbi_params
-%requires ofdm_viterbi_core
+%name OFDM synchronizer library
+%desc OFDM synchronizer library
+%provides ofdm_synchronizer_library
 
 %attributes ofdm
 
-%public Viterbi.bsv
+%public SynchronizerLibrary.bsv
 
 %AWB_END

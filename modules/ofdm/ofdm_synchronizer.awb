@@ -8,8 +8,11 @@
 %desc OFDM synchronizer module
 %provides ofdm_synchronizer
 
+%requires ofdm_synchronizer_params
+%requires ofdm_synchronizer_library
+
 %attributes ofdm
 
-%public Synchronizer.bsv SParams.bsv SynchronizerLibrary.bsv
+%public Synchronizer.bsv
 
 %AWB_END

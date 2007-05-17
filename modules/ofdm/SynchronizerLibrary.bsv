@@ -1,9 +1,11 @@
 import Complex::*;
 import FIFOF::*;
 import FixedPoint::*;
+import Vector::*;
+
 import ofdm_common::*;
 import ofdm_parameters::*;
-import SParams::*;
+import ofdm_synchronizer_params::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;

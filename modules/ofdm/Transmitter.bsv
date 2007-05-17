@@ -13,6 +13,7 @@ import ofdm_cp_insert::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
+import ofdm_preambles::*;
 
 // import Controls::*;
 // import DataTypes::*;

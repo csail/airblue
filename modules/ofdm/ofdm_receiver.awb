@@ -13,6 +13,7 @@
 %requires ofdm_fft
 %requires ofdm_channel_estimator
 %requires ofdm_demapper
+%requires ofdm_deinterleaver
 %requires ofdm_decoder
 %requires ofdm_descrambler
 
