@@ -14,6 +14,27 @@ import ofdm_base::*;
 // import Interfaces::*;
 // import Parameters::*;
 
+interface WiFiPreFFTRXController;
+   interface Put#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
+      inFromPreFFT;
+   interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
+      outToPreDescrambler;
+endinterface
+
+interface WiFiPreDescramblerRXController;
+   interface Put#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)))    
+      inFromPreDescrambler;
+   interface Get#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) 
+      outToDescrambler;
+   interface Get#(Bit#(12)) outLength;
+endinterface
+
+interface WiFiPostDescramblerRXController;
+   interface Put#(EncoderMesg#(Bit#(0),DescramblerDataSz))                
+      inFromDescrambler;
+   interface Get#(Bit#(8))  outData;
+endinterface      
+
 interface WiFiRXController;
    interface Put#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
       inFromPreFFT;

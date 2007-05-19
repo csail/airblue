@@ -84,8 +84,8 @@ endmodule
 (* synthesize *)
 module mkSystem (Empty);
    
-   let transmitter <- mkWiFiTransmitter;
-   let receiver    <- mkWiFiReceiver;
+   let transmitter <- mkWiMAXTransmitter;
+   let receiver    <- mkWiMAXReceiver;
    
 endmodule
 
