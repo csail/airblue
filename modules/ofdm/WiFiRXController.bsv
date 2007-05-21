@@ -24,7 +24,7 @@ interface WiFiPreFFTRXController;
       inFromPreFFT;
    interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
       outToPreDescrambler;
-   interface Put#(RXFeedback) inFeedback;
+   interface Put#(Maybe#(RXFeedback)) inFeedback;
 endinterface
 
 interface WiFiPreDescramblerRXController;
@@ -32,7 +32,7 @@ interface WiFiPreDescramblerRXController;
       inFromPreDescrambler;
    interface Get#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) 
       outToDescrambler;
-   interface Get#(RXFeedback) outFeedback;
+   interface Get#(Maybe#(RXFeedback)) outFeedback;
    interface Get#(Bit#(12))   outLength;
 endinterface
 
@@ -58,28 +58,64 @@ interface WiFiRXController;
 endinterface
       
 typedef enum{
-   RX_IDLE,    // idle
-   RX_HEADER,  // decoding header
-   RX_HTAIL,   // sending zeros after header
-   RX_DATA,    // decoding data
-   RX_DTAIL    // sending zeros after data
+   RX_IDLE,     // idle
+   RX_HEADER,   // decoding header
+   RX_HTAIL,    // sending zeros after header
+   RX_FEEDBACK, // waiting for feedback
+   RX_DATA,     // decoding data
+   RX_DTAIL     // sending zeros after data
 } RXCtrlState deriving(Eq,Bits);
 
 (* synthesize *)
 module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // state elements
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
-   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE);
+   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE); // the current state
+   Reg#(Bit#(1))     zeroCounts <- mkRegU;  // count no of zeros symbol sent
+   Reg#(Rate)        rxRate <- mkRegU;      // the packet rate for receiving
+   Reg#(Bit#(16))    rxLength <- mkRegU;    // the remaining of data to be received (in terms of bits)  
    
-   interface Put in;
+   
+   // send 2 extra symbol of zeros to push out data from vitebri (also reset the viterbi state)
+   rule sendZeros(rxState == RX_HTAIL || rxState == RX_DTAIL);
+      RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
+					 rate: (rxState == RX_HTAIL) ? R0 : rxRate};
+      Symbol#(FFTIFFTSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
+      outQ.enq(FFTMesg{control:rxCtrl, data: zeroSymbol});
+      if (zeroCounts == 0)
+	 begin
+	    zeroCounts <= 1;
+	 end
+      else
+	 begin
+	    zerosCounts <= 0;
+	    rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
+	 end
+   endrule 
+   
+   interface Put inFromPreFFT;
       method Action put(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) mesg) if (rxState != RX_HTAIL && rxState != RX_DTAIL);
+	 noAction;
       endmethod
    endinterface
  
-      inFromPreFFT;
-   interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
-      outToPreDescrambler;
-   interface Put#(RXFeedback) inFeedback;
+   interface Put inFeedback;
+      method Action put(Maybe#(RXFeedback) feedback) if (rxState == RX_FEEDBACK);
+	 if (isValid(feedback)) // set the packet parameter
+	    begin
+	       let packetInfo = fromMaybe(?,feedback);
+	       rxState <= RX_DATA;
+	       rxRate  <= packetInfo.rate; 
+	       rxLength <= (packetInfo.length + 2) << 3; // get the number of bits remained to received 
+	    end
+	 else // error in decoding package, return to idle
+	    begin
+	       rxState <= RX_IDLE; 
+	    end
+      endmethod
+   endinterface
+
+   interface outToPreDescrambler = fifoToGet(outQ);
 
 endmodule
 
