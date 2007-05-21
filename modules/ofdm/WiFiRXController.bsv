@@ -71,8 +71,11 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
    Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE);
    
-   interface Put inFromPreFFT;
-      #(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
+   interface Put in;
+      method Action put(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) mesg) if (rxState != RX_HTAIL && rxState != RX_DTAIL);
+      endmethod
+   endinterface
+ 
       inFromPreFFT;
    interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
       outToPreDescrambler;
