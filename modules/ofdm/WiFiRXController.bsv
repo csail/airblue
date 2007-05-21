@@ -163,14 +163,18 @@ endmodule
 (* synthesize *)
 module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // state elements
+   FIFO#(Maybe#(RXFeedback)) feedbackQ <- mkLFIFO;
    FIFO#(Bit#(12)) outLengthQ <- mkLFIFO;
    FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
    
-   interface Put#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)))    
-      inFromPreDescrambler;
-   interface outFeedback ;
-   interface Get#(Bit#(12))   outLength;
-
+   interface Put inFromPreDescrambler;
+      method Action put(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)) mesg);
+	 noAction;
+      endmethod
+   endinterface
+     
+   interface outLength = fifoToGet(outLengthQ);   
+   interface outFeedback = fifoToGet(outFeedbackQ);
    interface outToDescrambler = fifoToGet(outMesgQ);
    
 endmodule 
