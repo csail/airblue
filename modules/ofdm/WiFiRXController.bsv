@@ -14,11 +14,17 @@ import ofdm_base::*;
 // import Interfaces::*;
 // import Parameters::*;
 
+typedef struct{
+   Rate     rate;
+   Bit#(12) length;
+} RXFeedback;
+
 interface WiFiPreFFTRXController;
    interface Put#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
       inFromPreFFT;
    interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
       outToPreDescrambler;
+   interface Put#(RXFeedback) inFeedback;
 endinterface
 
 interface WiFiPreDescramblerRXController;
@@ -26,7 +32,8 @@ interface WiFiPreDescramblerRXController;
       inFromPreDescrambler;
    interface Get#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) 
       outToDescrambler;
-   interface Get#(Bit#(12)) outLength;
+   interface Get#(RXFeedback) outFeedback;
+   interface Get#(Bit#(12))   outLength;
 endinterface
 
 interface WiFiPostDescramblerRXController;
@@ -53,8 +60,26 @@ endinterface
 typedef enum{
    RX_IDLE,    // idle
    RX_HEADER,  // decoding header
-   RX_DATA     // decoding data
+   RX_HTAIL,   // sending zeros after header
+   RX_DATA,    // decoding data
+   RX_DTAIL    // sending zeros after data
 } RXCtrlState deriving(Eq,Bits);
+
+(* synthesize *)
+module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
+   // state elements
+   FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
+   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE);
+   
+   interface Put inFromPreFFT;
+      #(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
+      inFromPreFFT;
+   interface Get#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec))   
+      outToPreDescrambler;
+   interface Put#(RXFeedback) inFeedback;
+
+endmodule
+
 
 (* synthesize *)
 module mkWiFiRXController(WiFiRXController);
@@ -82,7 +107,7 @@ module mkWiFiRXController(WiFiRXController);
       let outCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl:descramblerCtrl, globalCtrl: mesg.control};
       outToDescramblerQ.enq(Mesg{control:outCtrl, data:pack(mesg.data)});
    endrule
-
+   
    rule processDescrambler(True);
       let mesg = inFromDescramblerQ.first;
       outDataQ.enq(truncate(pack(mesg.data)));

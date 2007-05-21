@@ -302,3 +302,12 @@ Directory modules/ofdm
  WiMAXTransceiver.bsv      Locally Modified            6 
 
 some update
+----------
+mcn02       Date: Sun May 20 22:26:31 EDT 2007  CSN: CSN-ofdm-8
+                  Mon May 21 02:26:31 UTC 2007
+
+
+Directory modules/ofdm
+ WiFiRXController.bsv      Locally Modified            7 
+
+
