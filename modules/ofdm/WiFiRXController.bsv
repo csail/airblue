@@ -1,3 +1,4 @@
+import Complex::*;
 import Connectable::*;
 import FIFO::*;
 import GetPut::*;
@@ -17,7 +18,7 @@ import ofdm_base::*;
 typedef struct{
    Rate     rate;
    Bit#(12) length;
-} RXFeedback;
+} RXFeedback deriving (Bits, Eq);
 
 interface WiFiPreFFTRXController;
    interface Put#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) 
@@ -71,31 +72,71 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // state elements
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
    Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE); // the current state
-   Reg#(Bit#(1))     zeroCounts <- mkRegU;  // count no of zeros symbol sent
+   Reg#(Bit#(1))     zeroCount <- mkRegU;  // count no of zeros symbol sent
    Reg#(Rate)        rxRate <- mkRegU;      // the packet rate for receiving
-   Reg#(Bit#(16))    rxLength <- mkRegU;    // the remaining of data to be received (in terms of bits)  
+   Reg#(Bit#(16))    rxLength <- mkRegU;    // the remaining of data to be received (in terms of bits)
    
+   // constants
+   // data bis per ofdm symbol 
+   Bit#(16) dbps = case (rxRate)
+		      R0: 24;
+		      R1: 36;
+		      R2: 48;
+		      R3: 72;
+		      R4: 96;
+		      R5: 144;
+		      R6: 192;
+		      R7: 216;
+		   endcase;
    
+   // rules
    // send 2 extra symbol of zeros to push out data from vitebri (also reset the viterbi state)
    rule sendZeros(rxState == RX_HTAIL || rxState == RX_DTAIL);
       RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
 					 rate: (rxState == RX_HTAIL) ? R0 : rxRate};
       Symbol#(FFTIFFTSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
       outQ.enq(FFTMesg{control:rxCtrl, data: zeroSymbol});
-      if (zeroCounts == 0)
+      if (zeroCount == 0)
 	 begin
-	    zeroCounts <= 1;
+	    zeroCount <= 1;
 	 end
       else
 	 begin
-	    zerosCounts <= 0;
+	    zeroCount <= 0;
 	    rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
 	 end
    endrule 
    
+   // interface methods
    interface Put inFromPreFFT;
-      method Action put(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) mesg) if (rxState != RX_HTAIL && rxState != RX_DTAIL);
-	 noAction;
+      method Action put(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) mesg) 
+	 if (rxState != RX_HTAIL && rxState != RX_DTAIL);
+	 case (rxState)
+	    RX_IDLE: 
+	    begin
+	       if (mesg.control) // only process if it is a new packet, otherwise, drop it
+		  begin	
+		     RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: True, 
+							rate: R0};
+		     outQ.enq(FFTMesg{control:rxCtrl, data: mesg.data});
+		     rxState <= RX_HTAIL;
+		  end  
+	       end
+	    RX_DATA:
+	    begin
+	       RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
+						  rate: rxRate};
+	       outQ.enq(FFTMesg{control:rxCtrl, data: mesg.data});
+	       if (rxLength < dbps) // last symbol
+		  begin
+		     rxState <= RX_DTAIL;
+		  end
+	       else
+		  begin
+		     rxLength <= rxLength - dbps;
+		  end
+	    end
+	 endcase
       endmethod
    endinterface
  
@@ -106,7 +147,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	       let packetInfo = fromMaybe(?,feedback);
 	       rxState <= RX_DATA;
 	       rxRate  <= packetInfo.rate; 
-	       rxLength <= (packetInfo.length + 2) << 3; // get the number of bits remained to received 
+	       rxLength <= (zeroExtend(packetInfo.length) + 2) << 3; // get the number of bits remained to received 
 	    end
 	 else // error in decoding package, return to idle
 	    begin
@@ -119,6 +160,20 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 
 endmodule
 
+(* synthesize *)
+module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
+   // state elements
+   FIFO#(Bit#(12)) outLengthQ <- mkLFIFO;
+   FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
+   
+   interface Put#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)))    
+      inFromPreDescrambler;
+   interface outFeedback ;
+   interface Get#(Bit#(12))   outLength;
+
+   interface outToDescrambler = fifoToGet(outMesgQ);
+   
+endmodule 
 
 (* synthesize *)
 module mkWiFiRXController(WiFiRXController);
