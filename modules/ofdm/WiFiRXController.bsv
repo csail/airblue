@@ -72,9 +72,9 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // state elements
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
    Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE); // the current state
-   Reg#(Bit#(1))     zeroCount <- mkRegU;  // count no of zeros symbol sent
-   Reg#(Rate)        rxRate <- mkRegU;      // the packet rate for receiving
-   Reg#(Bit#(16))    rxLength <- mkRegU;    // the remaining of data to be received (in terms of bits)
+   Reg#(Bit#(3))     zeroCount <- mkRegU;       // count no of zeros symbol sent
+   Reg#(Rate)        rxRate <- mkRegU;          // the packet rate for receiving
+   Reg#(Bit#(16))    rxLength <- mkRegU;        // the remaining of data to be received (in terms of bits)
    
    // constants
    // data bis per ofdm symbol 
@@ -93,18 +93,18 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // send 2 extra symbol of zeros to push out data from vitebri (also reset the viterbi state)
    rule sendZeros(rxState == RX_HTAIL || rxState == RX_DTAIL);
       RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: (rxState == RX_HTAIL) ? True : False, 
-					 rate: (rxState == RX_HTAIL) ? R0 : rxRate};
+					 rate: R0};
       Symbol#(FFTIFFTSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
       outQ.enq(FFTMesg{control:rxCtrl, data: zeroSymbol});
-      if (zeroCount == 0)
+      if (zeroCount < 4)
 	 begin
-	    zeroCount <= 1;
+	    zeroCount <= zeroCount + 1;
 	 end
       else
 	 begin
 	    rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
 	 end
-      $display("PreFFTRXCtrllr sendZeros");
+      $display("PreFFTRXCtrllr sendZeros rxState:%d rxLength:%d",rxState,rxLength);
    endrule 
    
    // interface methods
@@ -128,7 +128,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	       RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
 						  rate: rxRate};
 	       outQ.enq(FFTMesg{control:rxCtrl, data: mesg.data});
-	       if (rxLength < dbps) // last symbol
+	       if (rxLength <= dbps) // last symbol
 		  begin
 		     rxState <= RX_DTAIL;
 		     zeroCount <= 0;
@@ -139,7 +139,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 		  end
 	    end
 	 endcase
-	 $display("PreFFTRXCtrllr inFromPreFFT");
+	 $display("PreFFTRXCtrllr inFromPreFFT rxState:%d rxLength:%d",rxState,rxLength);
       endmethod
    endinterface
  
@@ -150,13 +150,13 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	       let packetInfo = fromMaybe(?,feedback);
 	       rxState <= RX_DATA;
 	       rxRate  <= packetInfo.rate; 
-	       rxLength <= (zeroExtend(packetInfo.length) + 2) << 3; // get the number of bits to be received 
+	       rxLength <= ((zeroExtend(packetInfo.length) + 2) << 3) + 6; // no of bits to be received = (16+8*length+6) 
 	    end
 	 else // error in decoding package, return to idle
 	    begin
 	       rxState <= RX_IDLE; 
 	    end
-	 $display("PreFFTRXCtrllr inFeedback");
+	 $display("PreFFTRXCtrllr inFeedback rxState:%d rxLength:%d",rxState,rxLength);
       endmethod
    endinterface
 
@@ -173,7 +173,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    FIFO#(Bit#(12))           outLengthQ <- mkLFIFO;
    StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO;
    Reg#(RXCtrlState)         rxState <- mkReg(RX_DATA);
-   Reg#(Bit#(1))             zeroCount <- mkReg(0);
+   Reg#(Bit#(3))             zeroCount <- mkReg(0);
    Reg#(Bool)                isGetSeed <- mkReg(False);
    Reg#(Maybe#(Bit#(ScramblerShifterSz))) seed <- mkReg(tagged Invalid);
    Reg#(Bit#(12))            rxLength <- mkRegU;
@@ -181,6 +181,8 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // constants
    Bit#(5) vOutSz = fromInteger(valueOf(ViterbiOutDataSz));
    Bit#(5) dInSz  = fromInteger(valueOf(DescramblerDataSz));
+   let streamQ_usage = streamQ.usage;
+   let streamQ_free  = streamQ.free;
    
    // functions
    function Rate getRate(Bit#(24) header);
@@ -206,7 +208,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    endfunction
    
    // rules
-   rule decodeHeader(rxState == RX_HEADER && streamQ.notEmpty(24));
+   rule decodeHeader(rxState == RX_HEADER && streamQ_usage >= 24);
       let header = pack(streamQ.first);
       if (checkParity(header))
 	 begin
@@ -224,45 +226,45 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	 end
       rxState <= RX_HTAIL;
       streamQ.deq(24);
-      $display("PreDescramblerRXCtrllr decodeHeader");
+      $display("PreDescramblerRXCtrllr decodeHeader rxState:%d rxLength:%d",rxState,rxLength);
    endrule
    
    // skip 2 symbols of zeros
-   rule skipZeros(rxState == RX_HTAIL && streamQ.notEmpty(24));
+   rule skipZeros(rxState == RX_HTAIL && streamQ_usage >= 24);
       streamQ.deq(24);
-      if (zeroCount == 0)
+      if (zeroCount < 4)
 	 begin
-	    zeroCount <= 1;
+	    zeroCount <= zeroCount + 1;
 	 end
       else
 	 begin
 	    rxState <= RX_DATA;
 	 end
-      $display("PreDescramblerRXCtrllr skipZeros");
+      $display("PreDescramblerRXCtrllr skipZeros rxState:%d rxLength:%d",rxState,rxLength);
    endrule
    
-   rule getSeed(rxState == RX_DATA && isGetSeed && streamQ.notEmpty(12));
+   rule getSeed(rxState == RX_DATA && isGetSeed && streamQ_usage >= 12);
       seed <= tagged Valid (reverseBits((pack(streamQ.first))[11:5]));
       isGetSeed <= False;
       streamQ.deq(12);
-      $display("PreDescramblerRXCtrllr getSeed");      
+      $display("PreDescramblerRXCtrllr getSeed rxState:%d rxLength:%d",rxState,rxLength);      
    endrule
    
-   rule sendData(rxState == RX_DATA && !isGetSeed && streamQ.notEmpty(dInSz));
+   rule sendData(rxState == RX_DATA && !isGetSeed && streamQ_usage >= dInSz);
       let rxDCtrl = RXDescramblerCtrl{seed: seed, bypass: 0}; // descrambler ctrl, no bypass
       let rxGCtrl = RXGlobalCtrl{firstSymbol: isValid(seed), rate: ?};
       let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, length: rxLength, globalCtrl: rxGCtrl};
       seed <= tagged Invalid;
       outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: pack(take(streamQ.first))});
       streamQ.deq(dInSz);
-      $display("PreDescramblerRXCtrllr sendData");
+      $display("PreDescramblerRXCtrllr sendData rxState:%d rxLength:%d",rxState,rxLength);
    endrule
    
-   rule processInMesgQ(streamQ.notFull(vOutSz));
+   rule processInMesgQ(streamQ_free >= vOutSz);
       let mesg = inMesgQ.first;
       if (rxState == RX_DATA && mesg.control.firstSymbol)
 	 begin
-	    if (!streamQ.notEmpty(vOutSz)) // all date from last packet has been processed
+	    if (streamQ_usage == 0) // all date from last packet has been processed
 	       begin
 		  rxState <= RX_HEADER;
 		  zeroCount <= 0;
@@ -275,7 +277,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	    inMesgQ.deq;
 	    streamQ.enq(vOutSz,append(mesg.data,replicate(0)));
 	 end
-      $display("PreDescramblerRXCtrll processInMsgQ");      
+      $display("PreDescramblerRXCtrll processInMsgQ rxState:%d rxLength:%d",rxState,rxLength);      
    endrule
 
    // interface methods
@@ -297,9 +299,11 @@ module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
    
    // constants
    Bit#(5) dInSz = fromInteger(valueOf(DescramblerDataSz));
+   let streamQ_usage = streamQ.usage;
+   let streamQ_free  = streamQ.free;
    
    // rules
-   rule processInMesgQ(streamQ.notFull(dInSz));
+   rule processInMesgQ(streamQ_free >= dInSz);
       let mesg = inMesgQ.first;
       inMesgQ.deq;
       if ((rxState == RX_IDLE && mesg.control.globalCtrl.firstSymbol) || rxState != RX_IDLE)
@@ -316,11 +320,11 @@ module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
 	 begin
 	    streamQ.clear;
 	 end
-      $display("PostDescramblerRXCtrllr processInMesgQ");      
+      $display("PostDescramblerRXCtrllr processInMesgQ rxState:%d rxLength:%d",rxState,rxLength);      
    endrule
    
-   rule processStreamQ(streamQ.notEmpty(8));
-      Bit#(8) outData = pack(take(streamQ.first));
+   rule processStreamQ(streamQ_usage >= 8);
+      Bit#(8) outData = truncate(pack(streamQ.first));
       Bit#(5) deqSz = drop4b ? 4 : 8;
       drop4b <= False;
       streamQ.deq(deqSz);
@@ -336,7 +340,7 @@ module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
 		  rxState <= RX_IDLE;
 	       end
 	 end
-      $display("PostDescramblerRXCtrllr processStreamQ");      
+      $display("PostDescramblerRXCtrllr processStreamQ rxState:%d rxLength:%d",rxState,rxLength);      
    endrule
    
    // interface methods

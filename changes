@@ -401,3 +401,15 @@ Directory modules/ofdm
  WiFiTransceiver.bsv       Locally Modified           16 
 
 
+
+----------
+mcn02       Date: Tue May 22 18:33:18 EDT 2007  CSN: CSN-ofdm-18
+                  Tue May 22 22:33:18 UTC 2007
+
+
+Directory modules/ofdm
+ WiFiTXController.bsv      Locally Modified           16 
+ WiFiRXController.bsv      Locally Modified           17 
+ WiFiDecoder.bsv           Locally Modified           16 
+ WiFiTransceiver.bsv       Locally Modified           17 
+

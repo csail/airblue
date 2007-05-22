@@ -58,7 +58,7 @@ module mkDecoder(Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
    let viterbi <- mkViterbiInstance;   
    
    // connections
-   mkConnection(depuncturer.out,viterbi.in);
+   mkConnectionPrint("Dep -> Vit",depuncturer.out,viterbi.in);
    
    // methods
    interface in = depuncturer.in;

@@ -184,21 +184,21 @@ module mkWiFiTXController(WiFiTXController);
       $display("sendingTail1");      
    endrule
       
-   rule sendingPadding(busy && txState == SendPadding);
-      if (count == 0) // finish transmitter
-	 busy <= False;
-      else
-	 begin
-	    let bypass = 12'h000;
-	    let seed = tagged Invalid;
-	    let fstSym = False;
-	    let rate = txVector.rate;
-	    let data = 0;
-	    let mesg = makeMesg(bypass,seed,fstSym,rate,data);
-	    outQ.enq(mesg);
-	    count <= count - 1;
-	 end
+   rule sendingPadding(busy && txState == SendPadding && count > 0);
+      let bypass = 12'h000;
+      let seed = tagged Invalid;
+      let fstSym = False;
+      let rate = txVector.rate;
+      let data = 0;
+      let mesg = makeMesg(bypass,seed,fstSym,rate,data);
+      outQ.enq(mesg);
+      count <= count - 1;
       $display("sendingPadding");      
+   endrule
+   
+   rule becomeIdle(busy && txState == SendPadding && count == 0);
+      busy <= False;
+      $display("becomeIdle");
    endrule
    
    // methods

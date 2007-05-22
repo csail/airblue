@@ -114,7 +114,7 @@ module mkSystem (Empty);
    RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
    
    // rules
-   rule putTXStart(True);
+   rule putTXStart(packetNo < 1);
       let randData <- randGen.genRand;
       let newRate = nextRate(rate);
       Bit#(12) newLength = truncate(randData);
@@ -151,7 +151,7 @@ module mkSystem (Empty);
    
    rule getData(True);
       let outData <- receiver.outData.get;
-      $display("receiver output: data:%h",data);
+      $display("receiver output: data:%h",outData);
    endrule
    
    rule tick(True);
