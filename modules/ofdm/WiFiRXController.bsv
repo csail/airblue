@@ -163,9 +163,10 @@ endmodule
 (* synthesize *)
 module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // state elements
+   FIFO#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1))) inMesgQ <- mkLFIFO;
+   FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
    FIFO#(Maybe#(RXFeedback)) feedbackQ <- mkLFIFO;
    FIFO#(Bit#(12))           outLengthQ <- mkLFIFO;
-   FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
    StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO;
    Reg#(RXCtrlState)         rxState <- mkReg(RX_DATA);
    Reg#(Bit#(1))             zeroCount <- mkReg(0);
@@ -245,27 +246,47 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
       let rxGCtrl = RXGlobalCtrl{firstSymbol: isValid(seed), rate: ?};
       let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, length: rxLength, globalCtrl: rxGCtrl};
       seed <= tagged Invalid;
-      outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: tpl_2(pack(streamQ.first))});
+      outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: tpl_2(split(pack(streamQ.first)))});
       streamQ.deq(dInSz);
    endrule
    
-   // interface methods
-   interface Put inFromPreDescrambler;
-      method Action put(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)) mesg) if (streamQ.notFull(vOutSz));
-	 if (rxState == RX_DATA && mesg.control.firstSymbol)
-	    begin
-	       rxState <= RX_HEADER;
-	       zeroCount <= 0;
-	    end
-	 streamQ.enq(vOutSz);
+   rule processInMesgQ(streamQ.notFull(vOutSz));
+      let mesg = inMesgQ.first;
+      if (rxState == RX_DATA && mesg.control.firstSymbol)
+	 begin
+	    if (!streqmQ.notEmpty(vOutSz)) // all date from last packet has been processed
+	       begin
+		  rxState <= RX_HEADER;
+		  zeroCount <= 0;
+		  inMesgQ.deq;
+		  streqmQ.enq(vOutSz,append(mesg.data,replicate(0)));
+	       end
+	 end
+      else
+	 begin
+	    streamQ.enq(vOutSz,append(mesg.data,replicate(0)));
+	 end
       endmethod
    endinterface
-     
+
+   // interface methods
+   interface inFromPreDescrambler = fifoToPut(inMesgQ);     
+   interface outToDescrambler = fifoToGet(outMesgQ);   
    interface outLength = fifoToGet(outLengthQ);   
    interface outFeedback = fifoToGet(outFeedbackQ);
-   interface outToDescrambler = fifoToGet(outMesgQ);
-   
 endmodule 
+
+(* synthesize *)
+module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
+   // state elements
+   FIFO#(Bit#(8)) outDataQ <- mkLFIFO;
+   
+   
+   interface Put#(EncoderMesg#(Bit#(0),DescramblerDataSz))                
+      inFromDescrambler;
+      
+   interface outData = fifoToGet(outDataQ);
+endmodule
 
 (* synthesize *)
 module mkWiFiRXController(WiFiRXController);
