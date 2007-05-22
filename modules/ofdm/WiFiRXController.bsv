@@ -197,7 +197,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    endfunction
    
    function Bool checkParity(Bit#(24) header);
-      return header[17:17] == getParity([16:0]);
+      return header[17:17] == getParity(header[16:0]);
    endfunction
    
    // rules
