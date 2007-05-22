@@ -266,8 +266,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	 begin
 	    streamQ.enq(vOutSz,append(mesg.data,replicate(0)));
 	 end
-      endmethod
-   endinterface
+   endrule
 
    // interface methods
    interface inFromPreDescrambler = fifoToPut(inMesgQ);     
