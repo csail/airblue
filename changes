@@ -390,3 +390,14 @@ mcn02       Date: Mon May 21 21:27:03 EDT 2007  CSN: CSN-ofdm-16
 Directory modules/ofdm
  WiFiRXController.bsv      Locally Modified           15 
 
+
+----------
+mcn02       Date: Tue May 22 02:04:47 EDT 2007  CSN: CSN-ofdm-17
+                  Tue May 22 06:04:47 UTC 2007
+
+
+Directory modules/ofdm
+ WiFiRXController.bsv      Locally Modified           16 
+ WiFiTransceiver.bsv       Locally Modified           16 
+
+

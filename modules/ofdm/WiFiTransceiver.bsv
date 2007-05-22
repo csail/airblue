@@ -11,6 +11,7 @@ import ofdm_receiver::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
+import ofdm_common::*;
 
 
 // import Controls::*;
@@ -69,11 +70,16 @@ module mkWiFiReceiver(WiFiReceiver);
    let descrambler <- mkDescramblerInstance;
    
    // connections
-   mkConnection(receiver_preFFT.out,rx_controller.inFromPreFFT);
-   mkConnection(rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
-   mkConnection(receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
-   mkConnection(rx_controller.outToDescrambler,descrambler.in);
-   mkConnection(descrambler.out,rx_controller.inFromDescrambler);
+   mkConnectionPrint("PreFFT -> RXCtrl0",receiver_preFFT.out,rx_controller.inFromPreFFT);
+   mkConnectionPrint("RXCtrl0 -> PreDes",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+   mkConnectionPrint("PreDes -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+   mkConnectionPrint("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
+   mkConnectionPrint("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
+//    mkConnection(receiver_preFFT.out,rx_controller.inFromPreFFT);
+//    mkConnection(rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+//    mkConnection(receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+//    mkConnection(rx_controller.outToDescrambler,descrambler.in);
+//    mkConnection(descrambler.out,rx_controller.inFromDescrambler);
    
    // methods
    interface in = receiver_preFFT.in;
@@ -81,10 +87,79 @@ module mkWiFiReceiver(WiFiReceiver);
    interface outData = rx_controller.outData;
 endmodule
 
+function Rate nextRate(Rate rate);
+   return case (rate)
+  	     R0: R1;
+ 	     R1: R2;
+  	     R2: R3;
+  	     R3: R4;
+  	     R4: R5;
+ 	     R5: R6;
+ 	     R6: R7;
+ 	     R7: R0;
+	  endcase;
+endfunction
+
 (* synthesize *)
 module mkSystem (Empty);
-   
+
+   // state elements
    let transmitter <- mkWiFiTransmitter;
    let receiver    <- mkWiFiReceiver;
+   Reg#(Bit#(32)) packetNo <- mkReg(0);
+   Reg#(Bit#(8))  data <- mkReg(0);
+   Reg#(Rate)     rate <- mkReg(R0);
+   Reg#(Bit#(12)) counter <- mkReg(0);
+   Reg#(Bit#(32)) cycle <- mkReg(0);
+   RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
+   
+   // rules
+   rule putTXStart(True);
+      let randData <- randGen.genRand;
+      let newRate = nextRate(rate);
+      Bit#(12) newLength = truncate(randData);
+      let txVec = TXVector{rate: newRate,
+			   length: newLength,
+			   service: 0,
+			   power: 0};
+      rate <= newRate;
+      packetNo <= packetNo + 1;
+      transmitter.txStart(txVec);
+      $display("Going to send a packet %d at rate:%d, length:%d",packetNo,newRate,newLength);
+      if (packetNo == 51)
+	$finish;
+   endrule
+   
+   rule putData(True);
+      data <= data + 1;
+      transmitter.txData(data);
+      $display("transmitter input: rate:%d, data:%h",rate,data);
+   endrule
+   
+   rule getOutput(True);
+      let mesg <- transmitter.out.get;
+      receiver.in.put(mesg);
+      $write("transmitter output: data:");
+      fpcmplxWrite(4,mesg);
+      $display("");
+   endrule
+   
+   rule getLength(True);
+      let length <- receiver.outLength.get;
+      $display("Going to receiver a packet of length:%d",length);
+   endrule
+   
+   rule getData(True);
+      let outData <- receiver.outData.get;
+      $display("receiver output: data:%h",data);
+   endrule
+   
+   rule tick(True);
+      cycle <= cycle + 1;
+      if (cycle == 5000000)
+	 $finish;
+//      $display("Cycle: %d",cycle);
+   endrule
    
 endmodule
+

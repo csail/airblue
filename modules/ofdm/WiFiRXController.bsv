@@ -38,7 +38,7 @@ interface WiFiPreDescramblerRXController;
 endinterface
 
 interface WiFiPostDescramblerRXController;
-   interface Put#(EncoderMesg#(Bit#(0),DescramblerDataSz))                
+   interface Put#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz))                
       inFromDescrambler;
    interface Get#(Bit#(8))  outData;
 endinterface      
@@ -52,7 +52,7 @@ interface WiFiRXController;
       inFromPreDescrambler;
    interface Get#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) 
       outToDescrambler;
-   interface Put#(EncoderMesg#(Bit#(0),DescramblerDataSz))                
+   interface Put#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz))                
       inFromDescrambler;
    interface Get#(Bit#(12)) outLength;
    interface Get#(Bit#(8))  outData;
@@ -104,12 +104,13 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	 begin
 	    rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
 	 end
+      $display("PreFFTRXCtrllr sendZeros");
    endrule 
    
    // interface methods
    interface Put inFromPreFFT;
       method Action put(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) mesg) 
-	 if (rxState != RX_HTAIL && rxState != RX_DTAIL);
+	 if (rxState != RX_HTAIL && rxState != RX_DTAIL && rxState != RX_FEEDBACK);
 	 case (rxState)
 	    RX_IDLE: 
 	    begin
@@ -130,6 +131,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	       if (rxLength < dbps) // last symbol
 		  begin
 		     rxState <= RX_DTAIL;
+		     zeroCount <= 0;
 		  end
 	       else
 		  begin
@@ -137,6 +139,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 		  end
 	    end
 	 endcase
+	 $display("PreFFTRXCtrllr inFromPreFFT");
       endmethod
    endinterface
  
@@ -147,12 +150,13 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	       let packetInfo = fromMaybe(?,feedback);
 	       rxState <= RX_DATA;
 	       rxRate  <= packetInfo.rate; 
-	       rxLength <= (zeroExtend(packetInfo.length) + 2) << 3; // get the number of bits remained to received 
+	       rxLength <= (zeroExtend(packetInfo.length) + 2) << 3; // get the number of bits to be received 
 	    end
 	 else // error in decoding package, return to idle
 	    begin
 	       rxState <= RX_IDLE; 
 	    end
+	 $display("PreFFTRXCtrllr inFeedback");
       endmethod
    endinterface
 
@@ -165,7 +169,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // state elements
    FIFO#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1))) inMesgQ <- mkLFIFO;
    FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
-   FIFO#(Maybe#(RXFeedback)) feedbackQ <- mkLFIFO;
+   FIFO#(Maybe#(RXFeedback)) outFeedbackQ <- mkLFIFO;
    FIFO#(Bit#(12))           outLengthQ <- mkLFIFO;
    StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO;
    Reg#(RXCtrlState)         rxState <- mkReg(RX_DATA);
@@ -210,8 +214,8 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	    let length = getLength(header);
 	    outFeedbackQ.enq(tagged Valid RXFeedback{rate:rate,
 						     length:length});
-	    outLength.enq(length);
-	    getSeed <= True;
+	    outLengthQ.enq(length);
+	    isGetSeed <= True;
 	    rxLength <= length;
 	 end
       else
@@ -220,6 +224,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	 end
       rxState <= RX_HTAIL;
       streamQ.deq(24);
+      $display("PreDescramblerRXCtrllr decodeHeader");
    endrule
    
    // skip 2 symbols of zeros
@@ -233,12 +238,14 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
 	 begin
 	    rxState <= RX_DATA;
 	 end
+      $display("PreDescramblerRXCtrllr skipZeros");
    endrule
    
    rule getSeed(rxState == RX_DATA && isGetSeed && streamQ.notEmpty(12));
-      seed <= tagged Valid ((pack(streamQ.first))[11:5]);
+      seed <= tagged Valid (reverseBits((pack(streamQ.first))[11:5]));
       isGetSeed <= False;
       streamQ.deq(12);
+      $display("PreDescramblerRXCtrllr getSeed");      
    endrule
    
    rule sendData(rxState == RX_DATA && !isGetSeed && streamQ.notEmpty(dInSz));
@@ -246,26 +253,29 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
       let rxGCtrl = RXGlobalCtrl{firstSymbol: isValid(seed), rate: ?};
       let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, length: rxLength, globalCtrl: rxGCtrl};
       seed <= tagged Invalid;
-      outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: tpl_2(split(pack(streamQ.first)))});
+      outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: pack(take(streamQ.first))});
       streamQ.deq(dInSz);
+      $display("PreDescramblerRXCtrllr sendData");
    endrule
    
    rule processInMesgQ(streamQ.notFull(vOutSz));
       let mesg = inMesgQ.first;
       if (rxState == RX_DATA && mesg.control.firstSymbol)
 	 begin
-	    if (!streqmQ.notEmpty(vOutSz)) // all date from last packet has been processed
+	    if (!streamQ.notEmpty(vOutSz)) // all date from last packet has been processed
 	       begin
 		  rxState <= RX_HEADER;
 		  zeroCount <= 0;
 		  inMesgQ.deq;
-		  streqmQ.enq(vOutSz,append(mesg.data,replicate(0)));
+		  streamQ.enq(vOutSz,append(mesg.data,replicate(0)));
 	       end
 	 end
       else
 	 begin
+	    inMesgQ.deq;
 	    streamQ.enq(vOutSz,append(mesg.data,replicate(0)));
 	 end
+      $display("PreDescramblerRXCtrll processInMsgQ");      
    endrule
 
    // interface methods
@@ -278,209 +288,79 @@ endmodule
 (* synthesize *)
 module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
    // state elements
+   FIFO#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) inMesgQ <- mkLFIFO;
    FIFO#(Bit#(8)) outDataQ <- mkLFIFO;
+   StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO; // descramblerdatasz must be factor of 12
+   Reg#(Bit#(12)) rxLength <- mkRegU; // no of bytes remains to be received
+   Reg#(Bool)     drop4b   <- mkRegU; // drop the first 4 bits?
+   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE);
    
+   // constants
+   Bit#(5) dInSz = fromInteger(valueOf(DescramblerDataSz));
    
-   interface Put#(EncoderMesg#(Bit#(0),DescramblerDataSz))                
-      inFromDescrambler;
-      
+   // rules
+   rule processInMesgQ(streamQ.notFull(dInSz));
+      let mesg = inMesgQ.first;
+      inMesgQ.deq;
+      if ((rxState == RX_IDLE && mesg.control.globalCtrl.firstSymbol) || rxState != RX_IDLE)
+	 begin
+	    if (rxState == RX_IDLE)
+	       begin
+		  rxState <= RX_DATA;
+		  drop4b <= True;
+		  rxLength <= mesg.control.length;
+	       end
+	    streamQ.enq(dInSz,append(unpack(mesg.data),replicate(0)));
+	 end
+      else
+	 begin
+	    streamQ.clear;
+	 end
+      $display("PostDescramblerRXCtrllr processInMesgQ");      
+   endrule
+   
+   rule processStreamQ(streamQ.notEmpty(8));
+      Bit#(8) outData = pack(take(streamQ.first));
+      Bit#(5) deqSz = drop4b ? 4 : 8;
+      drop4b <= False;
+      streamQ.deq(deqSz);
+      if (!drop4b)
+	 begin
+	    outDataQ.enq(outData);
+	    if (rxLength > 1)
+	       begin
+		  rxLength <= rxLength - 1;
+	       end
+	    else
+	       begin
+		  rxState <= RX_IDLE;
+	       end
+	 end
+      $display("PostDescramblerRXCtrllr processStreamQ");      
+   endrule
+   
+   // interface methods
+   interface inFromDescrambler = fifoToPut(inMesgQ);
    interface outData = fifoToGet(outDataQ);
 endmodule
 
 (* synthesize *)
 module mkWiFiRXController(WiFiRXController);
    // state elements
-   FIFO#(SPMesgFromSync#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec)) inFromPreFFTQ <- mkLFIFO;
-   FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outToPreDescramblerQ <- mkLFIFO;
-   FIFO#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1))) inFromPreDescramblerQ <- mkLFIFO;
-   FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outToDescramblerQ <- mkLFIFO;
-   FIFO#(EncoderMesg#(Bit#(0),DescramblerDataSz)) inFromDescramblerQ <- mkLFIFO;
-   FIFO#(Bit#(12)) outLengthQ <- mkLFIFO;
-   FIFO#(Bit#(8))  outDataQ <- mkLFIFO;
-   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE);
+   let preFFTCtrllr          <- mkWiFiPreFFTRXController;
+   let preDescramblerCtrllr  <- mkWiFiPreDescramblerRXController;
+   let postDescramblerCtrllr <- mkWiFiPostDescramblerRXController;
    
-   // rules
-   rule processPreFFT(True);
-      let mesg = inFromPreFFTQ.first;
-      let outCtrl = RXGlobalCtrl{firstSymbol: False, rate:R1};
-      inFromPreFFTQ.deq;
-      outToPreDescramblerQ.enq(Mesg{control:outCtrl, data:mesg.data});
-   endrule
-	 
-   rule processPreDescrambler(True);
-      let mesg = inFromPreDescramblerQ.first;
-      let descramblerCtrl = RXDescramblerCtrl{bypass: 0, seed: tagged Invalid};
-      let outCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl:descramblerCtrl, globalCtrl: mesg.control};
-      outToDescramblerQ.enq(Mesg{control:outCtrl, data:pack(mesg.data)});
-   endrule
+   // mkConnections
+   mkConnection(preDescramblerCtrllr.outFeedback,preFFTCtrllr.inFeedback);
    
-   rule processDescrambler(True);
-      let mesg = inFromDescramblerQ.first;
-      outDataQ.enq(truncate(pack(mesg.data)));
-   endrule
-         
    // methods
-   interface inFromPreFFT = fifoToPut(inFromPreFFTQ);
-   interface outToPreDescrambler = fifoToGet(outToPreDescramblerQ);
-   interface inFromPreDescrambler = fifoToPut(inFromPreDescramblerQ);
-   interface outToDescrambler = fifoToGet(outToDescramblerQ);
-   interface inFromDescrambler = fifoToPut(inFromDescramblerQ);
-   interface outLength = fifoToGet(outLengthQ);
-   interface outData   = fifoToGet(outDataQ);
+   interface inFromPreFFT = preFFTCtrllr.inFromPreFFT;
+   interface outToPreDescrambler = preFFTCtrllr.outToPreDescrambler;
+   interface inFromPreDescrambler = preDescramblerCtrllr.inFromPreDescrambler;
+   interface outToDescrambler = preDescramblerCtrllr.outToDescrambler;
+   interface inFromDescrambler = postDescramblerCtrllr.inFromDescrambler;
+   interface outLength = preDescramblerCtrllr.outLength;
+   interface outData   = postDescramblerCtrllr.outData;
 endmodule
-
-/*
-(* synthesize *)
-module mkRX_Controller(WiFiRX_Controller);
-   // states
-   FIFOF#(Bit#(24)) inputQ <- mkSizedFIFOF(2);
-   FIFOF#(FeedbackData) feedbackQ <- mkSizedFIFOF(2);
-   FIFOF#(Bit#(12)) lengthQ <- mkSizedFIFOF(2);
-   FIFOF#(DescramblerInData) outputQ <- mkSizedFIFOF(2);
-   Reg#(Bit#(13)) frames_left <- mkRegU; //here actually mean octets left
-   Reg#(Bit#(4))  zeros_to_skip <- mkRegU;
-   Reg#(RCtrlState) state <- mkReg(WAITING_FOR_HEADER);
-   Reg#(Rate) 	    rate <- mkRegU;
-   Reg#(Bool) 	    isFirstFrame <- mkReg(False);
-
-   // wires
-   Bit#(24) input_data = inputQ.first();
-
-   rule decodeHeader(state == WAITING_FOR_HEADER);
-   begin
-      Rate feedback_rate = case (input_data[1:0]) // check the first 2 bits (here is the least significant 2 bits because it is converted from a vector
-			     2'b00: RNone;
-			     2'b01: R4;  // supposed to be 2'b10, but reversed because of packing a vector
-			     2'b10: R2;  // supposed to be 2'b01, but reversed because of packing a vector
-			     2'b11: R1;
-			   endcase; // case(input_data[23:22])
-      Bit#(12) feedback_length = input_data[16:5];
-      inputQ.deq();
-      feedbackQ.enq(FeedbackData{rate: feedback_rate, length: feedback_length});
-      lengthQ.enq(feedback_length);
-      rate <= feedback_rate;
-      frames_left <= zeroExtend(feedback_length) + 3; // + 3 because of 16 service bits (start) plus 6 tail bits
-      state <= SKIPPING_ZEROS;
-      zeros_to_skip <= 2;
-      isFirstFrame <= True;
-   end
-   endrule
-
-   rule skipZeros(state == SKIPPING_ZEROS);
-   begin
-      inputQ.deq();
-      if (zeros_to_skip == 1) // last to skip
-	begin
-	   state <= (frames_left > 0) ? RECEIVING_DATA : WAITING_FOR_HEADER;
-	   zeros_to_skip <= getNextZerosToSkip(rate);
-	end
-      else		 
-	zeros_to_skip <= zeros_to_skip - 1;
-   end
-   endrule
-
-   rule receiveData(state == RECEIVING_DATA);
-   begin
-      inputQ.deq();
-      isFirstFrame <= False;
-      outputQ.enq(tuple2(isFirstFrame,input_data));
-      if (frames_left <= 3)
-	begin
-	   state <= SKIPPING_ZEROS;
-	   zeros_to_skip <= zeros_to_skip + 2;
-	   frames_left <= 0;
-	end
-      else
-	begin
-	   zeros_to_skip <= (zeros_to_skip == 0) ? getNextZerosToSkip(rate) : zeros_to_skip - 1;
-	   frames_left <= frames_left - 3;
-	end // else: !if(frames_left <= 3)
-   end
-   endrule
-
-   method Action fromViterbi(Vector#(24, Bit#(1)) inData);
-     inputQ.enq(pack(inData)); // note that when packed, a vector put the 0th element at least signficant bits 
-   endmethod
-
-   method ActionValue#(FeedbackData) toDetector();
-     feedbackQ.deq();
-     return(feedbackQ.first());
-   endmethod
-
-   method ActionValue#(Bit#(12)) toRX_MAC();
-     lengthQ.deq();
-     return(lengthQ.first());
-   endmethod
-
-   method ActionValue#(DescramblerInData) toDescrambler();
-     outputQ.deq();
-     return(outputQ.first());
-   endmethod
-   
-endmodule
-*/   
-
-/*
-   rule procinFromPreFFTQ(TRUE);
-      let mesg = inFromPreFFTQ.first;
-      case (preFFTState)
-	 PreFFT_ZerosPreHeader:
-	 begin
-	    if (preFFTSkipZero == 0)
-	       begin
-		  let outCtrl = RXGlobalCtrl{firstSymbol: True, Rate: R0};
-		  outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: mesg.data});
-		  preFFTSkipZero <= 1;
-		  preFFTState <= SKIPPING_ZEROS;
-	       end   
-	    else
-	       begin
-		  let outCtrl = RXGlobalCtrl{firstSymbol: False, Rate: R0};
-		  outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: replicate(cmplx(0,0))});
-		  preFFTSkipZero <= preFFTSkipZero - 1;
-	       end
-	 end
-	 PreFFT_Forward:
-	 begin
-	    if (mesg.control.isNewPacket)
-	       begin
-		  let outCtrl = RXGlobalCtrl{firstSymbol: True, Rate: R0};
-		  outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: replicate(cmplx(0,0))});
-		  preFFTSkipZero <= 1;
-		  preFFTState <= PreFFT_ZerosPreHeader;
-	       end   
-	    else
-	       begin
-	    	  let outCtrl = RXGlobalCtrl{firstSymbol: False, Rate: rate};
-		  outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: mesg.data});
-	       end
-	 end
-	 DROPPING_DATA:
-	 begin
-	    inFromPreFFTQ.deq;
-	    if (mesg.control.isNewPacket)
-	       begin
-		  let outCtrl = RXGlobalCtrl{firstSymbol: True, Rate: R0};
-		  outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: mesg.data});
-		  preFFTSkipZero <= 1;
-		  preFFTState <= SKIPPING_ZEROS;
-	       end   
-	 end
-	 
-	 
-	 
-      inFromPreFFTQ.deq;
-      if (mesg.control.isNewPacket)
-	 begin
-	    let outCtrl = RXGlobalCtrl{firstSymbol: True, Rate: R0};
-	    outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: mesg.data});
-	    preFFTSkipZero <= 1;
-	    preFFTState <= SKIPPING_ZEROS;
-	 end
-      else
-	 if (preFFTState == RECEIVING_DATA)
-	    begin
-	       let outCtrl = RXGlobalCtrl{firstSymbol: True, Rate: R0};
-	       outToPreDescramblerQ.enq(Mesg{control: outCtrl, data: mesg.data});
-*/	       
 
