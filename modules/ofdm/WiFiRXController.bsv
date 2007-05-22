@@ -92,7 +92,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // rules
    // send 2 extra symbol of zeros to push out data from vitebri (also reset the viterbi state)
    rule sendZeros(rxState == RX_HTAIL || rxState == RX_DTAIL);
-      RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
+      RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: (rxState == RX_HTAIL) ? True : False, 
 					 rate: (rxState == RX_HTAIL) ? R0 : rxRate};
       Symbol#(FFTIFFTSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
       outQ.enq(FFTMesg{control:rxCtrl, data: zeroSymbol});
@@ -102,7 +102,6 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	 end
       else
 	 begin
-	    zeroCount <= 0;
 	    rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
 	 end
    endrule 
@@ -116,6 +115,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 	    begin
 	       if (mesg.control) // only process if it is a new packet, otherwise, drop it
 		  begin	
+		     zeroCount <= 0;
 		     RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: True, 
 							rate: R0};
 		     outQ.enq(FFTMesg{control:rxCtrl, data: mesg.data});
@@ -164,12 +164,100 @@ endmodule
 module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // state elements
    FIFO#(Maybe#(RXFeedback)) feedbackQ <- mkLFIFO;
-   FIFO#(Bit#(12)) outLengthQ <- mkLFIFO;
+   FIFO#(Bit#(12))           outLengthQ <- mkLFIFO;
    FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
+   StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO;
+   Reg#(RXCtrlState)         rxState <- mkReg(RX_DATA);
+   Reg#(Bit#(1))             zeroCount <- mkReg(0);
+   Reg#(Bool)                isGetSeed <- mkReg(False);
+   Reg#(Maybe#(Bit#(ScramblerShifterSz))) seed <- mkReg(tagged Invalid);
+   Reg#(Bit#(12))            rxLength <- mkRegU;
+
+   // constants
+   Bit#(5) vOutSz = fromInteger(valueOf(ViterbiOutDataSz));
+   Bit#(5) dInSz  = fromInteger(valueOf(DescramblerDataSz));
    
+   // functions
+   function Rate getRate(Bit#(24) header);
+      return case (header[3:0])
+		4'b1011: R0;
+		4'b1111: R1;
+		4'b1010: R2; 
+		4'b1110: R3;
+		4'b1001: R4;
+		4'b1101: R5;
+		4'b1000: R6;
+		4'b1100: R7;
+		default: R0;
+	     endcase;
+   endfunction
+   
+   function Bit#(12) getLength(Bit#(24) header);
+      return header[16:5];
+   endfunction
+   
+   function Bool checkParity(Bit#(24) header);
+      return header[17:17] == getParity([16:0]);
+   endfunction
+   
+   // rules
+   rule decodeHeader(rxState == RX_HEADER && streamQ.notEmpty(24));
+      let header = pack(streamQ.first);
+      if (checkParity(header))
+	 begin
+	    let rate = getRate(header);
+	    let length = getLength(header);
+	    outFeedbackQ.enq(tagged Valid RXFeedback{rate:rate,
+						     length:length});
+	    outLength.enq(length);
+	    getSeed <= True;
+	    rxLength <= length;
+	 end
+      else
+	 begin
+	    outFeedbackQ.enq(tagged Invalid);
+	 end
+      rxState <= RX_HTAIL;
+      streamQ.deq(24);
+   endrule
+   
+   // skip 2 symbols of zeros
+   rule skipZeros(rxState == RX_HTAIL && streamQ.notEmpty(24));
+      streamQ.deq(24);
+      if (zeroCount == 0)
+	 begin
+	    zeroCount <= 1;
+	 end
+      else
+	 begin
+	    rxState <= RX_DATA;
+	 end
+   endrule
+   
+   rule getSeed(rxState == RX_DATA && isGetSeed && streamQ.notEmpty(12));
+      seed <= tagged Valid ((pack(streamQ.first))[11:5]);
+      isGetSeed <= False;
+      streamQ.deq(12);
+   endrule
+   
+   rule sendData(rxState == RX_DATA && !isGetSeed && streamQ.notEmpty(dInSz));
+      let rxDCtrl = RXDescramblerCtrl{seed: seed, bypass: 0}; // descrambler ctrl, no bypass
+      let rxGCtrl = RXGlobalCtrl{firstSymbol: isValid(seed), rate: ?};
+      let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, length: rxLength, globalCtrl: rxGCtrl};
+      seed <= tagged Invalid;
+      outMesgQ.enq(DescramblerMesg{control: rxCtrl, data: tpl_2(pack(streamQ.first))});
+      streamQ.deq(dInSz);
+   endrule
+   
+   // interface methods
    interface Put inFromPreDescrambler;
-      method Action put(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)) mesg);
-	 noAction;
+      method Action put(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1)) mesg) if (streamQ.notFull(vOutSz));
+	 if (rxState == RX_DATA && mesg.control.firstSymbol)
+	    begin
+	       rxState <= RX_HEADER;
+	       zeroCount <= 0;
+	    end
+	 streamQ.enq(vOutSz);
       endmethod
    endinterface
      

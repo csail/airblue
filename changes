@@ -349,3 +349,16 @@ Directory modules/ofdm
  WiFiRXController.bsv      Locally Modified           11 
 
 
+
+----------
+mcn02       Date: Mon May 21 20:18:07 EDT 2007  CSN: CSN-ofdm-13
+                  Tue May 22 00:18:07 UTC 2007
+
+
+Directory modules/ofdm
+ WiFiRXController.bsv      Locally Modified           12 
+ WiFiParameters.bsv        Locally Modified           11 
+ Descrambler.bsv           Locally Modified           11 
+ Types.bsv                 Locally Modified           11 
+
+

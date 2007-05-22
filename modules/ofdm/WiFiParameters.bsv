@@ -366,6 +366,7 @@ typedef TXScramblerCtrl    RXDescramblerCtrl;
 
 typedef struct {
    RXDescramblerCtrl  descramblerCtrl;
+   Bit#(12)           length;               
    RXGlobalCtrl       globalCtrl;
 } RXDescramblerAndGlobalCtrl deriving(Eq, Bits); 
 
@@ -373,9 +374,3 @@ function RXDescramblerCtrl
    descramblerMapCtrl(RXDescramblerAndGlobalCtrl ctrl);
    return ctrl.descramblerCtrl;
 endfunction
-
-function Bit#(0) 
-   descramblerConvertCtrl(RXDescramblerAndGlobalCtrl ctrl);
-    return ?;
-endfunction
-

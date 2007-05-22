@@ -15,9 +15,10 @@ module mkDescrambler#(function ScramblerCtrl#(n,shifter_sz)
    provisos(Add#(1,xxA,shifter_sz),
 	    Bits#(ctrl_t,ctrl_sz));
    
-   function Bit#(0) 
+   // id function
+   function ctrl_t 
       descramblerConvertCtrl(ctrl_t ctrl);
-      return ?;
+      return ctrl;
    endfunction
 			 
    let descrambler <- mkScrambler(mapCtrl,

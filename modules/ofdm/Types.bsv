@@ -370,7 +370,7 @@ typedef Block#(FFTMesg#(ctrl_t,i_n,i_prec,f_prec),
 				type o_t);
 
 // Descrambler
-typedef Scrambler#(ctrl_t,Bit#(0),i_n,o_n)
+typedef Scrambler#(ctrl_t,ctrl_t,i_n,o_n)
         Descrambler#(type ctrl_t,
 		     numeric type i_n,
 		     numeric type o_n);
