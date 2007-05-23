@@ -12,6 +12,8 @@
 
 %public WiFiParameters.bsv
 
+%param Hello hello "hello"
+%param ScramblerGenPoly 'b1001000  "testing"
 %param FPIPrec 2  "Integer Precision of FixedPoint (>= 2)"
 %param FPFPrec 14 "Fractional Precision of FixedPoint (>= 1)"
 %param ScramblerDataSz 12 "Parallellism of Scrambler (2,4,6,12)"

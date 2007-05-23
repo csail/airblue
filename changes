@@ -442,3 +442,15 @@ Directory config/pm/ofdm
  wifi_testbench.apm        Locally Modified           18 
 
 parameterized working verson
+----------
+mcn02       Date: Wed May 23 16:21:37 EDT 2007  CSN: CSN-ofdm-21
+                  Wed May 23 20:21:37 UTC 2007
+
+
+Directory config/pm/ofdm
+ wifi_testbench.apm        Locally Modified           20 
+
+Directory modules/ofdm
+ ofdm_wifi_parameters.awb  Locally Modified           20 
+
+what did i update?

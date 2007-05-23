@@ -237,3 +237,4 @@ PuncturerOutDataSz=48
 CORDICIter=12
 FPFPrec=13
 FPIPrec=3
+ScramblerGenPoly='b1001111
