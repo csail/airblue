@@ -231,3 +231,9 @@ Packagehint=ofdm
 [OFDM synchronizer parameters]
 File=modules/ofdm/ofdm_synchronizer_params.awb
 Packagehint=ofdm
+
+[OFDM WiFi parameters/Params]
+PuncturerOutDataSz=48
+CORDICIter=12
+FPFPrec=13
+FPIPrec=3

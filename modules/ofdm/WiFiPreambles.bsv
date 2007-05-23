@@ -8,13 +8,14 @@ import ofdm_common::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
+import ofdm_parameters::*;
 
 // import DataTypes::*;
 // import FPComplex::*;
 
 // function to generate short training sequence
-function Vector#(128, FPComplex#(2,14)) getShortPreambles();
-	Vector#(128, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(128, FPComplex#(TXFPIPrec,TXFPFPrec)) getShortPreambles();
+	Vector#(128, FPComplex#(TXFPIPrec,TXFPFPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(460000,10000000), fromRational(460000,10000000)),
 		List::cons(cmplx(fromRational(-1324400,10000000), fromRational(23400,10000000)),
 		List::cons(cmplx(fromRational(-134700,10000000), fromRational(-785200,10000000)),
@@ -148,8 +149,8 @@ function Vector#(128, FPComplex#(2,14)) getShortPreambles();
 endfunction
 
 // function to generate long training sequence
-function Vector#(128, FPComplex#(2,14)) getLongPreambles();
-	Vector#(128, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(128, FPComplex#(TXFPIPrec,TXFPFPrec)) getLongPreambles();
+	Vector#(128, FPComplex#(TXFPIPrec,TXFPFPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(1562500,10000000), fromRational(0,10000000)),
 		List::cons(cmplx(fromRational(-51200,10000000), fromRational(-1203300,10000000)),
 		List::cons(cmplx(fromRational(397500,10000000), fromRational(-1111600,10000000)),
@@ -418,16 +419,16 @@ function Vector#(128, Complex#(Bit#(1))) getLongPreSigns();
 endfunction
 
 // module to generate sample packet
-(* synthesize *)
-module mkPacket(RegFile#(Bit#(10), FPComplex#(2,14)));
-	RegFile#(Bit#(10), FPComplex#(2,14)) regFile <- mkRegFileLoad("WiFiPacket.txt",0,1023);
-	return regFile;
-endmodule
+// (* synthesize *)
+// module mkPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
+// 	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiFiPacket.txt",0,1023);
+// 	return regFile;
+// endmodule
 
-// module to generate sample packet
-(* synthesize *)
-module mkTweakedPacket(RegFile#(Bit#(10), FPComplex#(2,14)));
-	RegFile#(Bit#(10), FPComplex#(2,14)) regFile <- mkRegFileLoad("WiFiTweakedPacket.txt",0,1023);
-	return regFile;
-endmodule
+// // module to generate sample packet
+// (* synthesize *)
+// module mkTweakedPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
+// 	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiFiTweakedPacket.txt",0,1023);
+// 	return regFile;
+// endmodule
 

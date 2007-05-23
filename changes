@@ -426,3 +426,19 @@ Directory modules/ofdm
  WiFiTransceiver.bsv       Locally Modified           18 
 
 working wifi
+----------
+mcn02       Date: Wed May 23 11:59:36 EDT 2007  CSN: CSN-ofdm-20
+                  Wed May 23 15:59:36 UTC 2007
+
+
+Directory modules/ofdm
+ WiFiTXController.bsv      Locally Modified           18 
+ WiMAXParameters.bsv       Locally Modified           19 
+ WiFiParameters.bsv        Locally Modified           19 
+ ofdm_wifi_parameters.awb  Locally Modified           18 
+ WiFiPreambles.bsv         Locally Modified           18 
+
+Directory config/pm/ofdm
+ wifi_testbench.apm        Locally Modified           18 
+
+parameterized working verson
