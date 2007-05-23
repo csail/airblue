@@ -413,3 +413,16 @@ Directory modules/ofdm
  WiFiDecoder.bsv           Locally Modified           16 
  WiFiTransceiver.bsv       Locally Modified           17 
 
+
+----------
+mcn02       Date: Tue May 22 21:07:17 EDT 2007  CSN: CSN-ofdm-19
+                  Wed May 23 01:07:17 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           17 
+ WiFiRXController.bsv      Locally Modified           18 
+ WiFiParameters.bsv        Locally Modified           17 
+ WiFiTransceiver.bsv       Locally Modified           18 
+
+working wifi

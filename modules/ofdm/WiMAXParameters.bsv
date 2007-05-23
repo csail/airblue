@@ -351,7 +351,7 @@ typedef TMul#(2,DepuncturerOutDataSz)  DepuncturerOutBufSz; // to be safe 2x out
 typedef TDiv#(DepuncturerOutDataSz,4)  DepuncturerF1Sz;     // no. of 2/3 in parallel
 typedef TMul#(DepuncturerF1Sz,3)       DepuncturerF1InSz;   
 typedef TMul#(DepuncturerF1Sz,4)       DepuncturerF1OutSz;
-typedef TDiv#(DepuncturerOutBufSz,6)   DepuncturerF2Sz;     // no. of 3/4 in parallel
+typedef TDiv#(DepuncturerOutDataSz,6)   DepuncturerF2Sz;     // no. of 3/4 in parallel
 typedef TMul#(DepuncturerF2Sz,4)       DepuncturerF2InSz;   
 typedef TMul#(DepuncturerF2Sz,6)       DepuncturerF2OutSz;
 typedef TDiv#(DepuncturerOutDataSz,10) DepuncturerF3Sz;     // no. of 5/6 in parallel

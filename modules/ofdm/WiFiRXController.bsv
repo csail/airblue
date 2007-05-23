@@ -92,7 +92,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // rules
    // send 2 extra symbol of zeros to push out data from vitebri (also reset the viterbi state)
    rule sendZeros(rxState == RX_HTAIL || rxState == RX_DTAIL);
-      RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: (rxState == RX_HTAIL) ? True : False, 
+      RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: False, 
 					 rate: R0};
       Symbol#(FFTIFFTSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
       outQ.enq(FFTMesg{control:rxCtrl, data: zeroSymbol});

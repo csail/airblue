@@ -114,7 +114,7 @@ module mkSystem (Empty);
    RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
    
    // rules
-   rule putTXStart(packetNo < 1);
+   rule putTXStart(True);
       let randData <- randGen.genRand;
       let newRate = nextRate(rate);
       Bit#(12) newLength = truncate(randData);
