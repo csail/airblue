@@ -454,3 +454,175 @@ Directory modules/ofdm
  ofdm_wifi_parameters.awb  Locally Modified           20 
 
 what did i update?
+----------
+mcn02       Date: Wed May 23 17:44:19 EDT 2007  CSN: CSN-ofdm-22
+                  Wed May 23 21:44:19 UTC 2007
+
+
+Directory modules/ofdm
+ reed_solomon/             Locally Added               0 
+
+Directory modules/ofdm/reed_solomon
+ build/                    Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ output/                   Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/output
+ uncorrupted.dat           Locally Added               0 
+ info_4.dat                Locally Added               0 
+ input_100.dat             Locally Added               0 
+ test.dat                  Locally Added               0 
+ a.out                     Locally Added               0 
+ input_2.dat               Locally Added               0 
+ corrupted_new.dat         Locally Added               0 
+ input2.dat                Locally Added               0 
+ input_3.dat               Locally Added               0 
+ input_4.dat               Locally Added               0 
+ input_6.dat               Locally Added               0 
+ CVS/                      Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/output/CVS
+ Repository                Locally Added               0 
+ Root                      Locally Added               0 
+ Entries                   Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/output
+ last16error.dat           Locally Added               0 
+ newtrial.dat              Locally Added               0 
+ corrupted_1.dat           Locally Added               0 
+ error.dat                 Locally Added               0 
+ trial_3blocks.dat         Locally Added               0 
+ gftest.dat                Locally Added               0 
+ trial_4blocks.dat         Locally Added               0 
+ uncorrupted_3.dat         Locally Added               0 
+ uncorrupted_4.dat         Locally Added               0 
+ input.dat                 Locally Added               0 
+ output.dat                Locally Added               0 
+ syn                       Locally Added               0 
+ test_enc.dat              Locally Added               0 
+ corrupted.dat             Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ enc-par/                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/enc-par
+ Makefile                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ dc-synth/                 Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/dc-synth
+ Makefile                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ bsv/                      Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/bsv
+ Makefile                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ bsc-compile/              Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build/bsc-compile
+ Makefile                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/build
+ Makefile                  Locally Added               0 
+
+Directory modules/ofdm/reed_solomon
+ src/                      Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src
+ bluespec/                 Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/bluespec
+ mkTestBench.bsv           Locally Added               0 
+ file_interface.cpp        Locally Added               0 
+ Arith.bsv                 Locally Added               0 
+ RealReedDecoder.bsv       Locally Added               0 
+ ofdm_real_reed_decoder.awb Locally Added               0 
+ ErrorCorrector.bsv        Locally Added               0 
+ SyndromeParallel.bsv      Locally Added               0 
+ mkReedSolomon.bsv         Locally Added               0 
+ IReedSolomon.bsv          Locally Added               0 
+ Berlekamp.bsv             Locally Added               0 
+ ReedTypes.bsv             Locally Added               0 
+ ChienErrMag.bsv           Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src
+ software/                 Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software
+ matlab.mat                Locally Added               0 
+ matlab_input.dat          Locally Added               0 
+ output.dat                Locally Added               0 
+ input_2.dat               Locally Added               0 
+ matlab_input_withparity.dat Locally Added               0 
+ CVS/                      Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software/CVS
+ Repository                Locally Added               0 
+ Root                      Locally Added               0 
+ Entries                   Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software
+ ccode/                    Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software/ccode
+ rs256                     Locally Added               0 
+ a.out                     Locally Added               0 
+ encmsg_rev                Locally Added               0 
+ diff.cpp                  Locally Added               0 
+ preproc.cpp               Locally Added               0 
+ rs256.c                   Locally Added               0 
+ berl_old.cpp              Locally Added               0 
+ chien_errmag.cpp          Locally Added               0 
+ chien_errmag1             Locally Added               0 
+ berl.cpp                  Locally Added               0 
+ berl_2                    Locally Added               0 
+ chien_errmag2             Locally Added               0 
+ gfarith.cpp               Locally Added               0 
+ input.dat                 Locally Added               0 
+ reedsolomon.cpp           Locally Added               0 
+ chien.cpp                 Locally Added               0 
+ encmsg                    Locally Added               0 
+ gfmult_old.c              Locally Added               0 
+ berlmsg2                  Locally Added               0 
+ synmsg                    Locally Added               0 
+ syndrome.cpp              Locally Added               0 
+ berl_old                  Locally Added               0 
+ chien_errmag              Locally Added               0 
+ berl                      Locally Added               0 
+ gfmult_elaborated.out     Locally Added               0 
+ '                         Locally Added               0 
+ chien                     Locally Added               0 
+ reedsolomon               Locally Added               0 
+ GNUmakefile               Locally Added               0 
+ err_correct.cpp           Locally Added               0 
+ syn1                      Locally Added               0 
+ syn2                      Locally Added               0 
+ CVS/                      Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software/ccode/CVS
+ Repository                Locally Added               0 
+ Root                      Locally Added               0 
+ Entries                   Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software/ccode
+ berlmsg                   Locally Added               0 
+ syn3                      Locally Added               0 
+ syndrome                  Locally Added               0 
+ berl_prev.cpp             Locally Added               0 
+ berl1                     Locally Added               0 
+ berl2                     Locally Added               0 
+ chien1                    Locally Added               0 
+ chien2                    Locally Added               0 
+ syn                       Locally Added               0 
+ gfarith.h                 Locally Added               0 
+ rs256_new.c               Locally Added               0 
+
+Directory modules/ofdm/reed_solomon/src/software
+ test_rs.m                 Locally Added               0 
+ file_rs.m                 Locally Added               0 
+
