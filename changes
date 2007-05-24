@@ -668,3 +668,19 @@ mcn02       Date: Thu May 24 12:10:56 EDT 2007  CSN: CSN-ofdm-24
 Directory config/pm/ofdm
  prebuilt_wifi_testbench.apm Locally Added               0 
 
+
+----------
+mcn02       Date: Thu May 24 14:03:59 EDT 2007  CSN: CSN-ofdm-25
+                  Thu May 24 18:03:59 UTC 2007
+
+
+Directory config/pm/ofdm
+ prebuilt_wifi_testbench.apm Locally Modified           24 
+
+Directory modules/ofdm/reed_solomon/src/bluespec
+ ofdm_reed_types.awb       Locally Added               0 
+ ofdm_reed_arith.awb       Locally Added               0 
+ ofdm_reed_decoder_core.awb Locally Added               0 
+ ofdm_reed_commom.awb      Locally Added               0 
+
+add some files

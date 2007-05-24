@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM Real Reed-Solomon decoder common library
+%desc OFDM Real Reed-Solomon decoder common library
+%provides ofdm_reed_common
+
+%attributes ofdm
+
+%public Berlekamp.bsv ChienErrMag.bsv ErrorCorrector.bsv IReedSolomon.bsv SyndromeParallel.bsv
+
+%AWB_END

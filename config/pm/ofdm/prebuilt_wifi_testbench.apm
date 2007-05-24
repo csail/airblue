@@ -2,7 +2,7 @@
 [Global]
 Type=HAsim
 Version=2.0
-File=wifi_testbench
+File=prebuilt_wifi_testbench
 SaveParameters=0
 Description=WiFi Transceiver Testbench
 Name=WiFi Transceiver Testbench
@@ -235,6 +235,5 @@ Packagehint=ofdm
 [OFDM WiFi parameters/Params]
 PuncturerOutDataSz=48
 CORDICIter=12
-FPFPrec=13
-FPIPrec=3
-ScramblerGenPoly='b1001111
+ScramblerGenPoly='b1010000
+ConvGenPoly1='b1010111

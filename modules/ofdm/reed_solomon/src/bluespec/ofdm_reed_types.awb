@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name OFDM Real Reed-Solomon types
+%desc OFDM Real Reed-Solomon types
+%provides ofdm_reed_types
+
+%attributes ofdm
+
+%public ReedTypes.bsv
+
+%AWB_END
