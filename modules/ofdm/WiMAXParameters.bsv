@@ -44,8 +44,8 @@ typedef TXGlobalCtrl RXGlobalCtrl; // same as tx
 
 // Scrambler:
 typedef `ScramblerDataSz  ScramblerDataSz;    
-typedef `ScramblerGenPoly ScramblerShifterSz;
-Bit#(ScramblerShifterSz) scramblerGenPoly = 'b110000000000000;
+typedef 15 ScramblerShifterSz;
+Bit#(ScramblerShifterSz) scramblerGenPoly = `ScramblerGenPoly;
 typedef ScramblerCtrl#(ScramblerDataSz,ScramblerShifterSz) 
 	TXScramblerCtrl;
 
@@ -95,7 +95,7 @@ typedef `PuncturerOutDataSz         PuncturerOutDataSz;
 //typedef TDiv#(PuncturerInDataSz,6)  PuncturerF2Sz; // no. of 3/4 in parallel
 //typedef TDiv#(PuncturerInDataSz,10) PuncturerF3Sz; // no. of 5/6 in parallel
 typedef TAdd#(PuncturerInDataSz,10) PuncturerInBufSz;  // to be safe 2x inDataSz
-typedef TAdd#(PuncturerInBufDataSz,PuncturerOutBufSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
+typedef TAdd#(PuncturerInBufSz,PuncturerOutBufSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
 typedef 1  PuncturerF1Sz; // no. of 2/3 in parallel
 typedef 1  PuncturerF2Sz; // no. of 3/4 in parallel
 typedef 1 PuncturerF3Sz; // no. of 5/6 in parallel
@@ -408,7 +408,7 @@ typedef ConvEncoderOutDataSz ViterbiInDataSz;
 typedef ConvEncoderInDataSz  ViterbiOutDataSz;
 typedef ConvEncoderHistSz    KSz;       // no of input bits
 typedef `TBLength            TBLength;  // the minimum TB length for each output
-typedef `NoOfDecoeds         NoOfDecodes;    // no of traceback per stage, TBLength dividible by this value
+typedef `NoOfDecodes         NoOfDecodes;    // no of traceback per stage, TBLength dividible by this value
 typedef 3                    MetricSz;  // input metric
 typedef 1                    FwdSteps;  // forward step per cycle
 typedef `FwdRadii            FwdRadii;  // 2^(FwdRadii+FwdSteps*ConvInSz) <= 2^(KSz-1)

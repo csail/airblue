@@ -54,32 +54,32 @@ function TXVector decrTXVectorLength(TXVector txVec);
 endfunction
 
 
-// get maximum number of padding (basic unit is 8 bits) required for each rate
+//get maximum number of padding (basic unit is 8 bits) required for each rate
+function Bit#(7) maxPadding(Rate rate);
+   return case (rate)
+	     R0: 11;
+ 	     R1: 23;
+ 	     R2: 35; 
+ 	     R3: 47;
+ 	     R4: 71;
+ 	     R5: 95;
+ 	     R6: 107;
+ 	  endcase;
+endfunction      
+
+// // construct scrambler mesg// get maximum number of padding (basic unit is byte) required for each rate
 // function Bit#(7) maxPadding(Rate rate);
+//    Bit#(7) scramblerDataSz = fromInteger(valueOf(ScramblerDataSz)/8);
 //    return case (rate)
-// 	     R0: 11;
-// 	     R1: 23;
-// 	     R2: 35; 
-// 	     R3: 47;
-// 	     R4: 71;
-// 	     R5: 95;
-// 	     R6: 107;
+// 	     R0: 12 - scramblerDataSz;
+// 	     R1: 24 - scramblerDataSz;
+// 	     R2: 36 - scramblerDataSz; 
+// 	     R3: 48 - scramblerDataSz;
+// 	     R4: 72 - scramblerDataSz;
+// 	     R5: 96 - scramblerDataSz;
+// 	     R6: 108 - scramblerDataSz;
 // 	  endcase;
 // endfunction      
-
-// construct scrambler mesg// get maximum number of padding (basic unit is byte) required for each rate
-function Bit#(7) maxPadding(Rate rate);
-   Bit#(7) scramblerDataSz = fromInteger(valueOf(ScramblerDataSz)/8);
-   return case (rate)
-	     R0: 12 - scramblerDataSz;
-	     R1: 24 - scramblerDataSz;
-	     R2: 36 - scramblerDataSz; 
-	     R3: 48 - scramblerDataSz;
-	     R4: 72 - scramblerDataSz;
-	     R5: 96 - scramblerDataSz;
-	     R6: 108 - scramblerDataSz;
-	  endcase;
-endfunction      
 
 function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
    makeMesg(Bit#(ScramblerDataSz) bypass,
@@ -109,26 +109,43 @@ module mkWiMAXTXController(WiMAXTXController);
    Reg#(Bool)               fstSym <- mkRegU;
    Reg#(Bool)              rstSeed <- mkRegU;
    Reg#(TXVector)         txVector <- mkRegU;
-   Reg#(Vector#(TDiv#(ScramblerDataSz,8),Bit#(8))) outBuf <- mkRegU;
+   StreamFIFO#(32,6,Bit#(1)) sfifo <- mkStreamLFIFO; // buf at most 32
    FIFO#(ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)) outQ;
    outQ <- mkSizedFIFO(2);
    
+   // constants
+   let sfifo_usage = sfifo.usage;
+   let sfifo_free = sfifo.free;
+   Bit#(6) scramblerDataSz = fromInteger(valueOf(ScramblerDataSz));
+   
    // rules
-   rule sendingPadding(busy && txState == SendPadding);
-      if (count == 0) 
-	 busy <= False;
+   rule sendData(busy && sfifo_usage >= scramblerDataSz);
+      let seedVal = makeSeed(txVector);
+      let seed = rstSeed ? tagged Valid seedVal : tagged Invalid;
+      let rate = txVector.rate;
+      let cpSz = txVector.cpSize;
+      Bit#(ScramblerDataSz) data = pack(take(sfifo.first));
+      let mesg = makeMesg(bypass,seed,fstSym,rate,cpSz,data);
+      rstSeed <= False;
+      outQ.enq(mesg);
+      sfifo.deq(scramblerDataSz);
+   endrule
+   
+   rule enqPadding(busy && txState == SendPadding && sfifo_free >= 8);
+      if (count == 0)
+	 begin
+	    if (sfifo_usage == 0)
+	       begin
+		  busy <= False;
+		  $display("returnIdle");
+	       end
+	 end
       else
 	 begin
-	    let bypass = (count == 1) ? 8'hFF : 8'h00; // tail as unscramble 0
-	    let seed = tagged Invalid;
-	    let fstSym = False;
-	    let rate = txVector.rate;
-	    let cpSz = txVector.cpSize;
-	    let data = (count == 1) ? 8'h00 : 8'hFF ;
-	    let mesg = makeMesg(bypass,seed,fstSym,rate,cpSz,data);
-	    outQ.enq(mesg);
+	    let data = 8'hFF;
+	    sfifo.enq(8,append(unpack(data),replicate(0)));
 	    count <= count - 1;
-	    $display("sendingPadding"); 
+	    $display("enqPadding"); 
 	 end
    endrule
    
@@ -144,17 +161,10 @@ module mkWiMAXTXController(WiMAXTXController);
    endmethod
    
    method Action txData(Bit#(8) inData) 
-      if (busy && txState == SendData && txVector.length > 0);
-      let bypass = 8'h00;
-      let seedVal = makeSeed(txVector);
-      let seed = rstSeed ? tagged Valid seedVal : tagged Invalid;
-      let rate = txVector.rate;
-      let cpSz = txVector.cpSize;
-      let mesg = makeMesg(bypass,seed,fstSym,rate,cpSz,inData);
+      if (busy && txState == SendData && txVector.length > 0 && sfifo_free >= 8);
       let newTXVec = decrTXVectorLength(txVector);
+      sfifo.enq(8,append(unpack(inData),replicate(0)));
       outQ.enq(mesg);
-      rstSeed <= False;
-      fstSym <= (count == 0) ? False : fstSym;
       txVector <= newTXVec;
       if (newTXVec.length == 0)
 	 begin

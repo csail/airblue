@@ -684,3 +684,14 @@ Directory modules/ofdm/reed_solomon/src/bluespec
  ofdm_reed_commom.awb      Locally Added               0 
 
 add some files
+----------
+mcn02       Date: Thu May 24 15:17:52 EDT 2007  CSN: CSN-ofdm-26
+                  Thu May 24 19:17:52 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           24 
+ WiMAXTXController.bsv     Locally Modified           24 
+ WiMAXRXController.bsv     Locally Modified           24 
+
+some mods
