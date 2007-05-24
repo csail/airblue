@@ -106,8 +106,6 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_depuncturer.awb
 Packagehint=ofdm
 
-
-
 [OFDM WiMAX parameters]
 File=modules/ofdm/ofdm_wimax_parameters.awb
 Packagehint=ofdm
@@ -121,7 +119,7 @@ File=modules/ofdm/ofdm_wimax_rx_controller.awb
 Packagehint=ofdm
 
 [OFDM WiMAX decoder module/Requires]
-ofdm_reed_decoder=OFDM Reed-Solomon decoder module
+ofdm_reed_decoder=OFDM Real Reed-Solomon decoder module
 ofdm_viterbi=OFDM viterbi module
 ofdm_depuncturer=OFDM depuncturer module
 
@@ -140,10 +138,6 @@ ofdm_puncturer=OFDM puncturer module
 
 [OFDM WiMAX preambles]
 File=modules/ofdm/ofdm_wimax_preambles.awb
-Packagehint=ofdm
-
-[OFDM Reed-Solomon decoder module]
-File=modules/ofdm/ofdm_reed_decoder.awb
 Packagehint=ofdm
 
 [OFDM Reed-Solomon encoder module]
@@ -242,4 +236,30 @@ Packagehint=ofdm
 
 [WiMAX System]
 File=modules/ofdm/ofdm_wimax_system.awb
+Packagehint=ofdm
+
+[OFDM Real Reed-Solomon decoder module]
+File=modules/ofdm/reed_solomon/src/bluespec/ofdm_real_reed_decoder.awb
+Packagehint=ofdm
+
+[OFDM Real Reed-Solomon types]
+File=modules/ofdm/reed_solomon/src/bluespec/ofdm_reed_types.awb
+Packagehint=ofdm
+
+[OFDM Real Reed-Solomon decoder common library]
+File=modules/ofdm/reed_solomon/src/bluespec/ofdm_reed_commom.awb
+Packagehint=ofdm
+
+[OFDM Real Reed-Solomon arithmetic module]
+File=modules/ofdm/reed_solomon/src/bluespec/ofdm_reed_arith.awb
+Packagehint=ofdm
+
+[OFDM Real Reed-Solomon decoder module/Requires]
+ofdm_reed_types=OFDM Real Reed-Solomon types
+ofdm_reed_arith=OFDM Real Reed-Solomon arithmetic module
+ofdm_reed_common=OFDM Real Reed-Solomon decoder common library
+ofdm_reed_decoder_core=OFDM Real Reed-Solomon decoder core module
+
+[OFDM Real Reed-Solomon decoder core module]
+File=modules/ofdm/reed_solomon/src/bluespec/ofdm_reed_decoder_core.awb
 Packagehint=ofdm

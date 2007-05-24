@@ -626,3 +626,37 @@ Directory modules/ofdm/reed_solomon/src/software
  test_rs.m                 Locally Added               0 
  file_rs.m                 Locally Added               0 
 
+
+----------
+mcn02       Date: Thu May 24 11:45:33 EDT 2007  CSN: CSN-ofdm-23
+                  Thu May 24 15:45:33 UTC 2007
+
+
+Directory config/pm/ofdm
+ wimax_testbench.apm       Locally Modified           22 
+ wifi_testbench.apm        Locally Modified           22 
+
+Directory modules/ofdm
+ Depuncturer.bsv           Locally Modified           22 
+ WiFiParameters.bsv        Locally Modified           22 
+ Puncturer.bsv             Locally Modified           22 
+
+Directory modules/ofdm/reed_solomon/src/bluespec
+ Arith.bsv                 Locally Modified           22 
+ RealReedDecoder.bsv       Locally Modified           22 
+ ofdm_real_reed_decoder.awb Locally Modified           22 
+ ErrorCorrector.bsv        Locally Modified           22 
+ SyndromeParallel.bsv      Locally Modified           22 
+ mkReedSolomon.bsv         Locally Modified           22 
+ IReedSolomon.bsv          Locally Modified           22 
+ Berlekamp.bsv             Locally Modified           22 
+ ChienErrMag.bsv           Locally Modified           22 
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           22 
+ ofdm_wimax_parameters.awb Locally Modified           22 
+ WiMAXTXController.bsv     Locally Modified           22 
+ ofdm_wifi_parameters.awb  Locally Modified           22 
+ FIFOD.bsv                 Locally Modified           22 
+
+hi

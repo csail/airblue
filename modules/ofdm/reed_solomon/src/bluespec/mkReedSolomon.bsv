@@ -1,12 +1,16 @@
 import GetPut::*;
 import FIFO::*;
-import ReedTypes::*;
-import Arith::*;
-import SyndromeParallel::*;
-import Berlekamp::*;
-import ChienErrMag::*;
-import ErrorCorrector::*;
-import IReedSolomon::*;
+//import ReedTypes::*;
+//import Arith::*;
+//import SyndromeParallel::*;
+//import Berlekamp::*;
+//import ChienErrMag::*;
+//import ErrorCorrector::*;
+//import IReedSolomon::*;
+
+import ofdm_reed_types::*;
+import ofdm_reed_arith::*;
+import ofdm_reed_common::*;
 
 
 // Uncomment line below which defines BUFFER_LENGTH if   

@@ -4,7 +4,7 @@
 // $Id: Arith.bsv
 //
 		 
-import ReedTypes::*;
+import ofdm_reed_types::*;
 
 
 // -----------------------------------------------------------
@@ -87,7 +87,6 @@ function Byte times_alpha (Polynomial primitive_polynomial, Byte a);
 endfunction
 
 // -----------------------------------------------------------
-/*
 function Byte gf_inv (Byte a);
 
    case (a) matches
@@ -349,4 +348,3 @@ function Byte gf_inv (Byte a);
       255 : return       253;
    endcase
 endfunction
-*/

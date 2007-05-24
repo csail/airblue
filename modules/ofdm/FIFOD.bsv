@@ -114,7 +114,6 @@ module mkFIFOD(FIFOD#(sz, i_sz, o_sz, data_t))
 
 endmodule // mkDiffFIFO
 
-(* synthesize *)
 module mkTestFIFOD(Empty);
 
    FIFOD#(12,3,4,Bit#(1)) dFifo <- mkFIFOD;

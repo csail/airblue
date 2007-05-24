@@ -93,10 +93,10 @@ module mkDepuncturer#(function PuncturerCtrl
 				ThreeFourth: tuple2(f2InSz,f2OutSz);
 				FiveSixth: tuple2(f3InSz,f3OutSz);
 			     endcase; 
-   let canEnqInStreamQ = inStreamQ.notFull(inSz);
-   let canDeqInStreamQ = inStreamQ.notEmpty(fInSz);
-   let canEnqOutStreamQ = outStreamQ.notFull(fOutSz);
-   let canDeqOutStreamQ = outStreamQ.notEmpty(outSz); 
+   let canEnqInStreamQ = inStreamQ.free >= inSz;
+   let canDeqInStreamQ = inStreamQ.usage >= fInSz;
+   let canEnqOutStreamQ = outStreamQ.free >= fOutSz;
+   let canDeqOutStreamQ = outStreamQ.usage >= outSz; 
    
    rule enqInStreamQ(canEnqInStreamQ && (lastCtrl == inCtrl || (!canDeqInStreamQ && !canDeqOutStreamQ)));
       if (lastCtrl != inCtrl)

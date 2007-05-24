@@ -36,15 +36,15 @@ typedef struct {
 typedef 2  TXFPIPrec; // fixedpoint integer precision
 typedef 14 TXFPFPrec; // fixedpoint fractional precision
 
-typedef 2  RXFPIPrec; // rx fixedpoint integer precision
-typedef 14 RXFPFPrec; // rx fixedpoint fractional precision
+typedef `FPIPrec  RXFPIPrec; // rx fixedpoint integer precision
+typedef `FPFPrec  RXFPFPrec; // rx fixedpoint fractional precision
 typedef TXGlobalCtrl RXGlobalCtrl; // same as tx
 
 // Local Parameters:
 
 // Scrambler:
-typedef  8 ScramblerDataSz;    
-typedef 15 ScramblerShifterSz;
+typedef `ScramblerDataSz  ScramblerDataSz;    
+typedef `ScramblerGenPoly ScramblerShifterSz;
 Bit#(ScramblerShifterSz) scramblerGenPoly = 'b110000000000000;
 typedef ScramblerCtrl#(ScramblerDataSz,ScramblerShifterSz) 
 	TXScramblerCtrl;
@@ -80,7 +80,7 @@ function ReedSolomonCtrl#(8) reedEncoderMapCtrl(TXGlobalCtrl ctrl);
 endfunction
 
 // Conv. Encoder:
-typedef 8  ConvEncoderInDataSz;
+typedef ScramblerDataSz  ConvEncoderInDataSz;
 typedef TMul#(2,ConvEncoderInDataSz) ConvEncoderOutDataSz;
 typedef  7 ConvEncoderHistSz;
 Bit#(ConvEncoderHistSz) convEncoderG1 = 'b1111001;
@@ -88,12 +88,17 @@ Bit#(ConvEncoderHistSz) convEncoderG2 = 'b1011011;
 
 // Puncturer:
 typedef ConvEncoderOutDataSz        PuncturerInDataSz;
-typedef 24                          PuncturerOutDataSz;
-typedef TMul#(2,PuncturerInDataSz)  PuncturerInBufSz;  // to be safe 2x inDataSz
-typedef TMul#(2,PuncturerOutDataSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
-typedef TDiv#(PuncturerInDataSz,4)  PuncturerF1Sz; // no. of 2/3 in parallel
-typedef TDiv#(PuncturerInDataSz,6)  PuncturerF2Sz; // no. of 3/4 in parallel
-typedef TDiv#(PuncturerInDataSz,10) PuncturerF3Sz; // no. of 5/6 in parallel
+typedef `PuncturerOutDataSz         PuncturerOutDataSz;
+//typedef TMul#(2,PuncturerInDataSz)  PuncturerInBufSz;  // to be safe 2x inDataSz
+//typedef TMul#(2,PuncturerOutDataSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
+//typedef TDiv#(PuncturerInDataSz,4)  PuncturerF1Sz; // no. of 2/3 in parallel
+//typedef TDiv#(PuncturerInDataSz,6)  PuncturerF2Sz; // no. of 3/4 in parallel
+//typedef TDiv#(PuncturerInDataSz,10) PuncturerF3Sz; // no. of 5/6 in parallel
+typedef TAdd#(PuncturerInDataSz,10) PuncturerInBufSz;  // to be safe 2x inDataSz
+typedef TAdd#(PuncturerInBufDataSz,PuncturerOutBufSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
+typedef 1  PuncturerF1Sz; // no. of 2/3 in parallel
+typedef 1  PuncturerF2Sz; // no. of 3/4 in parallel
+typedef 1 PuncturerF3Sz; // no. of 5/6 in parallel
 
 function Bit#(3) puncturerF1 (Bit#(4) x);
    return {x[3:3],x[1:0]};
@@ -238,7 +243,7 @@ endfunction
 
 // FFT/IFFT:
 typedef PilotOutDataSz FFTIFFTSz;
-typedef 32             FFTIFFTNoBfly;
+typedef `FFTIFFTNoBfly FFTIFFTNoBfly;
 
 // CPInsert:
 typedef FFTIFFTSz CPInsertDataSz;
@@ -257,12 +262,12 @@ typedef 320 LSStart;      // when the long symbol start
 typedef 640 SignalStart;  // when the signal (useful data) start
 typedef 320 SymbolLen;    // one symbol length
 // implementation parameters
-typedef 192 SSyncPos;      // short symbol synchronization position ( 2*SSLen <= this value < LBStart)
-typedef 448 LSyncPos;      // long symbol synchronization position  ( LSStart <= this value < SinglaStart)       
+typedef `SSyncPos SSyncPos;      // short symbol synchronization position ( 2*SSLen <= this value < LBStart)
+typedef `LSyncPos LSyncPos;      // long symbol synchronization position  ( LSStart <= this value < SinglaStart)       
 typedef 16  FreqMeanLen;   // how many samples we collect to calculate CFO (power of 2, at most 32, bigger == more tolerant to noise)
 typedef 720 TimeResetPos;  // reset time if coarCounter is larger than this, must be bigger than SignalStart
-typedef 2   CORDICPipe;    // number of pipeline stage of the cordic
-typedef 16  CORDICIter;    // number of cordic iterations (max 16 iterations, must be multiple of CORDICPIPE)
+typedef `CORDICPipe   CORDICPipe;    // number of pipeline stage of the cordic
+typedef `CORDICIter  CORDICIter;    // number of cordic iterations (max 16 iterations, must be multiple of CORDICPIPE)
 typedef RXFPIPrec  SyncIntPrec;   // number of integer bits for internal arithmetic
 typedef RXFPFPrec  SyncFractPrec; // number of fractional bits for internal arithmetic 
 
@@ -346,17 +351,28 @@ endfunction
 // Depuncturer:
 typedef DemapperOutDataSz  DepuncturerInDataSz;
 typedef PuncturerInDataSz  DepuncturerOutDataSz;
-typedef TMul#(2,DepuncturerInDataSz)   DepuncturerInBufSz;  // to be safe 2x inDataSz
-typedef TMul#(2,DepuncturerOutDataSz)  DepuncturerOutBufSz; // to be safe 2x outDataSz 
-typedef TDiv#(DepuncturerOutDataSz,4)  DepuncturerF1Sz;     // no. of 2/3 in parallel
-typedef TMul#(DepuncturerF1Sz,3)       DepuncturerF1InSz;   
-typedef TMul#(DepuncturerF1Sz,4)       DepuncturerF1OutSz;
-typedef TDiv#(DepuncturerOutDataSz,6)  DepuncturerF2Sz;     // no. of 3/4 in parallel
-typedef TMul#(DepuncturerF2Sz,4)       DepuncturerF2InSz;   
-typedef TMul#(DepuncturerF2Sz,6)       DepuncturerF2OutSz;
-typedef TDiv#(DepuncturerOutDataSz,10) DepuncturerF3Sz;     // no. of 5/6 in parallel
-typedef TMul#(DepuncturerF3Sz,6)       DepuncturerF3InSz;   
-typedef TMul#(DepuncturerF3Sz,10)      DepuncturerF3OutSz;
+// typedef TMul#(2,DepuncturerInDataSz)   DepuncturerInBufSz;  // to be safe 2x inDataSz
+// typedef TMul#(2,DepuncturerOutDataSz)  DepuncturerOutBufSz; // to be safe 2x outDataSz 
+// typedef TDiv#(DepuncturerOutDataSz,4)  DepuncturerF1Sz;     // no. of 2/3 in parallel
+// typedef TMul#(DepuncturerF1Sz,3)       DepuncturerF1InSz;   
+// typedef TMul#(DepuncturerF1Sz,4)       DepuncturerF1OutSz;
+// typedef TDiv#(DepuncturerOutDataSz,6)  DepuncturerF2Sz;     // no. of 3/4 in parallel
+// typedef TMul#(DepuncturerF2Sz,4)       DepuncturerF2InSz;   
+// typedef TMul#(DepuncturerF2Sz,6)       DepuncturerF2OutSz;
+// typedef TDiv#(DepuncturerOutDataSz,10) DepuncturerF3Sz;     // no. of 5/6 in parallel
+// typedef TMul#(DepuncturerF3Sz,6)       DepuncturerF3InSz;   
+// typedef TMul#(DepuncturerF3Sz,10)      DepuncturerF3OutSz;
+ typedef TAdd#(DepuncturerInDataSz,6)                    DepuncturerInBufSz;  // to be safe 2x inDataSz
+ typedef TAdd#(DepuncturerInBufSz,DepuncturerOutDataSz)  DepuncturerOutBufSz; // to be safe 2x outDataSz 
+ typedef 1  DepuncturerF1Sz;     // no. of 2/3 in parallel
+ typedef 3  DepuncturerF1InSz;   
+ typedef 4  DepuncturerF1OutSz;
+ typedef 1  DepuncturerF2Sz;     // no. of 3/4 in parallel
+ typedef 4  DepuncturerF2InSz;   
+ typedef 6  DepuncturerF2OutSz;
+ typedef 1  DepuncturerF3Sz;     // no. of 5/6 in parallel
+ typedef 6  DepuncturerF3InSz;   
+typedef 10 DepuncturerF3OutSz;
 
 function DepunctData#(4) dp1 (DepunctData#(3) x);
    DepunctData#(4) outVec = replicate(4);
@@ -391,11 +407,11 @@ endfunction // Bit
 typedef ConvEncoderOutDataSz ViterbiInDataSz;
 typedef ConvEncoderInDataSz  ViterbiOutDataSz;
 typedef ConvEncoderHistSz    KSz;       // no of input bits
-typedef 35                   TBLength;  // the minimum TB length for each output
-typedef 5                    NoOfDecodes;    // no of traceback per stage, TBLength dividible by this value
+typedef `TBLength            TBLength;  // the minimum TB length for each output
+typedef `NoOfDecoeds         NoOfDecodes;    // no of traceback per stage, TBLength dividible by this value
 typedef 3                    MetricSz;  // input metric
 typedef 1                    FwdSteps;  // forward step per cycle
-typedef 4                    FwdRadii;  // 2^(FwdRadii+FwdSteps*ConvInSz) <= 2^(KSz-1)
+typedef `FwdRadii            FwdRadii;  // 2^(FwdRadii+FwdSteps*ConvInSz) <= 2^(KSz-1)
 typedef 1                    ConvInSz;  // conv input size
 typedef 2                    ConvOutSz; // conv output size
 

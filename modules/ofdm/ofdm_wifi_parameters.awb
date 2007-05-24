@@ -12,12 +12,13 @@
 
 %public WiFiParameters.bsv
 
-%param Hello hello "hello"
-%param ScramblerGenPoly 'b1001000  "testing"
 %param FPIPrec 2  "Integer Precision of FixedPoint (>= 2)"
 %param FPFPrec 14 "Fractional Precision of FixedPoint (>= 1)"
-%param ScramblerDataSz 12 "Parallellism of Scrambler (2,4,6,12)"
-%param PuncturerOutDataSz 24 "Parallelism of Puncturer (2,4,6,12,24,48)"
+%param ScramblerDataSz 12 "Parallellism of Scrambler (1,2,4,6,12)"
+%param ScramblerGenPoly 'b1001000 "Generator Polynomial of Scrambler (7b value)"
+%param ConvGenPoly1 'b1011011 "1st Generator Polynomial of Conv. Encoder (7b value)"
+%param ConvGenPoly2 'b1111001 "2nd Generator Polynomial of Conv. Encoder (7b value)"
+%param PuncturerOutDataSz 24 "Parallelism of Puncturer (12,24,48)"
 %param FFTIFFTNoBfly 32 "Parallelism of FFT/IFFT (1,2,4,8,16,32)"
 %param SSyncPos 96 "Coarse Timing Synchronization Position (32 - 159)"
 %param LSyncPos 224 "Fine Timing Synchronization Position (160 - 320)"

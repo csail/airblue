@@ -8,8 +8,13 @@
 %desc OFDM Real Reed-Solomon decoder module
 %provides ofdm_reed_decoder
 
+%requires ofdm_reed_types
+%requires ofdm_reed_arith
+%requires ofdm_reed_decoder_core
+%requires ofdm_reed_common
+
 %attributes ofdm
 
-%public RealReedDecoder.bsv Arith.bsv Berlekamp.bsv ChienErrMag.bsv ErrorCorrector.bsv IReedSolomon.bsv mkReedSolomon.bsv ReedTypes.bsv SyndromeParallel.bsv
+%public RealReedDecoder.bsv
 
 %AWB_END

@@ -2,19 +2,24 @@ import FIFO::*;
 import Vector::*;
 import GetPut::*;
 
-import ReedTypes::*;
-import IReedSolomon::*;
-import mkReedSolomon::*;
+//import ReedTypes::*;
+//import IReedSolomon::*;
+//import mkReedSolomon::*;
 
 import ofdm_common::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
 import ofdm_parameters::*;
+import ofdm_reed_types::*;
+import ofdm_reed_common::*;
+import ofdm_reed_decoder_core::*;
 
 // import DataTypes::*;
 // import Interfaces::*;
 // import Controls::*;
+
+Polynomial 	primitive_polynomial = 8'b00011101;
 
 module mkReedDecoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    (ReedDecoder#(ctrl_t,sz,sz))
@@ -57,7 +62,7 @@ module mkReedDecoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    rule putToRS0 (inCnt == 0);
       let mesg = inQ.first();
       let rCtrl = mapCtrl(mesg.control);
-      let newInBuf = unpack(pack(mesg.data));
+      Vector#(num,Byte) newInBuf = unpack(pack(mesg.data));
       let rsInput = newInBuf[inCnt]; 
       let newInCnt = numSz - 1;
       let newInCounter  = (inCounter == 0) ? (rCtrl.in + rCtrl.out) : inCounter;

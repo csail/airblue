@@ -1,7 +1,7 @@
 import GetPut::*;
 import Vector::*;
-import ReedTypes::*;
 
+import ofdm_reed_types::*;
 
 interface Read#(type rv);
    method rv read();

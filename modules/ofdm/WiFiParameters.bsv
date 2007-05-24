@@ -45,7 +45,7 @@ typedef TXGlobalCtrl RXGlobalCtrl; // same as tx
 // Scrambler:
 typedef `ScramblerDataSz ScramblerDataSz;    
 typedef  7 ScramblerShifterSz;
-Bit#(ScramblerShifterSz) scramblerGenPoly = 'b1001000;
+Bit#(ScramblerShifterSz) scramblerGenPoly = `ScramblerGenPoly;
 typedef ScramblerCtrl#(ScramblerDataSz,ScramblerShifterSz) 
 	TXScramblerCtrl;
 
@@ -68,16 +68,16 @@ endfunction
 typedef ScramblerDataSz ConvEncoderInDataSz;
 typedef TMul#(2,ConvEncoderInDataSz) ConvEncoderOutDataSz;
 typedef  7 ConvEncoderHistSz;
-Bit#(ConvEncoderHistSz) convEncoderG1 = 'b1011011;
-Bit#(ConvEncoderHistSz) convEncoderG2 = 'b1111001;
+Bit#(ConvEncoderHistSz) convEncoderG1 = `ConvGenPoly1;
+Bit#(ConvEncoderHistSz) convEncoderG2 = `ConvGenPoly2;
 
 // Puncturer:
 typedef ConvEncoderOutDataSz        PuncturerInDataSz;
 typedef `PuncturerOutDataSz         PuncturerOutDataSz;
 //typedef TMul#(2,PuncturerInDataSz)  PuncturerInBufSz;  // to be safe 2x inDataSz
 //typedef TMul#(2,PuncturerOutDataSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
-typedef 24                          PuncturerInBufSz;  // to be safe 2x inDataSz
-typedef 48                          PuncturerOutBufSz; // to be safe 2x outDataSz 
+typedef TAdd#(PuncturerInDataSz,10)                PuncturerInBufSz;
+typedef TAdd#(PuncturerInBufSz,PuncturerOutDataSz) PuncturerOutBufSz; 
 //typedef TDiv#(PuncturerInDataSz,4)  PuncturerF1Sz; // no. of 2/3 in parallel
 //typedef TDiv#(PuncturerInDataSz,6)  PuncturerF2Sz; // no. of 3/4 in parallel
 //typedef TDiv#(PuncturerInDataSz,10) PuncturerF3Sz; // no. of 5/6 in parallel
@@ -312,8 +312,8 @@ endfunction
 // Depuncturer:
 typedef DeinterleaverDataSz            DepuncturerInDataSz;
 typedef PuncturerInDataSz              DepuncturerOutDataSz;
-typedef 48                             DepuncturerInBufSz;  // to be safe 2x inDataSz
-typedef 48                             DepuncturerOutBufSz; // to be safe 2x outDataSz 
+typedef TAdd#(DepuncturerInDataSz,6)                  DepuncturerInBufSz;  // to be safe 2x inDataSz
+typedef TAdd#(DepuncturerInBufSz,DepuncturerOutDataSz) DepuncturerOutBufSz; // to be safe 2x outDataSz 
 //typedef TMul#(2,DepuncturerInDataSz)   DepuncturerInBufSz;  // to be safe 2x inDataSz
 //typedef TMul#(2,DepuncturerOutDataSz)  DepuncturerOutBufSz; // to be safe 2x outDataSz 
 // typedef TDiv#(DepuncturerOutDataSz,4)  DepuncturerF1Sz;     // no. of 2/3 in parallel

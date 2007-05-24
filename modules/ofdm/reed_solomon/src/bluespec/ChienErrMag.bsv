@@ -1,10 +1,9 @@
-package ChienErrMag;
-
-import Arith::*;
-import ReedTypes::*;
 import Vector::*;
 import GetPut::*;
 import FIFO::*;
+
+import ofdm_reed_types::*;
+import ofdm_reed_arith::*;
 
 typedef enum 
 { 
@@ -12,7 +11,7 @@ typedef enum
    LAMBDA_RECD, 
    EVAL_POLY,
    ERR_DONE
-} Stage deriving (Bits, Eq);
+} ChienErrMagStage deriving (Bits, Eq);
 
 
 // ---------------------------------------------------------
@@ -56,7 +55,7 @@ module mkChienErrMag#(Polynomial primitive_poly) (IChienErrMag);
    Reg# (Bool)                         calc_loc_end      <- mkReg (False);
    Reg# (Maybe#(Bool))                 cant_correct_flag <- mkReg (Invalid);
    Reg# (Maybe#(Bool))                 no_error_flag     <- mkReg (Invalid);
-   Reg# (Stage)                        stage             <- mkReg (INIT);
+   Reg# (ChienErrMagStage)                        stage             <- mkReg (INIT);
    Reg# (Byte)                         block_number      <- mkReg (0);
    Reg# (Byte)                         alpha_inv_squared <- mkReg (0);
    Reg# (Byte)                         alpha_inv_j	      <- mkReg (2);
@@ -319,9 +318,6 @@ module mkChienErrMag#(Polynomial primitive_poly) (IChienErrMag);
    endmethod
 
 endmodule
-
-endpackage
-
 
 
 

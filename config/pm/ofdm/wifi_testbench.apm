@@ -233,8 +233,15 @@ File=modules/ofdm/ofdm_synchronizer_params.awb
 Packagehint=ofdm
 
 [OFDM WiFi parameters/Params]
-PuncturerOutDataSz=48
+PuncturerOutDataSz=12
+FPFPrec=12
+FPIPrec=4
+ScramblerGenPoly='b1100000
+ScramblerDataSz=1
+ConvGenPoly1='b1110101
+FFTIFFTNoBfly=1
+FwdRadii=1
 CORDICIter=12
-FPFPrec=13
-FPIPrec=3
-ScramblerGenPoly='b1001111
+CORDICPipe=4
+NoOfDecodes=7
+SSyncPos=64

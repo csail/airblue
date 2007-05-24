@@ -53,20 +53,34 @@ function TXVector decrTXVectorLength(TXVector txVec);
 		   power: txVec.power};
 endfunction
 
+
 // get maximum number of padding (basic unit is 8 bits) required for each rate
+// function Bit#(7) maxPadding(Rate rate);
+//    return case (rate)
+// 	     R0: 11;
+// 	     R1: 23;
+// 	     R2: 35; 
+// 	     R3: 47;
+// 	     R4: 71;
+// 	     R5: 95;
+// 	     R6: 107;
+// 	  endcase;
+// endfunction      
+
+// construct scrambler mesg// get maximum number of padding (basic unit is byte) required for each rate
 function Bit#(7) maxPadding(Rate rate);
+   Bit#(7) scramblerDataSz = fromInteger(valueOf(ScramblerDataSz)/8);
    return case (rate)
-	     R0: 11;
-	     R1: 23;
-	     R2: 35; 
-	     R3: 47;
-	     R4: 71;
-	     R5: 95;
-	     R6: 107;
+	     R0: 12 - scramblerDataSz;
+	     R1: 24 - scramblerDataSz;
+	     R2: 36 - scramblerDataSz; 
+	     R3: 48 - scramblerDataSz;
+	     R4: 72 - scramblerDataSz;
+	     R5: 96 - scramblerDataSz;
+	     R6: 108 - scramblerDataSz;
 	  endcase;
 endfunction      
 
-// construct scrambler mesg
 function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
    makeMesg(Bit#(ScramblerDataSz) bypass,
 	    Maybe#(Bit#(ScramblerShifterSz)) seed,
@@ -95,6 +109,7 @@ module mkWiMAXTXController(WiMAXTXController);
    Reg#(Bool)               fstSym <- mkRegU;
    Reg#(Bool)              rstSeed <- mkRegU;
    Reg#(TXVector)         txVector <- mkRegU;
+   Reg#(Vector#(TDiv#(ScramblerDataSz,8),Bit#(8))) outBuf <- mkRegU;
    FIFO#(ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)) outQ;
    outQ <- mkSizedFIFO(2);
    

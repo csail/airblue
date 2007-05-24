@@ -12,4 +12,20 @@
 
 %public WiMAXParameters.bsv
 
+%param FPIPrec 2  "Integer Precision of FixedPoint (>= 2)"
+%param FPFPrec 14 "Fractional Precision of FixedPoint (>= 1)"
+%param ScramblerDataSz 8 "Parallellism of Scrambler (8,16,32)"
+%param ScramblerGenPoly 'b110000000000000 "Generator Polynomial of Scrambler (15b value)"
+%param ConvGenPoly1 'b1111001 "1st Generator Polynomial of Conv. Encoder (7b value)"
+%param ConvGenPoly2 'b1011011 "2nd Generator Polynomial of Conv. Encoder (7b value)"
+%param PuncturerOutDataSz 24 "Parallelism of Puncturer (12,24,48,96,192)"
+%param FFTIFFTNoBfly 32 "Parallelism of FFT/IFFT (1,2,4,8,16,32,64,128)"
+%param SSyncPos 192 "Coarse Timing Synchronization Position (128 - 319)"
+%param LSyncPos 448 "Fine Timing Synchronization Position (320 - 640)"
+%param CORDICIter 16 "Synchronizer CORDIC Precision (4-16)" 
+%param CORDICPipe 2  "No. Pipeline Stages of CORDIC (factor of CORDICIter)"
+%param TBLength 35 "Traceback Length of Viterbi (recommend 5x constraint length)"
+%param NoOfDecodes 5 "Traceback per cycle (factor of TBLength)"
+%param FwdRadii 4 "No of acs units in Viterbi = 2^FwdRadii (1-4)"
+
 %AWB_END

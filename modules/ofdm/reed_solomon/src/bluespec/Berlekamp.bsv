@@ -1,7 +1,8 @@
-import Arith::*;
-import ReedTypes::*;
 import Vector::*;
 import GetPut::*;
+
+import ofdm_reed_arith::*;
+import ofdm_reed_types::*;
 
 
 
@@ -16,7 +17,7 @@ typedef enum
    INC_LENGTH,
    NEXT_ITERATION,
    BERLEKAMP_DONE
-} Stage deriving (Bits, Eq);
+} BerklekampStage deriving (Bits, Eq);
 
 // ---------------------------------------------------------
 // Reed-Solomon Berlekamp algoritm interface 
@@ -60,8 +61,8 @@ module mkBerlekamp#(Polynomial primitive_poly) (IBerlekamp);
    Reg# (Byte)                l           <- mkReg (0);
    Reg# (Byte)                len         <- mkReg (1);
    Reg# (Byte)                k_len       <- mkReg (0);
-   Reg# (Stage)               stage       <- mkReg (RECEIVE_SYNDROME);
-   Reg# (Stage)               next_stage  <- mkReg (CALC_D);
+   Reg# (BerklekampStage)               stage       <- mkReg (RECEIVE_SYNDROME);
+   Reg# (BerklekampStage)               next_stage  <- mkReg (CALC_D);
    Reg# (Byte)                block_number   <- mkReg (0);
 
    // ------------------------------------------------

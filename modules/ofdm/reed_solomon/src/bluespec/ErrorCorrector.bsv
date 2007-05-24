@@ -1,8 +1,9 @@
-import Arith::*;
-import ReedTypes::*;
 import Vector::*;
 import GetPut::*;
 import FIFO::*;
+
+import ofdm_reed_types::*;
+import ofdm_reed_arith::*;
 
 // ---------------------------------------------------------
 // Reed-Solomon error corrector interface 
