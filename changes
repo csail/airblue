@@ -709,3 +709,12 @@ Directory modules/ofdm
 Directory config/pm/ofdm
  wimax_testbench.apm       Locally Modified           25 
 
+
+----------
+mcn02       Date: Thu May 24 21:35:02 EDT 2007  CSN: CSN-ofdm-28
+                  Fri May 25 01:35:02 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           27 
+

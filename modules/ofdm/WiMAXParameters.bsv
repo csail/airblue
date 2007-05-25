@@ -95,7 +95,7 @@ typedef `PuncturerOutDataSz         PuncturerOutDataSz;
 //typedef TDiv#(PuncturerInDataSz,6)  PuncturerF2Sz; // no. of 3/4 in parallel
 //typedef TDiv#(PuncturerInDataSz,10) PuncturerF3Sz; // no. of 5/6 in parallel
 typedef TAdd#(PuncturerInDataSz,10) PuncturerInBufSz;  // to be safe 2x inDataSz
-typedef TAdd#(PuncturerInBufSz,PuncturerOutBufSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
+typedef TAdd#(PuncturerInBufSz,PuncturerOutDataSz) PuncturerOutBufSz; // to be safe 2x outDataSz 
 typedef 1  PuncturerF1Sz; // no. of 2/3 in parallel
 typedef 1  PuncturerF2Sz; // no. of 3/4 in parallel
 typedef 1 PuncturerF3Sz; // no. of 5/6 in parallel
