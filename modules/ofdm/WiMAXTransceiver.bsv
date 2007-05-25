@@ -32,7 +32,7 @@ endinterface
 interface WiMAXReceiver;
    interface Put#(RXFeedback) inFeedback;
    interface Put#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) in;
-   interface Get#(Bit#(12)) outLength;
+   interface Get#(Bit#(11)) outLength;
    interface Get#(Bit#(8))  outData;
 endinterface
 
@@ -77,11 +77,23 @@ module mkWiMAXReceiver(WiMAXReceiver);
    mkConnection(descrambler.out,rx_controller.inFromDescrambler);
    
    // methods
-   interface inFeeback = rx_controller.inFeedback;
+   interface inFeedback = rx_controller.inFeedback;
    interface in = receiver_preFFT.in;
    interface outLength = rx_controller.outLength;
    interface outData = rx_controller.outData;
 endmodule
+
+function Rate nextRate(Rate rate);
+   return case (rate)
+  	     R0: R1;
+ 	     R1: R2;
+  	     R2: R3;
+  	     R3: R4;
+  	     R4: R5;
+ 	     R5: R6;
+ 	     R6: R0;
+	  endcase;
+endfunction
 
 (* synthesize *)
 module mkSystem (Empty);
@@ -102,12 +114,15 @@ module mkSystem (Empty);
       Bit#(11) newLength = truncate(randData);
       let txVec = TXVector{rate: newRate,
 			   length: newLength,
-			   service: 0,
+			   cpSize: CP0,
+			   bsid: randData[3:0],
+			   uiuc: randData[7:4],
+			   fid: randData[11:8],
 			   power: 0};
       rate <= newRate;
       packetNo <= packetNo + 1;
       transmitter.txStart(txVec);
-      receiver.inFeedback(txVec);
+      receiver.inFeedback.put(txVec);
       $display("Going to send a packet %d at rate:%d, length:%d",packetNo,newRate,newLength);
       if (packetNo == 51)
 	$finish;

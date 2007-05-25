@@ -264,7 +264,3 @@ ofdm_reed_decoder_core=OFDM Real Reed-Solomon decoder core module
 File=modules/ofdm/reed_solomon/src/bluespec/ofdm_reed_decoder_core.awb
 Packagehint=ofdm
 
-[OFDM WiMAX parameters/Params]
-PuncturerOutDataSz=12
-FFTIFFTNoBfly=1
-FwdRadii=1
