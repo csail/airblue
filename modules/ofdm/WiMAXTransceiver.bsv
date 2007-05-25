@@ -30,6 +30,7 @@ interface WiMAXTransmitter;
 endinterface
       
 interface WiMAXReceiver;
+   interface Put#(RXFeedback) inFeedback;
    interface Put#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) in;
    interface Get#(Bit#(12)) outLength;
    interface Get#(Bit#(8))  outData;
@@ -76,6 +77,7 @@ module mkWiMAXReceiver(WiMAXReceiver);
    mkConnection(descrambler.out,rx_controller.inFromDescrambler);
    
    // methods
+   interface inFeeback = rx_controller.inFeedback;
    interface in = receiver_preFFT.in;
    interface outLength = rx_controller.outLength;
    interface outData = rx_controller.outData;
@@ -84,9 +86,63 @@ endmodule
 (* synthesize *)
 module mkSystem (Empty);
    
+   // state elements
    let transmitter <- mkWiMAXTransmitter;
    let receiver    <- mkWiMAXReceiver;
+   Reg#(Bit#(32)) packetNo <- mkReg(0);
+   Reg#(Bit#(8))  data <- mkReg(0);
+   Reg#(Rate)     rate <- mkReg(R0);
+   Reg#(Bit#(32)) cycle <- mkReg(0);
+   RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
    
+   // rules
+   rule putTXStart(True);
+      let randData <- randGen.genRand;
+      let newRate = nextRate(rate);
+      Bit#(11) newLength = truncate(randData);
+      let txVec = TXVector{rate: newRate,
+			   length: newLength,
+			   service: 0,
+			   power: 0};
+      rate <= newRate;
+      packetNo <= packetNo + 1;
+      transmitter.txStart(txVec);
+      receiver.inFeedback(txVec);
+      $display("Going to send a packet %d at rate:%d, length:%d",packetNo,newRate,newLength);
+      if (packetNo == 51)
+	$finish;
+   endrule
+   
+   rule putData(True);
+      data <= data + 1;
+      transmitter.txData(data);
+      $display("transmitter input: rate:%d, data:%h",rate,data);
+   endrule
+   
+   rule getOutput(True);
+      let mesg <- transmitter.out.get;
+      receiver.in.put(mesg);
+      $write("transmitter output: data:");
+      fpcmplxWrite(4,mesg);
+      $display("");
+   endrule
+   
+   rule getLength(True);
+      let length <- receiver.outLength.get;
+      $display("Going to receiver a packet of length:%d",length);
+   endrule
+   
+   rule getData(True);
+      let outData <- receiver.outData.get;
+      $display("receiver output: data:%h",outData);
+   endrule
+   
+   rule tick(True);
+      cycle <= cycle + 1;
+      if (cycle == 5000000)
+	 $finish;
+//      $display("Cycle: %d",cycle);
+   endrule
 endmodule
 
 

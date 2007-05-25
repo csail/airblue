@@ -33,8 +33,8 @@ typedef struct {
    CPSizeCtrl cpSize;
 } TXGlobalCtrl deriving(Eq, Bits);
 
-typedef 2  TXFPIPrec; // fixedpoint integer precision
-typedef 14 TXFPFPrec; // fixedpoint fractional precision
+typedef `FPIPrec  TXFPIPrec; // fixedpoint integer precision
+typedef `FPFPrec  TXFPFPrec; // fixedpoint fractional precision
 
 typedef `FPIPrec  RXFPIPrec; // rx fixedpoint integer precision
 typedef `FPFPrec  RXFPFPrec; // rx fixedpoint fractional precision
@@ -430,8 +430,8 @@ typedef TXScramblerCtrl    RXDescramblerCtrl;
 
 typedef struct {
    RXDescramblerCtrl  descramblerCtrl;
-   Bit#(12)           length;               
-   RXGlobalCtrl       globalCtrl;
+   Bit#(11)           length;               
+   Bool               isNewPacket;
 } RXDescramblerAndGlobalCtrl deriving(Eq, Bits); 
 
 function RXDescramblerCtrl 

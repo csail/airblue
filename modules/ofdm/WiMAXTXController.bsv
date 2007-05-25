@@ -57,13 +57,13 @@ endfunction
 //get maximum number of padding (basic unit is 8 bits) required for each rate
 function Bit#(7) maxPadding(Rate rate);
    return case (rate)
-	     R0: 11;
- 	     R1: 23;
- 	     R2: 35; 
- 	     R3: 47;
- 	     R4: 71;
- 	     R5: 95;
- 	     R6: 107;
+	     R0: 12;
+ 	     R1: 24;
+ 	     R2: 36; 
+ 	     R3: 48;
+ 	     R4: 72;
+ 	     R5: 96;
+ 	     R6: 108;
  	  endcase;
 endfunction      
 
@@ -106,6 +106,7 @@ module mkWiMAXTXController(WiMAXTXController);
    Reg#(Bool)                 busy <- mkReg(False);
    Reg#(TXState)           txState <- mkRegU;
    Reg#(Bit#(7))             count <- mkRegU;
+   Reg#(Bit#(7))       fstSymCount <- mkRegU;
    Reg#(Bool)               fstSym <- mkRegU;
    Reg#(Bool)              rstSeed <- mkRegU;
    Reg#(TXVector)         txVector <- mkRegU;
@@ -120,8 +121,10 @@ module mkWiMAXTXController(WiMAXTXController);
    
    // rules
    rule sendData(busy && sfifo_usage >= scramblerDataSz);
+      let bypass = 0;
       let seedVal = makeSeed(txVector);
       let seed = rstSeed ? tagged Valid seedVal : tagged Invalid;
+      let fstSym = (fstSymCount > 0) ? True : False;
       let rate = txVector.rate;
       let cpSz = txVector.cpSize;
       Bit#(ScramblerDataSz) data = pack(take(sfifo.first));
@@ -129,6 +132,9 @@ module mkWiMAXTXController(WiMAXTXController);
       rstSeed <= False;
       outQ.enq(mesg);
       sfifo.deq(scramblerDataSz);
+      if (fstSymCount > 0)
+	 fstSymCount <= fstSymCount - fromInteger(valueOf(ScramblerDataSz)/8);
+      $display("sendData");
    endrule
    
    rule enqPadding(busy && txState == SendPadding && sfifo_free >= 8);
@@ -157,6 +163,7 @@ module mkWiMAXTXController(WiMAXTXController);
       count <= 0;
       rstSeed <= True;
       fstSym <= True;
+      fstSymCount <= maxPadding(txVec.rate);
       $display("txStart");
    endmethod
    
@@ -164,16 +171,15 @@ module mkWiMAXTXController(WiMAXTXController);
       if (busy && txState == SendData && txVector.length > 0 && sfifo_free >= 8);
       let newTXVec = decrTXVectorLength(txVector);
       sfifo.enq(8,append(unpack(inData),replicate(0)));
-      outQ.enq(mesg);
       txVector <= newTXVec;
       if (newTXVec.length == 0)
 	 begin
 	    txState <= SendPadding;
 	    if (count == 0)
-	       count <= maxPadding(txVector.rate) + 1; // need a tail
+	       count <= maxPadding(txVector.rate); // need a tail
 	 end
       else
-	 count <= (count == 0) ? maxPadding(txVector.rate) : count - 1;
+	 count <= (count == 0) ? maxPadding(txVector.rate)-1 : count - 1;
       $display("txData");
    endmethod
    

@@ -695,3 +695,17 @@ Directory modules/ofdm
  WiMAXRXController.bsv     Locally Modified           24 
 
 some mods
+----------
+mcn02       Date: Thu May 24 21:27:27 EDT 2007  CSN: CSN-ofdm-27
+                  Fri May 25 01:27:27 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           26 
+ WiMAXTransceiver.bsv      Locally Modified           25 
+ WiMAXTXController.bsv     Locally Modified           26 
+ WiMAXRXController.bsv     Locally Modified           26 
+
+Directory config/pm/ofdm
+ wimax_testbench.apm       Locally Modified           25 
+
