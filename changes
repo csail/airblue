@@ -749,3 +749,13 @@ Directory modules/ofdm/reed_solomon/src/bluespec
 Directory modules/ofdm
  WiMAXRXController.bsv     Locally Modified           28 
 
+
+----------
+mcn02       Date: Fri May 25 09:56:22 EDT 2007  CSN: CSN-ofdm-31
+                  Fri May 25 13:56:22 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           30 
+ WiMAXTransceiver.bsv      Locally Modified           29 
+

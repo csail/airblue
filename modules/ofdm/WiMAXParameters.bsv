@@ -207,7 +207,7 @@ function Symbol#(PilotOutDataSz,TXFPIPrec,TXFPFPrec)
    Symbol#(PilotOutDataSz,TXFPIPrec,TXFPFPrec) syms = replicate(cmplx(0,0));
 
    // data carriers
-   for(i = 29; i < 40; i = i + 1, j = j + 1)
+   for(i = 28; i < 40; i = i + 1, j = j + 1)
       syms[i] = x[j];
    for(i = 41; i < 65; i = i + 1, j = j + 1)
       syms[i] = x[j]; 
@@ -225,7 +225,7 @@ function Symbol#(PilotOutDataSz,TXFPIPrec,TXFPFPrec)
       syms[i] = x[j];
    for(i = 192; i < 216 ; i = i + 1, j = j + 1)
       syms[i] = x[j];
-   for(i = 217; i < 228 ; i = i + 1, j = j + 1)
+   for(i = 217; i < 229 ; i = i + 1, j = j + 1)
       syms[i] = x[j];
    
    //pilot carriers 
@@ -285,7 +285,7 @@ function Symbol#(CEstOutDataSz,RXFPIPrec,RXFPFPrec) pilotRemover
    Symbol#(CEstOutDataSz,RXFPIPrec,RXFPFPrec) syms = newVector;
   
    // data carriers
-   for(i = 29; i < 40; i = i + 1, j = j + 1)
+   for(i = 28; i < 40; i = i + 1, j = j + 1)
       syms[j] = x[i];
    for(i = 41; i < 65; i = i + 1, j = j + 1)
       syms[j] = x[i]; 
@@ -303,7 +303,7 @@ function Symbol#(CEstOutDataSz,RXFPIPrec,RXFPFPrec) pilotRemover
       syms[j] = x[i];
    for(i = 192; i < 216 ; i = i + 1, j = j + 1)
       syms[j] = x[i];
-   for(i = 217; i < 228 ; i = i + 1, j = j + 1)
+   for(i = 217; i < 229 ; i = i + 1, j = j + 1)
       syms[j] = x[i];
    return syms;
 endfunction

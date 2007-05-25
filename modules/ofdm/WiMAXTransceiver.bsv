@@ -12,6 +12,7 @@ import ofdm_receiver::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
+import ofdm_common::*;
 
 // import Controls::*;
 // import DataTypes::*;
@@ -70,11 +71,11 @@ module mkWiMAXReceiver(WiMAXReceiver);
    let descrambler <- mkDescramblerInstance;
    
    // connections
-   mkConnection(receiver_preFFT.out,rx_controller.inFromPreFFT);
-   mkConnection(rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
-   mkConnection(receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
-   mkConnection(rx_controller.outToDescrambler,descrambler.in);
-   mkConnection(descrambler.out,rx_controller.inFromDescrambler);
+   mkConnectionPrint("PreFFT -> RXCtrl0",receiver_preFFT.out,rx_controller.inFromPreFFT);
+   mkConnectionPrint("RXCtrl0 -> PreDesc",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+   mkConnectionPrint("PreDesc -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+   mkConnectionPrint("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
+   mkConnectionPrint("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
    
    // methods
    interface inFeedback = rx_controller.inFeedback;
