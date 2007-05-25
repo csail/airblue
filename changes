@@ -731,3 +731,21 @@ Directory modules/ofdm
  WiMAXTransceiver.bsv      Locally Modified           28 
 
 wimax
+----------
+mcn02       Date: Fri May 25 06:49:14 EDT 2007  CSN: CSN-ofdm-30
+                  Fri May 25 10:49:14 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           28 
+ Synchronizer.bsv          Locally Modified           28 
+ WiMAXDecoder.bsv          Locally Modified           28 
+ SynchronizerTest.bsv      Locally Modified           28 
+ WiMAXPreambles.bsv        Locally Modified           28 
+
+Directory modules/ofdm/reed_solomon/src/bluespec
+ RealReedDecoder.bsv       Locally Modified           28 
+
+Directory modules/ofdm
+ WiMAXRXController.bsv     Locally Modified           28 
+

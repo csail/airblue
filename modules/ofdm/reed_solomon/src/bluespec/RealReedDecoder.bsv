@@ -42,7 +42,12 @@ module mkReedDecoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    // constants
    Bit#(num_sz) numSz = fromInteger(valueOf(num) - 1);
    Bit#(8)      num8b  = fromInteger(valueOf(num));
-   			 
+   			
+   rule dropRSFlag(True);
+      let flag <- rs.rs_flag.get;
+      $display("rs decoder error:%d",flag);
+   endrule
+ 
    rule getFromRS (True);
       let ctrl = ctrlQ.first;
       let rCtrl = mapCtrl(ctrl);

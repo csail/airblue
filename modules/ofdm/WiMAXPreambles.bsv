@@ -8,6 +8,7 @@ import ofdm_common::*;
 import ofdm_types::*;
 import ofdm_arith_library::*;
 import ofdm_base::*;
+import ofdm_parameters::*;
 
 // import List::*;
 // import Vector::*;
@@ -18,8 +19,8 @@ import ofdm_base::*;
 // import FPComplex::*;
 
 // function to generate short training sequence
-function Vector#(256, FPComplex#(2,14)) getShortPreambles();
-	Vector#(256, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(256, FPComplex#(TXFPIPrec,TXFPFPrec)) getShortPreambles();
+	Vector#(256, FPComplex#(TXFPIPrec,TXFPFPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(625000,10000000), fromRational(625000,10000000)),
 		List::cons(cmplx(fromRational(353100,10000000), fromRational(-1029300,10000000)),
 		List::cons(cmplx(fromRational(-757100,10000000), fromRational(194400,10000000)),
@@ -281,8 +282,8 @@ function Vector#(256, FPComplex#(2,14)) getShortPreambles();
 endfunction
 
 // function to generate long training sequence
-function Vector#(256, FPComplex#(2,14)) getLongPreambles();
-	Vector#(256, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(256, FPComplex#(TXFPIPrec,TXFPFPrec)) getLongPreambles();
+	Vector#(256, FPComplex#(TXFPIPrec,TXFPFPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(441900,10000000), fromRational(441900,10000000)),
 		List::cons(cmplx(fromRational(865600,10000000), fromRational(-503600,10000000)),
 		List::cons(cmplx(fromRational(-626200,10000000), fromRational(31200,10000000)),
@@ -808,15 +809,15 @@ endfunction
 
 // module to generate sample packet
 (* synthesize *)
-module mkPacket(RegFile#(Bit#(10), FPComplex#(2,14)));
-	RegFile#(Bit#(10), FPComplex#(2,14)) regFile <- mkRegFileLoad("WiMAXPacket.txt",0,1023);
+module mkPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
+	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiMAXPacket.txt",0,1023);
 	return regFile;
 endmodule
 
 // module to generate sample packet
 (* synthesize *)
-module mkTweakedPacket(RegFile#(Bit#(10), FPComplex#(2,14)));
-	RegFile#(Bit#(10), FPComplex#(2,14)) regFile <- mkRegFileLoad("WiMAXTweakedPacket.txt",0,1023);
+module mkTweakedPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
+	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiMAXTweakedPacket.txt",0,1023);
 	return regFile;
 endmodule
 

@@ -250,7 +250,7 @@ typedef FFTIFFTSz CPInsertDataSz;
 
 function CPInsertCtrl cpInsertMapCtrl(TXGlobalCtrl ctrl);
    // UL: SendLong, DL: SendBoth
-   let fstEle = ctrl.firstSymbol ? SendLong : SendNone; 
+   let fstEle = ctrl.firstSymbol ? SendBoth : SendNone; 
    return tuple2(fstEle, ctrl.cpSize);
 endfunction
 

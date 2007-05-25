@@ -24,7 +24,7 @@ import ofdm_base::*;
 // import FPComplex::*;
 // import Parameters::*;
 
-//`define debug_mode True // uncomment this line for displaying text 
+`define debug_mode True // uncomment this line for displaying text 
 
 typedef struct{
   ctrlT   control;  // estimate postion

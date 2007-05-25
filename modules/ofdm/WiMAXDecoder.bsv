@@ -70,8 +70,8 @@ module mkDecoder(Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
    let reedDecoder <- mkReedDecoderInstance;
    
    // connections
-   mkConnection(depuncturer.out,viterbi.in);
-   mkConnection(viterbi.out,reedDecoder.in);
+   mkConnectionPrint("Dep -> Vit",depuncturer.out,viterbi.in);
+   mkConnectionPrint("Vit -> Reed",viterbi.out,reedDecoder.in);
    
    // methods
    interface in = depuncturer.in;

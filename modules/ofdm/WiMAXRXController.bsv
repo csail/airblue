@@ -117,8 +117,13 @@ module mkWiMAXPreFFTRXController(WiMAXPreFFTRXController);
 	       if (mesg.control) // only process if it is a new packet, otherwise, drop it
 		  begin	
 		     let rxVec = rxVecQ.first;
-		     rxRate <= rxVec.rate;
-		     rxLength <= rxVec.length - (getDBPS(rxVec.rate) - 1);
+		     let checkLen = getDBPS(rxVec.rate) - 1;
+		     if (rxVec.length > checkLen)
+			begin
+		   	   rxRate <= rxVec.rate;
+			   rxLength <= rxVec.length - checkLen;
+			   rxState <= RX_DATA;
+			end
 		     RXGlobalCtrl rxCtrl = RXGlobalCtrl{firstSymbol: True,
 							cpSize: CP0,
 							rate: rxVec.rate};
