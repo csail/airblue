@@ -377,11 +377,11 @@ typedef 10 DepuncturerF3OutSz;
 function DepunctData#(4) dp1 (DepunctData#(3) x);
    DepunctData#(4) outVec = replicate(4);
    outVec[0] = x[0];
-   outVec[2] = x[1];
+   outVec[1] = x[1];
    outVec[3] = x[2];
    return outVec;
 endfunction // Bit
-   
+    
 function DepunctData#(6) dp2 (DepunctData#(4) x);
    DepunctData#(6) outVec = replicate(4);
    outVec[0] = x[0];

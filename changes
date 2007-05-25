@@ -759,3 +759,13 @@ Directory modules/ofdm
  WiMAXParameters.bsv       Locally Modified           30 
  WiMAXTransceiver.bsv      Locally Modified           29 
 
+
+----------
+mcn02       Date: Fri May 25 13:41:12 EDT 2007  CSN: CSN-ofdm-32
+                  Fri May 25 17:41:12 UTC 2007
+
+
+Directory modules/ofdm
+ WiMAXParameters.bsv       Locally Modified           31 
+
+correct a typo in WiMAXParameters
