@@ -59,8 +59,8 @@ module mkEncoder(Encoder#(TXGlobalCtrl,EncoderInDataSz,
    let   puncturer <- mkPuncturerInstance;
    
    // connections
-   mkConnection(reedEncoder.out,convEncoder.in);
-   mkConnection(convEncoder.out,puncturer.in);
+   mkConnectionPrint("reedEn -> conv",reedEncoder.out,convEncoder.in);
+   mkConnectionPrint("conv -> punc",convEncoder.out,puncturer.in);
    
    // methods
    interface in = reedEncoder.in;

@@ -1,11 +1,12 @@
 
 [Global]
 Type=HAsim
-Version=2.0
+Version=2.1
 File=wifi_testbench
 SaveParameters=0
 Description=WiFi Transceiver Testbench
 Name=WiFi Transceiver Testbench
+Class=Asim::Model
 
 [Model]
 DefaultAttributes=wifi ofdm bluespec
