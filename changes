@@ -769,3 +769,19 @@ Directory modules/ofdm
  WiMAXParameters.bsv       Locally Modified           31 
 
 correct a typo in WiMAXParameters
+----------
+emer        Date: Sun Jun  8 11:29:04 EDT 2008  CSN: CSN-ofdm-34
+                  Sun Jun  8 15:29:04 UTC 2008
+
+
+Directory config/pm/ofdm
+ prebuilt_wifi_testbench.apm Locally Modified           33 
+ wimax_testbench.apm       Locally Modified           33 
+ wifi_testbench.apm        Locally Modified           33 
+
+Directory modules/ofdm
+ WiMAXTransceiver.bsv      Locally Modified           33 
+ WiFiTransceiver.bsv       Locally Modified           33 
+
+Accomodate moved/changed model foundation. There are, however, 
+still build problems.

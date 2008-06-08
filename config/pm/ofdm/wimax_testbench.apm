@@ -1,15 +1,16 @@
 
 [Global]
 Type=HAsim
-Version=2.0
+Version=2.1
 File=wimax_testbench
 SaveParameters=0
 Description=WiMAX Transceiver Testbench
 Name=WiMAX Transceiver Testbench
+Class=Asim::Model
 
 [Model]
 DefaultAttributes=wimax ofdm bluespec
-model=Pure Bluespec Model Foundation
+model=Pure Bluespec Hardware-Only Model Foundation
 
 [OFDM interleaver module]
 File=modules/ofdm/ofdm_interleaver.awb
@@ -144,17 +145,11 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_reed_encoder.awb
 Packagehint=ofdm
 
-[Pure Bluespec Model Foundation]
-File=modules/bluespec/model/pure-bluespec/pure_bluespec_model.awb
-Packagehint=hasim
 
 [Bluespec Null Library]
 File=modules/bluespec/common/null/bluespec_null.awb
 Packagehint=hasim
 
-[Pure Bluespec Model Foundation/Requires]
-bluespec_common=Bluespec Null Library
-bluespec_system=WiMAX System
 
 [OFDM viterbi core module/Requires]
 ofdm_viterbi_memory=OFDM viterbi memory module
@@ -268,3 +263,21 @@ Packagehint=ofdm
 PuncturerOutDataSz=12
 FFTIFFTNoBfly=1
 FwdRadii=1
+
+[Hardware-Only Null Controller]
+File=modules/hasim/controller/controller-null-hardware-only.awb
+Packagehint=hasim
+
+[FPGA Environment]
+File=config/pm/hasim/submodels/fpgaenv/hasim-fpgaenv-null.apm
+Packagehint=platforms
+
+[Pure Bluespec Hardware-Only Model Foundation]
+File=modules/model/pure_bluespec_model.awb
+Packagehint=hasim
+
+[Pure Bluespec Hardware-Only Model Foundation/Requires]
+bluespec_common=Bluespec Null Library
+bluespec_system=WiMAX System
+hasim_controller=Hardware-Only Null Controller
+fpgaenv=FPGA Environment

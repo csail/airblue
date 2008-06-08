@@ -1,15 +1,16 @@
 
 [Global]
 Type=HAsim
-Version=2.0
+Version=2.1
 File=prebuilt_wifi_testbench
 SaveParameters=0
 Description=WiFi Transceiver Testbench
 Name=WiFi Transceiver Testbench
+Class=Asim::Model
 
 [Model]
 DefaultAttributes=wifi ofdm bluespec
-model=Pure Bluespec Model Foundation
+model=Pure Bluespec Hardware-Only Model Foundation
 
 [OFDM WiFi transmitter controller module]
 File=modules/ofdm/ofdm_wifi_tx_controller.awb
@@ -138,17 +139,11 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_depuncturer.awb
 Packagehint=ofdm
 
-[Pure Bluespec Model Foundation]
-File=modules/bluespec/model/pure-bluespec/pure_bluespec_model.awb
-Packagehint=hasim
 
 [Bluespec Null Library]
 File=modules/bluespec/common/null/bluespec_null.awb
 Packagehint=hasim
 
-[Pure Bluespec Model Foundation/Requires]
-bluespec_common=Bluespec Null Library
-bluespec_system=WiFi System
 
 [OFDM shared library/Requires]
 ofdm_types=OFDM Types Definitions
@@ -237,3 +232,21 @@ PuncturerOutDataSz=48
 CORDICIter=12
 ScramblerGenPoly='b1010000
 ConvGenPoly1='b1010111
+
+[Hardware-Only Null Controller]
+File=modules/hasim/controller/controller-null-hardware-only.awb
+Packagehint=hasim
+
+[FPGA Environment]
+File=config/pm/hasim/submodels/fpgaenv/hasim-fpgaenv-null.apm
+Packagehint=platforms
+
+[Pure Bluespec Hardware-Only Model Foundation/Requires]
+bluespec_common=Bluespec Null Library
+bluespec_system=WiFi System
+hasim_controller=Hardware-Only Null Controller
+fpgaenv=FPGA Environment
+
+[Pure Bluespec Hardware-Only Model Foundation]
+File=modules/model/pure_bluespec_model.awb
+Packagehint=hasim

@@ -2,6 +2,11 @@ import Connectable::*;
 import FIFO::*;
 import GetPut::*;
 
+// Include virtual devices
+
+`include "low_level_platform_interface.bsh"
+
+
 import ofdm_parameters::*;
 import ofdm_preambles::*;
 import ofdm_tx_controller::*;
@@ -100,8 +105,7 @@ function Rate nextRate(Rate rate);
 	  endcase;
 endfunction
 
-(* synthesize *)
-module mkSystem (Empty);
+module mkSystem#(LowLevelPlatformInterface llpi) (Empty);
 
    // state elements
    let transmitter <- mkWiFiTransmitter;
