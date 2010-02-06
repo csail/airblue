@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Mapper.bsv
+%sources -t BSV -v PUBLIC Mapper.bsv
 
 %AWB_END

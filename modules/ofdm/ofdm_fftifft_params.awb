@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public FParams.bsv
+%sources -t BSV -v PUBLIC FParams.bsv
 
 %AWB_END

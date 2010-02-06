@@ -74,21 +74,21 @@ function Integer deinterleaverGetIndex(Modulation m, Integer j);
    return (j >= ncbps) ? j : k;
 endfunction			  
 
-(* synthesize *)
+// (* synthesize *)
 module mkInterleaverInstance(Interleaver#(Modulation,24,24,192));
    Interleaver#(Modulation,24,24,192) interleaver;
    interleaver <- mkInterleaver(idFunc,interleaverGetIndex);
    return interleaver;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDeinterleaverInstance(Deinterleaver#(Modulation,24,24,ViterbiMetric,192));
    Deinterleaver#(Modulation,24,24,ViterbiMetric,192) deinterleaver;
    deinterleaver <- mkDeinterleaver(idFunc,deinterleaverGetIndex);
    return deinterleaver;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDeinterleaverTest(Empty);
    
    // state elements

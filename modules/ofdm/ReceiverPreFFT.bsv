@@ -8,21 +8,21 @@ import Connectable::*;
 import GetPut::*;
 import LibraryFunctions::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkSynchronizerInstance
    (Synchronizer#(SyncIntPrec,SyncFractPrec));
    Synchronizer#(SyncIntPrec,SyncFractPrec) block <- mkSynchronizer;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkUnserializerInstance
    (Unserializer#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec));
    Unserializer#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) block <- mkUnserializer;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkReceiverPreFFTInstance
    (ReceiverPreFFT#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec));
    

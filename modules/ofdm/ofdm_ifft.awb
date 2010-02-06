@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public IFFT.bsv
+%sources -t BSV -v PUBLIC IFFT.bsv
 
 %AWB_END

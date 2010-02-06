@@ -6,7 +6,7 @@ import Interfaces::*;
 import Vector::*;
 import ConvEncoder::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkConvEncoderTest(Empty);
    
    // state elements

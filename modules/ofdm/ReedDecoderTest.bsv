@@ -61,21 +61,21 @@ function ReedSolomonCtrl#(8) reedEncoderMapCtrl(TXGlobalCtrl ctrl);
            endcase;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkReedEncoderInstance(ReedEncoder#(TXGlobalCtrl,8,8));
    ReedEncoder#(TXGlobalCtrl,8,8) reedEncoder;
    reedEncoder <- mkReedEncoder(reedEncoderMapCtrl);
    return reedEncoder;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkReedDecoderInstance(ReedDecoder#(TXGlobalCtrl,8,8));
    ReedDecoder#(TXGlobalCtrl,8,8) reedDecoder;
    reedDecoder <- mkReedDecoder(reedEncoderMapCtrl);
    return reedDecoder;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkReedDecoderTest (Empty);
    
    let reedEncoder <- mkReedEncoderInstance;

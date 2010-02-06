@@ -6,7 +6,7 @@
 
 %name WiFi System
 %desc WiFi System
-%provides bluespec_system
+%provides connected_application
 
 %requires ofdm_parameters
 %requires ofdm_preambles
@@ -18,6 +18,6 @@
 
 %attributes wifi
 
-%public WiFiTransceiver.bsv
+%sources -t BSV -v PUBLIC WiFiTransceiver.bsv
 
 %AWB_END

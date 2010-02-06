@@ -99,7 +99,7 @@ function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
    return mesg;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXTXController(WiMAXTXController);
    
    //state elements

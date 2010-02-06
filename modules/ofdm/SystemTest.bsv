@@ -11,7 +11,7 @@ import RegFile::*;
 import RX_MAC::*;
 import TX_Controller::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkSystemTest(Empty);
 
    RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);

@@ -17,7 +17,7 @@ function Action fpcmplxVecWrite(Integer fwidth, FFTDataVec dataVec);
       return joinActions(map(fpcmplxWrite(fwidth),dataVec));
 endfunction // Action
 
-(* synthesize *)
+// (* synthesize *)
 module mkFFTIFFTTest(Empty);
 
    RandomGen#(64)     randGen <- mkMersenneTwister(64'hB573AE980FF1134C);

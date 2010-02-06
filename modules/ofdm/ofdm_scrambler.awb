@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Scrambler.bsv
+%sources -t BSV -v PUBLIC Scrambler.bsv
 
 %AWB_END

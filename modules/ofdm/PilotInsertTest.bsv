@@ -41,7 +41,7 @@ function Symbol#(64,2,14) pilotAdder(Symbol#(48,2,14) x,
    return syms;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiPilotInsertTest(Empty);
    
    PilotInsert#(PilotInsertCtrl,48,64,2,14) pilotInsert;

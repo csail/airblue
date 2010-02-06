@@ -47,7 +47,7 @@ function DepunctData#(10) p3 (DepunctData#(6) x);
    return outVec;
 endfunction // Bit
       
-(* synthesize *)
+// (* synthesize *)
 module mkWiMaxDepuncturer (Depuncturer#(Bit#(3),8,8,24,24));
 
    function DepunctData#(8) pp1(DepunctData#(6) x);
@@ -68,7 +68,7 @@ module mkWiMaxDepuncturer (Depuncturer#(Bit#(3),8,8,24,24));
    
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDepuncturerTest (Empty);
 
    Depuncturer#(Bit#(3),8,8,24,24) depuncturer <- mkWiMaxDepuncturer;

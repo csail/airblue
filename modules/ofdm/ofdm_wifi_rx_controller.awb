@@ -10,6 +10,6 @@
 
 %attributes wifi
 
-%public WiFiRXController.bsv
+%sources -t BSV -v PUBLIC WiFiRXController.bsv
 
 %AWB_END

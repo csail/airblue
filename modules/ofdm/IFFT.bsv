@@ -10,7 +10,7 @@ import ofdm_fftifft_params::*;
 import ofdm_fftifft_library::*;
 import ofdm_fft::*;
 
-module [Module] mkIFFT(IFFT#(ctrl_t,FFTSz,ISz,FSz))
+module [CONNECTED_MODULE] mkIFFT(IFFT#(ctrl_t,FFTSz,ISz,FSz))
    provisos (Bits#(ctrl_t,ctrl_sz));
    
    FFTIFFT ifft <- mkFFTIFFT;

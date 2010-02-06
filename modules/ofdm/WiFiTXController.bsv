@@ -81,7 +81,7 @@ function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
    return mesg;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiTXController(WiFiTXController);
    
    //state elements

@@ -18,7 +18,7 @@ import ofdm_base::*;
 // import Depuncturer::*;
 // import ReedDecoder::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkDepuncturerInstance
    (Depuncturer#(RXGlobalCtrl,DepuncturerInDataSz,
 		 DepuncturerOutDataSz,DepuncturerInBufSz,
@@ -45,7 +45,7 @@ module mkDepuncturerInstance
    return depuncturer;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkViterbiInstance(Viterbi#(RXGlobalCtrl,ViterbiInDataSz,
 				  ViterbiOutDataSz));
    Viterbi#(RXGlobalCtrl,ViterbiInDataSz,ViterbiOutDataSz) viterbi;
@@ -53,7 +53,7 @@ module mkViterbiInstance(Viterbi#(RXGlobalCtrl,ViterbiInDataSz,
    return viterbi;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkReedDecoderInstance(ReedDecoder#(RXGlobalCtrl,ReedDecoderDataSz,
 					  ReedDecoderDataSz));
    ReedDecoder#(RXGlobalCtrl,

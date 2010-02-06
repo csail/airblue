@@ -44,7 +44,7 @@ function Rate nextRate(Rate rate);
    return res;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkReedEncoderTest(Empty);
    
    // state elements

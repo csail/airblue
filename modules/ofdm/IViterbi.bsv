@@ -163,7 +163,7 @@ function Vector#(row_sz, value_T) writeSelect (Bit#(sub_idx_sz) sidx,
 endfunction
 				
 
-(* synthesize *)
+// (* synthesize *)
 module mkMetricSums (VRegFile#(VRegsSubIdxSz,VRegsOutSz,VMetricSum));
    
    let vRegFile <- mkVRegFile(readSelect(conv_in_sz, fwd_steps),writeSelect, 0);
@@ -171,7 +171,7 @@ module mkMetricSums (VRegFile#(VRegsSubIdxSz,VRegsOutSz,VMetricSum));
 
 endmodule // mkVRegFileFull
 
-(* synthesize *)
+// (* synthesize *)
 module mkTrellis (VRegFile#(VRegsSubIdxSz,VRegsOutSz,VTrellisEntry));
 
    let vRegFile <- mkVRegFile(readSelect(conv_in_sz, fwd_steps),writeSelect, 0);

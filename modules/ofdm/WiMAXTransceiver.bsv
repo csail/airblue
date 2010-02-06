@@ -41,7 +41,7 @@ interface WiMAXReceiver;
    interface Get#(Bit#(8))  outData;
 endinterface
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXTransmitter(WiMAXTransmitter);
    // state element
    let tx_controller <- mkWiMAXTXController;
@@ -66,7 +66,7 @@ module mkWiMAXTransmitter(WiMAXTransmitter);
    interface out = transmitter.out;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXReceiver(WiMAXReceiver);
    // state elements
    let rx_controller <- mkWiMAXRXController;

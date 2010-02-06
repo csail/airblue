@@ -13,6 +13,6 @@
 
 %attributes ofdm
 
-%public Synchronizer.bsv
+%sources -t BSV -v PUBLIC Synchronizer.bsv
 
 %AWB_END

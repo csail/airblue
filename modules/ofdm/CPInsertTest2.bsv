@@ -14,7 +14,7 @@ function CPInsertCtrl mapWiFiCPCtrl(WiFiCtrl ctrl);
 endfunction
 
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiCPInsert(CPInsert#(WiFiCtrl,64,1,15));
    let cpInsert <- mkCPInsert(mapWiFiCPCtrl,
 			      getShortPreambles,

@@ -99,7 +99,7 @@ interface AutoCorrelator;
    method ActionValue#(CorrType) getCorrelation();
 endinterface
 
-(* synthesize *)
+// (* synthesize *)
 module mkAutoCorrelator(AutoCorrelator);
 
    // output buffer
@@ -178,7 +178,7 @@ module mkAutoCorrelator(AutoCorrelator);
      
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkTimeEstimator(TimeEstimator);
    // constants
    Integer lSStart = valueOf(LSStart);
@@ -512,8 +512,8 @@ module mkTimeEstimator(TimeEstimator);
    endmethod   
 endmodule   
 
-(* synthesize *)
-module [Module] mkFreqEstimator(FreqEstimator);
+// (* synthesize *)
+module [CONNECTED_MODULE] mkFreqEstimator(FreqEstimator);
    // Constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);
@@ -610,8 +610,8 @@ module [Module] mkFreqEstimator(FreqEstimator);
    endmethod
 endmodule
 
-(* synthesize *)
-module [Module] mkFreqRotator(FreqRotator);
+// (* synthesize *)
+module [CONNECTED_MODULE] mkFreqRotator(FreqRotator);
    // Integer constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);
@@ -667,8 +667,8 @@ module [Module] mkFreqRotator(FreqRotator);
    endmethod   
 endmodule   
 
-(* synthesize *)
-module [Module] mkSynchronizer(Synchronizer#(SyncIntPrec,SyncFractPrec));
+// (* synthesize *)
+module [CONNECTED_MODULE] mkSynchronizer(Synchronizer#(SyncIntPrec,SyncFractPrec));
    //input and output buffers
    FIFO#(SynchronizerMesg#(SyncIntPrec,SyncFractPrec)) inQ <- mkLFIFO;
    FIFO#(UnserializerMesg#(SyncIntPrec,SyncFractPrec)) outQ <- mkSizedFIFO(2);

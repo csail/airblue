@@ -10,7 +10,7 @@ function t idFunc(t in);
    return in;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkScramblerTest(Empty);
    
    // state elements

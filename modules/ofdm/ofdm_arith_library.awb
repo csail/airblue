@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public ComplexLibrary.bsv FixedPointLibrary.bsv
+%sources -t BSV -v PUBLIC ComplexLibrary.bsv FixedPointLibrary.bsv
 
 %AWB_END

@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public PilotInsert.bsv
+%sources -t BSV -v PUBLIC PilotInsert.bsv
 
 %AWB_END

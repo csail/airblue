@@ -10,6 +10,6 @@
 
 %attributes wifi
 
-%public WiFiPreambles.bsv
+%sources -t BSV -v PUBLIC WiFiPreambles.bsv
 
 %AWB_END

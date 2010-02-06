@@ -31,7 +31,7 @@ function Rate nextRate(Rate rate);
 	  endcase;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiTransmitterTest(Empty);
    
    // state elements

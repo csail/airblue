@@ -7,7 +7,7 @@ import Vector::*;
 `define DataSz   32
 `define CntSz    TMul#(`BufferSz,`DataSz)
 
-(* synthesize *)
+// (* synthesize *)
 module mkStreamFIFOTest(Empty);
    // state elements
    StreamFIFO#(`BufferSz,`SSz,Bit#(`DataSz)) fifos;

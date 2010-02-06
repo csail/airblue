@@ -19,6 +19,6 @@
 
 %attributes ofdm
 
-%public Receiver.bsv
+%sources -t BSV -v PUBLIC Receiver.bsv
 
 %AWB_END

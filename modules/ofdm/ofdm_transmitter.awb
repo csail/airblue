@@ -18,6 +18,6 @@
 
 %attributes ofdm
 
-%public Transmitter.bsv
+%sources -t BSV -v PUBLIC Transmitter.bsv
 
 %AWB_END

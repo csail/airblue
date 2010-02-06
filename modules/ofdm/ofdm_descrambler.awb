@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Descrambler.bsv
+%sources -t BSV -v PUBLIC Descrambler.bsv
 
 %AWB_END

@@ -7,10 +7,12 @@ SaveParameters=0
 Description=WiFi Transceiver Testbench
 Name=WiFi Transceiver Testbench
 Class=Asim::Model
+DefaultBenchmark=
+DefaultRunOpts=
 
 [Model]
-DefaultAttributes=wifi ofdm bluespec
-model=Pure Bluespec Hardware-Only Model Foundation
+DefaultAttributes=wifi ofdm hybrid
+model=HW/SW Hybrid Project Foundation
 
 [OFDM WiFi transmitter controller module]
 File=modules/ofdm/ofdm_wifi_tx_controller.awb
@@ -139,12 +141,6 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_depuncturer.awb
 Packagehint=ofdm
 
-
-[Bluespec Null Library]
-File=modules/bluespec/common/null/bluespec_null.awb
-Packagehint=hasim
-
-
 [OFDM shared library/Requires]
 ofdm_types=OFDM Types Definitions
 ofdm_base=OFDM basic share library
@@ -227,34 +223,36 @@ Packagehint=ofdm
 File=modules/ofdm/ofdm_synchronizer_params.awb
 Packagehint=ofdm
 
-[OFDM WiFi parameters/Params]
-PuncturerOutDataSz=12
-FPFPrec=12
-FPIPrec=4
-ScramblerGenPoly='b1100000
-ScramblerDataSz=1
-ConvGenPoly1='b1110101
-FFTIFFTNoBfly=1
-FwdRadii=1
-CORDICIter=12
-CORDICPipe=4
-NoOfDecodes=7
-SSyncPos=64
-
-[Hardware-Only Null Controller]
-File=modules/hasim/controller/controller-null-hardware-only.awb
-Packagehint=hasim
-
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/hasim-fpgaenv-null.apm
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
 
-[Pure Bluespec Hardware-Only Model Foundation/Requires]
-bluespec_common=Bluespec Null Library
-bluespec_system=WiFi System
-hasim_controller=Hardware-Only Null Controller
-fpgaenv=FPGA Environment
+[Soft Connections Library]
+File=config/pm/hasim/submodels/common/soft-connections-lib.apm
+Packagehint=hasim
 
-[Pure Bluespec Hardware-Only Model Foundation]
-File=modules/model/pure_bluespec_model.awb
+[HW/SW Hybrid Project Foundation]
+File=modules/project/project-hybrid.awb
+Packagehint=platforms
+
+[Soft Connections Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Project Foundation/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
+
+[Soft Connections Hybrid Application Environment/Requires]
+platform_services=Platform Services
+soft_connections_lib=Soft Connections Library
+connected_application=WiFi System
+
+[Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=hasim
+
+[Platform Services]
+File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
 Packagehint=hasim

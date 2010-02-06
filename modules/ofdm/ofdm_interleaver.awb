@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Interleaver.bsv
+%sources -t BSV -v PUBLIC Interleaver.bsv
 
 %AWB_END

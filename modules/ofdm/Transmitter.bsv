@@ -29,7 +29,7 @@ import ofdm_preambles::*;
 // import Preambles::*;
 // import LibraryFunctions::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkScramblerInstance
    (Scrambler#(TXScramblerAndGlobalCtrl,TXGlobalCtrl,
 	       ScramblerDataSz,ScramblerDataSz));
@@ -41,7 +41,7 @@ module mkScramblerInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkEncoderInstance
    (Encoder#(TXGlobalCtrl,EncoderInDataSz,EncoderOutDataSz));
    Encoder#(TXGlobalCtrl,EncoderInDataSz,EncoderOutDataSz) block;
@@ -49,7 +49,7 @@ module mkEncoderInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkInterleaverInstance
    (Interleaver#(TXGlobalCtrl,InterleaverDataSz,
 		 InterleaverDataSz,MinNcbps));
@@ -59,7 +59,7 @@ module mkInterleaverInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkMapperInstance
    (Mapper#(TXGlobalCtrl,MapperInDataSz,MapperOutDataSz,
 	    TXFPIPrec,TXFPFPrec)); 
@@ -69,7 +69,7 @@ module mkMapperInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkPilotInsertInstance
    (PilotInsert#(TXGlobalCtrl,PilotInDataSz,PilotOutDataSz,
 		 TXFPIPrec,TXFPFPrec)); 
@@ -80,15 +80,15 @@ module mkPilotInsertInstance
    return block;
 endmodule
 
-(* synthesize *)
-module [Module] mkIFFTInstance (IFFT#(TXGlobalCtrl,FFTIFFTSz,
+// (* synthesize *)
+module [CONNECTED_MODULE] mkIFFTInstance (IFFT#(TXGlobalCtrl,FFTIFFTSz,
 				      TXFPIPrec,TXFPFPrec));
    IFFT#(TXGlobalCtrl,FFTIFFTSz,TXFPIPrec,TXFPFPrec) block;
    block <- mkIFFT;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkCPInsertInstance(CPInsert#(TXGlobalCtrl,CPInsertDataSz,
 				    TXFPIPrec,TXFPFPrec));
    CPInsert#(TXGlobalCtrl,CPInsertDataSz,
@@ -98,8 +98,8 @@ module mkCPInsertInstance(CPInsert#(TXGlobalCtrl,CPInsertDataSz,
    return block;
 endmodule
 
-(* synthesize *)
-module mkTransmitterInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkTransmitterInstance
    (Transmitter#(TXScramblerAndGlobalCtrl,ScramblerDataSz,
 		 TXFPIPrec,TXFPFPrec));
    // state elements

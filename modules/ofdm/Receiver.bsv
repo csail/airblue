@@ -29,22 +29,22 @@ import ofdm_base::*;
 // import Scrambler::*;
 // import LibraryFunctions::*;
 
-(* synthesize *)
-module mkSynchronizerInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkSynchronizerInstance
    (Synchronizer#(SyncIntPrec,SyncFractPrec));
    Synchronizer#(SyncIntPrec,SyncFractPrec) block <- mkSynchronizer;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkUnserializerInstance
    (Unserializer#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec));
    Unserializer#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec) block <- mkUnserializer;
    return block;
 endmodule
 
-(* synthesize *)
-module mkReceiverPreFFTInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkReceiverPreFFTInstance
    (ReceiverPreFFT#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec));
    
    // state elements
@@ -60,14 +60,14 @@ module mkReceiverPreFFTInstance
    interface out = unserializer.out;
 endmodule		     
 
-(* synthesize *)
-module [Module] mkFFTInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkFFTInstance
    (FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec));
    FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec) block <- mkFFT;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkChannelEstimatorInstance
    (ChannelEstimator#(RXGlobalCtrl,CEstInDataSz,
 		      CEstOutDataSz,RXFPIPrec,RXFPFPrec));
@@ -77,7 +77,7 @@ module mkChannelEstimatorInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDemapperInstance
    (Demapper#(RXGlobalCtrl,DemapperInDataSz,DemapperOutDataSz,
 	      RXFPIPrec,RXFPFPrec,ViterbiMetric));
@@ -87,7 +87,7 @@ module mkDemapperInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDeinterleaverInstance
    (Deinterleaver#(RXGlobalCtrl,DeinterleaverDataSz,
 		   DeinterleaverDataSz,ViterbiMetric,MinNcbps));
@@ -97,7 +97,7 @@ module mkDeinterleaverInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDecoderInstance
    (Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
 	     DecoderOutDataSz,Bit#(1)));
@@ -107,8 +107,8 @@ module mkDecoderInstance
    return block;
 endmodule
     
-(* synthesize *)
-module mkReceiverPreDescramblerInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkReceiverPreDescramblerInstance
    (ReceiverPreDescrambler#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,
 			    RXFPFPrec,DecoderOutDataSz,Bit#(1)));
     // state elements
@@ -130,7 +130,7 @@ module mkReceiverPreDescramblerInstance
     interface out = decoder.out;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDescramblerInstance
    (Descrambler#(RXDescramblerAndGlobalCtrl,
 		 DescramblerDataSz,DescramblerDataSz));

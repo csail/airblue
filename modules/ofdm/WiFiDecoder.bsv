@@ -16,7 +16,7 @@ import ofdm_base::*;
 // import Viterbi::*;
 // import Depuncturer::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkDepuncturerInstance
    (Depuncturer#(RXGlobalCtrl,DepuncturerInDataSz,
 		 DepuncturerOutDataSz,DepuncturerInBufSz,
@@ -43,7 +43,7 @@ module mkDepuncturerInstance
    return depuncturer;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkViterbiInstance(Viterbi#(RXGlobalCtrl,ViterbiInDataSz,
 				  ViterbiOutDataSz));
    Viterbi#(RXGlobalCtrl,ViterbiInDataSz,ViterbiOutDataSz) viterbi;

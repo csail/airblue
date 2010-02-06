@@ -67,7 +67,7 @@ typedef enum{
    RX_DTAIL     // sending zeros after data
 } RXCtrlState deriving(Eq,Bits);
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
    // state elements
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
@@ -164,7 +164,7 @@ module mkWiFiPreFFTRXController(WiFiPreFFTRXController);
 
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    // state elements
    FIFO#(DecoderMesg#(RXGlobalCtrl,ViterbiOutDataSz,Bit#(1))) inMesgQ <- mkLFIFO;
@@ -287,7 +287,7 @@ module mkWiFiPreDescramblerRXController(WiFiPreDescramblerRXController);
    interface outFeedback = fifoToGet(outFeedbackQ);
 endmodule 
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
    // state elements
    FIFO#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) inMesgQ <- mkLFIFO;
@@ -348,7 +348,7 @@ module mkWiFiPostDescramblerRXController(WiFiPostDescramblerRXController);
    interface outData = fifoToGet(outDataQ);
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiFiRXController(WiFiRXController);
    // state elements
    let preFFTCtrllr          <- mkWiFiPreFFTRXController;

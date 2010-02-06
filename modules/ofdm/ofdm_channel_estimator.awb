@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public ChannelEstimator.bsv
+%sources -t BSV -v PUBLIC ChannelEstimator.bsv
 
 %AWB_END

@@ -12,7 +12,7 @@ import GetPut::*;
 import Controls::*;
 import Unserializer::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkUnserializerTest(Empty);
 
    // states

@@ -13,6 +13,6 @@
 
 %attributes ofdm
 
-%public FFTIFFT.bsv
+%sources -t BSV -v PUBLIC FFTIFFT.bsv
 
 %AWB_END

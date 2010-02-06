@@ -41,7 +41,7 @@ function Integer interleaverGetIndex(Modulation m, Integer k);
     return (k >= ncbps) ? k : j;
 endfunction			  
 
-(* synthesize *)
+// (* synthesize *)
 module mkInterleaverTest(Empty);
    
    // state elements

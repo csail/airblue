@@ -1,7 +1,7 @@
 import BRAMFIFO::*;
 import FIFO::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkBRAMFIFOTest (Empty);
    
    // constants

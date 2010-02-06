@@ -51,7 +51,7 @@ interface TracebackMemory;
     method Action clear();
 endinterface
 
-(* synthesize *)
+// (* synthesize *)
 module mkCSRforTB(ShiftRegs#(CSRSize, Vector#(NoOfStates, Bit#(1))));
 
    ShiftRegs#(CSRSize, Vector#(NoOfStates, Bit#(1))) memory <- mkCirShiftRegs;
@@ -61,7 +61,7 @@ module mkCSRforTB(ShiftRegs#(CSRSize, Vector#(NoOfStates, Bit#(1))));
 endmodule // mkCSRforTB
    
 
-(* synthesize *)
+// (* synthesize *)
 module mkTracebackMemory(TracebackMemory);
     //Traceback memory:
     //There are PipelineStages number of Circular Shift Registers (CSR)
@@ -90,7 +90,7 @@ module mkTracebackMemory(TracebackMemory);
     endmethod
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkTraceback(Traceback);
     TracebackMemory                                     tracebackMemory <- mkTracebackMemory();
     Vector#(PipelineStages, Reg#(Maybe#(Bit#(StateSize)))) minStateRegs <- replicateM(mkReg(tagged Invalid));

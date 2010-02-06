@@ -15,7 +15,7 @@ import Vector::*;
 import RegFile::*;
 import GetPut::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkSynchronizerTest(Empty);
 
    // states

@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public Unserializer.bsv
+%sources -t BSV -v PUBLIC Unserializer.bsv
 
 %AWB_END

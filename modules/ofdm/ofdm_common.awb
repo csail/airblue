@@ -14,6 +14,6 @@
 
 %attributes ofdm
 
-%public CORDIC.bsv FIFOD.bsv Pipeline2.bsv BRAMFIFO.bsv LibraryFunctions.bsv StreamFIFO.bsv
+%sources -t BSV -v PUBLIC CORDIC.bsv FIFOD.bsv Pipeline2.bsv BRAMFIFO.bsv LibraryFunctions.bsv StreamFIFO.bsv
 
 %AWB_END

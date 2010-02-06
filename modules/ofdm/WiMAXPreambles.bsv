@@ -808,14 +808,14 @@ function Vector#(256, Complex#(Bit#(1))) getLongPreSigns();
 endfunction
 
 // module to generate sample packet
-(* synthesize *)
+// (* synthesize *)
 module mkPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
 	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiMAXPacket.txt",0,1023);
 	return regFile;
 endmodule
 
 // module to generate sample packet
-(* synthesize *)
+// (* synthesize *)
 module mkTweakedPacket(RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)));
 	RegFile#(Bit#(10), FPComplex#(TXFPIPrec,TXFPFPrec)) regFile <- mkRegFileLoad("WiMAXTweakedPacket.txt",0,1023);
 	return regFile;

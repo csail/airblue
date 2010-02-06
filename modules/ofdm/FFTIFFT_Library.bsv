@@ -71,13 +71,13 @@ function FFTBflyMesg fftBflys(FFTBflyMesg inMesg);
       return zip(dummyOmegas, outData);
 endfunction      
 
-(* synthesize *)
+// (* synthesize *)
 module mkFFTBflys_RWire(Pipeline2#(FFTBflyMesg));
    Pipeline2#(FFTBflyMesg) pipeStage <- mkPipeStage_RWire(fftBflys);
    return pipeStage;
 endmodule   
 
-(* synthesize *)
+// (* synthesize *)
 module mkFFTBflys_FIFO(Pipeline2#(FFTBflyMesg));
    Pipeline2#(FFTBflyMesg) pipeStage <- mkPipeStage_FIFO(fftBflys);
    return pipeStage;
@@ -103,8 +103,8 @@ function Vector#(2,a) tuple2Vec(Tuple2#(a,a) in);
       return outVec;
 endfunction // Vector
 
-(* synthesize *)
-module [Module] mkOneStage(Pipeline2#(FFTTuples));
+// (* synthesize *)
+module [CONNECTED_MODULE] mkOneStage(Pipeline2#(FFTTuples));
 
    Pipeline2#(FFTStageMesg) stageFU;
    stageFU <- mkPipeline2_Time(mkFFTBflys_RWire);

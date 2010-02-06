@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public CPInsert.bsv
+%sources -t BSV -v PUBLIC CPInsert.bsv
 
 %AWB_END

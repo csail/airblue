@@ -30,7 +30,7 @@ function CPSizeCtrl nextCPSize(CPSizeCtrl cpSize);
 	  endcase;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXTransmitterTest(Empty);
    
    // state elements

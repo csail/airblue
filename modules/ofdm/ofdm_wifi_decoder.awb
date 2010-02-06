@@ -13,6 +13,6 @@
 
 %attributes wifi
 
-%public WiFiDecoder.bsv
+%sources -t BSV -v PUBLIC WiFiDecoder.bsv
 
 %AWB_END

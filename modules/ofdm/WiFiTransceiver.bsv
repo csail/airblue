@@ -4,8 +4,9 @@ import GetPut::*;
 
 // Include virtual devices
 
-`include "low_level_platform_interface.bsh"
-
+`include "asim/provides/low_level_platform_interface.bsh"
+`include "asim/provides/soft_connections.bsh"
+`include "asim/provides/common_services.bsh"
 
 import ofdm_parameters::*;
 import ofdm_preambles::*;
@@ -41,8 +42,8 @@ interface WiFiReceiver;
    interface Get#(Bit#(8))  outData;
 endinterface
 
-(* synthesize *)
-module mkWiFiTransmitter(WiFiTransmitter);
+//// (* synthesize *)
+module [CONNECTED_MODULE] mkWiFiTransmitter(WiFiTransmitter);
    // state element
    let tx_controller <- mkWiFiTXController;
    let transmitter <- mkTransmitterInstance;
@@ -66,8 +67,8 @@ module mkWiFiTransmitter(WiFiTransmitter);
    interface out = transmitter.out;
 endmodule
 
-(* synthesize *)
-module mkWiFiReceiver(WiFiReceiver);
+//// (* synthesize *)
+module [CONNECTED_MODULE] mkWiFiReceiver(WiFiReceiver);
    // state elements
    let rx_controller <- mkWiFiRXController;
    let receiver_preFFT <- mkReceiverPreFFTInstance;
@@ -105,7 +106,7 @@ function Rate nextRate(Rate rate);
 	  endcase;
 endfunction
 
-module mkSystem#(LowLevelPlatformInterface llpi) (Empty);
+module [CONNECTED_MODULE] mkConnectedApplication (Empty);
 
    // state elements
    let transmitter <- mkWiFiTransmitter;

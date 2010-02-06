@@ -45,7 +45,7 @@ module mkWiMaxPuncturer (Puncturer#(Bit#(3),8,8,24,24));
    
 endmodule
    
-(* synthesize *)
+// (* synthesize *)
 module mkPuncturerTest (Empty);
 
    Puncturer#(Bit#(3),8,8,24,24) puncturer <- mkWiMaxPuncturer;

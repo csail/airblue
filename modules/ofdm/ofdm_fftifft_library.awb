@@ -10,6 +10,6 @@
 
 %attributes ofdm
 
-%public FFTIFFT_Library.bsv
+%sources -t BSV -v PUBLIC FFTIFFT_Library.bsv
 
 %AWB_END

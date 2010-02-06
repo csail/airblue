@@ -120,14 +120,14 @@ function Modulation modulationMapCtrl(TXGlobalCtrl ctrl);
           endcase;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkConvEncoderInstance(ConvEncoder#(TXGlobalCtrl,12,24));
    ConvEncoder#(TXGlobalCtrl,12,24) convEncoder;
    convEncoder <- mkConvEncoder(7'b1011011,7'b1111001);
    return convEncoder;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkPuncturerInstance (Puncturer#(TXGlobalCtrl,24,24,48,48));
    Bit#(6) f1_sz = 0;
    Bit#(4) f2_sz = 0;
@@ -141,7 +141,7 @@ module mkPuncturerInstance (Puncturer#(TXGlobalCtrl,24,24,48,48));
    return puncturer;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDepuncturerInstance (Depuncturer#(TXGlobalCtrl,24,24,48,48));
    function DepunctData#(24) dpp1(DepunctData#(18) x);
       return parDepunctFunc(dp1,x);
@@ -160,28 +160,28 @@ module mkDepuncturerInstance (Depuncturer#(TXGlobalCtrl,24,24,48,48));
    return depuncturer;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkMapperInstance (Mapper#(TXGlobalCtrl,24,48,2,14));
    Mapper#(TXGlobalCtrl,24,48,2,14) mapper;
    mapper <- mkMapper(modulationMapCtrl,True);
    return mapper;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDemapperInstance (Demapper#(TXGlobalCtrl,48,24,2,14,ViterbiMetric));
    Demapper#(TXGlobalCtrl,48,24,2,14,ViterbiMetric) demapper;
    demapper <- mkDemapper(modulationMapCtrl,True);
    return demapper;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkViterbiInstance(Viterbi#(TXGlobalCtrl,24,12));
    Viterbi#(TXGlobalCtrl,24,12) viterbi;
    viterbi <- mkViterbi;
    return viterbi;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkViterbiTest (Empty);
 
    // state elements

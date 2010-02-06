@@ -14,6 +14,7 @@ import Vector::*;
 
 import ofdm_base::*;
 
+`include "asim/provides/soft_connections.bsh"
 // import Pipelines::*;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -360,7 +361,7 @@ endfunction // FixedPoint
 /////////////////////////////////////////////////////////////////////////////////////////
 // Begin of Modules
 
-module [Module] mkCORDIC#(Module#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
+module [CONNECTED_MODULE] mkCORDIC#(Module#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
               (CORDIC#(vfsz,afsz));
 
    Pipeline#(CORDICData#(vfsz,afsz)) p <- mkP(); 
@@ -383,7 +384,7 @@ module [Module] mkCORDIC#(Module#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
 endmodule
 
 // for making cordic pipeline
-module [Module] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afsz))
+module [CONNECTED_MODULE] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afsz))
   provisos (Arith#(FixedPoint#(2, vfsz)),
 	    Add#(1, afsz, TAdd#(1, afsz)),
 	    Arith#(FixedPoint#(1, vfsz)),
@@ -405,7 +406,7 @@ module [Module] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afs
 endmodule
 
 // for making CosAndSin pipeline
-module [Module] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(visz, vfsz, aisz, afsz))
+module [CONNECTED_MODULE] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(visz, vfsz, aisz, afsz))
   provisos (Arith#(FixedPoint#(2, vfsz)),
 	    Arith#(FixedPoint#(1, afsz)),
 	    Add#(xxA, 1, aisz),
@@ -431,7 +432,7 @@ module [Module] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(vi
 endmodule
 
 // for making ArcTan  pipeline
-module [Module] mkArcTan_Pipe#(Integer numStages, Integer step)(ArcTan#(visz,vfsz,aisz,afsz))
+module [CONNECTED_MODULE] mkArcTan_Pipe#(Integer numStages, Integer step)(ArcTan#(visz,vfsz,aisz,afsz))
   provisos (Add#(xxA, vfsz, rf), 
 	    Add#(xxA, TAdd#(visz,vfsz), TAdd#(visz,rf)),
 	    Add#(xxA, 1, visz),

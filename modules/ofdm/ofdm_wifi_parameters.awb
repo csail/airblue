@@ -10,7 +10,7 @@
 
 %attributes wifi
 
-%public WiFiParameters.bsv
+%sources -t BSV -v PUBLIC WiFiParameters.bsv
 
 %param FPIPrec 2  "Integer Precision of FixedPoint (>= 2)"
 %param FPFPrec 14 "Fractional Precision of FixedPoint (>= 1)"

@@ -16,7 +16,7 @@ import ofdm_base::*;
 // import ConvEncoder::*;
 // import Puncturer::*;
 
-(* synthesize *)
+// (* synthesize *)
 module mkConvEncoderInstance(ConvEncoder#(TXGlobalCtrl,ConvEncoderInDataSz,
 					  ConvEncoderOutDataSz));
    ConvEncoder#(TXGlobalCtrl,ConvEncoderInDataSz,
@@ -25,7 +25,7 @@ module mkConvEncoderInstance(ConvEncoder#(TXGlobalCtrl,ConvEncoderInDataSz,
    return convEncoder;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkPuncturerInstance(Puncturer#(TXGlobalCtrl,PuncturerInDataSz,PuncturerOutDataSz,
 				      PuncturerInBufSz,PuncturerOutBufSz));
    Bit#(PuncturerF1Sz) f1_sz = 0;

@@ -11,14 +11,14 @@ import Connectable::*;
 import GetPut::*;
 import LibraryFunctions::*;
 
-(* synthesize *)
-module [Module] mkFFTInstance
+// (* synthesize *)
+module [CONNECTED_MODULE] mkFFTInstance
    (FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec));
    FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec) block <- mkFFT;
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkChannelEstimatorInstance
    (ChannelEstimator#(RXGlobalCtrl,CEstInDataSz,
 		      CEstOutDataSz,RXFPIPrec,RXFPFPrec));
@@ -28,7 +28,7 @@ module mkChannelEstimatorInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDemapperInstance
    (Demapper#(RXGlobalCtrl,DemapperInDataSz,DemapperOutDataSz,
 	      RXFPIPrec,RXFPFPrec,ViterbiMetric));
@@ -38,7 +38,7 @@ module mkDemapperInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDeinterleaverInstance
    (Deinterleaver#(RXGlobalCtrl,DeinterleaverDataSz,
 		   DeinterleaverDataSz,ViterbiMetric,MinNcbps));
@@ -48,7 +48,7 @@ module mkDeinterleaverInstance
    return block;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkDecoderInstance
    (Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
 	     DecoderOutDataSz,Bit#(1)));
@@ -58,7 +58,7 @@ module mkDecoderInstance
    return block;
 endmodule
     
-(* synthesize *)
+// (* synthesize *)
 module mkReceiverPreDescramblerInstance
    (ReceiverPreDescrambler#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,
 			    RXFPFPrec,DecoderOutDataSz,Bit#(1)));

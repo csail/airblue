@@ -144,49 +144,49 @@ function Vector#(m,a) insertCP3(Vector#(n,a) inVec)
    return outVec;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkAutoCorr_DelayIn(ShiftRegs#(SSLen, FPComplex#(SyncIntPrec,SyncFractPrec)));
    ShiftRegs#(SSLen,FPComplex#(SyncIntPrec,SyncFractPrec)) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkAutoCorr_CorrSub(ShiftRegs#(SSLen, FPComplex#(MulIntPrec,SyncFractPrec)));
    ShiftRegs#(SSLen,FPComplex#(MulIntPrec,SyncFractPrec)) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkAutoCorr_ExtDelayIn(ShiftRegs#(LSLSSLen, FPComplex#(SyncIntPrec,SyncFractPrec)));
    ShiftRegs#(LSLSSLen,FPComplex#(SyncIntPrec,SyncFractPrec)) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkAutoCorr_ExtCorrSub(ShiftRegs#(LSLSSLen, FPComplex#(MulIntPrec,SyncFractPrec)));
    ShiftRegs#(LSLSSLen,FPComplex#(MulIntPrec,SyncFractPrec)) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkTimeEst_CoarPowSub(ShiftRegs#(SSLen, FixedPoint#(MulIntPrec,SyncFractPrec)));
    ShiftRegs#(SSLen,FixedPoint#(MulIntPrec,SyncFractPrec)) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkTimeEst_CoarTimeSub(ShiftRegs#(CoarTimeAccumDelaySz, Bool));
    ShiftRegs#(CoarTimeAccumDelaySz, Bool) shiftRegs <- mkCirShiftRegsNoGetVec;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkTimeEst_FineDelaySign(ShiftRegs#(FineTimeCorrDelaySz, Complex#(Bit#(1))));
    ShiftRegs#(FineTimeCorrDelaySz, Complex#(Bit#(1))) shiftRegs <- mkShiftRegs;
    return shiftRegs;
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkFreqEst_FreqOffAccumSub(ShiftRegs#(FreqMeanLen, FixedPoint#(SyncIntPrec,SyncFractPrec)));
    ShiftRegs#(FreqMeanLen, FixedPoint#(SyncIntPrec,SyncFractPrec)) shiftRegs <- mkShiftRegs;
    return shiftRegs;

@@ -63,7 +63,7 @@ typedef enum{
    RX_DTAIL     // sending zeros after data
 } RXCtrlState deriving(Eq,Bits);
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXPreFFTRXController(WiMAXPreFFTRXController);
    // state elements
    FIFO#(FFTMesg#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
@@ -157,7 +157,7 @@ module mkWiMAXPreFFTRXController(WiMAXPreFFTRXController);
 
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXPreDescramblerRXController(WiMAXPreDescramblerRXController);
    // state elements
    FIFO#(DescramblerMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) outMesgQ <- mkLFIFO;
@@ -212,7 +212,7 @@ module mkWiMAXPreDescramblerRXController(WiMAXPreDescramblerRXController);
    interface inFeedback = fifoToPut(rxVecQ);
 endmodule 
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXPostDescramblerRXController(WiMAXPostDescramblerRXController);
    // state elements
    FIFO#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) inMesgQ <- mkLFIFO;
@@ -266,7 +266,7 @@ module mkWiMAXPostDescramblerRXController(WiMAXPostDescramblerRXController);
    interface outData = fifoToGet(outDataQ);
 endmodule
 
-(* synthesize *)
+// (* synthesize *)
 module mkWiMAXRXController(WiMAXRXController);
    // state elements
    let preFFTCtrllr          <- mkWiMAXPreFFTRXController;

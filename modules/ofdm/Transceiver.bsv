@@ -20,7 +20,7 @@ import Descrambler::*;
 
 
 
-(* synthesize *)
+// (* synthesize *)
 module mkWifiTransceiver(Transceiver);
   Synchronizer#(1,15) synchronizer <- mkWifiSynchronizer();
   FftIfft fftifft <- ;
@@ -32,7 +32,7 @@ module mkWifiTransceiver(Transceiver);
   return receiver, transmitter;
 end module;
 
-(* synthesize *)
+// (* synthesize *)
 module mkWifiReceiver(Receiver);
   protocolParams = mkProtocolParams(64, ...);
   Synchronizer#(1,15) synchronizer <- mkWifiSynchronizer();
@@ -49,7 +49,7 @@ module mkWifiReceiver(Receiver);
   return receiver;
 end module;
 
-(* synthesize *)
+// (* synthesize *)
 module mkWimaxReceiver(Receiver);
   Synchronizer#(1,15) synchronizer <- mkWimaxSynchronizer();
   controller <- mkWimaxController();
@@ -66,7 +66,7 @@ module mkWimaxReceiver(Receiver);
   return receiver;
 end module;
 
-(* synthesize *)
+// (* synthesize *)
 module mkWifiTransceiver(Transceiver);
   Synchronizer#(1,15) synchronizer <- mkWifiSynchronizer();
 

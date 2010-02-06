@@ -13,7 +13,7 @@ function t idFunc (t in);
    return in;
 endfunction
 
-(* synthesize *)
+// (* synthesize *)
 module mkDemapperTest(Empty);
    
    // state elements
