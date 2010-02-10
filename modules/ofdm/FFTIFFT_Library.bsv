@@ -104,7 +104,7 @@ function Vector#(2,a) tuple2Vec(Tuple2#(a,a) in);
 endfunction // Vector
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkOneStage(Pipeline2#(FFTTuples));
+module [Module] mkOneStage(Pipeline2#(FFTTuples));
 
    Pipeline2#(FFTStageMesg) stageFU;
    stageFU <- mkPipeline2_Time(mkFFTBflys_RWire);

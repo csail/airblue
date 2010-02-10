@@ -15,9 +15,13 @@
 %requires ofdm_rx_controller
 %requires ofdm_receiver
 %requires ofdm_common
+%requires avalon
 
 %attributes wifi
 
+%sources -t H   -v PUBLIC WiFiTransceiver.h
+%sources -t CPP -v PUBLIC WiFiTransceiver.cpp
 %sources -t BSV -v PUBLIC WiFiTransceiver.bsv
+%sources -t RRR -v PUBLIC WiFiTransceiver.rrr
 
 %AWB_END

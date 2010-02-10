@@ -513,7 +513,7 @@ module mkTimeEstimator(TimeEstimator);
 endmodule   
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkFreqEstimator(FreqEstimator);
+module [Module] mkFreqEstimator(FreqEstimator);
    // Constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);
@@ -611,7 +611,7 @@ module [CONNECTED_MODULE] mkFreqEstimator(FreqEstimator);
 endmodule
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkFreqRotator(FreqRotator);
+module [Module] mkFreqRotator(FreqRotator);
    // Integer constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);
@@ -668,7 +668,7 @@ module [CONNECTED_MODULE] mkFreqRotator(FreqRotator);
 endmodule   
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkSynchronizer(Synchronizer#(SyncIntPrec,SyncFractPrec));
+module [Module] mkSynchronizer(Synchronizer#(SyncIntPrec,SyncFractPrec));
    //input and output buffers
    FIFO#(SynchronizerMesg#(SyncIntPrec,SyncFractPrec)) inQ <- mkLFIFO;
    FIFO#(UnserializerMesg#(SyncIntPrec,SyncFractPrec)) outQ <- mkSizedFIFO(2);

@@ -39,7 +39,7 @@ interface FFTIFFT;
 	method ActionValue#(FFTDataVec) getOutput();
 endinterface
 
-module [CONNECTED_MODULE] mkFFTIFFT(FFTIFFT);
+module [Module] mkFFTIFFT(FFTIFFT);
    FFTStage noStages = fromInteger(valueOf(LogFFTSz)-1);
    
    // state elements
@@ -73,7 +73,7 @@ module [CONNECTED_MODULE] mkFFTIFFT(FFTIFFT);
    endmethod
 endmodule
 
-module [CONNECTED_MODULE] mkFFT(FFT#(ctrl_t,FFTSz,ISz,FSz))
+module [Module] mkFFT(FFT#(ctrl_t,FFTSz,ISz,FSz))
    provisos (Bits#(ctrl_t,ctrl_sz));
    
    FFTIFFT fft <- mkFFTIFFT;

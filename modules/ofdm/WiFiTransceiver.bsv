@@ -7,6 +7,7 @@ import GetPut::*;
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/soft_connections.bsh"
 `include "asim/provides/common_services.bsh"
+`include "asim/rrr/remote_server_stub_WIFITRANSCEIVER.bsh"
 
 import ofdm_parameters::*;
 import ofdm_preambles::*;
@@ -42,8 +43,8 @@ interface WiFiReceiver;
    interface Get#(Bit#(8))  outData;
 endinterface
 
-//// (* synthesize *)
-module [CONNECTED_MODULE] mkWiFiTransmitter(WiFiTransmitter);
+(* synthesize *)
+module mkWiFiTransmitter(WiFiTransmitter);
    // state element
    let tx_controller <- mkWiFiTXController;
    let transmitter <- mkTransmitterInstance;
@@ -67,8 +68,8 @@ module [CONNECTED_MODULE] mkWiFiTransmitter(WiFiTransmitter);
    interface out = transmitter.out;
 endmodule
 
-//// (* synthesize *)
-module [CONNECTED_MODULE] mkWiFiReceiver(WiFiReceiver);
+(* synthesize *)
+module mkWiFiReceiver(WiFiReceiver);
    // state elements
    let rx_controller <- mkWiFiRXController;
    let receiver_preFFT <- mkReceiverPreFFTInstance;
@@ -117,9 +118,21 @@ module [CONNECTED_MODULE] mkConnectedApplication (Empty);
    Reg#(Bit#(12)) counter <- mkReg(0);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
+   Reg#(Bool)     started <- mkReg(False);
+   
+   ServerStub_WIFITRANSCEIVER server_stub <- mkServerStub_WIFITRANSCEIVER();
    
    // rules
-   rule putTXStart(True);
+   rule waitSWStart(True);
+      let dont_care <- server_stub.acceptRequest_start();
+      started <= True;
+   endrule
+   
+   rule waitSWFinish(True);
+      let dont_care <- server_stub.acceptRequest_finish();
+   endrule
+   
+   rule putTXStart(started);
       let randData <- randGen.genRand;
       let newRate = nextRate(rate);
       Bit#(12) newLength = truncate(randData);
@@ -132,16 +145,16 @@ module [CONNECTED_MODULE] mkConnectedApplication (Empty);
       transmitter.txStart(txVec);
       $display("Going to send a packet %d at rate:%d, length:%d",packetNo,newRate,newLength);
       if (packetNo == 51)
-	$finish;
+	server_stub.sendResponse_finish(0); // succeed
    endrule
    
-   rule putData(True);
+   rule putData(started);
       data <= data + 1;
       transmitter.txData(data);
       $display("transmitter input: rate:%d, data:%h",rate,data);
    endrule
    
-   rule getOutput(True);
+   rule getOutput(started);
       let mesg <- transmitter.out.get;
       receiver.in.put(mesg);
       $write("transmitter output: data:");
@@ -149,21 +162,21 @@ module [CONNECTED_MODULE] mkConnectedApplication (Empty);
       $display("");
    endrule
    
-   rule getLength(True);
+   rule getLength(started);
       let length <- receiver.outLength.get;
       $display("Going to receiver a packet of length:%d",length);
    endrule
    
-   rule getData(True);
+   rule getData(started);
       let outData <- receiver.outData.get;
       $display("receiver output: data:%h",outData);
    endrule
    
-   rule tick(True);
+   rule tick(started);
       cycle <= cycle + 1;
-      if (cycle == 5000000)
-	 $finish;
-//      $display("Cycle: %d",cycle);
+      if (cycle == 50000)
+	 server_stub.sendResponse_finish(1); // timeout failure
+      $display("Cycle: %d",cycle);
    endrule
    
 endmodule

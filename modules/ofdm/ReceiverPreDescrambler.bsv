@@ -12,7 +12,7 @@ import GetPut::*;
 import LibraryFunctions::*;
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkFFTInstance
+module [Module] mkFFTInstance
    (FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec));
    FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec) block <- mkFFT;
    return block;

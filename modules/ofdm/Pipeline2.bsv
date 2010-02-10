@@ -50,7 +50,7 @@ endmodule
 
 
 // normal pipeline
-module [CONNECTED_MODULE] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
+module [Module] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
 				 function Module#(Pipeline2#(a)) mkP)
   (Pipeline2#(a)) provisos (Bits#(a, asz));
 
@@ -71,7 +71,7 @@ module [CONNECTED_MODULE] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
 endmodule // mkP
 
 // circular pipeline, assume stageFU.out < stageFU.in or no conflict   
-module [CONNECTED_MODULE] mkPipeline2_Circ#(Bit#(idx_sz) maxStage,
+module [Module] mkPipeline2_Circ#(Bit#(idx_sz) maxStage,
 				 function Module#(Pipeline2#(a)) mkP)
   (Pipeline2#(a)) provisos (Bits#(a, asz));
    
@@ -128,7 +128,7 @@ module [CONNECTED_MODULE] mkPipeline2_Circ#(Bit#(idx_sz) maxStage,
 endmodule // mkP
 
 // time multiplex pipline
-module [CONNECTED_MODULE] mkPipeline2_Time#(function Module#(Pipeline2#(Vector#(psz,a))) mkP)
+module [Module] mkPipeline2_Time#(function Module#(Pipeline2#(Vector#(psz,a))) mkP)
   (Pipeline2#(Vector#(sz,a)))
    provisos (Bits#(a, asz),
 	     Div#(sz,psz,noStages), // div now change to return ceiling 

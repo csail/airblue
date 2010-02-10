@@ -30,7 +30,7 @@ import ofdm_base::*;
 // import LibraryFunctions::*;
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkSynchronizerInstance
+module [Module] mkSynchronizerInstance
    (Synchronizer#(SyncIntPrec,SyncFractPrec));
    Synchronizer#(SyncIntPrec,SyncFractPrec) block <- mkSynchronizer;
    return block;
@@ -44,7 +44,7 @@ module mkUnserializerInstance
 endmodule
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkReceiverPreFFTInstance
+module [Module] mkReceiverPreFFTInstance
    (ReceiverPreFFT#(UnserialOutDataSz,RXFPIPrec,RXFPFPrec));
    
    // state elements
@@ -61,7 +61,7 @@ module [CONNECTED_MODULE] mkReceiverPreFFTInstance
 endmodule		     
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkFFTInstance
+module [Module] mkFFTInstance
    (FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec));
    FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec) block <- mkFFT;
    return block;
@@ -108,7 +108,7 @@ module mkDecoderInstance
 endmodule
     
 // (* synthesize *)
-module [CONNECTED_MODULE] mkReceiverPreDescramblerInstance
+module [Module] mkReceiverPreDescramblerInstance
    (ReceiverPreDescrambler#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,
 			    RXFPFPrec,DecoderOutDataSz,Bit#(1)));
     // state elements

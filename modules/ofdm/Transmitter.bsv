@@ -81,7 +81,7 @@ module mkPilotInsertInstance
 endmodule
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkIFFTInstance (IFFT#(TXGlobalCtrl,FFTIFFTSz,
+module [Module] mkIFFTInstance (IFFT#(TXGlobalCtrl,FFTIFFTSz,
 				      TXFPIPrec,TXFPFPrec));
    IFFT#(TXGlobalCtrl,FFTIFFTSz,TXFPIPrec,TXFPFPrec) block;
    block <- mkIFFT;
@@ -99,7 +99,7 @@ module mkCPInsertInstance(CPInsert#(TXGlobalCtrl,CPInsertDataSz,
 endmodule
 
 // (* synthesize *)
-module [CONNECTED_MODULE] mkTransmitterInstance
+module [Module] mkTransmitterInstance
    (Transmitter#(TXScramblerAndGlobalCtrl,ScramblerDataSz,
 		 TXFPIPrec,TXFPFPrec));
    // state elements
