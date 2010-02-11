@@ -24,16 +24,21 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
-import FPComplex::*;
 import Complex::*;
-import FixedPoint::*;
-import LibraryFunctions::*;
-import Vector::*;
 import FIFO::*;
+import FixedPoint::*;
 import GetPut::*;
+import Vector::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
+// import FPComplex::*;
+// import LibraryFunctions::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 // mkMapper definition, 
 // i_n must be multiple of 12

@@ -24,42 +24,54 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
-import FPComplex::*;
+import Complex::*;
+import FixedPoint::*;
 import GetPut::*;
-import Interfaces::*;
 import Vector::*;
-import Mapper::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import Demapper::*;
+// import Mapper::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_mapper.bsh"
 
 function t idFunc (t in);
    return in;
 endfunction
 
 (* synthesize *)
-module mkMapperInstance(Mapper#(Modulation,48,48,2,14));
-   // state elements
-   Mapper#(Modulation,48,48,2,14) mapper <- mkMapper(idFunc, False);
-   return mapper;
+module mkDemapperInstance(Demapper#(Modulation,48,12,2,14,Bit#(3)));
+   Demapper#(Modulation,48,12,2,14,Bit#(3)) demapper;
+   demapper <- mkDemapper(idFunc, False);
+   return demapper;
 endmodule
 
-(* synthesize *)
-module mkMapperTest(Empty);
-   
+// (* synthesize *)
+// module mkDemapperTest(Empty);
+
+module mkHWOnlyApplication(Empty);   
    // state elements
-   Mapper#(Modulation,48,48,2,14) mapper <- mkMapperInstance();
+   Mapper#(Modulation,12,48,2,14) mapper <- mkMapper(idFunc, False);
+   Demapper#(Modulation,48,12,2,14,Bit#(3)) demapper;
+   demapper <- mkDemapperInstance();
    Reg#(Bit#(4))  ctrl  <- mkReg(1);
-   Reg#(Bit#(48)) data  <- mkRegU;
-   Reg#(Bit#(4))  cntr  <- mkReg(0);
+   Reg#(Bit#(12)) data  <- mkReg(0);
+   Reg#(Bit#(8))  cntr  <- mkReg(0);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
-   rule putNewCtrl(cntr==0);
+   rule putMapperNewCtrl(cntr==0);
       let newCtrl = (ctrl == 8) ? 1 : ctrl << 1;
       let newCntr = case (unpack(newCtrl))
-		       BPSK:   1;
-		       QPSK:   3;
-		       QAM_16: 7;
-		       QAM_64: 11;
+		       BPSK:   3;    
+		       QPSK:   7;
+		       QAM_16: 15;
+		       QAM_64: 23;
 		    endcase;
       let mesg = Mesg { control: unpack(newCtrl),
 	   	        data: data};
@@ -67,21 +79,27 @@ module mkMapperTest(Empty);
       ctrl <= newCtrl;
       cntr <= newCntr;
       data <= data + 1;
-      $display("input: ctrl = %d, data:%h",newCtrl,data);
+      $display("Mapper input: ctrl = %d, data:%b",newCtrl,data);
    endrule
    
-   rule putInput(cntr > 0);
+   rule putMapperInput(cntr > 0);
       let mesg = Mesg { control: unpack(ctrl),
 	   	        data: data};
       mapper.in.put(mesg);
       cntr <= cntr - 1;
       data <= data + 1;
-      $display("input: ctrl = %d, data:%h",ctrl,data);
+      $display("Mapper input: ctrl = %d, data:%b",ctrl,data);
    endrule
 
-   rule getOutput(True);
+   rule getMapperOutput(True);
       let mesg <- mapper.out.get;
-      $display("output: ctrl = %d, data: %h",mesg.control,mesg.data);
+      demapper.in.put(mesg);
+      $display("Mapper output: ctrl = %d, data: %h",mesg.control,mesg.data);
+   endrule
+   
+   rule getDemapperOutput(True);
+      let mesg <- demapper.out.get;
+      $display("Demapper output: ctrl = %d, data: %b",mesg.control,mesg.data);
    endrule
    
    rule tick(True);

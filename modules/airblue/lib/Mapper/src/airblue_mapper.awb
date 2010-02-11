@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Mapper/Demapper
+%desc Airblue Mapper/Demapper
+%provides airblue_mapper
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC Mapper.bsv Demapper.bsv
+
+%AWB_END

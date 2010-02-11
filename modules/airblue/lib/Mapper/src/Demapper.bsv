@@ -25,15 +25,21 @@
 //----------------------------------------------------------------------//
 
 import Complex::*;
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import FixedPoint::*;
-import FPComplex::*;
-import Interfaces::*;
-import Vector::*;
 import GetPut::*;
-import VectorLibrary::*;
+import Vector::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import VectorLibrary::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_mapper.bsh"
 
 //`define isDebug True // uncomment this line to display error
 
