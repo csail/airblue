@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Channel Estimator
+%desc Airblue Channel Estimator  
+%provides airblue_channel_estimator
+
+%requires airblue_inverse_sq_root
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC ChannelEstimator.bsv ChannelEstimatorTypes.bsv
+
+%AWB_END

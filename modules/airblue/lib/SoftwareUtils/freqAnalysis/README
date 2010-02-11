@@ -1,0 +1,4 @@
+Given a trace hex file (trace_name.hex), returns a matlab script that perform frequency analysis on each symbol throughput the whole traces.
+
+Example usage:
+./packetHexToComplex.pl trace_name 64 

@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Special FIFOs
+%desc Implementation of some of the special fifo buffer used in airblue including StreamFIFO, FIFOD, BitSreamFIFO. These fifos allow the size of enq and deq to be different
+%provides airblue_special_fifos
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC BitStreamFIFO.bsv StreamFIFO.bsv FIFOD.bsv
+
+%AWB_END

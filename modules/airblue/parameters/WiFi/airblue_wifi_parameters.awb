@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue WiFi parameters
+%desc Airblue parameters used to build the WiFi system
+%provides airblue_parameters
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC FFTParameters.bsv FPGAParameters.bsv MACPhyParameters.bsv Macros.bsv ProtocolParameters.bsv ViterbiParameters.bsv Preambles.bsv
+
+%AWB_END

@@ -1,0 +1,24 @@
+##################################################################################
+# DIRECTORY STRUCTURE
+##################################################################################
+
+This directory contains the source code for the reusable OFDM IP components.
+For the functions of each IP please refer to doc/OFDM.pdf Section 3.
+
+     ChannelEstimator\: Channel Estimator module
+     ConvEncoder\: Convolutional Encoder module
+     CPInsert\: Cyclic Prefix(CP) Insertion module
+     FFT\: FFT and IFFT modules
+     FIFOs\: Different types of FIFOs
+     Interleaver\: Interleaver and De-interleaver modules
+     Mapper\: Mapper and De-mapper modules
+     PilotInsert\: Pilot and Guard insertion modules
+     Puncturer\: Puncturer and Depuncturer modules
+     ReedSolomon\: Reed-solomon Codecs modules
+     Scrambler\: Scrambler and Descrambler modules
+     Synchronizer\: Synchronizer module
+     Unserializer\: S/P module
+     Viterbi\: Convolutional Decoder module
+
+
+

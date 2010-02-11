@@ -1,0 +1,10 @@
+set xlabel "Real"
+set ylabel "Quad"
+set nokey
+unset key
+set size 1.0, 0.6
+set terminal postscript portrait enhanced mono dashed lw 1 "Helvetica" 14
+set output "my-plot.ps"
+plot "plot.txt" using 1:2 with linespoints
+
+

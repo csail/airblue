@@ -1,0 +1,38 @@
+set size 1.0,0.6
+set origin 0,0
+set nokey
+unset key
+# set size 1.0, 0.6
+set terminal postscript portrait enhanced mono dashed lw 1 "Helvetica" 14
+set output "my-plot.ps"
+set multiplot
+
+# for pilots
+set xlabel "Carrier"
+set ylabel "Value"
+set xrange [-1:49]
+set yrange [-2:2]
+
+set size 0.5,0.3
+set origin 0,0.3
+plot "pilotangles.txt" using 1:2 with linespoints
+
+set xrange [-1:49]
+set yrange [0:4]
+set size 0.5,0.3
+set origin 0.5,0.3
+plot "pilotmags.txt" using 1:2 with linespoints
+
+# for carriers
+set xlabel "Real"
+set ylabel "Quad"
+set xrange [-2:2]
+set yrange [-2:2]
+
+set size 0.5,0.3
+set origin 0,0
+plot "presubcarriers.txt" using 1:2 with points
+
+set size 0.5,0.3
+set origin  0.5,0
+plot "postsubcarriers.txt" using 1:2 with points

@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue cyclic prefix insertion
+%desc Airblue cyclic prefix insertion
+%provides airblue_cyclic_prefix_insert
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC CPInsert.bsv 
+
+%AWB_END

@@ -1,0 +1,21 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue FFT/IFFT Test
+%desc Airblue FFT/IFFT Test
+%provides hw_only_application
+
+%requries airblue_fft
+%requires airblue_common
+%requires airblue_parameters
+%requires airblue_types
+%requires debug_utils
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC FFTIFFTTest.bsv FFTIFFTTestLib.bsv
+
+%AWB_END

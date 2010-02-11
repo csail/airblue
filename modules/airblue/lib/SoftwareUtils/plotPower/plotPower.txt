@@ -1,0 +1,11 @@
+set size 1.0,0.6
+set origin 0,0
+set nokey
+unset key
+set terminal postscript portrait enhanced mono dashed lw 1 "Helvetica" 14
+set output "my-plot.ps"
+set xlabel "Carrier"
+set ylabel "Power"
+set xrange [-33:32]
+set yrange [0:6]
+plot "presubcarriers.txt" using 1:2 with linespoints

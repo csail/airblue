@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue FFT/IFFT
+%desc Airblue FFT/IFFT
+%provides airblue_fft
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC FParams.bsv FFTIFFT_Library.bsv FFTIFFT.bsv
+
+%AWB_END
