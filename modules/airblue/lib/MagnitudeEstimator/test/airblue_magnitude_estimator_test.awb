@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Magnitude Estimator Test
+%desc Airblue Magnitude Estimator Test 
+%provides hw_only_application
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC MagnitudeEstimatorTest.bsv
+
+%AWB_END

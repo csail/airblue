@@ -3,11 +3,16 @@ import LFSR::*;
 import GetPut::*;
 import ClientServer::*;
 
-import MagnitudeEstimator::*;
+// Local includes
+`includes "asim/provides/airblue_magnitude_estimator_test.bsh"
+
+//import MagnitudeEstimator::*;
 
 
-(* synthesize *)
-module mkMagnitudeEstimatorTest (Empty);
+// (* synthesize *)
+// module mkMagnitudeEstimatorTest (Empty);
+
+module mkHWOnlyApplication (Empty);
   LFSR#(Bit#(32)) lfsr <- mkLFSR_32;
   MagnitudeEstimator#(32) estimator <- mkMagnitudeEstimator;
   RWire#(Bit#(6)) expectedMagnitude <- mkRWire;

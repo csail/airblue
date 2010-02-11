@@ -1,6 +1,6 @@
-import Vector::*;
 import ClientServer::*;
 import GetPut::*;
+import Vector::*;
 
 typedef Server#(Bit#(length), Bit#(TAdd#(1,TLog#(length)))) MagnitudeEstimator#(numeric type length);
 
