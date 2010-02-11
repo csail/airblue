@@ -24,12 +24,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import LibraryFunctions::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 module mkPilotInsert#(function PilotInsertCtrl 
 			 mapCtrl(ctrl_t ctrl), 

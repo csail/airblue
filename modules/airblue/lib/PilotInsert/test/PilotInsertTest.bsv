@@ -25,13 +25,19 @@
 //----------------------------------------------------------------------//
 
 import Complex::*;
-import Controls::*;
-import DataTypes::*;
 import GetPut::*;
-import Interfaces::*;
-import LibraryFunctions::*;
-import PilotInsert::*;
 import Vector::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
+// import PilotInsert::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_pilot_insert.bsh"
 
 function t idFunc (t in);
    return in;
