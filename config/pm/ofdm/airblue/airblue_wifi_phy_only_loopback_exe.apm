@@ -1,0 +1,100 @@
+
+[Soft Connections Hybrid Application Environment/Requires]
+platform_services=Platform Services
+soft_connections_lib=Soft Connections Library
+connected_application=WiFi Phy Only Loopback
+
+[Global]
+SaveParameters=0
+DefaultBenchmark=
+Version=2.1
+Type=HAsim
+File=airblue_wifi_phy_only_loopback_exe
+Class=Asim::Model
+Name=airblue_wifi_phy_only_loopback_exe
+Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
+DefaultRunOpts=
+
+[Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=hasim
+
+[Soft Connections Library]
+File=config/pm/hasim/submodels/common/soft-connections-lib.apm
+Packagehint=hasim
+
+[Airblue Interleaver/Deinterleaver]
+File=modules/airblue/lib/Interleaver/src/airblue_interleaver.awb
+Packagehint=ofdm
+
+[Platform Services]
+File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+Packagehint=hasim
+
+[Model]
+DefaultAttributes=airblue
+model=HW/SW Hybrid Project Foundation
+
+[Airblue Channel Estimator]
+File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
+Packagehint=ofdm
+
+[Airblue cyclic prefix insertion]
+File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
+Packagehint=ofdm
+
+[Airblue FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_fft.awb
+Packagehint=ofdm
+
+[Airblue types]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[FPGA Environment]
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=platforms
+
+[WiFi Phy Only Loopback/Requires]
+airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
+airblue_convolutional_encoder=Airblue Convolutional Encoder
+airblue_types=Airblue types
+airblue_channel_estimator=Airblue Channel Estimator
+airblue_common=Airblue common library
+airblue_interleaver=Airblue Interleaver/Deinterleaver
+airblue_special_fifos=Airblue Special FIFOs
+airblue_fft=Airblue FFT/IFFT
+airblue_parameters=Airblue WiFi parameters
+
+[HW/SW Hybrid Project Foundation]
+File=modules/project/project-hybrid.awb
+Packagehint=platforms
+
+[Airblue Special FIFOs]
+File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
+Packagehint=ofdm
+
+[Airblue common library]
+File=modules/airblue/lib/Common/airblue_common.awb
+Packagehint=ofdm
+
+[Soft Connections Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
+Packagehint=platforms
+
+[Airblue Convolutional Encoder]
+File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
+Packagehint=ofdm
+
+[WiFi Phy Only Loopback]
+File=modules/airblue/PhyOnly_Loopback/WiFi/airblue_wifi_phyonly_loopback.awb
+Packagehint=ofdm
+
+[HW/SW Hybrid Project Foundation/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
