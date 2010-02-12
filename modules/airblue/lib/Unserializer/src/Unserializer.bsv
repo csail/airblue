@@ -25,16 +25,22 @@
 //----------------------------------------------------------------------//
 
 import Complex::*;
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import FIFOF::*;
 import FixedPoint::*;
-import FPComplex::*;
 import GetPut::*;
-import Interfaces::*;
-import StreamFIFO::*;
 import Vector::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import StreamFIFO::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_special_fifos.bsh"
 
 //`define debug_mode True // uncomment this line for displaying text
 

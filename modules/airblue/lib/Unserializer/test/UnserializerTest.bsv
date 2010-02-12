@@ -24,19 +24,27 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import DataTypes::*;
-import Interfaces::*;
-import Synchronizer::*;
-import FixedPoint::*;
 import Complex::*;
-import Preambles::*;
-import SynchronizerLibrary::*;
-import Vector::*;
-import RegFile::*;
-import FPComplex::*;
+import FixedPoint::*;
 import GetPut::*;
-import Controls::*;
-import Unserializer::*;
+import RegFile::*;
+import Vector::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Synchronizer::*;
+// import Preambles::*;
+// import SynchronizerLibrary::*;
+// import FPComplex::*;
+// import Controls::*;
+// import Unserializer::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_synchronizer.bsh"
+`include "asim/provides/airblue_unserializer.bsh"
+`include "asim/provides/airblue_parameters.bsh"
 
 (* synthesize *)
 module mkUnserializerTest(Empty);
