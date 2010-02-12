@@ -1,0 +1,18 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name WiFi Phy Transceiver
+%desc WiFi Phy Transceiver
+%provides airblue_phy
+
+%requires airblue_transmitter
+%requires airblue_receiver
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC WiFiTransceiver.bsv
+
+%AWB_END
