@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name Airblue Puncturer 
-%desc Airblue Puncturer
-%provides airblue_puncturer
+%name Airblue Depuncturer 
+%desc Airblue Depuncturer
+%provides airblue_depuncturer
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Puncturer.bsv
+%sources -t BSV -v PUBLIC Depuncturer.bsv
  
 %AWB_END

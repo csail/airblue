@@ -11,7 +11,7 @@
 %requires airblue_common
 %requires airblue_types
 %requires airblue_puncturer
-%requires airblue_special_fifo
+%requires airblue_special_fifos
 
 %attributes airblue
 
