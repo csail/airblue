@@ -3,12 +3,14 @@ import LFSR::*;
 import FIFO::*;
 import StmtFSM::*;
 
-import Register::*;
+// import Register::*;
 
-import MACPhyParameters::*;
-import TXController::*;
-import RXController::*;
-import ProtocolParameters::*;
+// import MACPhyParameters::*;
+// import ProtocolParameters::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/register_library.bsh"
 
 
 interface PacketGen;

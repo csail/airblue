@@ -3,10 +3,15 @@ import LFSR::*;
 import FIFO::*;
 import StmtFSM::*;
 
-import Register::*;
+// import Register::*;
 
-import ProtocolParameters::*;
-import MACDataTypes::*;
+// import ProtocolParameters::*;
+// import MACDataTypes::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/register_library.bsh"
+`include "asim/provides/airblue_mac.bsh"
 
 interface MACPacketGen;
   // These functions reveal stats about the generator
