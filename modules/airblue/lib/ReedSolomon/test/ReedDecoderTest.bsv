@@ -24,13 +24,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
 import GetPut::*;
-import Interfaces::*;
 import Vector::*;
-import ReedEncoder::*;
-import ReedDecoder::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import ReedEncoder::*;
+// import ReedDecoder::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_reed_encoder.bsh"
+`include "asim/provides/airblue_reed_decoder.bsh"
 
 // Global Parameters:
 typedef enum {
@@ -101,9 +107,11 @@ module mkReedDecoderInstance(ReedDecoder#(TXGlobalCtrl,8,8));
    return reedDecoder;
 endmodule
 
-(* synthesize *)
-module mkReedDecoderTest (Empty);
-   
+// (* synthesize *)
+// module mkReedDecoderTest (Empty);
+
+
+module mkHWOnlyApplication (Empty);   
    let reedEncoder <- mkReedEncoderInstance;
    let reedDecoder <- mkReedDecoderInstance;
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,

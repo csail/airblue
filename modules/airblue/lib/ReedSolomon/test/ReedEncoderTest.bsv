@@ -24,13 +24,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
-import FPComplex::*;
 import GetPut::*;
-import Interfaces::*;
 import Vector::*;
-import ReedEncoder::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import ReedEncoder::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_reed_encoder.bsh"
 
 typedef enum {R0, R1, R2, R3, R4, R5, R6} Rate deriving(Eq, Bits);
 
@@ -70,8 +76,10 @@ function Rate nextRate(Rate rate);
    return res;
 endfunction
 
-(* synthesize *)
-module mkReedEncoderTest(Empty);
+// (* synthesize *)
+// module mkReedEncoderTest(Empty);
+   
+module mkHWOnlyApplication (Empty);
    
    // state elements
    ReedEncoder#(GlobalCtrl,32,32) reedEncoder;

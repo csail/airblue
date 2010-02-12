@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Reed-Solomon Decoder
+%desc Airblue Reed-Solomon Decoder
+%provides airblue_reed_decoder
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC ReedDecoder.bsv
+ 
+%AWB_END

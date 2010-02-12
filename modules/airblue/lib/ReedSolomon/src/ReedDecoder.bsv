@@ -24,12 +24,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
 import FIFO::*;
 import Vector::*;
 import GetPut::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
 
 module mkReedDecoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    (ReedDecoder#(ctrl_t,sz,sz))
