@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name Airblue Interleaver
-%desc Airblue Interleaver
-%provides airblue_interleaver
+%name Airblue Deinterleaver
+%desc Airblue Deinterleaver   
+%provides airblue_deinterleaver
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Interleaver.bsv
+%sources -t BSV -v PUBLIC Deinterleaver.bsv
 
 %AWB_END
