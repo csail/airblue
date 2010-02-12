@@ -29,7 +29,7 @@
 
 // import project libraries
 // viterbi not compatible with soft phy hints
-import VParams::*;
+//import VParams::*;
 
 //////////////////////////////////////////////////////////
 // begin of IViterbi interface definitions

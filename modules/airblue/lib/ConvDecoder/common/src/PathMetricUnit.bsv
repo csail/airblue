@@ -34,11 +34,15 @@ import Vector::*;
 import FShow::*;
 
 // import project libraries
-import EHRReg::*;
-import LibraryFunctions::*;
-import ProtocolParameters::*;
-import ViterbiParameters::*;
-import VParams::*;
+// import EHRReg::*;
+// import LibraryFunctions::*;
+// import ProtocolParameters::*;
+// import ViterbiParameters::*;
+// import VParams::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_parameters.bsh"
 
 //`define isDebug True // uncomment this line to display error
 

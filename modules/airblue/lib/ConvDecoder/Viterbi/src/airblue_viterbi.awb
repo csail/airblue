@@ -12,6 +12,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Viterbi.bsv VParams.bsv TracebackUnit.bsv Macros.bsv       
+%sources -t BSV -v PUBLIC Viterbi.bsv TracebackUnit.bsv Macros.bsv       
 
 %AWB_END

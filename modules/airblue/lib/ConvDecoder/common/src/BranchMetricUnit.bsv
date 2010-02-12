@@ -33,9 +33,12 @@ import GetPut::*;
 import Vector::*;
 
 // import project libraries
-import ProtocolParameters::*;
-import ViterbiParameters::*;
-import VParams::*;
+// import ProtocolParameters::*;
+// import ViterbiParameters::*;
+// import VParams::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
 
 //`define isDebug True // uncomment this line to display error
 
