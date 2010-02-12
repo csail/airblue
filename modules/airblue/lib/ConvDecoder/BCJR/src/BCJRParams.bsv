@@ -1,12 +1,18 @@
 import Vector::*;
 import FShow::*;
 
-import ReversalBuffer::*;
+// import ReversalBuffer::*;
 
-import LibraryFunctions::*;
+// import LibraryFunctions::*;
 
-import ProtocolParameters::*;
-import VParams::*;
+// import ProtocolParameters::*;
+// import VParams::*;
+
+// Local includes
+`include "asim/provides/reversal_buffer.bsh"
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_convolutional_decoder_common.bsh"
 
 // This file contains some parameters for configuring the BCJR encoder.
 

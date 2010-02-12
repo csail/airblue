@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue BCJR
+%desc Convolutional Decoder implemented using BCJR algorithm (support Soft-Phy-Hints too)   
+%provides airblue_convolutional_decoder
+
+%requires airblue_convolutional_decoder_common
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnit.bsv Macros.bsv
+
+%AWB_END

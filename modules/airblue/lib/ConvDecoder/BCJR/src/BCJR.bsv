@@ -6,23 +6,26 @@ import Vector::*;
 import FShow::*;
 import Probe::*;
 
-import ReversalBuffer::*;
-import Connectable::*;
+// import ReversalBuffer::*;
 
-import Interfaces::*;
-import DataTypes::*;
-import Viterbi::*;
-import BCJRParams::*;
-import IViterbi::*;
-import BranchMetricUnit::*;
-import PathMetricUnit::*;
-import DecisionUnit::*;
-import ProtocolParameters::*;
-import VParams::*;
+// import Interfaces::*;
+// import DataTypes::*;
+// import Viterbi::*;
+// import BCJRParams::*;
+// import IViterbi::*;
+// import BranchMetricUnit::*;
+// import PathMetricUnit::*;
+// import DecisionUnit::*;
+// import ProtocolParameters::*;
+// import VParams::*;
 
 `include "../../../WiFiFPGA/Macros.bsv"
 
-
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_convolutional_decoder_common.bsh"
+`include "asim/provides/reversal_buffer.bsh"
 
 /////////////////////////////////////////////////////////
 // Begin of BCJR Module 

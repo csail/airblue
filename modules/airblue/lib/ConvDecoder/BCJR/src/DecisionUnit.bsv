@@ -34,11 +34,15 @@ import Vector::*;
 import FShow::*;
 
 // import project libraries
-import ProtocolParameters::*;
-import ViterbiParameters::*;
-import VParams::*;
+// import ProtocolParameters::*;
+// import ViterbiParameters::*;
+// import VParams::*;
 
-`include "../../../WiFiFPGA/Macros.bsv"
+// `include "../../../WiFiFPGA/Macros.bsv"
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_convolutional_decoder.bsh"
 
 //`define isDebug True // uncomment this line to display error
 
