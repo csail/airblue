@@ -24,13 +24,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import DataTypes::*;
-import Interfaces::*;
-import Controls::*;
 import FIFO::*;
 import GetPut::*;
-import LibraryFunctions::*;
 import Vector::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Controls::*;
+// import LibraryFunctions::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 function a choose(Bool b, a x, a y);
    return b ? x : y;

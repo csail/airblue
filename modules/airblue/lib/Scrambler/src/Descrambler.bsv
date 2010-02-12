@@ -24,13 +24,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
-import Interfaces::*;
-import LibraryFunctions::*;
 import GetPut::*;
-import Scrambler::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import LibraryFunctions::*;
+// import Scrambler::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_scrambler.bsh"
 
 module mkDescrambler#(function ScramblerCtrl#(n,shifter_sz) 
 			 mapCtrl(ctrl_t ctrl),

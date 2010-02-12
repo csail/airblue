@@ -24,13 +24,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
-import FPComplex::*;
 import GetPut::*;
-import Interfaces::*;
 import Vector::*;
-import Scrambler::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import Scrambler::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_scrambler.bsh"
 
 function t idFunc(t in);
    return in;
