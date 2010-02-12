@@ -6,10 +6,14 @@ import Vector::*;
 import GetPut::*;
 import ClientServer::*; 
 
-import InverseSqRoot::*;
-import InverseSqRootParams::*;
+// import InverseSqRoot::*;
+// import InverseSqRootParams::*;
 
-import ProtocolParameters::*;
+// import ProtocolParameters::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_inverse_sq_root.bsh"
 
 (* synthesize *)
 module mkInverseSqRootTest();

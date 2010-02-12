@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Inverse Square Root
+%desc Inverse Square Root implementation based on Newton Raphson
+%provides airblue_inverse_sq_root
+
+%requires airblue_magnitude_estimator
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC  InverseSqRootParams.bsv InverseSqRoot.bsv
+
+%AWB_END

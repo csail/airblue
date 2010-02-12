@@ -1,6 +1,9 @@
 import FixedPoint::*;
-import ProtocolParameters::*;
 
+//import ProtocolParameters::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
 
 // Need at least half the floating point precision
 // This is needed to scale up large valuse. 

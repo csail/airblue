@@ -5,10 +5,13 @@ import ClientServer::*;
 import Vector::*;
 import Real::*;
 
-import MagnitudeEstimator::*;
-import ProtocolParameters::*;
+// import MagnitudeEstimator::*;
+// import ProtocolParameters::*;
+// import InverseSqRootParams::*;
 
-import InverseSqRootParams::*;
+// Local includes
+`include "asim/provides/airblue_magnitude_estimator.bsh"
+`include "asim/provides/airblue_parameters.bsh"
 
 
 typedef Server#(FixedPoint#(i_prec,f_prec),FixedPoint#(i_prec,f_prec)) InverseSqRoot#(numeric type i_prec, numeric type f_prec);
