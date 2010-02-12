@@ -10,6 +10,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC DataTypes.bsv Controls.bsv Interfaces.bsv Macros.bsv
+%sources -t BSV -v PUBLIC DataTypes.bsv Controls.bsv Interfaces.bsv Macros.bsv MACDataTypes.bsv
 
 %AWB_END

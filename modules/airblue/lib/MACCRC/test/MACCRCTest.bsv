@@ -1,20 +1,26 @@
 import FIFO::*;
 import FIFOF::*;
-import DataTypes::*;
 import GetPut::*;
 import StmtFSM::*;
-import MACCRC::*;
 import LFSR::*;
 import Connectable::*;
 
-import MACDataTypes::*;
-import ProtocolParameters::*;
-import TXController::*;
-import RXController::*;
+// import MACCRC::*;
+// import DataTypes::*;
+// import MACDataTypes::*;
+// import ProtocolParameters::*;
+// import MACPhyParameters::*;
 
-(* synthesize *) 
-module mkMACCRCTest(Empty);
+// Local include
+`include "asim/provides/airblue_mac_crc.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_parameters.bsh"
+
+// (* synthesize *) 
+// module mkMACCRCTest(Empty);
    
+module mkHWOnlyApplication (Empty);   
+
    MACCRC maccrc <- mkMACCRC;
    FIFO#(PhyData) turnFIFO <- mkSizedFIFO(4096);
    FIFO#(PhyData) expectedFIFO <- mkSizedFIFO(4096);

@@ -2,15 +2,18 @@ import FIFO::*;
 import GetPut::*;
 import StmtFSM::*;
 import Vector::*;
-import CRC::*;
 
-import CommitFIFO::*;
+// import CRC::*;
+// import CommitFIFO::*;
+// import MACDataTypes::*;
+// import ProtocolParameters::*;
+// import MACPhyParameters::*;
 
-import MACDataTypes::*;
-import ProtocolParameters::*;
-import TXController::*;
-import RXController::*;
-import MACPhyParameters::*;
+// Local include
+`include "asim/provides/crc.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/commit_fifo.bsh"
 
 interface MACCRC;
    // CRC <-> Phy

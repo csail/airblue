@@ -13,6 +13,10 @@
 %requires airblue_shift_regs
 %requires debug_utils
 %requires avalon
+%requires register_library
+%requires c_bus_utils
+%requires stream_capture_fifo
+%requires commit_fifo
 
 %attributes airblue
 
