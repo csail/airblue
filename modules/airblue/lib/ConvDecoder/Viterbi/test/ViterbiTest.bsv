@@ -24,19 +24,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import ConfigReg::*;
-import DataTypes::*;
 import GetPut::*;
-import Interfaces::*;
-import Depuncturer::*;
 import Vector::*;
-import Mapper::*;
-import Demapper::*;
-import Puncturer::*;
-import Viterbi::*;
-import ConvEncoder::*;
-import ConvolutionalDecoderTest::*;
+
+// import Controls::*;
+// import ConfigReg::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Depuncturer::*;
+// import Mapper::*;
+// import Demapper::*;
+// import Puncturer::*;
+// import Viterbi::*;
+// import ConvEncoder::*;
+// import ConvolutionalDecoderTest::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_convolutional_decoder.bsh"
+`include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
 
 module mkViterbiInstance(Viterbi#(TXGlobalCtrl,24,12));
@@ -48,8 +54,10 @@ endmodule
 
 // testing wifi setting
 //`define isDebug True // uncomment this line to display error
-(* synthesize *)
-module mkViterbiTest (Empty);
+// (* synthesize *)
+// module mkViterbiTest (Empty);
+   
+module mkHWOnlyApplication (Empty);
    let viterbi <- mkViterbiInstance;
    let viterbiTest <- mkConvolutionalDecoderTest(viterbi);
 endmodule

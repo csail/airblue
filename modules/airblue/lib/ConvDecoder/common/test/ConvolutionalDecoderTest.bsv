@@ -24,21 +24,32 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
 import ConfigReg::*;
-import DataTypes::*;
 import GetPut::*;
-import Interfaces::*;
-import Depuncturer::*;
 import Vector::*;
-import Mapper::*;
-import Demapper::*;
-import Puncturer::*;
-import Viterbi::*;
-import ConvEncoder::*;
-import FFTIFFT::*;
-import FPComplex::*;
 import Complex::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import Depuncturer::*;
+// import Mapper::*;
+// import Demapper::*;
+// import Puncturer::*;
+// //import Viterbi::*;
+// import ConvEncoder::*;
+// import FFTIFFT::*;
+// import FPComplex::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_fft.bsh"
+`include "asim/provides/airblue_convolutional_encoder.bsh"
+`include "asim/provides/airblue_mapper.bsh"
+`include "asim/provides/airblue_demapper.bsh"
+`include "asim/provides/airblue_puncturer.bsh"
+`include "asim/provides/airblue_depuncturer.bsh"
 
 // testing wifi setting
 `define isDebug True // uncomment this line to display error

@@ -17,6 +17,7 @@
 %requires c_bus_utils
 %requires stream_capture_fifo
 %requires commit_fifo
+%requires reversal_buffer
 
 %attributes airblue
 

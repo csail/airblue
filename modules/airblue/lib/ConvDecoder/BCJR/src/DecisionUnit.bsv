@@ -42,7 +42,7 @@ import FShow::*;
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_convolutional_decoder.bsh"
+`include "asim/provides/airblue_convolutional_decoder_common.bsh"
 
 //`define isDebug True // uncomment this line to display error
 

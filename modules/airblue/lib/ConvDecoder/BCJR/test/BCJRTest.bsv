@@ -24,19 +24,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import ConfigReg::*;
-import DataTypes::*;
 import GetPut::*;
-import Interfaces::*;
-import Depuncturer::*;
 import Vector::*;
-import Mapper::*;
-import Demapper::*;
-import Puncturer::*;
-import BCJR::*;
-import ConvEncoder::*;
-import ConvolutionalDecoderTest::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import BCJR::*;
+// import ConvolutionalDecoderTest::*;
+
+// Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_convolutional_decoder.bsh"
+`include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
 // testing wifi setting
 //`define isDebug True // uncomment this line to display error
@@ -48,8 +48,10 @@ module mkBCJRInstance(Viterbi#(TXGlobalCtrl,24,12));
    return bcjr;
 endmodule
 
-(* synthesize *)
-module mkBCJRTest (Empty);
+// (* synthesize *)
+// module mkBCJRTest (Empty);
+   
+module mkHWOnlyApplication (Empty);
    let bcjr <- mkBCJRInstance;
    let bcjrTest <- mkConvolutionalDecoderTest(bcjr);
 endmodule
