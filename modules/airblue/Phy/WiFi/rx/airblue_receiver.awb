@@ -10,7 +10,7 @@
 
 %requires airblue_synchronizer
 %requires airblue_unserializer
-%requires airblue_channel_esimator
+%requires airblue_channel_estimator
 %requires airblue_demapper
 %requires airblue_deinterleaver
 %requires airblue_depuncturer

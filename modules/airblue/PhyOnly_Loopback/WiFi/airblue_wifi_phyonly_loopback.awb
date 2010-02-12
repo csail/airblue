@@ -6,24 +6,20 @@
 
 %name WiFi Phy Only Loopback
 %desc The top level of the WiFi Phy only loopback system that connects a pair of TX and RX together   
-%provides connected_application
+%provides hw_only_application
 
 %requires airblue_shared
 %requires airblue_types
 %requires airblue_parameters
-%requires airblue_convolutional_encoder
-%requires airblue_channel_estimator
-%requires airblue_cyclic_prefix_insert
 %requires airblue_fft
-%requires airblue_interleaver
-%requires airblue_deinterleaver
-%requires airblue_mapper
-%requires airblue_demapper
-%requires airblue_puncturer
-%requires airblue_depuncturer
-%requires airblue_pilot_insert
-%requires airblue_scrambler
-%requires airblue_descrambler
+%requires airblue_mac_crc
+%requires airblue_phy_packet_gen
+%requires airblue_mac_packet_gen
+%requires airblue_transmitter
+%requires airblue_receiver
+%requires airblue_transceiver
+%requires airblue_device
+
 
 %attributes airblue
 

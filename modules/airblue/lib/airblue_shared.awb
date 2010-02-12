@@ -18,6 +18,11 @@
 %requires stream_capture_fifo
 %requires commit_fifo
 %requires reversal_buffer
+%requires spi
+%requires fifo_utils
+%requires librl_bsv_storage
+%requires stat_min
+%requires stat_averager
 
 %attributes airblue
 
