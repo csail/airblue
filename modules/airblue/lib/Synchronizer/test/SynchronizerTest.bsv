@@ -24,19 +24,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import DataTypes::*;
-import Interfaces::*;
-import Synchronizer::*;
-import FixedPoint::*;
-import Complex::*;
-//import Preambles::*;
-import SynchronizerLibrary::*;
-import Vector::*;
-import RegFile::*;
-import FPComplex::*;
-import GetPut::*;
-import Controls::*;
 import CBus::*;
+import Complex::*;
+import FixedPoint::*;
+import GetPut::*;
+import RegFile::*;
+import Vector::*;
+
+// import DataTypes::*;
+// import Interfaces::*;
+// import Synchronizer::*;
+// //import Preambles::*;
+// import SynchronizerLibrary::*;
+// import FPComplex::*;
+// import Controls::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/synchronizer.bsh"
+
 
 (* synthesize *)
 module [Module] mkStatefulSynchronizerInstance(StatefulSynchronizer#(2,14));
@@ -45,9 +52,10 @@ module [Module] mkStatefulSynchronizerInstance(StatefulSynchronizer#(2,14));
    return statefulSynchronizer;
 endmodule
 
-(* synthesize *)
-module mkSynchronizerTest(Empty);
-
+// (* synthesize *)
+// module mkSynchronizerTest(Empty);
+   
+module mkHWOnlyApplication (Empty);   
    // states
    StatefulSynchronizer#(2,14) statefulSynchronizer <- mkStatefulSynchronizerInstance();
    Synchronizer#(2,14) synchronizer = statefulSynchronizer.synchronizer;

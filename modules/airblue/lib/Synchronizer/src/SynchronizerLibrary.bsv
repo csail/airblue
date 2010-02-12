@@ -25,17 +25,24 @@
 //----------------------------------------------------------------------//
 
 import Complex::*;
-import ComplexLibrary::*;
-import CORDIC::*;
-import DataTypes::*;
 import FIFOF::*;
 import FixedPoint::*;
-import FixedPointLibrary::*;
-import FPComplex::*;
-import SParams::*;
-import ShiftRegs::*;
 import Vector::*;
-import ProtocolParameters::*;
+
+// import ComplexLibrary::*;
+// import CORDIC::*;
+// import DataTypes::*;
+// import FixedPointLibrary::*;
+// import FPComplex::*;
+// import SParams::*;
+// import ShiftRegs::*;
+// import ProtocolParameters::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_shift_regs.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 // adjust DC offset by doing a high-pass filter
 function FPComplex#(ai,af)highPassFilter(FPComplex#(ai,af) alpha,

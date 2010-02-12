@@ -26,9 +26,14 @@
 
 import Complex::*;
 import FixedPoint::*;
-import FPComplex::*;
 import Vector::*;
-import ProtocolParameters::*;
+
+// import FPComplex::*;
+// import ProtocolParameters::*;
+
+// Local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_common.bsh"
 
 //  ////////////////////////////////////////
 //  // Synchronizer parameters (changable)
