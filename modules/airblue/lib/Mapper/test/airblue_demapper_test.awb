@@ -8,6 +8,11 @@
 %desc Airblue Demapper Test
 %provides hw_only_application
 
+%requires airblue_common
+%requires airblue_types
+%requires airblue_mapper
+%requires airblue_demapper
+
 %attributes airblue
 
 %sources -t BSV -v PUBLIC DemapperTest.bsv

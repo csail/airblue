@@ -4,12 +4,13 @@
 
 %AWB_START
 
-%name Airblue Mapper
-%desc Airblue Mapper
-%provides airblue_mapper
+%name Airblue Demapper
+%desc Airblue Demapper
+%provides airblue_demapper
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Mapper.bsv 
+%sources -t BSV -v PUBLIC Demapper.bsv 
 
 %AWB_END
+

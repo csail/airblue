@@ -40,6 +40,7 @@ import Vector::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_mapper.bsh"
+`include "asim/provides/airblue_demapper.bsh"
 
 function t idFunc (t in);
    return in;

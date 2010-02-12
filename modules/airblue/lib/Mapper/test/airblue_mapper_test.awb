@@ -8,6 +8,10 @@
 %desc Airblue Mapper Test
 %provides hw_only_application
 
+%requires airblue_common
+%requires airblue_types
+%requires airblue_mapper
+
 %attributes airblue
 
 %sources -t BSV -v PUBLIC MapperTest.bsv

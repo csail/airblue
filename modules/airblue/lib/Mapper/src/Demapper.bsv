@@ -39,7 +39,6 @@ import Vector::*;
 // Local includes
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_mapper.bsh"
 
 //`define isDebug True // uncomment this line to display error
 
