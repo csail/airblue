@@ -24,14 +24,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import GetPut::*;
-import Interfaces::*;
-import StreamFIFO::*;
 import Vector::*;
-import VectorLibrary::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import StreamFIFO::*;
+// import VectorLibrary::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_special_fifos.bsh"
 
 typedef Vector#(r_sz,DepunctData#(c_sz))
    Depunct2DVec#(numeric type r_sz,

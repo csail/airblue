@@ -1,0 +1,20 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Puncturer Test 
+%desc Airblue Puncturer Test
+%provides hw_only_application
+
+%requires airblue_common
+%requires airblue_types
+%requires airblue_puncturer
+%requires airblue_special_fifo
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC PuncturerTest.bsv
+ 
+%AWB_END
