@@ -8,15 +8,22 @@
 %desc The top level of the WiFi Phy only loopback system that connects a pair of TX and RX together   
 %provides connected_application
 
-%requires airblue_common
+%requires airblue_shared
 %requires airblue_types
 %requires airblue_parameters
-%requires airblue_special_fifos
 %requires airblue_convolutional_encoder
 %requires airblue_channel_estimator
 %requires airblue_cyclic_prefix_insert
 %requires airblue_fft
 %requires airblue_interleaver
+%requires airblue_deinterleaver
+%requires airblue_mapper
+%requires airblue_demapper
+%requires airblue_puncturer
+%requires airblue_depuncturer
+%requires airblue_pilot_insert
+%requires airblue_scrambler
+%requires airblue_descrambler
 
 %attributes airblue
 

@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Shared Libraries
+%desc Airblue Shared Libraries   
+%provides airblue_shared
+
+%requires airblue_common
+%requires airblue_special_fifos
+%requires airblue_shift_regs
+%requires debug_utils
+%requires avalon
+
+%attributes airblue
+
+%AWB_END
