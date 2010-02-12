@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Viterbi 
+%desc Convolutional Decoder implemented using the Viterbi algorithm
+%provides airblue_convolutional_decoder
+
+%requires airblue_convolutional_decoder_common
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC Viterbi.bsv VParams.bsv TracebackUnit.bsv Macros.bsv       
+
+%AWB_END
