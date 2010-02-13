@@ -8,6 +8,7 @@
 %desc WiFi Phy Transceiver
 %provides airblue_phy
 
+%requires airblue_fft
 %requires airblue_transmitter
 %requires airblue_receiver
 

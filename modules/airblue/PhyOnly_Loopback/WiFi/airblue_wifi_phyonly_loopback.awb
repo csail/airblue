@@ -11,16 +11,13 @@
 %requires airblue_shared
 %requires airblue_types
 %requires airblue_parameters
-%requires airblue_fft
-%requires airblue_mac_crc
+%requires airblue_phy
 %requires airblue_phy_packet_gen
-%requires airblue_mac_packet_gen
-%requires airblue_transmitter
-%requires airblue_receiver
-%requires airblue_transceiver
 %requires airblue_device
 
 
 %attributes airblue
+
+%sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAPacketGenWiresTest.bsv
 
 %AWB_END
