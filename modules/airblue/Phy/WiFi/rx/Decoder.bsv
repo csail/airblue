@@ -46,7 +46,7 @@ import Connectable::*;
 `include "asim/provides/fifo_utils.bsh"
 
 // make a decoder with mkViterbi or mkBCJR?
-`define mkViterbi mkBCJR(viterbiMapCtrl)
+//`define mkViterbi mkBCJR(viterbiMapCtrl)
 
 (* synthesize *)
 module mkDepuncturerInstance
@@ -79,7 +79,8 @@ endmodule
 module mkViterbiInstance(Viterbi#(RXGlobalCtrl,ViterbiInDataSz,
 				  ViterbiOutDataSz));
    Viterbi#(RXGlobalCtrl,ViterbiInDataSz,ViterbiOutDataSz) viterbi;
-   viterbi <- `mkViterbi;
+//   viterbi <- `mkViterbi;
+   viterbi <- mkConvDecoder;
    return viterbi;
 endmodule
 

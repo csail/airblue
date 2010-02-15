@@ -47,7 +47,7 @@ import Vector::*;
 
 module mkViterbiInstance(Viterbi#(TXGlobalCtrl,24,12));
    Viterbi#(TXGlobalCtrl,24,12) viterbi;
-   viterbi <- mkViterbi(viterbiMapCtrl);
+   viterbi <- mkConvDecoder(viterbiMapCtrl);
    return viterbi;
 endmodule
 

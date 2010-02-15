@@ -354,7 +354,8 @@ endmodule
 
 // for now, we handle only one forward step.
 // This wrapper is for the deserializing of the BCJR
-module mkBCJR#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
+//module mkBCJR#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
+module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
    provisos(Log#(n2,ln2),
 	    Log#(n,ln),
 	    Bits#(ctrl_t, ctrl_sz));

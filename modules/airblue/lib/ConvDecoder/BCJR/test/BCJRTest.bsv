@@ -44,7 +44,7 @@ import Vector::*;
 
 module mkBCJRInstance(Viterbi#(TXGlobalCtrl,24,12));
    Viterbi#(TXGlobalCtrl,24,12) bcjr;
-   bcjr <- mkBCJR(viterbiMapCtrl);
+   bcjr <- mkConvDecoder(viterbiMapCtrl);
    return bcjr;
 endmodule
 

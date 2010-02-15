@@ -83,8 +83,8 @@ module mkIViterbiTBPath (IViterbi);
    
 endmodule
 
-// module mkViterbi (Viterbi#(ctrl_t,n2,n))
-module mkViterbi#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
+//module mkViterbi#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
+module mkConvDecoder#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t,n2,n))
    provisos(Log#(n2,ln2),
 	    Log#(n,ln),
 	    Bits#(ctrl_t, ctrl_sz));
