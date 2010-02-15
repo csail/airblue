@@ -1,0 +1,23 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Convolutional Decoder Test template 
+%desc Test template used for both viterbi and BCJR   
+%provides airblue_convolutional_decoder_test_common
+
+%requires airblue_fft
+%requires airblue_convolutional_encoder
+%requires airblue_mapper
+%requires airblue_demapper
+%requires airblue_puncturer
+%requires airbule_depuncturer
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC ConvolutionalDecoderTest.bsv
+%sources -t BDPI_C -v PUBLIC addNoise.c
+
+%AWB_END
