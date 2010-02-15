@@ -80,7 +80,7 @@ module mkViterbiInstance(Viterbi#(RXGlobalCtrl,ViterbiInDataSz,
 				  ViterbiOutDataSz));
    Viterbi#(RXGlobalCtrl,ViterbiInDataSz,ViterbiOutDataSz) viterbi;
 //   viterbi <- `mkViterbi;
-   viterbi <- mkConvDecoder;
+   viterbi <- mkConvDecoder(viterbiMapCtrl);
    return viterbi;
 endmodule
 
