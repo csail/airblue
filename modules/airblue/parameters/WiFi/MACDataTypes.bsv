@@ -1,10 +1,7 @@
 import GetPut::*;
 
-import ProtocolParameters::*;
-import RXController::*;
-import TXController::*;
-import MACPhyParameters::*;
-
+// import ProtocolParameters::*;
+// import MACPhyParameters::*;
 
 interface MAC;
    interface Put#(Bit#(48))           mac_sa;  

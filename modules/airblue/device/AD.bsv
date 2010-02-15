@@ -34,9 +34,9 @@ import FixedPoint::*;
 `include "asim/provides/airblue_synchronizer.bsh" // try to get rid of, it only need to know some type exported by the synchronizer for now
 `include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/fifo_utils.bsh"
-`include "asim/provides/librl_bsv_storage.bsh"
+//`include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/stat_min.bsh"
-`include "asim/provides/stat_avaerager.bsh"
+`include "asim/provides/stat_averager.bsh"
 
 
 Bool adDebug = True;
@@ -90,7 +90,8 @@ endinterface
 
 interface ADC;
   interface Get#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) dataIn;
-  interface Put#(Synchronizer::ControlType) synchronizerStateUpdate;
+//  interface Put#(Synchronizer::ControlType) synchronizerStateUpdate;
+  interface Put#(ControlType) synchronizerStateUpdate;
   interface ADCWires adcWires;
   method ActionValue#(FPComplex#(ADCIPart,ADCFPart)) agcSampleBypass();
   method Action triggerCapture();
@@ -124,11 +125,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
   Clock clock <- exposeCurrentClock;
   SyncFIFOIfc#(DACMesg#(RXFPIPrec,RXFPFPrec)) infifo <- mkSyncFIFOFromCC(16,basebandClock);
   //SyncFIFOIfc#(DACMesg#(RXFPIPrec,RXFPFPrec)) infifoStream <- mkSyncFIFOFromCC(16,basebandClock);
-  FIFO#(FPComplex#(RXFPIPrec,RXFPFPrec)) bramfifo <- mkSizedFIFO_BRAM(2048,clocked_by basebandClock, reset_by basebandReset); // sounds reasonable.
+  FIFO#(FPComplex#(RXFPIPrec,RXFPFPrec)) bramfifo <- mkSizedFIFO(2048,clocked_by basebandClock, reset_by basebandReset); // sounds reasonable.
   FIFOF#(DACMesg#(RXFPIPrec,RXFPFPrec)) streamfifo <- mkStreamCaptureFIFOF(32768,clocked_by basebandClock, reset_by basebandReset);
   TriggeredStreamCaptureFIFOF#(DACMesg#(RXFPIPrec,RXFPFPrec)) triggeredstreamfifo <- mkTriggeredStreamCaptureFIFOF(16384,clocked_by basebandClock, reset_by basebandReset);
   RWire#(DACMesg#(RXFPIPrec,RXFPFPrec)) scaledwire <- mkRWire(clocked_by basebandClock, reset_by basebandReset);
-  RWire#(Synchronizer::ControlType) syncWire <-mkRWire(clocked_by basebandClock, reset_by basebandReset);
+  RWire#(ControlType) syncWire <-mkRWire(clocked_by basebandClock, reset_by basebandReset);
   PulseWire triggerCaptureWire <-mkPulseWire(clocked_by basebandClock, reset_by basebandReset);
   Scaler#(RXFPIPrec,RXFPFPrec) scaler <- mkScaler(valueof(AddrRXScaleFactor),clocked_by basebandClock, reset_by basebandReset);
 
@@ -210,7 +211,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
   endmethod
 
   interface Put synchronizerStateUpdate;
-    method Action put(Synchronizer::ControlType ctrl);
+    method Action put(ControlType ctrl);
       syncWire.wset(ctrl);
     endmethod
   endinterface

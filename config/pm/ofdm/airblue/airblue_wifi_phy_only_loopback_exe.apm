@@ -2,7 +2,7 @@
 [Soft Connections Hybrid Application Environment/Requires]
 platform_services=Platform Services
 soft_connections_lib=Soft Connections Library
-connected_application=WiFi Phy Only Loopback
+connected_application=HW only hybrid application
 
 [Global]
 SaveParameters=0
@@ -23,10 +23,6 @@ Packagehint=hasim
 File=config/pm/hasim/submodels/common/soft-connections-lib.apm
 Packagehint=hasim
 
-[Airblue Interleaver/Deinterleaver]
-File=modules/airblue/lib/Interleaver/src/airblue_interleaver.awb
-Packagehint=ofdm
-
 [Platform Services]
 File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
 Packagehint=hasim
@@ -34,10 +30,6 @@ Packagehint=hasim
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
-
-[Airblue Channel Estimator]
-File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
-Packagehint=ofdm
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
@@ -56,15 +48,12 @@ File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
 
 [WiFi Phy Only Loopback/Requires]
-airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
-airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_types=Airblue types
-airblue_channel_estimator=Airblue Channel Estimator
-airblue_common=Airblue common library
-airblue_interleaver=Airblue Interleaver/Deinterleaver
-airblue_special_fifos=Airblue Special FIFOs
-airblue_fft=Airblue FFT/IFFT
 airblue_parameters=Airblue WiFi parameters
+airblue_shared=Airblue Shared Libraries
+airblue_device=Airblue FPGA device specific modules
+airblue_phy=WiFi Phy Transceiver
+airblue_phy_packet_gen=Airblue Phy Only PacketGen
 
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
@@ -98,3 +87,214 @@ Packagehint=ofdm
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
+
+[Airblue Pilot Insert]
+File=modules/airblue/lib/PilotInsert/src/airblue_pilot_insert.awb
+Packagehint=ofdm
+
+[Airblue Depuncturer]
+File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
+Packagehint=ofdm
+
+[Airblue Mapper]
+File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
+Packagehint=ofdm
+
+[Airblue Demapper]
+File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
+Packagehint=ofdm
+
+[Airblue Puncturer]
+File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
+Packagehint=ofdm
+
+[Airblue Descrambler]
+File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
+Packagehint=ofdm
+
+[Airblue Interleaver]
+File=modules/airblue/lib/Interleaver/src/airblue_interleaver.awb
+Packagehint=ofdm
+
+[Airblue Scrambler]
+File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
+Packagehint=ofdm
+
+[Airblue Deinterleaver]
+File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
+Packagehint=ofdm
+
+[Airblue Shared Libraries]
+File=modules/airblue/lib/airblue_shared.awb
+Packagehint=ofdm
+
+[Debug Utilities]
+File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+Packagehint=bsv-libraries
+
+[Avalon Bus Intefaces]
+File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
+Packagehint=bsv-libraries
+
+[Airblue Shared Libraries/Requires]
+airblue_common=Airblue common library
+avalon=Avalon Bus Intefaces
+airblue_special_fifos=Airblue Special FIFOs
+debug_utils=Debug Utilities
+airblue_shift_regs=Airblue Shifted Registers
+c_bus_utils=CBus Utilities
+stream_capture_fifo=StreamCaptureFIFO
+commit_fifo=CommitFIFO
+reversal_buffer=ReversalBuffer
+spi=SPI
+fifo_utils=FIFO Utility
+stat_min=Min collector
+stat_averager=Averager collector
+client_server_utils=ClientServer Utilities
+register_mapper=Register Mapping Utilities
+vector_utils=Vector Utilities
+
+[Airblue Shifted Registers]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
+Packagehint=ofdm
+
+[StreamCaptureFIFO]
+File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
+Packagehint=bsv-libraries
+
+[RegisterLibrary]
+File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
+Packagehint=bsv-libraries
+
+[CBus Utilities]
+File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
+Packagehint=bsv-libraries
+
+[Airblue Synchronizer]
+File=modules/airblue/lib/Synchronizer/src/airblue_synchronizer.awb
+Packagehint=ofdm
+
+[Airblue Unserializer]
+File=modules/airblue/lib/Unserializer/src/airblue_unserializer.awb
+Packagehint=ofdm
+
+[CommitFIFO]
+File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
+Packagehint=bsv-libraries
+
+[Airblue Convolutional Decoder Common]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[ReversalBuffer]
+File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
+Packagehint=bsv-libraries
+
+[HW only hybrid application]
+File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
+Packagehint=bsv-libraries
+
+[HW only hybrid application/Requires]
+hw_only_application=WiFi Phy Only Loopback
+
+[WiFi Transmitter Pipeline]
+File=modules/airblue/Phy/WiFi/tx/airblue_transmitter.awb
+Packagehint=ofdm
+
+[WiFi Transmitter Pipeline/Requires]
+airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
+airblue_convolutional_encoder=Airblue Convolutional Encoder
+airblue_mapper=Airblue Mapper
+airblue_interleaver=Airblue Interleaver
+airblue_scrambler=Airblue Scrambler
+airblue_puncturer=Airblue Puncturer
+airblue_pilot_insert=Airblue Pilot Insert
+
+[SPI]
+File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
+Packagehint=bsv-libraries
+
+[FIFO Utility]
+File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
+Packagehint=bsv-libraries
+
+[WiFi Receiver Pipeline/Requires]
+airblue_depuncturer=Airblue Depuncturer
+airblue_descrambler=Airblue Descrambler
+airblue_synchronizer=Airblue Synchronizer
+airblue_deinterleaver=Airblue Deinterleaver
+airblue_convolutional_decoder=Airblue BCJR
+airblue_demapper=Airblue Demapper
+airblue_unserializer=Airblue Unserializer
+airblue_channel_estimator=Airblue Channel Estimator
+
+[WiFi Receiver Pipeline]
+File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
+Packagehint=ofdm
+
+[Airblue Magnitude Estimator]
+File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
+Packagehint=ofdm
+
+[Min collector]
+File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
+Packagehint=bsv-libraries
+
+[Airblue Inverse Square Root/Requires]
+airblue_magnitude_estimator=Airblue Magnitude Estimator
+
+[Airblue Inverse Square Root]
+File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
+Packagehint=ofdm
+
+[Airblue FPGA device specific modules]
+File=modules/airblue/device/airblue_device.awb
+Packagehint=ofdm
+
+[Airblue Channel Estimator]
+File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
+Packagehint=ofdm
+
+[Airblue Channel Estimator/Requires]
+airblue_inverse_sq_root=Airblue Inverse Square Root
+
+[Averager collector]
+File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
+Packagehint=bsv-libraries
+
+[WiFi Phy Transceiver]
+File=modules/airblue/Phy/WiFi/airblue_wifi_phy.awb
+Packagehint=ofdm
+
+[WiFi Phy Transceiver/Requires]
+airblue_transmitter=WiFi Transmitter Pipeline
+airblue_receiver=WiFi Receiver Pipeline
+airblue_fft=Airblue FFT/IFFT
+
+[ClientServer Utilities]
+File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
+Packagehint=bsv-libraries
+
+[Register Mapping Utilities/Requires]
+register_library=RegisterLibrary
+
+[Register Mapping Utilities]
+File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
+Packagehint=bsv-libraries
+
+[Airblue Phy Only PacketGen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen.awb
+Packagehint=ofdm
+
+[Vector Utilities]
+File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
+Packagehint=bsv-libraries
+
+
+
+[Airblue BCJR/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Airblue BCJR]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm

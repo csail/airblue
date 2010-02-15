@@ -277,7 +277,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
       outQIFFT.enq(Mesg{control:ctrl,data:result.data});
    endrule
 	       
-   interface Interfaces::IFFT ifft;
+   interface airblue_types::IFFT ifft;
      interface in = fifoToPut(fifofToFifo(inQIFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get();
@@ -289,7 +289,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
      endinterface
    endinterface
 
-   interface Interfaces::FFT fft;
+   interface airblue_types::FFT fft;
      interface in = fifoToPut(fifofToFifo(inQFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get();
@@ -354,7 +354,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
      preference <= (preference == IFFT)?FFT:IFFT;
    endrule
 	       
-   interface Interfaces::IFFT ifft;
+   interface airblue_types::IFFT ifft;
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == IFFT );
@@ -377,7 +377,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
      endinterface
    endinterface
 
-   interface Interfaces::FFT fft;
+   interface airblue_types::FFT fft;
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == FFT);
@@ -400,7 +400,7 @@ endmodule
 
 
 
-module [Module] mkIFFT(Interfaces::IFFT#(ctrl_t,FFTSz,ISz,FSz))
+module [Module] mkIFFT(airblue_types::IFFT#(ctrl_t,FFTSz,ISz,FSz))
    provisos (Bits#(ctrl_t,ctrl_sz));
    
    CtrlFFTIFFT#(ctrl_t,FFTSz,ISz,FSz) ifft <- mkCtrlFFTIFFT;
@@ -435,7 +435,7 @@ module [Module] mkIFFT(Interfaces::IFFT#(ctrl_t,FFTSz,ISz,FSz))
    endinterface
 endmodule
 
-module [Module] mkFFT(Interfaces::FFT#(ctrl_t,FFTSz,ISz,FSz))
+module [Module] mkFFT(airblue_types::FFT#(ctrl_t,FFTSz,ISz,FSz))
    provisos (Bits#(ctrl_t,ctrl_sz));
    
    CtrlFFTIFFT#(ctrl_t,FFTSz,ISz,FSz) fft <- mkCtrlFFTIFFT;
@@ -490,7 +490,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
       outQ.enq(mesg);
    endrule
 
-   interface Interfaces::IFFT ifft;
+   interface airblue_types::IFFT ifft;
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg);
@@ -513,7 +513,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
      endinterface
    endinterface
 
-   interface Interfaces::FFT fft;
+   interface airblue_types::FFT fft;
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg);

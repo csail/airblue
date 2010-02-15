@@ -494,7 +494,9 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                      inMesgQ.deq();
                      if (mesg.control.firstSymbol) // only process if start of packet
                         begin
+                           `ifdef SOFT_PHY_HINTS
                            minSoftPhyHints <= maxBound;
+                           `endif
                            rxState <= RX_HEADER;
                            dropData <= zeroExtend(headerSz) - zeroExtend(vOutSz);
 		           streamQ.enq(vOutSz,append(msgData,replicate(0)));

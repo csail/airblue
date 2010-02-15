@@ -68,7 +68,8 @@ interface WiFiReceiver;
    `ifdef SOFT_PHY_HINTS
    interface Get#(Bit#(8))  outSoftPhyHints;
    `endif    
-   interface Get#(Synchronizer::ControlType) synchronizerStateUpdate;
+//   interface Get#(Synchronizer::ControlType) synchronizerStateUpdate;
+   interface Get#(ControlType) synchronizerStateUpdate;
    interface ReadOnly#(CoarPowType) synchronizerCoarPower;
    interface Get#(RXExternalFeedback) packetFeedback;
    interface Get#(Bit#(0)) abortAck;

@@ -36,7 +36,6 @@ import Complex::*;
 import FixedPoint::*;
 //import FixedPointLibrary::*;
 
-
 typedef Complex#(FixedPoint#(i,f)) FPComplex#(type i, type f);
 
 // for displaying FPComplex

@@ -19,7 +19,7 @@ import Probe::*;
 // import ProtocolParameters::*;
 // import VParams::*;
 
-`include "../../../WiFiFPGA/Macros.bsv"
+//`include "../../../WiFiFPGA/Macros.bsv"
 
 // Local includes
 `include "asim/provides/airblue_types.bsh"

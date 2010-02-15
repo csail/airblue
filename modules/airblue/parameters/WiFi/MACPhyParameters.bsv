@@ -136,8 +136,8 @@ function Feedback#(RXVector,RXVectorDecodeError) decodeHeader(Header header);
    
    RXVector vec;
    
-   function Maybe#(Rate) getRate(Header header);
-      return case (header[3:0])
+   function Maybe#(Rate) getRate(Header header_data);
+      return case (header_data[3:0])
 		4'b1011: tagged Valid R0;
 		4'b1111: tagged Valid R1;
 		4'b1010: tagged Valid R2; 

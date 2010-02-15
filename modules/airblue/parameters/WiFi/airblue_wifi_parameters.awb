@@ -10,6 +10,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC FFTParameters.bsv FPGAParameters.bsv MACPhyParameters.bsv Macros.bsv ProtocolParameters.bsv ViterbiParameters.bsv Preambles.bsv
+%sources -t BSV -v PUBLIC Macros.bsv FFTParameters.bsv FPGAParameters.bsv ProtocolParameters.bsv ViterbiParameters.bsv Preambles.bsv MACPhyParameters.bsv MACDataTypes.bsv
 
 %AWB_END

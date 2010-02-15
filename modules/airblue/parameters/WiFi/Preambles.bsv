@@ -27,10 +27,14 @@
 import List::*;
 import Vector::*;
 import Complex::*;
-import DataTypes::*;
+//import DataTypes::*;
 import RegFile::*;
 import FixedPoint::*;
-import FPComplex::*;
+//import FPComplex::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 // function to generate short training sequence
 function Vector#(128, FPComplex#(2,14)) getShortPreambles();

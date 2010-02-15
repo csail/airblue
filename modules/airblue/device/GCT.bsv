@@ -49,7 +49,7 @@ interface GCT;
   interface Put#(SPIRawBits) spiCommand;
   interface GCTWires gctWires;      
   interface SPIMasterWires#(SPISlaveCount) spiWires;
-  interface Put#(Synchronizer::ControlType) synchronizerStateUpdate;
+  interface Put#(ControlType) synchronizerStateUpdate;
   interface Put#(RXExternalFeedback) packetFeedback;
   interface Put#(TXVector) txStart;
   interface Put#(Bit#(0)) txComplete; // This Bit 0 is ugly.
@@ -118,7 +118,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
 
   /* state for dealing with ghold */
   Reg#(Bit#(20)) gHoldTimeout <- mkReg(0);
-  RWire#(Synchronizer::ControlType) syncWire <-mkRWire;
+  RWire#(ControlType) syncWire <-mkRWire;
   RWire#(RXExternalFeedback) feedbackWire <-mkRWire;
 
   rule tickCounter;
@@ -285,7 +285,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
   // We chould probably only care about this if we are rxing
   // otherwise we should drop this crap
   interface Put synchronizerStateUpdate;
-    method Action put(Synchronizer::ControlType ctrl);
+    method Action put(ControlType ctrl);
       
       syncWire.wset(ctrl);
     endmethod

@@ -380,7 +380,7 @@ endfunction
 
 // FFT/IFFT:
 typedef PilotOutDataSz FFTIFFTSz;
-typedef 4             FFTIFFTNoBfly;
+//typedef 4             FFTIFFTNoBfly;
 
 // CPInsert:
 typedef FFTIFFTSz CPInsertDataSz;

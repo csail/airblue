@@ -30,7 +30,6 @@
 // import Controls::*;
 // import CORDIC::*;
 // import DataTypes::*;
-// import FixedPoint::*;
 // import FPComplex::*;
 // import Interfaces::*;
 // import LibraryFunctions::*;
@@ -47,6 +46,7 @@ import ClientServer::*;
 import Complex::*;
 import ConfigReg::*;
 import FIFO::*;
+import FixedPoint::*;
 import GetPut::*;
 import Vector::*;
 

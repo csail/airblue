@@ -22,7 +22,7 @@ import Vector::*;
 typedef Server#(CoarPowType,Int#(10)) GainAdjuster;
 
 interface AGC; 
-  interface Put#(Synchronizer::ControlType) synchronizerStateUpdate;
+  interface Put#(ControlType) synchronizerStateUpdate;
   interface Put#(RXExternalFeedback) packetFeedback;
   method Action inputPower(CoarPowType power);
   method Bit#(10) outputGain();
@@ -72,7 +72,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
   Reg#(GainState) gainState <- mkCBRegR(addrAGCState,Sweeping);
   Reg#(Bit#(32)) sweepEntries <- mkCBRegR(addrAGCSweepEntries,0);
   RWire#(CoarPowType) powerWire <- mkRWire();
-  RWire#(Synchronizer::ControlType) syncWire <-mkRWire;
+  RWire#(ControlType) syncWire <-mkRWire;
   FIFOF#(RXExternalFeedback) feedbackFIFO <- mkFIFOF;
   FIFOF#(CoarPowType) streamfifo <- mkStreamCaptureFIFOF(512);
   mkCBusGet(valueof(AddrAGCStreamFifoOffset),fifoToGet(fifofToFifo(streamfifo)));
@@ -269,7 +269,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
 
 
   interface Put synchronizerStateUpdate;
-    method Action put(Synchronizer::ControlType ctrl);
+    method Action put(ControlType ctrl);
       syncWire.wset(ctrl);
     endmethod
   endinterface

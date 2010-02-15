@@ -8,9 +8,9 @@
 %desc The top level of the WiFi Phy only loopback system that connects a pair of TX and RX together   
 %provides hw_only_application
 
-%requires airblue_shared
 %requires airblue_types
 %requires airblue_parameters
+%requires airblue_shared
 %requires airblue_phy
 %requires airblue_phy_packet_gen
 %requires airblue_device

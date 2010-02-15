@@ -93,13 +93,13 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
     Server#(AvalonRequest#(AvalonAddressWidth,AvalonDataWidth),Bit#(AvalonDataWidth)) avalonServerRx <- mkAvalonSlaveDriver(receiverFPGA.avalonWires);
 
   rule init(!initialized);
-    avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: RegisterMapper::Write});
+    avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
     initialized <= True;
   endrule
 
 
   rule pushPacketRx (pushReq);
-    avalonServerRx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrPacketsRX)),data:~0,command: RegisterMapper::Read});
+    avalonServerRx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrPacketsRX)),data:~0,command: register_mapper::Read});
     pushReq <= !pushReq;
   endrule
 
@@ -147,7 +147,7 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
 endmodule
 
 (*synthesize*)
-module [Module] mkWiFiFPGAPacketGenWiresTest ();
+module mkWiFiFPGAPacketGenWiresTest ();
   Reset reset <- exposeCurrentReset;
   Clock busClock <- mkAbsoluteClock(1,5);
   Reset busReset <- mkAsyncReset(1,reset,busClock);
@@ -162,6 +162,7 @@ endmodule
                                
 module mkHWOnlyApplication (Empty);
    let test <- mkWiFiFPGAPacketGenWiresTest();
+   return test;
 endmodule                         
                                
 function Reg#(regType) mkRegFromActions(function regType readAction(), function Action writeAction(regType value));

@@ -70,6 +70,7 @@ import Clocks::*;
 `include "asim/provides/spi.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_phy_packet_gen.bsh"
+`include "asim/provides/airblue_phy.bsh"
 
 interface TransceiverASICWires;
   interface GCTWires gctWires;      
@@ -77,6 +78,16 @@ interface TransceiverASICWires;
   interface DACWires dacWires;
   interface PowerCtrlWires powerCtrlWires;
   interface SPIMasterWires#(SPISlaveCount) spiWires;
+  interface OutOfBandWires oobWires;
+endinterface
+
+interface TransceiverFPGA;
+  interface GCTWires gctWires;      
+  interface ADCWires adcWires;
+  interface DACWires dacWires;
+  interface SPIMasterWires#(SPISlaveCount) spiWires;
+  interface PowerCtrlWires powerCtrlWires;
+  interface AvalonSlaveWires#(AvalonAddressWidth,AvalonDataWidth) avalonWires;
   interface OutOfBandWires oobWires;
 endinterface
 
@@ -142,7 +153,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 
    // hook the Synchronizer to feedback points  
    rule synchronizerFeedback;
-     Synchronizer::ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
+     ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
      gct.synchronizerStateUpdate.put(ctrl);
      agc.synchronizerStateUpdate.put(ctrl);
      // update ctrl counts
@@ -254,14 +265,14 @@ module [Module]  mkTransceiverPacketGenFPGAReset#(Clock viterbiClock, Reset vite
    let ifc <- exposeCBusIFC(mkTransceiverPacketGenFPGAMonad(viterbiClock,viterbiReset,rfClock, rfReset));
   
    //Create a mapping...
-   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  RegisterMapper::Read);
+   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  register_mapper::Read);
      let request <- busSlave.busClient.request.get;
      let readVal <- ifc.cbus_ifc.read(request.addr);
      $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
      busSlave.busClient.response.put(readVal);
    endrule
  
-   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  RegisterMapper::Write);
+   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  register_mapper::Write);
      let request <- busSlave.busClient.request.get;
      $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
      ifc.cbus_ifc.write(request.addr,request.data);

@@ -15,6 +15,7 @@
 %requires avalon
 %requires register_mapper
 %requires c_bus_utils
+%requires vector_utils
 %requires stream_capture_fifo
 %requires commit_fifo
 %requires reversal_buffer

@@ -12,6 +12,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnit.bsv Macros.bsv
+%sources -t BSV -v PUBLIC Macros.bsv BCJR.bsv BCJRParams.bsv DecisionUnit.bsv 
 
 %AWB_END
