@@ -10,8 +10,11 @@
 
 %requires airblue_mac_crc
 %requires airblue_types
+%requires airblue_common
 %requires airblue_parameters
 %requires commit_fifo
+%requires debug_utils
+
 
 %attributes airblue
 

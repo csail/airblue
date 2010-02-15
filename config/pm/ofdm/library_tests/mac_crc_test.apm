@@ -1,0 +1,99 @@
+
+[Soft Connections Hybrid Application Environment/Requires]
+platform_services=Platform Services
+soft_connections_lib=Soft Connections Library
+connected_application=HW only hybrid application
+
+[Global]
+SaveParameters=0
+DefaultBenchmark=
+Version=2.1
+Type=HAsim
+File=mac_crc_test
+Class=Asim::Model
+Name=airblue_wifi_phy_only_loopback_exe
+Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
+DefaultRunOpts=
+
+[Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=hasim
+
+[Soft Connections Library]
+File=config/pm/hasim/submodels/common/soft-connections-lib.apm
+Packagehint=hasim
+
+[Platform Services]
+File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+Packagehint=hasim
+
+[Model]
+DefaultAttributes=airblue
+model=HW/SW Hybrid Project Foundation
+
+[Airblue types]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[FPGA Environment]
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=platforms
+
+[HW/SW Hybrid Project Foundation]
+File=modules/project/project-hybrid.awb
+Packagehint=platforms
+
+[Airblue WiFi parameters]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
+Packagehint=ofdm
+
+[Soft Connections Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Project Foundation/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
+
+[HW only hybrid application]
+File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
+Packagehint=bsv-libraries
+
+[HW only hybrid application/Requires]
+hw_only_application=Airblue MAC CRC Test
+
+[CommitFIFO]
+File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
+Packagehint=bsv-libraries
+
+[Airblue MAC CRC]
+File=modules/airblue/lib/MACCRC/src/airblue_mac_crc.awb
+Packagehint=ofdm
+
+[Airblue MAC CRC/Requires]
+crc=CRC Library
+
+[Airblue MAC CRC Test/Requires]
+airblue_mac_crc=Airblue MAC CRC
+airblue_types=Airblue types
+commit_fifo=CommitFIFO
+airblue_parameters=Airblue WiFi parameters
+airblue_common=Airblue common library
+debug_utils=Debug Utilities
+
+[Airblue MAC CRC Test]
+File=modules/airblue/lib/MACCRC/test/airblue_mac_crc_test.awb
+Packagehint=ofdm
+
+[CRC Library]
+File=modules/bsv-libraries/bluespec/CRC/src/crc.awb
+Packagehint=bsv-libraries
+
+[Airblue common library]
+File=modules/airblue/lib/Common/airblue_common.awb
+Packagehint=ofdm
+
+[Debug Utilities]
+File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+Packagehint=bsv-libraries

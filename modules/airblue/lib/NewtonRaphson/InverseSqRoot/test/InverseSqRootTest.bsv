@@ -15,8 +15,8 @@ import ClientServer::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_inverse_sq_root.bsh"
 
-(* synthesize *)
-module mkInverseSqRootTest();
+
+module mkHWOnlyApplication();
   Reg#(Bit#(8)) counter <- mkReg(0);
 
   Tuple3#(FixedPoint#(ISRIPrec,ISRFPrec),

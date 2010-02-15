@@ -8,7 +8,7 @@
 %desc Airblue FFT/IFFT Test
 %provides hw_only_application
 
-%requries airblue_fft
+%requires airblue_fft
 %requires airblue_common
 %requires airblue_parameters
 %requires airblue_types
