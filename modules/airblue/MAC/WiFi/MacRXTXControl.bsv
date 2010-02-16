@@ -7,15 +7,15 @@ import Vector::*;
 import CBus::*;
 import FixedPoint::*;
 
-import Register::*;
-import CBusUtils::*;
+// import Register::*;
+// import CBusUtils::*;
 
-import FPGAParameters::*;
-import ProtocolParameters::*;
-import MACDataTypes::*;
-import TXController::*;
-import RXController::*;
-import MACPhyParameters::*;
+// import FPGAParameters::*;
+// import ProtocolParameters::*;
+// import MACDataTypes::*;
+// import TXController::*;
+// import RXController::*;
+// import MACPhyParameters::*;
 
 // local includes
 `include "asim/provides/airblue_parameters.bsh"

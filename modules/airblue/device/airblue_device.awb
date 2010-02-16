@@ -10,6 +10,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC AD.bsv Scaler.bsv AGC.bsv GCT.bsv OutOfBand.bsv Power.bsv
+%sources -t BSV -v PUBLIC Scaler.bsv AD.bsv AGC.bsv GCT.bsv OutOfBand.bsv Power.bsv
 
 %AWB_END

@@ -35,27 +35,27 @@ import FIFOF::*;
 import FIFO::*;
 import GetPut::*;
 
-import ClientServerUtils::*;
-import AvalonSlave::*;
-import AvalonCommon::*;
-import CBusUtils::*;
+// import ClientServerUtils::*;
+// import AvalonSlave::*;
+// import AvalonCommon::*;
+// import CBusUtils::*;
 
-import DataTypes::*;
-import Interfaces::*;
-import ProtocolParameters::*;
-import FPGAParameters::*;
-import Transceiver::*;
-import LibraryFunctions::*;
-import FPComplex::*;
-import AD::*;
-import GCT::*;
-import MACDataTypes::*;
+// import DataTypes::*;
+// import Interfaces::*;
+// import ProtocolParameters::*;
+// import FPGAParameters::*;
+// import Transceiver::*;
+// import LibraryFunctions::*;
+// import FPComplex::*;
+// import AD::*;
+// import GCT::*;
+// import MACDataTypes::*;
 
 // local includes
 `include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airbule_types.bsh"
+`include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_devices.bsh"
+`include "asim/provides/airblue_device.bsh"
 `include "asim/provides/avalon.bsh"
 `include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/client_server_utils.bsh"
@@ -145,7 +145,7 @@ module [Module] mkBusMacVector#(Clock viterbiClock, Reset viterbiReset, Clock ba
       
       // need some fold function here.
       rule init(!initialized && pushReq && fold(logicAnd,map(eq(0),readVReg(addrCountVec))));
-        servers[2].request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: RegisterMapper::Write});
+        servers[2].request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
        
         $display("TB initializing MAC %d",i);
         pushReq <= !pushReq;    
@@ -158,7 +158,7 @@ module [Module] mkBusMacVector#(Clock viterbiClock, Reset viterbiReset, Clock ba
       endrule
       // count packets acked, not RXed
       rule pushPacketRx (initialized && pushReq);
-        servers[2].request.put(AvalonRequest{addr:fromInteger(valueof(AddrPacketsAcked)),data:~0,command: RegisterMapper::Read});
+        servers[2].request.put(AvalonRequest{addr:fromInteger(valueof(AddrPacketsAcked)),data:~0,command: register_mapper::Read});
         pushReq <= !pushReq;
 //        $display("TB PacketGen pushReq");
       endrule

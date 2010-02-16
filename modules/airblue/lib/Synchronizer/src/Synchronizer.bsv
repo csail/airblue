@@ -736,7 +736,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 endmodule   
 
 (* synthesize *)
-module  mkFreqEstimator(FreqEstimator);
+module mkFreqEstimator(FreqEstimator);
    // Constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);
@@ -853,7 +853,7 @@ module  mkFreqEstimator(FreqEstimator);
 endmodule
 
 (* synthesize *)
-module  mkFreqRotator(FreqRotator);
+module mkFreqRotator(FreqRotator);
    // Integer constants
    Integer cordicPipe = valueOf(CORDICPipe);
    Integer cordicIter = valueOf(CORDICIter);

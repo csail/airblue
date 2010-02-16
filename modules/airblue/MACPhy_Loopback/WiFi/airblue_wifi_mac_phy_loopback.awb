@@ -1,0 +1,23 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name WiFi MAC Phy Loopback
+%desc The top level of the WiFi MAC Phy loopback system that connects multiple pairs of TX and RX together   
+%provides hw_only_application
+
+%requires airblue_types
+%requires airblue_parameters
+%requires airblue_shared
+%requires airblue_phy
+%requires airblue_mac
+%requires airblue_mac_packet_gen
+%requires airblue_device
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAMACPacketGenWiresTest.bsv
+
+%AWB_END

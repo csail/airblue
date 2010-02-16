@@ -81,6 +81,7 @@ import Clocks::*;
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
 `include "asim/provides/airblue_device.bsh"
+`include "asim/provides/airblue_phy.bsh"
 `include "asim/provides/airblue_mac.bsh"
 `include "asim/provides/avalon.bsh"
 `include "asim/provides/spi.bsh"
@@ -154,7 +155,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
 
    // hook the Synchronizer to feedback points  
    rule synchronizerFeedback;
-     Synchronizer::ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
+     airblue_synchronizer::ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
      gct.synchronizerStateUpdate.put(ctrl);
      agc.synchronizerStateUpdate.put(ctrl);
      case (ctrl) 
@@ -314,14 +315,14 @@ module [Module]  mkTransceiverMACPacketGenFPGAReset#(Clock viterbiClock, Reset v
    let ifc <- exposeCBusIFC(mkTransceiverMACPacketGenFPGAMonad(viterbiClock,viterbiReset,rfClock, rfReset));
   
    //Create a mapping...
-   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  RegisterMapper::Read);
+   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  register_mapper::Read);
      let request <- busSlave.busClient.request.get;
      let readVal <- ifc.cbus_ifc.read(request.addr);
      $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
      busSlave.busClient.response.put(readVal);
    endrule
  
-   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  RegisterMapper::Write);
+   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  register_mapper::Write);
      let request <- busSlave.busClient.request.get;
      $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
      ifc.cbus_ifc.write(request.addr,request.data);
