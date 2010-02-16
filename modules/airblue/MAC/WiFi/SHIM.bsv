@@ -2,16 +2,20 @@ import FIFO::*;
 import GetPut::*;
 import StmtFSM::*;
 import Vector::*;
-
-import MACDataTypes::*;
-import ProtocolParameters::*;
-import RXController::*;
-import TXController::*;
-import MACPhyParameters::*;
-
 import CBus::*;
-import FPGAParameters::*;
-import CBusUtils::*;
+
+// import MACDataTypes::*;
+// import ProtocolParameters::*;
+// import RXController::*;
+// import TXController::*;
+// import MACPhyParameters::*;
+
+// import FPGAParameters::*;
+// import CBusUtils::*;
+
+// local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/c_bus_utils.bsh"
 
 interface SHIM;
    // SHIM <-> Phy

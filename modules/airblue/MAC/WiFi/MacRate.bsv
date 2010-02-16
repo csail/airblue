@@ -4,15 +4,20 @@ import GetPut::*;
 import ClientServer::*;
 import CBus::*;
 
-import Register::*;
-import CBusUtils::*;
+// import Register::*;
+// import CBusUtils::*;
 
-import FPGAParameters::*;
-import ProtocolParameters::*;
-import MACDataTypes::*;
-import TXController::*;
-import RXController::*;
-import MACPhyParameters::*;
+// import FPGAParameters::*;
+// import ProtocolParameters::*;
+// import MACDataTypes::*;
+// import TXController::*;
+// import RXController::*;
+// import MACPhyParameters::*;
+
+// local includes
+`includes "asim/provides/airblue_parameters.bsh"
+`includes "asim/provides/c_bus_utils.bsh"
+`includes "asim/provides/register_library.bsh"
 
 interface MacRate#(type ctrl_t_old, type ctrl_t_new);
   interface Server#(ctrl_t_old,ctrl_t_new) rateServer;

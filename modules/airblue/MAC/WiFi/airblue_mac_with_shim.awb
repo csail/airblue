@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue MAC with SHIM
+%desc MAC with SHIM which add early abortion feature to MAC
+%provides airblue_mac
+
+%requires airblue_mac_crc
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv
+ 
+%AWB_END

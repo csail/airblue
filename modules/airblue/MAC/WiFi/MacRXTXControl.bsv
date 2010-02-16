@@ -17,6 +17,11 @@ import TXController::*;
 import RXController::*;
 import MACPhyParameters::*;
 
+// local includes
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/c_bus_utils.bsh"
+`include "asim/provides/register_library.bsh"
+
 function data_t funcXor(data_t a, data_t b)
    provisos(Bitwise#(data_t));
      return a^b;
