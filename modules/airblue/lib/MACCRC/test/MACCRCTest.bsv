@@ -24,7 +24,7 @@ module mkHWOnlyApplication (Empty);
    MACCRC maccrc <- mkMACCRC;
    FIFO#(PhyData) turnFIFO <- mkSizedFIFO(4096);
    FIFO#(PhyData) expectedFIFO <- mkSizedFIFO(4096);
-   FIFO#(TXVector) vectorFIFO <- mkSizedFIFO(4);
+   FIFO#(BasicTXVector) vectorFIFO <- mkSizedFIFO(4);
    FIFO#(Bool) scrogFIFO <- mkFIFO;
    Reg#(Bool) scrog <- mkReg(False);
    Reg#(PhyPacketLength) counter <- mkReg(0);
@@ -60,7 +60,7 @@ module mkHWOnlyApplication (Empty);
   rule turnRXVector(counter == 0);
      $display("TB turn RX vector: ");
      scrogFIFO.deq;
-     RXVector vector = RXVector {length:vectorFIFO.first.length,rate:vectorFIFO.first.rate};
+     BasicRXVector vector = BasicRXVector {length:vectorFIFO.first.length,rate:vectorFIFO.first.rate};
      if(scrogFIFO.first) 
        begin
          $display("TB we intend to shoot down: %d", vectorFIFO.first.length + 1 );
@@ -86,7 +86,7 @@ module mkHWOnlyApplication (Empty);
    rule stuffNew(initialized && macCounter == 0);
      scrogFIFO.enq(scrog);
      lfsr.next;
-     maccrc.mac_txstart.put(TXVector{length:zeroExtend(lfsr.value),power:0,service:0,rate:R0});
+     maccrc.mac_txstart.put(BasicTXVector{length:zeroExtend(lfsr.value),power:0,service:0,rate:R0, dst_addr: ?, src_addr: ?});
      macCounter <= zeroExtend(lfsr.value);     
    endrule
 

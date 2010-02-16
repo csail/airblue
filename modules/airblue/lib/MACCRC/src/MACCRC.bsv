@@ -37,7 +37,6 @@ typedef enum {
   TX
 } CRCState deriving (Bits,Eq);
 
-(*synthesize*)
 module mkMACCRC (MACCRC);
 
    Reg#(BasicRXVector) rxvector <- mkRegU;  
