@@ -1,7 +1,9 @@
 import FIFO::*;
+import FIFOF::*;
 import GetPut::*;
 import StmtFSM::*;
 import Vector::*;
+import FShow::*;
 
 // import CRC::*;
 // import CommitFIFO::*;
@@ -31,6 +33,16 @@ interface MACCRC;
    interface Get#(RXExternalFeedback) mac_abort;
 endinterface
 
+instance FShow#(CRCState);
+  function Fmt fshow (CRCState state);
+    case (state)
+       Idle: return $format("Idle");
+       RX: return $format("RX");
+       TX: return $format("TX");
+     endcase
+  endfunction
+endinstance
+
 typedef enum {
   Idle,
   RX,
@@ -47,13 +59,26 @@ module mkMACCRC (MACCRC);
    Reg#(Bool)     txFull <- mkReg(False);
    Reg#(CRCState) state <- mkReg(Idle);
    CommitFIFO#(PhyData,4096) rxBuffer <- mkCommitFIFO;
-   FIFO#(PhyData) txBuffer <- mkFIFO; // much smaller - could get rid of...
+   FIFOF#(PhyData) txBuffer <- mkFIFOF; // much smaller - could get rid of...
    CRC#(Bit#(32),PhyData) crc <- mkParallelCRC(fromInteger(valueof(CRCPoly)),~0);
    Reg#(Bit#(TLog#(TDiv#(SizeOf#(Bit#(32)),SizeOf#(PhyData)))))  crcCount <- mkReg(0);
-   FIFO#(RXExternalFeedback) abortFIFO <- mkFIFO;
+   FIFOF#(RXExternalFeedback) abortFIFO <- mkFIFOF;
  
-   rule checkFIFOFull (!rxBuffer.notFull);
-     $display("TB MACCRC Warning rxBufferFull");
+   Reg#(Bit#(16)) debugCounter <- mkReg(0);
+
+   
+
+   rule checkDebug;
+     debugCounter <= debugCounter + 1;
+     if(debugCounter == 0 && `DEBUG_MACCRC == 1)
+       begin
+         $display("txBuffer", fshow(txBuffer));
+         $display("state", fshow(state));
+         $display("txvector", fshow(txvector));
+         $display("rxvector", fshow(rxvector));
+         $display("txFull", fshow(txFull));
+         $display("rxFull", fshow(rxFull));
+       end
    endrule
 
    rule handleTXzero(state == TX && counter >= length && counter < txvector.length);
@@ -70,8 +95,11 @@ module mkMACCRC (MACCRC);
        begin
          state <= Idle;
        end
-     $display("MACCRC TX: %h", crc.getRemainder);
-     $display("MACCRC PacketTX: %b %h", ~reverseBits(crcVec[crcCount]),~reverseBits(crcVec[crcCount]));
+     if(`DEBUG_MACCRC == 1)
+       begin
+         $display("MACCRC TX: %h", crc.getRemainder);
+         $display("MACCRC PacketTX: %b %h", ~reverseBits(crcVec[crcCount]),~reverseBits(crcVec[crcCount]));
+       end
      txBuffer.enq(~reverseBits(crcVec[crcCount]));
    endrule   
 
@@ -88,7 +116,10 @@ module mkMACCRC (MACCRC);
      else 
        begin
          Bit#(32) expected = fromInteger(valueof(CRCPolyResult));
-         $display("MACCRC Shooting down packet expected: %b %h, got %b", expected,expected,crc.getRemainder );
+         if(debugCounter == 0 && `DEBUG_MACCRC == 1)
+           begin
+             $display("MACCRC Shooting down packet expected: %b %h, got %b", expected,expected,crc.getRemainder );
+           end
          rxBuffer.abort;
          abortFIFO.enq(Abort);
        end
@@ -98,7 +129,10 @@ module mkMACCRC (MACCRC);
    // CRC <-> Phy
    interface Get phy_txstart;  
      method ActionValue#(BasicTXVector) get() if(txFull);
-       $display("TB Packet Past CRC");
+       if(`DEBUG_MACCRC == 1)
+         begin
+           $display("TB Packet Past CRC");
+         end
        txFull <= False;
        return txvector;
      endmethod
@@ -122,7 +156,10 @@ module mkMACCRC (MACCRC);
       method ActionValue#(PhyData) get();
          let tx_data = txBuffer.first();
          txBuffer.deq();
-         $display("%m MACCRC TX data to PHY: %h",tx_data);
+         if(`DEBUG_MACCRC == 1)
+           begin
+             $display("%m MACCRC TX data to PHY: %h",tx_data);
+           end
          return tx_data;
       endmethod
    endinterface
@@ -134,8 +171,12 @@ module mkMACCRC (MACCRC);
        if(counter < length - 4) // last 4 are CRC...
          begin
            rxBuffer.enq(data);
-         end   
-        $display("%m MACCRC RX data from PHY: %h",data);
+         end  
+  
+       if(`DEBUG_MACCRC == 1)
+         begin 
+           $display("%m MACCRC RX data from PHY: %h",data);
+         end
      endmethod
    endinterface
 
@@ -146,7 +187,10 @@ module mkMACCRC (MACCRC);
        crc.init();
        counter <= 0; 
        state <= TX;
-       $display("MACCRC TX Vector: %d",  vector.length);
+       if(`DEBUG_MACCRC == 1)
+         begin
+           $display("MACCRC TX Vector: %d",  vector.length);
+         end
        length <= vector.length;
        BasicTXVector newVec = vector;
        newVec.length = newVec.length + 4;
@@ -158,7 +202,12 @@ module mkMACCRC (MACCRC);
    interface Get mac_rxstart;   
      method ActionValue#(BasicRXVector) get() if(rxFull);
        rxFull <= False;
-       $display("TB MACCRC RX Vector finish: %d",  rxvector.length);
+
+       if(`DEBUG_MACCRC == 1)
+         begin
+           $display("TB MACCRC RX Vector finish: %d",  rxvector.length);
+         end
+
        return rxvector;
      endmethod
    endinterface
@@ -172,6 +221,6 @@ module mkMACCRC (MACCRC);
    endinterface
       
    interface Get mac_rxdata = commitFifoToGet(rxBuffer);   
-   interface Get mac_abort = fifoToGet(abortFIFO);
+   interface Get mac_abort = fifoToGet(fifofToFifo(abortFIFO));
 endmodule
 

@@ -29,6 +29,7 @@
 //import ProtocolParameters::*;
 //import Scrambler::*;
 import Vector::*;
+import FShow::*;
 
 // Local includes
 `include "asim/provides/airblue_common.bsh"
@@ -196,6 +197,12 @@ endfunction
 //Old definitions, used by old MAC
 //SHIM in the MAC translates between old and new vectors
 
+instance FShow#(BasicTXVector);
+   function Fmt fshow (BasicTXVector vec);
+      return $format("TX Vector: Length: ") + fshow(vec.length) + $format(" Rate: ") + fshow(vec.rate);
+   endfunction
+endinstance
+
 typedef struct{
    PhyPacketLength length;  // data to send in bytes
    Rate            rate;    // data rate
@@ -204,6 +211,12 @@ typedef struct{
    MACAddr         src_addr;
    MACAddr         dst_addr;	       
    } BasicTXVector deriving (Eq, Bits);
+
+instance FShow#(BasicRXVector);
+   function Fmt fshow (BasicRXVector vec);
+      return $format("RX Vector: Length: ") + fshow(vec.length) + $format(" Rate: ") + fshow(vec.rate);
+   endfunction
+endinstance
 
 typedef struct{
    Rate      rate;

@@ -9,7 +9,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=mac_crc_test
+File=deinterleaver_test
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -43,10 +43,6 @@ Packagehint=platforms
 File=modules/project/project-hybrid.awb
 Packagehint=platforms
 
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
-
 [Soft Connections Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
 Packagehint=platforms
@@ -61,40 +57,41 @@ File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
 Packagehint=bsv-libraries
 
 [HW only hybrid application/Requires]
-hw_only_application=Airblue MAC CRC Test
-
-[CommitFIFO]
-File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
-Packagehint=bsv-libraries
-
-[Airblue MAC CRC]
-File=modules/airblue/lib/MACCRC/src/airblue_mac_crc.awb
-Packagehint=ofdm
-
-[Airblue MAC CRC/Requires]
-crc=CRC Library
-
-[Airblue MAC CRC Test/Requires]
-airblue_mac_crc=Airblue MAC CRC
-airblue_types=Airblue types
-commit_fifo=CommitFIFO
-airblue_parameters=Airblue WiFi parameters
-airblue_common=Airblue common library
-debug_utils=Debug Utilities
-
-[Airblue MAC CRC Test]
-File=modules/airblue/lib/MACCRC/test/airblue_mac_crc_test.awb
-Packagehint=ofdm
-
-[CRC Library]
-File=modules/bsv-libraries/bluespec/CRC/src/crc.awb
-Packagehint=bsv-libraries
+hw_only_application=Airblue Deinterleaver Test
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
+Packagehint=ofdm
+
+[Airblue Deinterleaver Test]
+File=modules/airblue/lib/Interleaver/test/airblue_deinterleaver_test.awb
+Packagehint=ofdm
+
+[Airblue Interleaver]
+File=modules/airblue/lib/Interleaver/src/airblue_interleaver.awb
+Packagehint=ofdm
+
+[Airblue Deinterleaver Test/Requires]
+airblue_types=Airblue types
+airblue_common=Airblue common library
+airblue_interleaver=Airblue Interleaver
+airblue_deinterleaver=Airblue Deinterleaver
+airblue_mapper=Airblue Mapper
+debug_utils=Debug Utilities
+airblue_demapper=Airblue Demapper
+
+[Airblue Deinterleaver]
+File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
 Packagehint=ofdm
 
 [Debug Utilities]
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
 
+[Airblue Mapper]
+File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
+Packagehint=ofdm
+
+[Airblue Demapper]
+File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
+Packagehint=ofdm

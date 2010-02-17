@@ -4,6 +4,7 @@ import GetPut::*;
 import StmtFSM::*;
 import LFSR::*;
 import Connectable::*;
+import FShow::*;
 
 // import MACCRC::*;
 // import DataTypes::*;
@@ -22,22 +23,35 @@ import Connectable::*;
 module mkHWOnlyApplication (Empty);   
 
    MACCRC maccrc <- mkMACCRC;
-   FIFO#(PhyData) turnFIFO <- mkSizedFIFO(4096);
-   FIFO#(PhyData) expectedFIFO <- mkSizedFIFO(4096);
-   FIFO#(BasicTXVector) vectorFIFO <- mkSizedFIFO(4);
-   FIFO#(Bool) scrogFIFO <- mkFIFO;
+   FIFOF#(PhyData) turnFIFO <- mkSizedFIFOF(4096);
+   FIFOF#(PhyData) expectedFIFO <- mkSizedFIFOF(4096);
+   FIFOF#(BasicTXVector) vectorFIFO <- mkSizedFIFOF(1);
+   FIFOF#(Bool) scrogFIFO <- mkFIFOF;
    Reg#(Bool) scrog <- mkReg(False);
    Reg#(PhyPacketLength) counter <- mkReg(0);
    Reg#(PhyPacketLength) macCounter <- mkReg(0);
    LFSR#(Bit#(8)) lfsr <- mkLFSR_8();
    Reg#(Bool) initialized <- mkReg(False);
    Reg#(Bit#(18)) rxCount <- mkReg(0);
+   Reg#(Bit#(18)) count <- mkReg(0);
 
    // hook up physical side
-   mkConnection(maccrc.phy_txdata,fifoToPut(turnFIFO));
-   mkConnection(maccrc.phy_txstart,fifoToPut(vectorFIFO));
+   mkConnection(maccrc.phy_txdata,fifoToPut(fifofToFifo(turnFIFO)));
+   mkConnection(maccrc.phy_txstart,fifoToPut(fifofToFifo(vectorFIFO)));
 //   mkConnection(fifoToGet(turnFIFO),maccrc.phy_rxdata);
-   
+   rule printState;
+     count <= count + 1;
+     if(count[15:0] == 0)
+       begin
+         $display("Counter %d", counter);
+         $display("Expected FIFO: ", fshow(expectedFIFO));
+         $display("Turn FIFO: ", fshow(turnFIFO));
+         $display("Vector FIFO: ", fshow(vectorFIFO));
+         $display("scrog FIFO: ", fshow(vectorFIFO));
+       end
+   endrule   
+
+
    rule turnRXData(counter != 0);
      $display("turn RX data");
      counter <= counter - 1;
@@ -128,5 +142,9 @@ module mkHWOnlyApplication (Empty);
         $finish;
       end
    endrule 
+
+   rule drainAborts;
+     let abort <- maccrc.mac_abort.get();
+   endrule
 
 endmodule

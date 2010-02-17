@@ -1,0 +1,7 @@
+# ***************
+#
+# H264 models
+#
+# ***************
+
+maccrc   config/pm/ofdm/library_tests/mac_crc_test.apm      --bluesim="-m 1000000000"

@@ -46,6 +46,21 @@ Bool detailedDebugInfo = False;
 typedef Bit#(12) PhyPacketLength;
 typedef Bit#(8)  PhyData;
 
+instance FShow#(Rate);
+   function Fmt fshow (Rate rate);
+     case (rate)
+       R0: return $format("6Mbps");
+       R1: return $format("9Mbps");
+       R2: return $format("12Mbps");
+       R3: return $format("18Mbps");
+       R4: return $format("24Mbps");
+       R5: return $format("36Mbps");
+       R6: return $format("48Mbps");
+       R7: return $format("54Mbps");
+     endcase
+   endfunction
+endinstance
+
 // Global Parameters:
 typedef enum {
    R0 = 0,  // 6Mbps
