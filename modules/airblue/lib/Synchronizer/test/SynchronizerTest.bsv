@@ -42,7 +42,7 @@ import Vector::*;
 // Local includes
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/synchronizer.bsh"
+`include "asim/provides/airblue_synchronizer.bsh"
 
 
 (* synthesize *)
@@ -52,10 +52,13 @@ module [Module] mkStatefulSynchronizerInstance(StatefulSynchronizer#(2,14));
    return statefulSynchronizer;
 endmodule
 
-// (* synthesize *)
-// module mkSynchronizerTest(Empty);
    
 module mkHWOnlyApplication (Empty);   
+   let test <- mkSynchronizerTest();
+endmodule
+   
+(* synthesize *)
+module mkSynchronizerTest(Empty);
    // states
    StatefulSynchronizer#(2,14) statefulSynchronizer <- mkStatefulSynchronizerInstance();
    Synchronizer#(2,14) synchronizer = statefulSynchronizer.synchronizer;
