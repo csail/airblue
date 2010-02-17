@@ -26,6 +26,7 @@
 
 import CBus::*;
 import Complex::*;
+import FIFO::*;
 import FixedPoint::*;
 import GetPut::*;
 import LFSR::*;
@@ -45,6 +46,7 @@ import Vector::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_channel.bsh"
 
 
 interface PacketGenerator;
@@ -149,47 +151,58 @@ module mkSynchronizerTest(Empty);
    StatefulSynchronizer#(2,14) statefulSynchronizer <- mkStatefulSynchronizerInstance();
    Synchronizer#(2,14) synchronizer = statefulSynchronizer.synchronizer;
    
-   PacketGenerator generator <- mkPacketGenerator();
+   PacketGenerator generator <- mkPacketGenerator(); // packet generator
+   Channel#(2,14)  channel   <- mkChannel();  // channel that connect the packet generator to synchronizer with added noise
    
-   Reg#(Bit#(16)) inCounter <- mkReg(0);
-   Reg#(Bit#(14)) outCounter <- mkReg(0);
+   Reg#(Bit#(16)) inCounter  <- mkReg(0);
+   Reg#(Bit#(32)) outCounter <- mkReg(0);
+   
+   Reg#(Bit#(32))  expected_sync_pos <- mkReg(256); // the next expected synchronization position, the first one should start at 256th (assuming 0 is the 1st output)
+   FIFO#(Bit#(32)) expected_sync_pos_fifo <- mkSizedFIFO(4); // check whether the expected synchronization position match  
    
    // constant
-//   RegFile#(Bit#(14),FPComplex#(2,14)) packet <- mkRegFileFullLoad("WiFiPacket.txt");
-//   RegFile#(Bit#(14), FPComplex#(2,14)) tweakedPacket <- mkRegFileFullLoad("WiFiTweakedPacket.txt");
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
    rule startNextPacket(inCounter == 0);
       let len <- generator.nextLength.get();
+      let new_expected_sync_pos = expected_sync_pos + zeroExtend(len);
       inCounter <= len; 
-      $display("Execute startNextPacket cycle: %d length: %d", cycle, len);
+      expected_sync_pos <= new_expected_sync_pos;
+      expected_sync_pos_fifo.enq(expected_sync_pos);
+      $display("Cycle %d: %m startNextPacket packet_length = %d, expected_synchronization_postion = %d", cycle, len, expected_sync_pos);
    endrule
    
-   rule toSynchronizer(inCounter > 0);
+   rule toChannel(inCounter > 0);
       FPComplex#(2,14) inCmplx <- generator.nextData.get();
       inCounter <= inCounter - 1;
+      channel.in.put(inCmplx);
+   endrule
+
+   rule toSynchronizer(True);
+      FPComplex#(2,14) inCmplx <- channel.out.get(); 
       synchronizer.in.put(inCmplx);
-//      $write("Execute toSync cycle: %d, at %d:",cycle,inCounter);
-      $write("Execute toSync cycle: %d ",cycle);
+      $write("Cycle %d: %m toSynchronizer data = ",cycle);
       cmplxWrite("("," + "," i)",fxptWrite(7),inCmplx);
       $display("");
    endrule
 
-   rule fromSynchronizerToUnserializer(True);
+   rule fromSynchronizer(True);
       let result <- synchronizer.out.get;
       let resultCmplx = result.data;
       outCounter <= outCounter + 1;
-      $write("Execute fromSyncToUnserializer at %d:", outCounter);
-      $write("new message: %d, ", result.control.isNewPacket);
+      $write("Cycle %d: %m fromSynchronizer data = ", cycle);
       cmplxWrite("("," + ","i)",fxptWrite(7),resultCmplx);
       $display("");
-//      $write("Cycle: %d; Expected Output at %d:", cycle, outCounter);
-//      cmplxWrite("("," + ","i)",fxptWrite(7),packet.sub(outCounter));
-//      $display("");
+      if (result.control.isNewPacket)
+         begin
+//            expected_sync_pos_fifo.deq();
+//            $display("Cycle %d: new packet detected at position %d, expected position %d", cycle, outCounter, expected_sync_pos_fifo.first());
+            $display("Cycle %d: new packet detected at position %d", cycle, outCounter);
+         end
    endrule
    
    rule readCoarPow(True);
-      $write("Cycle: %d; readCoarPow: ", cycle);
+      $write("Cycle %d: readCoarPow = ", cycle);
       fxptWrite(7,statefulSynchronizer.coarPow);
       $display("");
    endrule
@@ -199,7 +212,6 @@ module mkSynchronizerTest(Empty);
       cycle <= cycle + 1;
       if (cycle == 10000)
 	 $finish();
-      $display("cycle: %d",cycle);
    endrule
      
 endmodule   

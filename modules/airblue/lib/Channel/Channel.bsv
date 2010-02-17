@@ -1,10 +1,16 @@
-import DataTypes::*;
-import FixedPoint::*;
-import FIFOF::*;
-import FPComplex::*;
 import Complex::*;
+import FIFOF::*;
+import FixedPoint::*;
 import GetPut::*;
-import RandomGen::*;
+import LFSR::*;
+
+// import DataTypes::*;
+// import FPComplex::*;
+// //import RandomGen::*;
+
+// local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 // start sending empty if nothing happen for sendEmptyThreshold cycles 
 `define sendEmptyThreshold 100000
@@ -55,13 +61,20 @@ module mkChannel(Channel#(2,14));
    FIFOF#(FPComplex#(2,14)) inQ   <- mkSizedFIFOF(2);
    FIFOF#(FPComplex#(2,14)) outQ  <- mkSizedFIFOF(2);     
    Reg#(Bit#(32))           count <- mkReg(0);
-   RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
-   
+   LFSR#(Bit#(16))          randGen  <- mkLFSR_16();
+//   RandomGen#(64) randGen <- mkMersenneTwister(64'hB573AE980FF1134C);
+   Reg#(Bool)               initialized <- mkReg(False);
+
+   rule initialization(!initialized);
+      randGen.seed(16'h0241);
+      initialized <= True;
+   endrule
     
-   rule sendEmpty(!inQ.notEmpty());
+   rule sendEmpty(initialized && !inQ.notEmpty());
       if (count >= `sendEmptyThreshold)
          begin
-            let randData <- randGen.genRand;
+            randGen.next();
+            let randData = randGen.value();
             Bit#(12) truncRandData = truncate(randData);
             FixedPoint#(2,14) fpRandData = unpack(signExtend(truncRandData));
             outQ.enq(cmplx(fpRandData,fpRandData));
@@ -77,7 +90,7 @@ module mkChannel(Channel#(2,14));
          count <= count + 1;
    endrule
 
-   rule processData(True);
+   rule processData(initialized);
 //   rule processData(inQ.notEmpty());
       let transformedComplex = transformData(inQ.first(), 0, False);
       inQ.deq();
