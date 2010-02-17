@@ -163,6 +163,10 @@ module mkSynchronizerTest(Empty);
    // constant
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
+   rule printState;
+      $display("Cycle %d: expected_sync_pos_fifo ",cycle, fshow(expected_sync_pos_fifo));
+   endrule
+   
    rule startNextPacket(inCounter == 0);
       let len <- generator.nextLength.get();
       let new_expected_sync_pos = expected_sync_pos + zeroExtend(len);
@@ -195,9 +199,8 @@ module mkSynchronizerTest(Empty);
       $display("");
       if (result.control.isNewPacket)
          begin
-//            expected_sync_pos_fifo.deq();
-//            $display("Cycle %d: new packet detected at position %d, expected position %d", cycle, outCounter, expected_sync_pos_fifo.first());
-            $display("Cycle %d: new packet detected at position %d", cycle, outCounter);
+            expected_sync_pos_fifo.deq();
+            $display("Cycle %d: new packet detected at position %d, expected position %d", cycle, outCounter, expected_sync_pos_fifo.first());
          end
    endrule
    
