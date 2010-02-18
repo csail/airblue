@@ -1,7 +1,11 @@
 # ***************
 #
-# H264 models
+# OFDM models
 #
 # ***************
 
 maccrc   config/pm/ofdm/library_tests/mac_crc_test.apm      --bluesim="-m 1000000000"
+
+#inv_sq_root   config/pm/ofdm/library_tests/inv_sq_root_test.apm      --bluesim="-m 1000000000"
+
+
