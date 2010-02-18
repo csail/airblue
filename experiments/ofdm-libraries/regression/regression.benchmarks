@@ -4,7 +4,7 @@
 #
 # ***************
 
-experiments = maccrc
+experiments = maccrc synchronizer
 config/bm/bsv-libraries/pass_check.cfx/benchmarks/pass_check.cfg
 
 #experiments = inv_sq_root

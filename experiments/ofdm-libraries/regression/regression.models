@@ -8,4 +8,4 @@ maccrc   config/pm/ofdm/library_tests/mac_crc_test.apm      --bluesim="-m 100000
 
 #inv_sq_root   config/pm/ofdm/library_tests/inv_sq_root_test.apm      --bluesim="-m 1000000000"
 
-
+synchronizer config/pm/ofdm/library_tests/synchronizer_test.apm       --bluesim="-m 1000000000"

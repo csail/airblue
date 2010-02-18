@@ -50,6 +50,8 @@ import Vector::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_channel.bsh"
 
+// to deal with the case where synchronizer may output some initialization junk samples, will try to adjust the expected position accordingly 
+`define SyncPosAdjustment 11 
 
 interface PacketGenerator;
    interface Get#(Bit#(16))         nextLength; // start the next random packet, return packet length
@@ -124,12 +126,13 @@ module mkPacketGenerator (PacketGenerator);
             Data: begin
                      i_lfsr.next();
                      q_lfsr.next();
+                     let out_sample = cmplx(unpack(i_lfsr.value()),unpack(q_lfsr.value()));
                      if (counter == len) 
                         begin
                            len_lfsr.next();
                            state <= Idle;
                         end
-                     return cmplx(unpack(i_lfsr.value()),unpack(q_lfsr.value()));
+                     return out_sample;
                   end
          endcase
       endmethod
@@ -162,14 +165,17 @@ module mkSynchronizerTest(Empty);
    Reg#(Bit#(16)) inCounter  <- mkReg(0);
    Reg#(Bit#(32)) outCounter <- mkReg(0);
    
-   Reg#(Bit#(32))  expected_sync_pos <- mkReg(320); // the next expected synchronization position, the first one should start at 256th (assuming 0 is the 1st output)
+   Reg#(Bit#(32))  expected_sync_pos <- mkReg(320+`SyncPosAdjustment); // the next expected synchronization position, the first one should start at 256th (assuming 0 is the 1st output)
    FIFOF#(Bit#(32)) expected_sync_pos_fifo <- mkSizedFIFOF(4); // check whether the expected synchronization position match
    Reg#(Bit#(16))   misses <- mkReg(0); // no. unsuccessfully detected packets
    Reg#(Bit#(16))   detected <- mkReg(0); // no. successfully detected packets
-  
+   Reg#(Bit#(16))   false  <- mkReg(0); // no. false positives
+   
    // constant
    Reg#(Bit#(32)) cycle <- mkReg(0);
    FIFOF#(Bit#(32)) deq_fifo <- mkSizedFIFOF(4);
+
+   let expected_pos = expected_sync_pos_fifo.first();
    
    rule printState;
       $display("Cycle %d: expected_sync_pos_fifo ",cycle, fshow(expected_sync_pos_fifo));
@@ -211,24 +217,35 @@ module mkSynchronizerTest(Empty);
          end
    endrule
    
-   rule detectNewPacket(True);
-      let expected_pos = expected_sync_pos_fifo.first();
-      if (outCounter > expected_pos + 320) // probably miss the packet
+   rule missPacket(outCounter > expected_pos + 320);
+      misses <= misses + 1;
+      expected_sync_pos_fifo.deq();
+      $display("Cycle %d: new packet detection fails at expected_position = %d", cycle, expected_pos);
+   endrule
+      
+   rule detectNewPacket(expected_sync_pos_fifo.notEmpty() && deq_fifo.notEmpty());      
+      let actual_pos = deq_fifo.first();
+      let diff_is_positive = (actual_pos > expected_pos); // positive = late detection
+      let diff_pos = diff_is_positive ? actual_pos - expected_pos : expected_pos - actual_pos;
+      deq_fifo.deq();
+      if (!diff_is_positive && diff_pos > 320) // a too early detection positive is false positive
          begin
-            misses <= misses + 1;
-            expected_sync_pos_fifo.deq();
-            $display("Cycle %d: new packet detection fails at expected_position = %d", cycle, expected_pos);
+            false <= false + 1;
+            $display("Cycle %d: unexpected packet detected position = %d", cycle, actual_pos);
          end
-      else          
-         begin            
-            let actual_pos = deq_fifo.first();
-            let diff_is_positive = (actual_pos > expected_pos); // positive = late detection
-            let diff_pos = diff_is_positive ? actual_pos - expected_pos : expected_pos - actual_pos;
+      else
+         begin
             detected <= detected + 1;
-            deq_fifo.deq();
             expected_sync_pos_fifo.deq();
             $display("Cycle %d: new packet detected_position = %d, expected_position = %d, is_late_detection = %d, diff = %d ", cycle, actual_pos, expected_pos, diff_is_positive, diff_pos);
          end
+   endrule
+   
+   // it is false postive if synchronizer detect something that is not expected
+   rule falsePositive(deq_fifo.notEmpty() && !expected_sync_pos_fifo.notEmpty());
+      false <= false + 1;
+      deq_fifo.deq();
+      $display("Cycle %d: unexpected packet detected position = %d", cycle, deq_fifo.first());
    endrule
    
    rule readCoarPow(True);
@@ -243,8 +260,8 @@ module mkSynchronizerTest(Empty);
    endrule
    
    rule finishTest(cycle > 300000);
-      $display("Cycle %d: simulation ends, detection success = %d, failure = %d",cycle,detected,misses);
-      if (misses == 0)
+      $display("Cycle %d: simulation ends, detection success = %d, misses = %d, false +v = %d",cycle,detected,misses,false);
+      if (misses == 0 && false == 0)
          $display("Pass");
       else
          $display("Fail");

@@ -10,7 +10,7 @@ Packagehint=bsv-libraries
 
 [Global]
 SaveParameters=0
-DefaultBenchmark=
+DefaultBenchmark=config/bm/bsv-libraries/pass_check.cfx/benchmarks/pass_check.cfg
 Version=2.1
 Type=HAsim
 File=synchronizer_test
@@ -54,7 +54,6 @@ hw_only_application=Airblue WiFi Synchronizer Test
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
 
-
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
 Packagehint=platforms
@@ -62,7 +61,6 @@ Packagehint=platforms
 [RegisterLibrary]
 File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
 Packagehint=bsv-libraries
-
 
 [Airblue WiFi parameters]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
