@@ -3,4 +3,4 @@
 ////////////////////////////////////////////////////////////////////////
 
 // if this SoftPhyHints is defined, we are going to expose it to the external interface
-`define SOFT_PHY_HINTS 1
+//`define SOFT_PHY_HINTS 1

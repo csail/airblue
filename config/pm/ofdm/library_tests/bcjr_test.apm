@@ -1,0 +1,217 @@
+
+[Soft Connections Hybrid Application Environment/Requires]
+platform_services=Platform Services
+soft_connections_lib=Soft Connections Library
+connected_application=HW only hybrid application
+
+[Global]
+SaveParameters=0
+DefaultBenchmark=
+Version=2.1
+Type=HAsim
+File=bcjr_test
+Class=Asim::Model
+Name=airblue_wifi_phy_only_loopback_exe
+Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
+DefaultRunOpts=
+
+[Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=hasim
+
+[Soft Connections Library]
+File=config/pm/hasim/submodels/common/soft-connections-lib.apm
+Packagehint=hasim
+
+[Platform Services]
+File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+Packagehint=hasim
+
+[Model]
+DefaultAttributes=airblue
+model=HW/SW Hybrid Project Foundation
+
+[Airblue types]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[FPGA Environment]
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=platforms
+
+[HW/SW Hybrid Project Foundation]
+File=modules/project/project-hybrid.awb
+Packagehint=platforms
+
+[Soft Connections Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Project Foundation/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
+
+[HW only hybrid application]
+File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
+Packagehint=bsv-libraries
+
+[HW only hybrid application/Requires]
+hw_only_application=Airblue Viterbi Test
+
+[Airblue Mapper]
+File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
+Packagehint=ofdm
+
+[Airblue Demapper]
+File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
+Packagehint=ofdm
+
+[Airblue Viterbi Test/Requires]
+airblue_types=Airblue types
+airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test template
+airblue_shared=Airblue Shared Libraries
+airblue_convolutional_decoder=Airblue BCJR
+airblue_parameters=Airblue WiFi parameters
+
+[Airblue FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_fft.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test template]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+Packagehint=ofdm
+
+[Airblue Viterbi Test]
+File=modules/airblue/lib/ConvDecoder/Viterbi/test/airblue_viterbi_test.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test template/Requires]
+airblue_convolutional_encoder=Airblue Convolutional Encoder
+airblue_mapper=Airblue Mapper
+airblue_puncturer=Airblue Puncturer
+airblue_fft=Airblue FFT/IFFT
+airblue_demapper=Airblue Demapper
+airblue_depuncturer=Airblue Depuncturer
+
+[Airblue Convolutional Encoder]
+File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
+Packagehint=ofdm
+
+[Airblue Puncturer]
+File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
+Packagehint=ofdm
+
+[Airblue Shared Libraries]
+File=modules/airblue/lib/airblue_shared.awb
+Packagehint=ofdm
+
+[Register Mapping Utilities]
+File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
+Packagehint=bsv-libraries
+
+[FIFO Utility]
+File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
+Packagehint=bsv-libraries
+
+[Vector Utilities]
+File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
+Packagehint=bsv-libraries
+
+[StreamCaptureFIFO]
+File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
+Packagehint=bsv-libraries
+
+[Debug Utilities]
+File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+Packagehint=bsv-libraries
+
+
+[Airblue Depuncturer]
+File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
+Packagehint=ofdm
+
+[Avalon Bus Intefaces]
+File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
+Packagehint=bsv-libraries
+
+[RegisterLibrary]
+File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
+Packagehint=bsv-libraries
+
+[Airblue Shifted Registers]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
+Packagehint=ofdm
+
+[Airblue Special FIFOs]
+File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
+Packagehint=ofdm
+
+[CBus Utilities]
+File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
+Packagehint=bsv-libraries
+
+[Airblue Shared Libraries/Requires]
+stream_capture_fifo=StreamCaptureFIFO
+fifo_utils=FIFO Utility
+spi=SPI
+commit_fifo=CommitFIFO
+reversal_buffer=ReversalBuffer
+client_server_utils=ClientServer Utilities
+airblue_special_fifos=Airblue Special FIFOs
+vector_utils=Vector Utilities
+debug_utils=Debug Utilities
+c_bus_utils=CBus Utilities
+airblue_common=Airblue common library
+stat_min=Min collector
+avalon=Avalon Bus Intefaces
+airblue_shift_regs=Airblue Shifted Registers
+stat_averager=Averager collector
+register_mapper=Register Mapping Utilities
+
+[Airblue common library]
+File=modules/airblue/lib/Common/airblue_common.awb
+Packagehint=ofdm
+
+[ClientServer Utilities]
+File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
+Packagehint=bsv-libraries
+
+[Min collector]
+File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
+Packagehint=bsv-libraries
+
+[CommitFIFO]
+File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
+Packagehint=bsv-libraries
+
+[Register Mapping Utilities/Requires]
+register_library=RegisterLibrary
+
+[SPI]
+File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
+Packagehint=bsv-libraries
+
+
+[Airblue Convolutional Decoder Common]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
+Packagehint=ofdm
+
+[ReversalBuffer]
+File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
+Packagehint=bsv-libraries
+
+[Averager collector]
+File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
+Packagehint=bsv-libraries
+
+[Airblue BCJR]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
+
+[Airblue BCJR/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common

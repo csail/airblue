@@ -13,11 +13,14 @@
 %requires airblue_mapper
 %requires airblue_demapper
 %requires airblue_puncturer
-%requires airbule_depuncturer
+%requires airblue_depuncturer
 
 %attributes airblue
 
 %sources -t BSV -v PUBLIC ConvolutionalDecoderTest.bsv
-%sources -t BDPI_C -v PUBLIC addNoise.c
+%sources -t BDPI_C -v PUBLIC addError.c
+
+%param BDPI_NAMES "finishTime" "list of BDPI-exported names"
+
 
 %AWB_END

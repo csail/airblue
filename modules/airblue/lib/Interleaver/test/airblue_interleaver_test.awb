@@ -11,6 +11,10 @@
 %requires airblue_common
 %requires airblue_types
 %requires airblue_interleaver
+%requires airblue_deinterleaver
+%requires airblue_mapper
+%requires airblue_demapper
+%requires debug_utils
 
 %attributes airblue
 
