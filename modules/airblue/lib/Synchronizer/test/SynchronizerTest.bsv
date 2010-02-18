@@ -26,17 +26,19 @@
 
 import CBus::*;
 import Complex::*;
-import FIFO::*;
+import FIFOF::*;
 import FixedPoint::*;
+import FShow::*;
 import GetPut::*;
 import LFSR::*;
 import RegFile::*;
 import Vector::*;
 
+// import Channel::*;
 // import DataTypes::*;
 // import Interfaces::*;
 // import Synchronizer::*;
-// //import Preambles::*;
+// import Preambles::*;
 // import SynchronizerLibrary::*;
 // import FPComplex::*;
 // import Controls::*;
@@ -69,9 +71,10 @@ module mkPacketGenerator (PacketGenerator);
    LFSR#(Bit#(16))            q_lfsr      <- mkLFSR_16();  // to generate q of the sample
    Reg#(PacketGeneratorState) state       <- mkReg(Idle);  // the state of the current packetgenrator
    Reg#(Bit#(16))             counter     <- mkReg(0);     // no. samples output at this state so far
+   Reg#(Bit#(7))              idx         <- mkReg(0);
    Reg#(Bool)                 initialized <- mkReg(False); // initialized the seed yet?
 
-   let len = (len_lfsr.value() > maxBound - 256) ? maxBound : len_lfsr.value() + 256;
+   let len = (len_lfsr.value() > maxBound - 320) ? maxBound : len_lfsr.value() + 320;
    
    rule initialization (!initialized);
       initialized <= True;
@@ -83,47 +86,49 @@ module mkPacketGenerator (PacketGenerator);
    interface Get nextLength;
       method ActionValue#(Bit#(16)) get() if (initialized && state == Idle);
          state <= Short;
-         counter <= 0;
+         counter <= 1;
+         idx <= 96; // starting with cyclic prefix pos
          return len;
       endmethod
    endinterface
    
    interface Get nextData;
       method ActionValue#(FPComplex#(2,14)) get() if (initialized && state != Idle);
+         counter <= counter + 1;
          case (state)
             Short: begin
                       let short = getShortPreambles();
-                      if (counter == 127) // get to next state
+                      if (counter == 160) // get to next state
                          begin
-                            counter <= 0;
                             state <= Long;
+                            idx <= 96;
                          end
                       else
-                         counter <= counter + 1;
-                      return short[counter];
+                         begin
+                            idx <= idx + 1;
+                         end
+                      return short[idx];
                    end
             Long: begin
                      let long = getLongPreambles();
-                     if (counter == 127) // get to the next state
+                     if (counter == 320) // get to the next state
                         begin
-                           counter <= 0;
                            state <= Data;
                         end
                      else
-                        counter <= counter + 1;
-                     return long[counter];
+                        begin
+                           idx <= idx + 1;
+                        end
+                     return long[idx];
                   end
             Data: begin
                      i_lfsr.next();
                      q_lfsr.next();
-                     if (counter == len-257) // minus 256 preamble
+                     if (counter == len) 
                         begin
-                           counter <= 0;
                            len_lfsr.next();
                            state <= Idle;
                         end
-                     else
-                        counter <= counter + 1;
                      return cmplx(unpack(i_lfsr.value()),unpack(q_lfsr.value()));
                   end
          endcase
@@ -157,11 +162,14 @@ module mkSynchronizerTest(Empty);
    Reg#(Bit#(16)) inCounter  <- mkReg(0);
    Reg#(Bit#(32)) outCounter <- mkReg(0);
    
-   Reg#(Bit#(32))  expected_sync_pos <- mkReg(256); // the next expected synchronization position, the first one should start at 256th (assuming 0 is the 1st output)
-   FIFO#(Bit#(32)) expected_sync_pos_fifo <- mkSizedFIFO(4); // check whether the expected synchronization position match  
-   
+   Reg#(Bit#(32))  expected_sync_pos <- mkReg(320); // the next expected synchronization position, the first one should start at 256th (assuming 0 is the 1st output)
+   FIFOF#(Bit#(32)) expected_sync_pos_fifo <- mkSizedFIFOF(4); // check whether the expected synchronization position match
+   Reg#(Bit#(16))   misses <- mkReg(0); // no. unsuccessfully detected packets
+   Reg#(Bit#(16))   detected <- mkReg(0); // no. successfully detected packets
+  
    // constant
    Reg#(Bit#(32)) cycle <- mkReg(0);
+   FIFOF#(Bit#(32)) deq_fifo <- mkSizedFIFOF(4);
    
    rule printState;
       $display("Cycle %d: expected_sync_pos_fifo ",cycle, fshow(expected_sync_pos_fifo));
@@ -199,8 +207,27 @@ module mkSynchronizerTest(Empty);
       $display("");
       if (result.control.isNewPacket)
          begin
+            deq_fifo.enq(outCounter);
+         end
+   endrule
+   
+   rule detectNewPacket(True);
+      let expected_pos = expected_sync_pos_fifo.first();
+      if (outCounter > expected_pos + 320) // probably miss the packet
+         begin
+            misses <= misses + 1;
             expected_sync_pos_fifo.deq();
-            $display("Cycle %d: new packet detected at position %d, expected position %d", cycle, outCounter, expected_sync_pos_fifo.first());
+            $display("Cycle %d: new packet detection fails at expected_position = %d", cycle, expected_pos);
+         end
+      else          
+         begin            
+            let actual_pos = deq_fifo.first();
+            let diff_is_positive = (actual_pos > expected_pos); // positive = late detection
+            let diff_pos = diff_is_positive ? actual_pos - expected_pos : expected_pos - actual_pos;
+            detected <= detected + 1;
+            deq_fifo.deq();
+            expected_sync_pos_fifo.deq();
+            $display("Cycle %d: new packet detected_position = %d, expected_position = %d, is_late_detection = %d, diff = %d ", cycle, actual_pos, expected_pos, diff_is_positive, diff_pos);
          end
    endrule
    
@@ -213,10 +240,17 @@ module mkSynchronizerTest(Empty);
    // tick
    rule tick(True);
       cycle <= cycle + 1;
-      if (cycle == 10000)
-	 $finish();
    endrule
-     
+   
+   rule finishTest(cycle > 300000);
+      $display("Cycle %d: simulation ends, detection success = %d, failure = %d",cycle,detected,misses);
+      if (misses == 0)
+         $display("Pass");
+      else
+         $display("Fail");
+      $finish();
+   endrule
+   
 endmodule   
 
 
