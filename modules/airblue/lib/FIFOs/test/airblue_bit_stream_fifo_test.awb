@@ -9,6 +9,9 @@
 %provides hw_only_application
 
 %requires airblue_special_fifos
+%requires airblue_common
+%requires debug_utils
+
 
 %attributes airblue
 
