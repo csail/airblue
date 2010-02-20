@@ -11,5 +11,6 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC Puncturer.bsv
+%generated -t BA mkPuncturerInstance.ba
  
 %AWB_END

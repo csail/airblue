@@ -12,4 +12,9 @@
 
 %sources -t BSV -v PUBLIC Macros.bsv VParams.bsv IViterbi.bsv PathMetricUnit.bsv BranchMetricUnit.bsv       
 
+%generated -t BA mkBranchMetricUnit.ba
+%generated -t BA module_permuteForward.ba
+%generated -t BA module_getBranchMetricForward.ba
+%generated -t BA module_acs.ba
+
 %AWB_END

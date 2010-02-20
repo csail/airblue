@@ -14,4 +14,8 @@
 
 %sources -t BSV -v PUBLIC Macros.bsv Viterbi.bsv TracebackUnit.bsv        
 
+%generated -t BA mkIViterbiTBPath.ba
+%generated -t BA mkTracebackUnit.ba
+%generated -t BA module_getPMUOutViterbi.ba
+
 %AWB_END

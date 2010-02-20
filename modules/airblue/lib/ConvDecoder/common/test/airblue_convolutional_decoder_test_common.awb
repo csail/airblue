@@ -19,8 +19,10 @@
 
 %sources -t BSV -v PUBLIC ConvolutionalDecoderTest.bsv
 %sources -t BDPI_C -v PUBLIC addError.c
-
-%param BDPI_NAMES "finishTime" "list of BDPI-exported names"
-
+%generated -t BA addError.ba
+%generated -t BA finishTime.ba
+%generated -t BA addNoise.ba
+%generated -t BA getConvOutBER.ba
+%generated -t BA nextRate.ba
 
 %AWB_END

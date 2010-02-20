@@ -12,4 +12,7 @@
 
 %sources -t BSV -v PUBLIC Mapper.bsv 
 
+%generated -t BA viterbiMapCtrl.ba
+%generated -t BA mkMapperInstance.ba
+
 %AWB_END

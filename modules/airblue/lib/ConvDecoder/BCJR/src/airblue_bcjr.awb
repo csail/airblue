@@ -14,4 +14,9 @@
 
 %sources -t BSV -v PUBLIC Macros.bsv BCJR.bsv BCJRParams.bsv DecisionUnit.bsv 
 
+%generated -t BA mkIBCJR.ba
+%generated -t BA mkDecisionUnit.ba
+%generated -t BA module_getBranchMetricBackward.ba
+
+
 %AWB_END
