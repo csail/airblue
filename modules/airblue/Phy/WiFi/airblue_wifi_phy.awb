@@ -16,4 +16,7 @@
 
 %sources -t BSV -v PUBLIC WiFiTransceiver.bsv
 
+%generated -t BA mkBusTransceiver.ba
+%generated -t BA mkTransceiverPacketGenFPGA.ba
+
 %AWB_END

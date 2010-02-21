@@ -1,0 +1,22 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Folded FFT/IFFT
+%desc Airblue Folded FFT/IFFT
+%provides airblue_fft
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC FParams.bsv FFTIFFT_Library.bsv FFTIFFT.bsv
+%generated -t BA mkFFTIFFT.ba
+%generated -t BA mkWiFiFFTIFFT.ba
+%generated -t BA mkOneStage.ba
+%generated -t BA mkFFTBflys_RWire.ba
+%generated -t BA module_genOmegaVecs.ba
+%generated -t BA module_fftPermute.ba
+%generated -t BA module_fftPermuteRes.ba
+
+%AWB_END

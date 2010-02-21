@@ -99,8 +99,8 @@ airblue_channel_estimator=Airblue Channel Estimator
 airblue_common=Airblue common library
 airblue_pilot_insert=Airblue Pilot Insert
 airblue_parameters=Airblue WiFi parameters
-physical_platform_utils=Common Physical Platform Utilities
+debug_utils=Debug Utilities
 
-[Common Physical Platform Utilities]
-File=modules/bluespec/common/fpgaenv/physical-platform/utils/utils.awb
-Packagehint=platforms
+[Debug Utilities]
+File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+Packagehint=bsv-libraries

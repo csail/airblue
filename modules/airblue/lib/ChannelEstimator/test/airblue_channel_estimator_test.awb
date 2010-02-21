@@ -13,7 +13,7 @@
 %requires airblue_parameters
 %requires airblue_channel_estimator
 %requires airblue_pilot_insert
-
+%requires debug_utils
 
 
 %attributes airblue

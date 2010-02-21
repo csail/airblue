@@ -35,10 +35,6 @@ model=HW/SW Hybrid Project Foundation
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[Airblue FFT/IFFT]
-File=modules/airblue/lib/FFT/src/airblue_fft.awb
-Packagehint=ofdm
-
 [Airblue types]
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
@@ -269,7 +265,7 @@ Packagehint=ofdm
 [WiFi Phy Transceiver/Requires]
 airblue_transmitter=WiFi Transmitter Pipeline
 airblue_receiver=WiFi Receiver Pipeline
-airblue_fft=Airblue FFT/IFFT
+airblue_fft=Airblue Folded FFT/IFFT
 
 [ClientServer Utilities]
 File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
@@ -290,11 +286,13 @@ Packagehint=ofdm
 File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
 Packagehint=bsv-libraries
 
-
-
 [Airblue BCJR/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue BCJR]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
+
+[Airblue Folded FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm

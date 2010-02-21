@@ -11,5 +11,20 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC SParams.bsv Synchronizer.bsv SynchronizerLibrary.bsv
+
+%generated -t BA mkAutoCorrelator.ba
+%generated -t BA mkAutoCorr_DelayIn.ba
+%generated -t BA mkAutoCorr_CorrSub.ba
+%generated -t BA mkAutoCorr_ExtDelayIn.ba
+%generated -t BA mkAutoCorr_ExtCorrSub.ba
+
+%generated -t BA mkTimeEst_FineDelay.ba
+%generated -t BA mkTimeEst_CoarTimeSub.ba
+%generated -t BA mkTimeEst_CoarPowSub.ba
+%generated -t BA mkTimeEst_FineDelaySign.ba
+
+%generated -t BA mkFreqEstimator.ba
+%generated -t BA mkFreqRotator.ba
+%generated -t BA mkFreqEst_FreqOffAccumSub.ba
  
 %AWB_END

@@ -20,4 +20,13 @@
 
 %sources -t BSV -v PUBLIC Encoder.bsv TXController.bsv Transmitter.bsv WiFiTransmitter.bsv
 
+%generated -t BA mkEncoderInstance.ba
+%generated -t BA mkPilotInsertInstance.ba
+%generated -t BA mkCPInsertInstance.ba
+%generated -t BA mkPreDescramblerRXController.ba
+%generated -t BA mkPostDescramblerRXController.ba
+%generated -t BA mkDecoderMCDInstance.ba
+%generated -t BA mkViterbiInstance.ba
+
+
 %AWB_END

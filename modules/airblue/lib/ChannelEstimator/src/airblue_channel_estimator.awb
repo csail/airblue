@@ -14,4 +14,6 @@
 
 %sources -t BSV -v PUBLIC ChannelEstimator.bsv ChannelEstimatorTypes.bsv
 
+%generated -t BA mkChannelEstimatorInstance.ba
+
 %AWB_END
