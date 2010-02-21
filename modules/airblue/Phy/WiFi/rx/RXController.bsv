@@ -161,9 +161,6 @@ interface PreDescramblerRXController;
       outToDescrambler;
    interface Get#(Feedback#(RXVector,RXVectorDecodeError)) outFeedback;
    interface Get#(RXVector)   outRXVector;
-   `ifdef SOFT_PHY_HINTS
-   interface Get#(Bit#(8))  outSoftPhyHints;
-   `endif  
    method    Action abortReq;
 endinterface
 
@@ -187,9 +184,6 @@ interface RXController;
       inFromDescrambler;
    interface Get#(RXVector) outRXVector;
    interface Get#(Bit#(8))  outData;
-   `ifdef SOFT_PHY_HINTS
-   interface Get#(Bit#(8))  outSoftPhyHints;
-   `endif
    interface Get#(RXExternalFeedback) packetFeedback;
    method    Put#(Bit#(0)) abortReq;
    interface Get#(Bit#(0)) abortAck;
@@ -392,10 +386,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    Reg#(Bit#(32))            cycleCount <- mkReg(0);
    Reg#(Bool)                abortReg <- mkReg(False);
 
-   `ifdef SOFT_PHY_HINTS
-   Reg#(Bit#(8))             minSoftPhyHints <- mkReg(maxBound);
-   FIFO#(Bit#(8))            outSoftPhyHintsQ <- mkLFIFO;
-   `endif 
    
    // constants
    Bit#(TLog#(HeaderSz)) vOutSz   = fromInteger(valueOf(ViterbiOutDataSz));
@@ -483,20 +473,12 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    
    rule processInMesgQ(streamQ_free >= vOutSz);
       let mesg = inMesgQ.first;
-      `ifdef SOFT_PHY_HINTS
-      let softHints = tpl_2(unzip(mesg.data));
-      let msgData = tpl_1(unzip(mesg.data));
-      `else
       let msgData = mesg.data;
-      `endif
       case (rxState)
          RX_IDLE: begin
                      inMesgQ.deq();
                      if (mesg.control.firstSymbol) // only process if start of packet
                         begin
-                           `ifdef SOFT_PHY_HINTS
-                           minSoftPhyHints <= maxBound;
-                           `endif
                            rxState <= RX_HEADER;
                            dropData <= zeroExtend(headerSz) - zeroExtend(vOutSz);
 		           streamQ.enq(vOutSz,append(msgData,replicate(0)));
@@ -524,9 +506,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                                begin
                                   rxState <= RX_DATA;
                                   dropData <= zeroExtend(rxLength) << 3;
-                                  `ifdef SOFT_PHY_HINTS
-                                  checkData <= getBitLength(rxLength) - fromInteger(valueOf(PostDataSz));
-                                  `endif
                                end
                          end
                       else
@@ -538,26 +517,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
          RX_DATA: begin
                      inMesgQ.deq();
                      streamQ.enq(vOutSz,append(msgData,replicate(0)));
-                     `ifdef SOFT_PHY_HINTS
-                     Bit#(8) minHints = fold(pickSmaller, map(truncate, softHints));
-                     let newMinSoftPhyHints = (minHints < minSoftPhyHints) ? minHints : minSoftPhyHints; 
-                     minSoftPhyHints <= newMinSoftPhyHints;
-                     for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
-                        $display("PreDescramblerRXCtrllr softphy hints: %d",softHints[i]);
-                     if (checkData > 0)
-                        begin
-                           if (checkData <= zeroExtend(vOutSz)) // last data
-                              begin
-                                 checkData <= 0;
-//                                 outSoftPhyHintsQ.enq(newMinSoftPhyHints);
-                                 $display("PreDescramblerRXCtrllr report min softphy hint of the packet %d",newMinSoftPhyHints);
-                              end
-                           else
-                              begin
-                                 checkData <= checkData - zeroExtend(vOutSz);
-                              end
-                        end
-                     `endif
                   end
       endcase
       $display("PreDescramblerRXCtrll processInMsgQ rxState:%d rxLength:%d",rxState,rxLength);      
@@ -569,9 +528,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    interface outToDescrambler = fifoToGet(outMesgQ);   
    interface outRXVector = fifoToGet(outRXVectorQ);   
    interface outFeedback = fifoToGet(outFeedbackQ);
-   `ifdef SOFT_PHY_HINTS
-   interface outSoftPhyHints = fifoToGet(outSoftPhyHintsQ);
-   `endif
       
    method Action abortReq;
       abortReg <= True;
@@ -691,9 +647,6 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkRXController(RXContr
    interface inFromDescrambler = postDescramblerCtrllr.inFromDescrambler;
    interface outRXVector = preDescramblerCtrllr.outRXVector;
    interface outData   = postDescramblerCtrllr.outData;
-   `ifdef SOFT_PHY_HINTS
-   interface outSoftPhyHints = preDescramblerCtrllr.outSoftPhyHints;
-   `endif
    interface packetFeedback = fifoToGet(fifofToFifo(feedbackFIFO));
    interface abortAck = preDemapperCtrllr.abortAck;
 

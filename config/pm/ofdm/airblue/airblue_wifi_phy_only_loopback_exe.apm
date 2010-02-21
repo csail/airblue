@@ -35,16 +35,12 @@ model=HW/SW Hybrid Project Foundation
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[Airblue types]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
-
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
 
 [WiFi Phy Only Loopback/Requires]
-airblue_types=Airblue types
+airblue_types=Airblue types (no SoftHints)
 airblue_parameters=Airblue WiFi parameters
 airblue_shared=Airblue Shared Libraries
 airblue_device=Airblue FPGA device specific modules
@@ -178,10 +174,6 @@ Packagehint=ofdm
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
 Packagehint=bsv-libraries
 
-[Airblue Convolutional Decoder Common]
-File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
-
 [ReversalBuffer]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
 Packagehint=bsv-libraries
@@ -213,20 +205,6 @@ Packagehint=bsv-libraries
 [FIFO Utility]
 File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
 Packagehint=bsv-libraries
-
-[WiFi Receiver Pipeline/Requires]
-airblue_depuncturer=Airblue Depuncturer
-airblue_descrambler=Airblue Descrambler
-airblue_synchronizer=Airblue Synchronizer
-airblue_deinterleaver=Airblue Deinterleaver
-airblue_convolutional_decoder=Airblue BCJR
-airblue_demapper=Airblue Demapper
-airblue_unserializer=Airblue Unserializer
-airblue_channel_estimator=Airblue Channel Estimator
-
-[WiFi Receiver Pipeline]
-File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
-Packagehint=ofdm
 
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
@@ -264,7 +242,7 @@ Packagehint=ofdm
 
 [WiFi Phy Transceiver/Requires]
 airblue_transmitter=WiFi Transmitter Pipeline
-airblue_receiver=WiFi Receiver Pipeline
+airblue_receiver=WiFi Receiver Pipeline (no Soft Hints)
 airblue_fft=Airblue Folded FFT/IFFT
 
 [ClientServer Utilities]
@@ -286,13 +264,41 @@ Packagehint=ofdm
 File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
 Packagehint=bsv-libraries
 
-[Airblue BCJR/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
-
-[Airblue BCJR]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
-Packagehint=ofdm
-
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
+
+
+
+
+
+
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[Airblue BCJR (no Soft Hints)/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common (no Soft Hints)
+
+[WiFi Receiver Pipeline (no Soft Hints)]
+File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Common (no Soft Hints)]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[Airblue BCJR (no Soft Hints)]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
+
+[WiFi Receiver Pipeline (no Soft Hints)/Requires]
+airblue_depuncturer=Airblue Depuncturer
+airblue_descrambler=Airblue Descrambler
+airblue_channel_estimator=Airblue Channel Estimator
+airblue_synchronizer=Airblue Synchronizer
+airblue_deinterleaver=Airblue Deinterleaver
+airblue_convolutional_decoder=Airblue BCJR (no Soft Hints)
+airblue_demapper=Airblue Demapper
+airblue_unserializer=Airblue Unserializer

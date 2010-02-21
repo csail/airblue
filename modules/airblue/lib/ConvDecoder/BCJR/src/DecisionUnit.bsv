@@ -122,11 +122,7 @@ module mkDecisionUnit (DecisionUnit);
       ExtendedPathMetric                 other_min_path_metric = tpl_2(other_min_tpl);
       ExtendedPathMetric                 soft_phy_hints = min_path_metric - other_min_path_metric;
       
-      `ifdef SOFT_PHY_HINTS
-      let out = tuple2(res,soft_phy_hints);
-      `else
       let out = res;
-      `endif
 
       $display("path_metric_sums: ", fshow(path_metric_sums));
       $display("other_path_metric_sums: ", fshow(other_path_metric_sums));

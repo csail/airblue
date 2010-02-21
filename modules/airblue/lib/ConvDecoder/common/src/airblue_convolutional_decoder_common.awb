@@ -4,13 +4,13 @@
 
 %AWB_START
 
-%name Airblue Convolutional Decoder Common
+%name Airblue Convolutional Decoder Common (no Soft Hints)
 %desc Common modules shared by both Viterbi and BCJR
 %provides airblue_convolutional_decoder_common
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Macros.bsv VParams.bsv IViterbi.bsv PathMetricUnit.bsv BranchMetricUnit.bsv       
+%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv PathMetricUnit.bsv BranchMetricUnit.bsv       
 
 %generated -t BA mkBranchMetricUnit.ba
 %generated -t BA module_permuteForward.ba

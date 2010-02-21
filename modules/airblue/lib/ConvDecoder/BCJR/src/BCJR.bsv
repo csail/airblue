@@ -427,24 +427,14 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
    
 
    rule pullDataFromBCJR (True);
-      `ifdef SOFT_PHY_HINTS
-      VOutType v_data_tpl <- bcjr.getResult();
-      let v_data      = tpl_1(v_data_tpl);
-      let v_data_soft = tpl_2(v_data_tpl);
-      `else
       VOutType v_data <- bcjr.getResult();
-      `endif
       Vector#(n,ViterbiOutput) new_out_data = out_data;
       for (Integer i = 0 ; i < fwd_steps; i = i + 1)
 	 begin
             for (Integer j = 0; j < conv_in_sz; j = j + 1)
                begin
                   let offset = i * conv_in_sz + j;
-                  `ifdef SOFT_PHY_HINTS
-	          new_out_data[out_data_count+fromInteger(offset)] = tuple2(v_data[i][j],v_data_soft); 
-                  `else
 	          new_out_data[out_data_count+fromInteger(offset)] = v_data[i][j]; 
-                  `endif
                end
 	 end
       out_data <= new_out_data;

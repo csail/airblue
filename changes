@@ -785,3 +785,44 @@ Directory modules/ofdm
 
 Accomodate moved/changed model foundation. There are, however, 
 still build problems.
+
+----------
+mcn02       Date: Sun Feb 21 02:40:47 EST 2010  CSN: CSN-ofdm-86
+                  Sun Feb 21 07:40:47 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_only_loopback_exe.apm Locally Modified           85 
+
+Directory modules/airblue/Phy/WiFi/rx
+ airblue_receiver.awb      Locally Modified           85 
+ RXController.bsv          Locally Modified           85 
+ WiFiReceiver.bsv          Locally Modified           85 
+
+Directory modules/airblue/parameters/WiFi
+ airblue_wifi_parameters.awb Locally Modified           85 
+ Macros.bsv                Locally Removed            85 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/src
+ DecisionUnit.bsv          Locally Modified           85 
+ BCJR.bsv                  Locally Modified           85 
+ airblue_bcjr.awb          Locally Modified           85 
+ Macros.bsv                Locally Removed            85 
+
+Directory modules/airblue/lib/ConvDecoder/Viterbi/src
+ airblue_viterbi.awb       Locally Modified           85 
+ TracebackUnit.bsv         Locally Modified           85 
+ Macros.bsv                Locally Removed            85 
+ Viterbi.bsv               Locally Modified           85 
+
+Directory modules/airblue/lib/ConvDecoder/common/src
+ VParams.bsv               Locally Modified           85 
+ airblue_convolutional_decoder_common.awb Locally Modified           85 
+ Macros.bsv                Locally Removed            85 
+
+Directory modules/airblue/lib/Types
+ airblue_types.awb         Locally Modified           85 
+ DataTypes.bsv             Locally Modified           85 
+ Macros.bsv                Locally Removed            85 
+
+Remove the Macros.bsv hack for providing soft phy hints. Now we have two alternatives, one with soft hints and one without

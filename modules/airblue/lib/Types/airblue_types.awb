@@ -4,12 +4,12 @@
 
 %AWB_START
 
-%name Airblue types
+%name Airblue types (no SoftHints)
 %desc Airblue types definitions used across the system. Including the definition of the controls, data types and interfaces.
 %provides airblue_types
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Macros.bsv DataTypes.bsv Controls.bsv Interfaces.bsv
+%sources -t BSV -v PUBLIC DataTypes.bsv Controls.bsv Interfaces.bsv
 
 %AWB_END

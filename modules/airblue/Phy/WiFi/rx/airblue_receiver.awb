@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name WiFi Receiver Pipeline 
+%name WiFi Receiver Pipeline (no Soft Hints) 
 %desc WiFi Receiver Pipeline (Exclude FFT which is shared with TX pipeline)
 %provides airblue_receiver
 
@@ -19,6 +19,6 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Macros.bsv Decoder.bsv RXController.bsv Receiver.bsv WiFiReceiver.bsv 
+%sources -t BSV -v PUBLIC Decoder.bsv RXController.bsv Receiver.bsv WiFiReceiver.bsv 
 
 %AWB_END
