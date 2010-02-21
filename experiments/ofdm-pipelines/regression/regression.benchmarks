@@ -1,0 +1,10 @@
+# ***************
+#
+# OFDM benchmarks
+#
+# ***************
+
+experiments = phy_pipeline
+config/bm/bsv-libraries/pass_check.cfx/benchmarks/pass_check.cfg
+
+
