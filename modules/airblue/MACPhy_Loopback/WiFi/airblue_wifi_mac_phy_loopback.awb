@@ -20,4 +20,8 @@
 
 %sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAMACPacketGenWiresTest.bsv
 
+%generated -t BA mkBusMacVectorSpec.ba
+%generated -t BA mkTransceiverMACPacketGenFPGA.ba
+%generated -t BA mkWiFiFPGAMACPacketGenWiresTest.ba
+
 %AWB_END

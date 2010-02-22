@@ -16,6 +16,8 @@
 %requires airblue_device
 
 %generated -t BA mkWiFiFPGAPacketGenWiresTest.ba
+%generated -t BA mkBusTransceiver.ba
+%generated -t BA mkTransceiverPacketGenFPGA.ba
 
 %attributes airblue
 

@@ -853,3 +853,57 @@ Directory experiments/ofdm-pipelines/regression
  regression.benchmarks     Locally Added               0 
 
 Added new regression targets
+
+----------
+kfleming    Date: Sun Feb 21 21:27:04 EST 2010  CSN: CSN-ofdm-88
+                  Mon Feb 22 02:27:04 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_mac_phy_loopback_exe.apm Locally Modified           87 
+
+Directory modules/airblue/Phy/WiFi
+ airblue_wifi_phy.awb      Locally Modified           87 
+
+Directory modules/airblue/lib/PacketGen/src
+ airblue_mac_packet_gen.awb Locally Modified           87 
+
+Directory modules/airblue/MACPhy_Loopback/WiFi
+ airblue_wifi_mac_phy_loopback.awb Locally Modified           87 
+
+Directory modules/airblue/PhyOnly_Loopback/WiFi
+ airblue_wifi_phyonly_loopback.awb Locally Modified           87 
+
+
+Mac test now builds
+
+----------
+kfleming    Date: Sun Feb 21 21:28:39 EST 2010  CSN: CSN-ofdm-88
+                  Mon Feb 22 02:28:39 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_mac_phy_loopback_exe.apm Locally Modified           87 
+
+Directory admin
+ mytags                    Locally Modified           87 
+
+Directory admin/packages
+ ofdm                      Locally Modified           87 
+
+Directory modules/airblue/Phy/WiFi
+ airblue_wifi_phy.awb      Locally Modified           87 
+
+Directory modules/airblue/lib/PacketGen/src
+ airblue_mac_packet_gen.awb Locally Modified           87 
+
+Directory modules/airblue/MACPhy_Loopback/WiFi
+ airblue_wifi_mac_phy_loopback.awb Locally Modified           87 
+
+Directory modules/airblue/PhyOnly_Loopback/WiFi
+ airblue_wifi_phyonly_loopback.awb Locally Modified           87 
+
+Directory .
+ changes                   Locally Modified           87 
+
+MAC pipeline now builds

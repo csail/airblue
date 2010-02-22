@@ -11,5 +11,8 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC PacketGenMAC.bsv
+
+%generated -t BA mkMACPacketGen.ba
+%generated -t BA mkMACPacketCheck.ba
  
 %AWB_END
