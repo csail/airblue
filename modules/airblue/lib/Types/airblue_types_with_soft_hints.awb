@@ -1,0 +1,15 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue types (with SoftHints)
+%desc Airblue types definitions used across the system. Including the definition of the controls, data types and interfaces.
+%provides airblue_types
+
+%attributes airblue soft_hints
+
+%sources -t BSV -v PUBLIC DataTypesSoftHints.bsv Controls.bsv Interfaces.bsv
+
+%AWB_END

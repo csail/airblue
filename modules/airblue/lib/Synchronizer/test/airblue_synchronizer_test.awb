@@ -23,5 +23,9 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC SynchronizerTest.bsv
+
+%generated -t BA mkSynchronizerTest.ba
+%generated -t BA mkStatefulSynchronizerInstance.ba
+%generated -t BA mkPacketGenerator.ba
  
 %AWB_END

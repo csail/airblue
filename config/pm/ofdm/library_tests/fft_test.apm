@@ -31,9 +31,6 @@ Packagehint=hasim
 DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
 
-[Airblue types]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
 
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
@@ -43,9 +40,6 @@ Packagehint=platforms
 File=modules/project/project-hybrid.awb
 Packagehint=platforms
 
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
@@ -72,10 +66,10 @@ Packagehint=bsv-libraries
 hw_only_application=Airblue FFT/IFFT Test
 
 [Airblue FFT/IFFT Test/Requires]
-airblue_types=Airblue types
+airblue_types=Airblue types (no SoftHints)
 airblue_common=Airblue common library
 debug_utils=Debug Utilities
-airblue_parameters=Airblue WiFi parameters
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_fft=Airblue FFT/IFFT
 
 [Airblue FFT/IFFT Test]
@@ -84,4 +78,12 @@ Packagehint=ofdm
 
 [Airblue FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_fft.awb
+Packagehint=ofdm
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters (with standard null SHIM)]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm

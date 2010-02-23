@@ -12,5 +12,8 @@
 
 %sources -t BSV -v PUBLIC Channel.bsv
 %sources -t BDPI_C -v PUBLIC addNoise.c
+
+%generated -t BA mkChannel.ba 
+%generated -t BA addNoise.ba
  
 %AWB_END

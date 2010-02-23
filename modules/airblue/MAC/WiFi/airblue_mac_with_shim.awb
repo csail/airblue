@@ -4,13 +4,13 @@
 
 %AWB_START
 
-%name Airblue MAC with SHIM
-%desc MAC with SHIM which add early abortion feature to MAC
+%name Airblue MAC (with Concurrent TX SHIM)
+%desc MAC with SHIM which add early abortion and concurrent transmission feature to MAC
 %provides airblue_mac
 
-%requires airblue_mac_crc
+%requires airblue_mac_crc 
 
-%attributes airblue
+%attributes airblue concurrent_tx_shim
 
 %sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv
  

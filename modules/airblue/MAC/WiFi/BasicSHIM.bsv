@@ -3,12 +3,14 @@ import GetPut::*;
 import StmtFSM::*;
 import Vector::*;
 
-import MACDataTypes::*;
-import ProtocolParameters::*;
-import RXController::*;
-import TXController::*;
-import MACPhyParameters::*;
+// import MACDataTypes::*;
+// import ProtocolParameters::*;
+// //import RXController::*;
+// //import TXController::*;
+// import MACPhyParameters::*;
 
+// local includes
+`include "asim/provides/airblue_parameters.bsh"
 
 interface SHIM;
    // SHIM <-> Phy
@@ -28,6 +30,10 @@ interface SHIM;
    interface Get#(PhyCcaStatus_T) phy_cca_ind_mac;   
       
    interface Put#(Bit#(48))           mac_sa;  
+
+   //aborting transmissions
+   interface Put#(Bit#(0))  abortAck;
+   interface Get#(Bit#(0))  abortReq; 
 endinterface
    
 
@@ -163,6 +169,18 @@ module mkSHIM (SHIM);
       endmethod
    endinterface
    
+   interface Put abortAck;
+      method Action put(Bit#(0) ack); // should never happen, drop it for now
+         $display("MACSHIMERROR %m gets an abortAck that isn't suppose to happen!");
+         $finish();
+      endmethod
+   endinterface
+   
+   interface Get abortReq;
+      method ActionValue#(Bit#(0)) get() if(False); // never happen
+         return ?;
+      endmethod
+   endinterface
      
 endmodule
 

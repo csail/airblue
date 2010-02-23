@@ -59,9 +59,6 @@ hw_only_application=Airblue Channel Estimator Test
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
 Packagehint=ofdm
 
-[Airblue types]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
 
 [Airblue Channel Estimator/Requires]
 airblue_inverse_sq_root=Airblue Inverse Square Root
@@ -69,9 +66,6 @@ airblue_inverse_sq_root=Airblue Inverse Square Root
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
 
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
 
 [Airblue Inverse Square Root]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
@@ -94,13 +88,21 @@ File=modules/airblue/lib/Common/airblue_common.awb
 Packagehint=ofdm
 
 [Airblue Channel Estimator Test/Requires]
-airblue_types=Airblue types
+airblue_types=Airblue types (no SoftHints)
 airblue_channel_estimator=Airblue Channel Estimator
 airblue_common=Airblue common library
 airblue_pilot_insert=Airblue Pilot Insert
-airblue_parameters=Airblue WiFi parameters
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 debug_utils=Debug Utilities
 
 [Debug Utilities]
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters (with standard null SHIM)]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
+Packagehint=ofdm

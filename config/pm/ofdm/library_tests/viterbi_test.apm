@@ -31,9 +31,6 @@ Packagehint=hasim
 DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
 
-[Airblue types]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
 
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
@@ -68,11 +65,11 @@ File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
 Packagehint=ofdm
 
 [Airblue Viterbi Test/Requires]
-airblue_types=Airblue types
+airblue_types=Airblue types (no SoftHints)
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test template
 airblue_shared=Airblue Shared Libraries
-airblue_convolutional_decoder=Airblue Viterbi
-airblue_parameters=Airblue WiFi parameters
+airblue_convolutional_decoder=Airblue Viterbi (no Soft Hints)
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
 [Airblue FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_fft.awb
@@ -126,9 +123,6 @@ Packagehint=bsv-libraries
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
 
-[Airblue Viterbi]
-File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
-Packagehint=ofdm
 
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
@@ -195,16 +189,8 @@ register_library=RegisterLibrary
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
 
-[Airblue Viterbi/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue Convolutional Decoder Common]
-File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
 
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
 
 [ReversalBuffer]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
@@ -213,3 +199,22 @@ Packagehint=bsv-libraries
 [Averager collector]
 File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
 Packagehint=bsv-libraries
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[Airblue Viterbi (no Soft Hints)]
+File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Common (no Soft Hints)]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters (with standard null SHIM)]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
+Packagehint=ofdm
+
+[Airblue Viterbi (no Soft Hints)/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common (no Soft Hints)

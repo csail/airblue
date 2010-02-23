@@ -144,8 +144,8 @@ airblue_types=Airblue types (no SoftHints)
 airblue_device=Airblue FPGA device specific modules
 airblue_mac_packet_gen=Airblue MAC PacketGen
 airblue_shared=Airblue Shared Libraries
-airblue_parameters=Airblue WiFi parameters
-airblue_mac=Airblue MAC with SHIM
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_mac=Airblue MAC (with null SHIM)
 
 [WiFi MAC Phy Loopback]
 File=modules/airblue/MACPhy_Loopback/WiFi/airblue_wifi_mac_phy_loopback.awb
@@ -153,10 +153,6 @@ Packagehint=ofdm
 
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
-
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
 
 [Airblue Inverse Square Root]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
@@ -272,15 +268,8 @@ Packagehint=bsv-libraries
 [Airblue MAC CRC/Requires]
 crc=CRC Library
 
-[Airblue MAC with SHIM/Requires]
-airblue_mac_crc=Airblue MAC CRC
-
 [Airblue MAC CRC]
 File=modules/airblue/lib/MACCRC/src/airblue_mac_crc.awb
-Packagehint=ofdm
-
-[Airblue MAC with SHIM]
-File=modules/airblue/MAC/WiFi/airblue_mac_with_shim.awb
 Packagehint=ofdm
 
 [Airblue types (no SoftHints)]
@@ -314,4 +303,16 @@ airblue_unserializer=Airblue Unserializer
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
+Packagehint=ofdm
+
+[Airblue MAC (with null SHIM)]
+File=modules/airblue/MAC/WiFi/airblue_mac_no_shim.awb
+Packagehint=ofdm
+
+[Airblue MAC (with null SHIM)/Requires]
+airblue_mac_crc=Airblue MAC CRC
+
+
+[Airblue WiFi parameters (with standard null SHIM)]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm

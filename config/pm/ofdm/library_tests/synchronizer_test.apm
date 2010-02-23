@@ -43,10 +43,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Synchronizer/src/airblue_synchronizer.awb
 Packagehint=ofdm
 
-[Airblue types]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
-
 [HW only hybrid application/Requires]
 hw_only_application=Airblue WiFi Synchronizer Test
 
@@ -61,10 +57,6 @@ Packagehint=platforms
 [RegisterLibrary]
 File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
 Packagehint=bsv-libraries
-
-[Airblue WiFi parameters]
-File=modules/airblue/parameters/WiFi/airblue_wifi_parameters.awb
-Packagehint=ofdm
 
 [CBus Utilities]
 File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
@@ -102,7 +94,7 @@ Packagehint=ofdm
 [Airblue WiFi Synchronizer Test/Requires]
 c_bus_utils=CBus Utilities
 stream_capture_fifo=StreamCaptureFIFO
-airblue_types=Airblue types
+airblue_types=Airblue types (no SoftHints)
 airblue_common=Airblue common library
 airblue_shift_regs=Airblue Shifted Registers
 airblue_synchronizer=Airblue Synchronizer
@@ -110,8 +102,16 @@ vector_utils=Vector Utilities
 register_library=RegisterLibrary
 debug_utils=Debug Utilities
 airblue_channel=Airblue Simulation Channel
-airblue_parameters=Airblue WiFi parameters
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
 [Airblue WiFi Synchronizer Test]
 File=modules/airblue/lib/Synchronizer/test/airblue_synchronizer_test.awb
+Packagehint=ofdm
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[Airblue WiFi parameters (with standard null SHIM)]
+File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm

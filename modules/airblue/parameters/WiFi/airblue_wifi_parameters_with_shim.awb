@@ -4,11 +4,11 @@
 
 %AWB_START
 
-%name Airblue WiFi parameters
-%desc Airblue parameters used to build the WiFi system
+%name Airblue WiFi parameters (with Concurrent TX SHIM)
+%desc Airblue parameters used to build the WiFi system that support concurrent transmission and early abortion
 %provides airblue_parameters
 
-%attributes airblue
+%attributes airblue concurrent_tx_shim
 
 %sources -t BSV -v PUBLIC FFTParameters.bsv FPGAParameters.bsv ProtocolParameters.bsv ViterbiParameters.bsv Preambles.bsv MACPhyParameters.bsv MACDataTypes.bsv
 

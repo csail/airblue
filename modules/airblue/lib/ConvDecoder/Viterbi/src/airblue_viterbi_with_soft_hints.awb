@@ -1,0 +1,21 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Viterbi (with Soft Hints)
+%desc Convolutional Decoder implemented using the Viterbi algorithm
+%provides airblue_convolutional_decoder
+
+%requires airblue_convolutional_decoder_common
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC ViterbiSoftHints.bsv TracebackUnitSoftHints.bsv        
+
+%generated -t BA mkIViterbiTBPath.ba
+%generated -t BA mkTracebackUnit.ba
+%generated -t BA module_getPMUOutViterbi.ba
+
+%AWB_END
