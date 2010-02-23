@@ -14,6 +14,8 @@
 %requires airblue_demapper
 %requires airblue_puncturer
 %requires airblue_depuncturer
+%requires airblue_channel
+
 
 %attributes airblue
 
@@ -21,7 +23,6 @@
 %sources -t BDPI_C -v PUBLIC addError.c
 %generated -t BA addError.ba
 %generated -t BA finishTime.ba
-%generated -t BA addNoise.ba
 %generated -t BA getConvOutBER.ba
 %generated -t BA nextRate.ba
 

@@ -50,6 +50,7 @@ import Complex::*;
 `include "asim/provides/airblue_demapper.bsh"
 `include "asim/provides/airblue_puncturer.bsh"
 `include "asim/provides/airblue_depuncturer.bsh"
+`include "asim/provides/airblue_channel.bsh"
 
 // testing wifi setting
 `define isDebug True // uncomment this line to display error
@@ -385,11 +386,17 @@ module mkConvolutionalDecoderTest#(Viterbi#(TXGlobalCtrl, 24, 12) convolutionalD
       
    rule tick(True);
       cycle <= cycle + 1;
-      if (cycle == finishTime)
+      if (cycle == finishTime())
 	 begin
             $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
             $display("Convolutional encoder BER was set as %d percent",getConvOutBER);
             $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);
+ 
+            if(errors == 0)
+              begin
+                $display("PASS");
+              end 
+
             $finish;
          end
       `ifdef isDebug

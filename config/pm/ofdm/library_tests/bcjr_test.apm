@@ -31,7 +31,6 @@ Packagehint=hasim
 DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
 
-
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
@@ -90,6 +89,7 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
+airblue_channel=Airblue Simulation Channel
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -188,8 +188,6 @@ register_library=RegisterLibrary
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
 
-
-
 [ReversalBuffer]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
 Packagehint=bsv-libraries
@@ -197,8 +195,6 @@ Packagehint=bsv-libraries
 [Averager collector]
 File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
 Packagehint=bsv-libraries
-
-
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
@@ -217,4 +213,8 @@ Packagehint=ofdm
 
 [Airblue BCJR (no Soft Hints)]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
+
+[Airblue Simulation Channel]
+File=modules/airblue/lib/Channel/airblue_channel.awb
 Packagehint=ofdm

@@ -967,3 +967,22 @@ Directory modules/airblue/lib/Channel
  airblue_channel.awb       Locally Modified           88 
 
 Check in the files required for soft hints. Also now have two MAC versions. One with null SHIM another with concurrent tx SHIM
+
+----------
+kfleming    Date: Tue Feb 23 08:59:59 EST 2010  CSN: CSN-ofdm-90
+                  Tue Feb 23 13:59:59 UTC 2010
+
+
+Directory config/pm/ofdm/library_tests
+ viterbi_test.apm          Locally Modified           89 
+ bcjr_test.apm             Locally Modified           89 
+
+Directory modules/airblue/lib/ConvDecoder/Viterbi/test
+ airblue_viterbi_test.awb  Locally Modified           89 
+
+Directory modules/airblue/lib/ConvDecoder/common/test
+ airblue_convolutional_decoder_test_common.awb Locally Modified           89 
+ ConvolutionalDecoderTest.bsv Locally Modified           89 
+
+
+We can now run bcjr/viterbi tests
