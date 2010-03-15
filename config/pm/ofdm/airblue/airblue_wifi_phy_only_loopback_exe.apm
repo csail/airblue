@@ -46,6 +46,7 @@ airblue_shared=Airblue Shared Libraries
 airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
+airblue_channel=Airblue Noisy Channel
 
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
@@ -54,7 +55,6 @@ Packagehint=platforms
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
 Packagehint=ofdm
-
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
@@ -296,4 +296,9 @@ airblue_unserializer=Airblue Unserializer
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
+Packagehint=ofdm
+
+
+[Airblue Noisy Channel]
+File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
 Packagehint=ofdm

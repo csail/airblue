@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Noisy Channel
+%desc Airblue Noisy Channel that connects a tx node to a rx node and capable of adding noises, multipath and fading effect
+%provides airblue_channel
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC Channel.bsv NoisyChannel.bsv
+%sources -t BDPI_C -v PUBLIC addNoise.c
+
+%generated -t BA mkChannel.ba 
+%generated -t BA addNoise.ba
+ 
+%AWB_END

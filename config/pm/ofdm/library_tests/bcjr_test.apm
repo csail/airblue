@@ -89,7 +89,7 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
-airblue_channel=Airblue Simulation Channel
+airblue_channel=Airblue Noisy Channel
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -215,6 +215,7 @@ Packagehint=ofdm
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
 Packagehint=ofdm
 
-[Airblue Simulation Channel]
-File=modules/airblue/lib/Channel/airblue_channel.awb
+
+[Airblue Noisy Channel]
+File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
 Packagehint=ofdm

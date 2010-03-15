@@ -54,6 +54,7 @@ import GetPut::*;
 `include "asim/provides/avalon.bsh"
 `include "asim/provides/client_server_utils.bsh"
 `include "asim/provides/register_mapper.bsh"
+`include "asim/provides/airblue_channel.bsh"
 
 //Bool detailedDebugInfo=True;
 
@@ -83,6 +84,7 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
   Reset busReset <- exposeCurrentReset;
   let receiverFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset,rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset);
   let transmitterFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset, rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset); 
+  let channel <- mkChannel(clocked_by rfClock, reset_by rfReset);
   SyncBitIfc#(Bit#(1)) txPE <- mkSyncBit(basebandClock, basebandReset, rfClock);
   Reg#(Bool) initialized <- mkReg(False);
   Reg#(Bool) pushReq <- mkReg(True);
@@ -113,36 +115,72 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
     pushReq <= !pushReq;    
   endrule
 
+  function FPComplex#(2,14) dacToComplex(DACWires dac);
+    let in = FPComplex {
+      rel: FixedPoint {
+        i: ~dac.dacRPart[9],
+        f: dac.dacRPart[8:0]
+      },
+      img: FixedPoint {
+        i: ~dac.dacIPart[9],
+        f: dac.dacIPart[8:0]
+      }
+    };
+
+    return fpcmplxSignExtend(in);
+  endfunction
+
+  function Bit#(10) fxptToDAC(FixedPoint#(2,14) sample);
+    FixedPoint#(1,9) trunc = fxptTruncate(sample);
+    Bit#(10) out = pack(trunc);
+    return { ~out[9], out[8:0] };
+  endfunction
+
   // send only if the transmitter is transmitting
   rule driveTX;
     txPE.send(transmitterFPGA.gctWires.txPE);
-  endrule  
-
-  rule connectRXTX(txPE.read == 1);
-    receiverFPGA.adcWires.adcRPart(transmitterFPGA.dacWires.dacRPart);    
-    receiverFPGA.adcWires.adcIPart(transmitterFPGA.dacWires.dacIPart); 
-    FPComplex#(DACIPart,DACFPart) sample;  
-    sample.img = unpack({~(transmitterFPGA.dacWires.dacIPart[9]) ,truncate(transmitterFPGA.dacWires.dacIPart)}); 
-    sample.rel = unpack({~(transmitterFPGA.dacWires.dacRPart[9]) ,truncate(transmitterFPGA.dacWires.dacRPart)}); 
-    FPComplex#(RXFPIPrec,RXFPFPrec) sampleExt = fpcmplxSignExtend(sample);
-    FPComplex#(RXFPIPrec,RXFPFPrec) sampleConj = FPComplex{rel:sampleExt.rel,img:-1*sampleExt.img};
-    let magnitude = fpcmplxMult(sampleExt,sampleConj);
-    $write("TXMAG: ");
-    fpcmplxWrite(5,magnitude);
-    $display("");
   endrule
 
-  rule connectRXTXOff(txPE.read == 0);
-    $display("AD: No transmit, sending zeros");
-    receiverFPGA.adcWires.adcRPart({1'b1,0});    
-    receiverFPGA.adcWires.adcIPart({1'b1,0}); 
-    if((transmitterFPGA.dacWires.dacRPart !=  {1'b1,0} ||   
-       transmitterFPGA.dacWires.dacIPart !=  {1'b1,0}) && transmitterFPGA.dacWires.dacModeSelect != 0) 
-      begin
-        $display("AD attempts to transfer non-zero data while not transmitting: %h %h %h",transmitterFPGA.dacWires.dacRPart, transmitterFPGA.dacWires.dacIPart, transmitterFPGA.dacWires.dacModeSelect);
-        $finish;
-      end   
+  rule connectTX(txPE.read == 1);
+    let sample = dacToComplex(transmitterFPGA.dacWires);
+    channel.in.put(sample);
   endrule
+
+  rule connectTXOff(txPE.read == 0);
+    channel.in.put(0);
+  endrule
+
+  rule connectRX;
+    let sample <- channel.out.get();
+    receiverFPGA.adcWires.adcRPart(fxptToDAC(sample.rel));
+    receiverFPGA.adcWires.adcIPart(fxptToDAC(sample.img));
+  endrule
+
+//  rule connectRXTX(txPE.read == 1);
+//    receiverFPGA.adcWires.adcRPart(transmitterFPGA.dacWires.dacRPart);    
+//    receiverFPGA.adcWires.adcIPart(transmitterFPGA.dacWires.dacIPart); 
+//    FPComplex#(DACIPart,DACFPart) sample;  
+//    sample.img = unpack({~(transmitterFPGA.dacWires.dacIPart[9]) ,truncate(transmitterFPGA.dacWires.dacIPart)}); 
+//    sample.rel = unpack({~(transmitterFPGA.dacWires.dacRPart[9]) ,truncate(transmitterFPGA.dacWires.dacRPart)}); 
+//    FPComplex#(RXFPIPrec,RXFPFPrec) sampleExt = fpcmplxSignExtend(sample);
+//    FPComplex#(RXFPIPrec,RXFPFPrec) sampleConj = FPComplex{rel:sampleExt.rel,img:-1*sampleExt.img};
+//    let magnitude = fpcmplxMult(sampleExt,sampleConj);
+//    $write("TXMAG: ");
+//    fpcmplxWrite(5,magnitude);
+//    $display("");
+//  endrule
+//
+//  rule connectRXTXOff(txPE.read == 0);
+//    $display("AD: No transmit, sending zeros");
+//    receiverFPGA.adcWires.adcRPart({1'b1,0});    
+//    receiverFPGA.adcWires.adcIPart({1'b1,0}); 
+//    if((transmitterFPGA.dacWires.dacRPart !=  {1'b1,0} ||   
+//       transmitterFPGA.dacWires.dacIPart !=  {1'b1,0}) && transmitterFPGA.dacWires.dacModeSelect != 0) 
+//      begin
+//        $display("AD attempts to transfer non-zero data while not transmitting: %h %h %h",transmitterFPGA.dacWires.dacRPart, transmitterFPGA.dacWires.dacIPart, transmitterFPGA.dacWires.dacModeSelect);
+//        $finish;
+//      end   
+//  endrule
 
 endmodule
 

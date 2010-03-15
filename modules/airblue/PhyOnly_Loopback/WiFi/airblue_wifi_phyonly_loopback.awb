@@ -14,6 +14,7 @@
 %requires airblue_phy
 %requires airblue_phy_packet_gen
 %requires airblue_device
+%requires airblue_channel
 
 %generated -t BA mkWiFiFPGAPacketGenWiresTest.ba
 %generated -t BA mkBusTransceiver.ba
