@@ -64,7 +64,7 @@ function Vector#(out_n,Tuple2#(Bit#(p_sz),FixedPoint#(i_prec,f_prec))) determine
    provisos(RealLiteral#(FixedPoint#(i_prec,f_prec)),
             Literal#(FixedPoint::FixedPoint#(i_prec, f_prec)),
             Log#(p_no,p_sz));
-   Vector#(out_n,Tuple2#(Bit#(p_bsz),FixedPoint#(i_prec,f_prec))) coefs = replicate(tuple2(0,-1));
+   Vector#(out_n,Tuple2#(Bit#(p_sz),FixedPoint#(i_prec,f_prec))) coefs = replicate(tuple2(0,-1));
    //Handle pilot 0 special		
    Integer index = 0;
    
@@ -391,7 +391,7 @@ endmodule
 //              Add#(1,xxA,p_sz),
 //              Add#(xxA,1,p_sz),
 //              Log#(out_n,out_sz),
-//              Log#(p_no,p_bsz),
+//              Log#(p_no,p_sz),
 //              Arith#(FixedPoint#(i_prec,f_prec)),
 //              Add#(1,xxB,i_prec),
 //              Add#(4,xxC,TAdd#(32,f_prec)),
@@ -450,8 +450,8 @@ endmodule
 //    Reg#(Bool)                  setupComplete <- mkReg(True);
 //    Reg#(Bool)                  compComplete  <- mkReg(True);
 //    Reg#(Bit#(out_sz))                   outIdx <- mkRegU();
-//    Reg#(Bit#(p_bsz))                  pilotIdxSetup <- mkRegU();
-//    Reg#(Bit#(p_bsz))                  pilotIdxSetupWrite <- mkRegU();
+//    Reg#(Bit#(p_sz))                  pilotIdxSetup <- mkRegU();
+//    Reg#(Bit#(p_sz))                  pilotIdxSetupWrite <- mkRegU();
 //    Reg#(Bit#(p_sz))                  pilotLFSR <- mkRegU();
 //    Reg#(Symbol#(p_no,i_prec,f_prec)) pilotEval <- mkRegU(); 
 //    Reg#(DemapperMesg#(ctrl_t,out_n,i_prec,f_prec))  outReg <- mkRegU(); // probably can get rid of this guy...

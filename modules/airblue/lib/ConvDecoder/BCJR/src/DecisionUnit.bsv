@@ -176,7 +176,7 @@ module mkDecisionUnit (DecisionUnit);
             $display("Decision Unit Backwards last");
          end 
       let combinedProbs = zipWith( \+ , map(signExtend,tpl_1(unzip(vecA))), map(signExtend,tpl_1(unzip(vecB))));
-      $display("Decision: Combined probs: ", fshow(combinedProbs));
+      //$display("Decision: Combined probs: ", fshow(combinedProbs));
         combinedQ.enq(combinedProbs);
       endmethod
    endinterface                

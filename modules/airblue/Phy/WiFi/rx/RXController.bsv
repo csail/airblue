@@ -336,7 +336,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkPreDemapperRXControl
 	       rxRate  <= packetInfo.header.rate; 
 	       rxLength <= getBitLength(packetInfo.header.length); // no of bits to be received = (16+8*length+6) 
                //if (detailedDebugInfo)
-	       $display("PreDemapperRXCtrllr valid inFeedback rxState:%d rxLength:%d",rxState,(((zeroExtend(packetInfo.header.length) + 2) << 3) + 6));
+	       $display("PreDemapperRXCtrllr valid inFeedback rxState:%d rxLength:%d",rxState,(((packetInfo.header.length + 2) << 3) + 6));
 	    end
 	 else // error in decoding package, return to idle, or is trailer
 	    begin

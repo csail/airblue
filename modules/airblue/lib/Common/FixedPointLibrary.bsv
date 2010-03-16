@@ -35,8 +35,8 @@ import FixedPoint::*;
 
 // take the most significant n bits from the fixedpoint value, result represented in bits
 function Bit#(n) fxptGetMSBs(FixedPoint#(ai,af) x)
-  provisos (Add#(n, xxA, TAdd#(n,xxA)),
-            Bits#(FixedPoint#(ai, af), TAdd#(n, xxA)));
+  provisos (Add#(n, xxA, TAdd#(ai,af)));
+            //Bits#(FixedPoint#(ai, af), TAdd#(n, xxA))*/);
       return tpl_1(split(pack(x)));
 endfunction // Bit
 

@@ -48,8 +48,9 @@ endfunction // Action
 
 //
 function Complex#(Bit#(n)) fpcmplxGetMSBs(FPComplex#(ai,af) x)
-  provisos (Add#(n, xxA, TAdd#(n,xxA)),
-            Bits#(FixedPoint#(ai, af), TAdd#(n, xxA)));
+  provisos (Add#(n, xxA, TAdd#(ai,af))
+            /*Add#(n, xxA, TAdd#(n,xxA)),
+            Bits#(FixedPoint#(ai, af), TAdd#(n, xxA))*/);
       return cmplxMap(fxptGetMSBs,x);
 endfunction // Complex
 

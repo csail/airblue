@@ -986,3 +986,23 @@ Directory modules/airblue/lib/ConvDecoder/common/test
 
 
 We can now run bcjr/viterbi tests
+
+----------
+kfleming    Date: Tue Mar 16 00:35:28 EDT 2010  CSN: CSN-ofdm-94
+                  Tue Mar 16 04:35:28 UTC 2010
+
+
+Directory modules/airblue/Phy/WiFi/rx
+ RXController.bsv          Locally Modified           93 
+
+Directory modules/airblue/lib/Common
+ FPComplex.bsv             Locally Modified           93 
+ FixedPointLibrary.bsv     Locally Modified           93 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/src
+ DecisionUnit.bsv          Locally Modified           93 
+
+Directory modules/airblue/lib/ChannelEstimator/src
+ ChannelEstimator.bsv      Locally Modified           93 
+
+Fixed some ambiguous types.
