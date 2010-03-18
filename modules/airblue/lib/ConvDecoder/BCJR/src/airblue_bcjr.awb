@@ -18,5 +18,6 @@
 %generated -t BA mkDecisionUnit.ba
 %generated -t BA module_getBranchMetricBackward.ba
 
+%param DEBUG_BCJR 0 "Enable debug messages"
 
 %AWB_END

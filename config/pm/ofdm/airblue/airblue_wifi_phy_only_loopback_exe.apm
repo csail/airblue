@@ -298,7 +298,6 @@ airblue_unserializer=Airblue Unserializer
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-
 [Airblue Noisy Channel]
 File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
 Packagehint=ofdm

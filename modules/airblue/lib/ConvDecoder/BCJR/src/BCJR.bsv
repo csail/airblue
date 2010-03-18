@@ -64,12 +64,15 @@ module mkIBCJR (IViterbi);
 
 
    // Some diagnostic
-   rule diagnostic;
-     $display("BCJR Diganostic bmuForwardOut: ", fshow(bmuForwardOut));
-     $display("BCJR Diganostic bmuReverseOut: ", fshow(bmuReverseOut));
-     $display("BCJR Diganostic backwardPathLast: ", fshow(backwardPathLast));
-     $display("BCJR Diganostic backwardsInit: ", fshow(backwardsInit));
-   endrule
+   if(`DEBUG_BCJR == 1)
+     begin
+       rule diagnostic;
+         $display("BCJR Diganostic bmuForwardOut: ", fshow(bmuForwardOut));
+         $display("BCJR Diganostic bmuReverseOut: ", fshow(bmuReverseOut));
+         $display("BCJR Diganostic backwardPathLast: ", fshow(backwardPathLast));
+         $display("BCJR Diganostic backwardsInit: ", fshow(backwardsInit));
+       endrule
+     end
 
 
 
@@ -87,7 +90,11 @@ module mkIBCJR (IViterbi);
    
      if(ctrl) // This is the last
        begin    
-         $display("BCJR: BMU push last next cycle");
+         if(`DEBUG_BCJR == 1)
+            begin
+              $display("BCJR: BMU push last next cycle");
+            end
+  
          bmuPushLast <= True; // Push last next cycle
        end    
 
@@ -98,7 +105,10 @@ module mkIBCJR (IViterbi);
 
      if(pushReset) 
        begin
-         $display("BCJR BMU pushes reset at bitId: %d", bitId);
+         if(`DEBUG_BCJR == 1)
+           begin
+             $display("BCJR BMU pushes reset at bitId: %d", bitId);
+           end
        end
 
      revResetCounter <= revCounterNext;
@@ -108,7 +118,10 @@ module mkIBCJR (IViterbi);
 
 
    rule feedPMUForward;
-     $display("BCJR: pushing bmu data to forward unit");
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: pushing bmu data to forward unit");
+       end
      bmuForwardOut.deq;
      pmuForward.in.put(PathMetricUnitIn{branchMetric: bmuForwardOut.first, initPathMetric: initPathMetricZero()});
    endrule
@@ -136,7 +149,11 @@ module mkIBCJR (IViterbi);
      let revBufferResult <- revBufferInitial.outputData.get;
      match {.need_rst, .bmuOut} = revBufferInitialPayload;
 
-     $display("BCJR backwardsPMUEstimator fires: %d", clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR backwardsPMUEstimator fires: %d", clockCycles);
+       end
+
      // Check bitIds 
      if(revBufferId != revBufferInitialId) 
        begin
@@ -149,7 +166,11 @@ module mkIBCJR (IViterbi);
      //keep last around, we'll need it for the final reversal...
      if(!firstBlock) // feed the Estimator...
        begin
-         $display("BCJR Putting data into PMU Backward Estimator: bitId: %d need_rst: %h", revBufferInitialId, need_rst);
+         if(`DEBUG_BCJR == 1)
+           begin
+             $display("BCJR Putting data into PMU Backward Estimator: bitId: %d need_rst: %h", revBufferInitialId, need_rst);
+           end
+
          pmuBackwardEstimator.in.put(PathMetricUnitIn{branchMetric: revBufferInitialPayload, initPathMetric: initPathMetricZero()});
        end
      
@@ -157,13 +178,20 @@ module mkIBCJR (IViterbi);
        begin
          if(!firstBlock)
            begin
-	     $display("BCJR Backwards Estimator: ReInit pmuESTEnq requested: %d ",pmuESTEnq+1);
+             if(`DEBUG_BCJR == 1)
+               begin
+	         $display("BCJR Backwards Estimator: ReInit pmuESTEnq requested: %d ",pmuESTEnq+1);
+               end
+
              pmuESTEnq <= pmuESTEnq + 1;
              backwardsInit.enq(PMUEst);
            end
          else 
            begin
-             $display("BCJR PMUEst firstBlock @ %d", clockCycles);
+             if(`DEBUG_BCJR == 1)
+               begin
+                 $display("BCJR PMUEst firstBlock @ %d", clockCycles);
+               end
            end
          firstBlock <= False;
        end
@@ -182,12 +210,20 @@ module mkIBCJR (IViterbi);
      firstBlock <= True;
      let revBufferResult <- revBufferInitial.outputData.get; 
      defaultEnq <= defaultEnq + 1;
-     $display("BCJR Backwards Estimator: ReInit Default requested %d", defaultEnq + 1);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR Backwards Estimator: ReInit Default requested %d", defaultEnq + 1);
+       end
+
      backwardsInit.enq(Default);
      // feed in need reset and a default vector
      // I believe 0 means no error for branch metric...
      // This may be introduce an extra token :(
-     $display("BCJR PMU Estimator Decode End Fires @ %d", clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR PMU Estimator Decode End Fires @ %d", clockCycles);
+       end
+
      bmuReverseOut.enq(BackwardPathCtrl{backwardCtrl:BCJRBackwardCtrl{last:True, bitId: ~0},metric:?});
    endrule
 
@@ -203,13 +239,14 @@ module mkIBCJR (IViterbi);
 
    // no ref to pmu est here....
    rule backwardsPMUNormal(!bmuReverseOut.first.backwardCtrl.last && !pmuBackwardReInit);
-      $display("BCJR Putting data into PMU Normal: bitId(Norm): %d need_rst: %h", 
-               bmuReverseOut.first.backwardCtrl.bitId,need_rstBackward);
-    
-      bmuReverseOut.deq;
-      $display("BCJR PMU Normal got bitId %d rstBMU: %h", 
-               bmuReverseOut.first.backwardCtrl.bitId, tpl_1(bmuReverseOut.first.metric));
-     
+     bmuReverseOut.deq;
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR Putting data into PMU Normal: bitId(Norm): %d need_rst: %h", 
+           bmuReverseOut.first.backwardCtrl.bitId,need_rstBackward);
+         $display("BCJR PMU Normal got bitId %d rstBMU: %h", 
+            bmuReverseOut.first.backwardCtrl.bitId, tpl_1(bmuReverseOut.first.metric));
+       end
   
       // should use the est rst...
       // using reset est: tuple2(need_rstPMUEst,tpl_2(bmuReverseOut.first.metric))
@@ -220,7 +257,12 @@ module mkIBCJR (IViterbi);
 
       if(need_rstBackward) 
         begin
-          $display("PMUNormal ReInit needs to be processed at bit %d", bmuReverseOut.first.backwardCtrl.bitId);
+
+        if(`DEBUG_BCJR == 1)
+          begin
+            $display("PMUNormal ReInit needs to be processed at bit %d", bmuReverseOut.first.backwardCtrl.bitId);
+          end
+
           pmuBackwardReInit <= True;
         end
    endrule
@@ -232,13 +274,22 @@ module mkIBCJR (IViterbi);
                            pmuBackwardReInit && backwardsInit.first == PMUEst);
       let pmuEstimate <- pmuBackwardEstimator.out.get;
       backwardsInit.deq;
-      $display("BCJR handling PMU Est ReInit: bitId(Norm): %d count: %d", bmuReverseOut.first.backwardCtrl.bitId, pmuESTDeq + 1);
+
+      if(`DEBUG_BCJR == 1)
+        begin
+          $display("BCJR handling PMU Est ReInit: bitId(Norm): %d count: %d", bmuReverseOut.first.backwardCtrl.bitId, pmuESTDeq + 1);
+        end
+
       pmuESTDeq <= pmuESTDeq + 1;
       pmuBackwardReInit <= False;
       bmuReverseOut.deq;
-     $display("BCJR PMU Normal got bitId %d rstPMUEst: %h rstBMU: %h", bmuReverseOut.first.backwardCtrl.bitId, need_rstPMUEst, tpl_1(bmuReverseOut.first.metric));
-      $display("BCJR PMU Normal Initial Vector: ", fshow(tpl_1(unzip(pmuEst))));
-     
+
+      if(`DEBUG_BCJR == 1)
+        begin
+          $display("BCJR PMU Normal got bitId %d rstPMUEst: %h rstBMU: %h", bmuReverseOut.first.backwardCtrl.bitId, need_rstPMUEst, tpl_1(bmuReverseOut.first.metric));
+          $display("BCJR PMU Normal Initial Vector: ", fshow(tpl_1(unzip(pmuEst))));
+        end
+
       pmuBackward.in.put(PathMetricUnitIn{branchMetric:  bmuReverseOut.first.metric, 
                                           initPathMetric: tpl_1(unzip(pmuEst))});
       backwardPathLast.enq(bmuReverseOut.first.backwardCtrl);
@@ -257,15 +308,24 @@ module mkIBCJR (IViterbi);
    // What will do here in the padding case is to remove the padding block, as it is no longer needed. 
    rule backwardsPMUReInitDefault(!bmuReverseOut.first.backwardCtrl.last && 
                                   pmuBackwardReInit && backwardsInit.first == Default);
-      $display("BCJR handling PMU ReInit Default bitId(Norm): %d count: %d", 
+
+      if(`DEBUG_BCJR == 1)
+        begin
+          $display("BCJR handling PMU ReInit Default bitId(Norm): %d count: %d", 
                bmuReverseOut.first.backwardCtrl.bitId,
                defaultDeq + 1);
+        end
+
       defaultDeq <= defaultDeq + 1;
       pmuBackwardReInit <= False;
       bmuReverseOut.deq;
       backwardsInit.deq;
-     $display("BCJR PMU Normal got bitId %d rstBMU: %h", bmuReverseOut.first.backwardCtrl.bitId, tpl_1(bmuReverseOut.first.metric));
-      $display("BCJR PMU Normal Initial Vector: ", initPathMetricZero());
+
+      if(`DEBUG_BCJR == 1)
+        begin
+          $display("BCJR PMU Normal got bitId %d rstBMU: %h", bmuReverseOut.first.backwardCtrl.bitId, tpl_1(bmuReverseOut.first.metric));
+          $display("BCJR PMU Normal Initial Vector: ", initPathMetricZero());
+        end
      
       pmuBackward.in.put(PathMetricUnitIn{branchMetric:  bmuReverseOut.first.metric, 
                                           initPathMetric: initPathMetricZero()});
@@ -289,12 +349,21 @@ module mkIBCJR (IViterbi);
    rule pmuUnReverse(!backwardPathLast.first.last);
      backwardPathLast.deq;
      let pmuOut <- pmuBackward.out.get;
-     $display("BCJR PMU UnReverse got bitId %d Max %d (%h)", backwardPathLast.first.bitId, getPathMetricMaxIndex(pmuOut));
+
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR PMU UnReverse got bitId %d Max %d (%h)", backwardPathLast.first.bitId, getPathMetricMaxIndex(pmuOut));
+       end
+
      revBufferFinal.inputData.put(tuple2(backwardPathLast.first,pmuOut));     
    endrule
 
    rule pmuUnReverseLast(backwardPathLast.first.last);
-     $display("BCJR PMU UnReverse last @ %d", clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR PMU UnReverse last @ %d", clockCycles);
+       end
+
      backwardPathLast.deq;
      revBufferFinal.inputData.put(tuple2(backwardPathLast.first,?));     
    endrule
@@ -307,19 +376,32 @@ module mkIBCJR (IViterbi);
    rule feedDecisionUnit(!tpl_1(peekGet(revBufferFinal.outputData)).last && !decisionReInit);
      let backwardProbs <- revBufferFinal.outputData.get;
      let forwardProbs <- pmuForward.out.get;
-     $display("BCJR: Decision Unit is being fed bitId %d",tpl_1(peekGet(revBufferFinal.outputData)).bitId);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: Decision Unit is being fed bitId %d",tpl_1(peekGet(revBufferFinal.outputData)).bitId);
+       end
+
      decisionUnit.in.put(tuple2(tpl_2(backwardProbs),forwardProbs));
    endrule
 
    rule feedDecisionUnitEatFirst(!tpl_1(peekGet(revBufferFinal.outputData)).last && decisionReInit);
      let backwardProbs <- revBufferFinal.outputData.get;
-     $display("BCJR: Decision Unit Clear Backwards Last");
+
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: Decision Unit Clear Backwards Last");
+       end
+
      decisionReInit <= False;
    endrule
 
    rule feedDecisionUnitEatLast(tpl_1(peekGet(revBufferFinal.outputData)).last && decisionReInit);
      let backwardProbs <- revBufferFinal.outputData.get;
-     $display("BCJR: Decision Unit Clear Extra Backward bit @ %d", clockCycles);
+
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: Decision Unit Clear Extra Backward bit @ %d", clockCycles);
+       end
    endrule
 
    rule feedDecisionUnitReplaceFirst(tpl_1(peekGet(revBufferFinal.outputData)).last && !decisionReInit);
@@ -399,13 +481,22 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
       // when does it end?
       if (in_data_count == check_n2) // means we have finished processing input
          begin
-            $display("BCJR top level deqs value");
+
+            if(`DEBUG_BCJR == 1)
+              begin
+                $display("BCJR top level deqs value");
+              end 
+
             in_q.deq;
             in_data_count <= 0;
             ctrl_q.enq(in_ctrl);
             if (decodeBoundary(in_ctrl))
               begin
-                $display("BCJR Pushing decode boundary");
+                if(`DEBUG_BCJR == 1)
+                  begin
+                    $display("BCJR Pushing decode boundary");
+                  end
+
                 bcjr.putData(tuple2(True,v_data)); 
               end
             else
@@ -420,9 +511,10 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
         end
 
 
-      `ifdef isDebug
-      $display("pushDataToViterbi");
-      `endif 
+      if(`DEBUG_BCJR == 1)
+        begin
+          $display("pushDataToViterbi");
+        end
    endrule
    
 
@@ -440,18 +532,23 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
       out_data <= new_out_data;
       if (out_data_count == check_n) // means we have finished processing output
          begin
-	    $display("BCJR out data: %h", new_out_data);
-            out_q.enq(Mesg{control:ctrl_q.first, data:new_out_data});
-            out_data_count <= 0;
-            ctrl_q.deq;
+           if(`DEBUG_BCJR == 1)
+             begin      
+	       $display("BCJR out data: %h", new_out_data);
+             end
+           out_q.enq(Mesg{control:ctrl_q.first, data:new_out_data});
+           out_data_count <= 0;
+           ctrl_q.deq;
          end
       else
          begin
             out_data_count <= out_data_count + fromInteger(fwd_steps * conv_in_sz);
          end
-      `ifdef isDebug
-      $display("pullDataFromViterbi");
-      `endif
+
+      if(`DEBUG_BCJR == 1)
+        begin      
+          $display("pullDataFromViterbi");
+        end
    endrule
 
    interface in  = fifoToPut(in_q);

@@ -33,12 +33,6 @@ import GetPut::*;
 import Vector::*;
 import FShow::*;
 
-// import project libraries
-// import ProtocolParameters::*;
-// import ViterbiParameters::*;
-// import VParams::*;
-
-// `include "../../../WiFiFPGA/Macros.bsv"
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
@@ -124,17 +118,17 @@ module mkDecisionUnit (DecisionUnit);
       
       let out = res;
 
-      $display("path_metric_sums: ", fshow(path_metric_sums));
-      $display("other_path_metric_sums: ", fshow(other_path_metric_sums));
-      $display("zero_sums: ", fshow(zero_sums));
-      $display("one_sums: ", fshow(one_sums));
 
-      $display("Decision Unit Max : %d (%h, check %h) Bit out: %h Other bit: %d (%h, check %h), hints (diff of two bits) %h", min_idx, min_path_metric, tpl_2(path_metric_sums[min_idx]), res, 
-               other_min_idx, other_min_path_metric, tpl_2(path_metric_sums[other_min_idx]),soft_phy_hints);
-         out_data_q.enq(out);
-               `ifdef isDebug
-               $display("TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
-               `endif
+      out_data_q.enq(out);
+
+      if(`DEBUG_BCJR == 1) 
+        begin
+          $display("path_metric_sums: ", fshow(path_metric_sums));
+          $display("other_path_metric_sums: ", fshow(other_path_metric_sums));
+          $display("zero_sums: ", fshow(zero_sums));
+          $display("one_sums: ", fshow(one_sums)); 
+          $display("Decision Unit Max : %d (%h, check %h) Bit out: %h Other bit: %d (%h, check %h), hints (diff of two bits) %h", min_idx, min_path_metric, tpl_2(path_metric_sums[min_idx]), res, other_min_idx, other_min_path_metric, tpl_2(path_metric_sums[other_min_idx]),soft_phy_hints);
+        end
 
    endrule
 
@@ -156,25 +150,37 @@ module mkDecisionUnit (DecisionUnit);
 	 );
 
       // Show the vectors:
-      $display("Decision Forward,Reverse Vector: ", fshow(forwardReverse)); 
-      $display("Decision Forward,Reverse Vector Norm: ", fshow(forwardReverseNorm)); 
+             
+      if(`DEBUG_BCJR == 1) 
+        begin 
+          $display("Decision Forward,Reverse Vector: ", fshow(forwardReverse)); 
+          $display("Decision Forward,Reverse Vector Norm: ", fshow(forwardReverseNorm)); 
+        end
+
       // obtain min index
       let indexA = tpl_1(fold(chooseMax,zip(genWith(fromInteger),errA)));
       let indexB = tpl_1(fold(chooseMax,zip(genWith(fromInteger),errB)));
-      $display("Decision: Max Index Forward: %d (%h) and Backward: %d (%h)", indexB, errB[indexB], indexA, errA[indexA]);
+      if(`DEBUG_BCJR == 1) 
+        begin
+          $display("Decision: Max Index Forward: %d (%h) and Backward: %d (%h)", indexB, errB[indexB], indexA, errA[indexA]);
+        end
    
-      if(tpl_1(metricA) != tpl_1(metricB))
-         begin
-            $display("Forward: %h and Backward: %h last do not match", tpl_1(metricB),tpl_1(metricA));
-         end
-      if(tpl_1(metricA))
-         begin
-            $display("Decision Unit Backwards last");
-         end 
-      if(tpl_1(metricB))
-         begin
-            $display("Decision Unit Backwards last");
-         end 
+      if(`DEBUG_BCJR == 1) 
+        begin
+          if(tpl_1(metricA) != tpl_1(metricB))
+            begin
+              $display("Forward: %h and Backward: %h last do not match", tpl_1(metricB),tpl_1(metricA));
+            end
+          if(tpl_1(metricA))
+            begin
+              $display("Decision Unit Backwards last");
+            end 
+          if(tpl_1(metricB))
+            begin
+              $display("Decision Unit Backwards last");
+            end 
+        end
+
       let combinedProbs = zipWith( \+ , map(signExtend,tpl_1(unzip(vecA))), map(signExtend,tpl_1(unzip(vecB))));
       //$display("Decision: Combined probs: ", fshow(combinedProbs));
         combinedQ.enq(combinedProbs);
