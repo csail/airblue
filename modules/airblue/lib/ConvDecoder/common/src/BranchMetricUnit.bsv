@@ -82,7 +82,7 @@ module mkBranchMetricUnit (BranchMetricUnit);
       VInType                                in_tup       = in_q.first;
       Bool                                   need_rst     = tpl_1(in_tup);
       Vector#(VNoExtendedPoly,VMetric)       observed_vec = unpack(pack(tpl_2(in_tup)));
-      observed_vec = map(convertMetric,observed_vec);
+//      observed_vec = map(convertMetric,observed_vec);
       Vector#(VNoExtendedPoly,Bool)          op_vec       = newVector;
       Vector#(VNoExtendedPoly,VBranchMetric) tmp_vec      = newVector;      
       Vector#(VNoBranchMetric,VBranchMetric) out_vec      = newVector;
