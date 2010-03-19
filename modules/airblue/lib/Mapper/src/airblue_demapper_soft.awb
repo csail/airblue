@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Soft-Decision Demapper   
+%desc Airblue Soft-Decision Demapper that returns the log-likelihood-ratio (LLR), implementation based on the publication Simplified Soft-Output Demapper for Binary Interleaved COFDM with Application to HIPERLAN/2 by Fillippo Tosato and Paola Bisaglia, though we ommit G(i) term in the paper (i.e. SNR of each subchannel).   
+%provides airblue_demapper
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC DemapperSoft.bsv 
+%generated -t BA mkDemapperInstance.ba
+
+%param DEBUG_DEMAPPER 0 "Enable debug messages"
+
+%AWB_END
+

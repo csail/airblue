@@ -13,5 +13,7 @@
 %sources -t BSV -v PUBLIC Demapper.bsv 
 %generated -t BA mkDemapperInstance.ba
 
+%param DEBUG_DEMAPPER 0 "Enable debug messages"
+
 %AWB_END
 

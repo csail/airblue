@@ -24,17 +24,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
+// implement the demapper based on the publication 
+// "Simplified Soft-Output Demapper for Binary Interleaved COFDM with Application to HIPERLAN/2"
+// by Fillippo Tosato and Paola Bisaglia   
+
 import Complex::*;
-import Controls::*;
-import DataTypes::*;
 import FIFO::*;
 import FixedPoint::*;
-import FPComplex::*;
-import Interfaces::*;
-import Vector::*;
 import GetPut::*;
-import VectorLibrary::*;
-import StreamFIFO::*;
+import Vector::*;
+
+// import Controls::*;
+// import DataTypes::*;
+// import FPComplex::*;
+// import Interfaces::*;
+// import StreamFIFO::*;
+// import VectorLibrary::*;
+
+// Local includes
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_types.bsh"
 
 // assume no overflow
 function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)
@@ -45,25 +54,25 @@ function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)
    return res;
 endfunction
 
-// aux functions
+// aux functions (use comparison to get the linear)
 function ViterbiMetric decodeRange(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
   provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
 	    Arith#(FixedPoint#(ai,af)));
       let result = (in < start + incr) ?
-		   (startZero ? 0 : 7) :
-		   (in < start + demapMult(2,incr)) ?
-		   (startZero ? 1 : 6) :
-		   (in < start + demapMult(3,incr)) ?
-		   (startZero ? 2 : 5) :
-		   (in < start + demapMult(4,incr)) ?
 		   (startZero ? 3 : 4) :
+		   (in < start + demapMult(2,incr)) ?
+		   (startZero ? 2 : 5) :
+		   (in < start + demapMult(3,incr)) ?
+		   (startZero ? 1 : 6) :
+		   (in < start + demapMult(4,incr)) ?
+		   (startZero ? 0 : 7) :
 		   (in < start + demapMult(5,incr)) ?
-		   (startZero ? 4 : 3) :
+		   (startZero ? 7 : 0) :
 		   (in < start + demapMult(6,incr)) ?
-		   (startZero ? 5 : 2) :
-		   (in < start + demapMult(7,incr)) ?
 		   (startZero ? 6 : 1) :
-		   (startZero ? 7 : 0);
+		   (in < start + demapMult(7,incr)) ?
+		   (startZero ? 5 : 2) :
+		   (startZero ? 4 : 3);
       return result;
 endfunction // ViterbiMetric
 
@@ -80,7 +89,7 @@ function Vector#(2, ViterbiMetric) decodeQPSK(Bool negateOutput,
 	    Arith#(FixedPoint#(ai,af)));
 
       function ViterbiMetric decodeQPSKAux(FixedPoint#(ai,af) fp);
-         return decodeRange(fp, fromRational(-707106781,1000000000), fromRational(17676695,1000000000), !negateOutput);
+         return decodeRange(fp, fromRational(-707106781,1000000000), fromRational(176776695,1000000000), !negateOutput);
       endfunction
 
       Vector#(2, ViterbiMetric) result = newVector;

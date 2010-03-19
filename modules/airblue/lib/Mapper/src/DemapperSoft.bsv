@@ -24,6 +24,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
+// implement the demapper based on the publication 
+// "Simplified Soft-Output Demapper for Binary Interleaved COFDM with Application to HIPERLAN/2"
+// by Fillippo Tosato and Paola Bisaglia   
+
 import Complex::*;
 import FIFO::*;
 import FixedPoint::*;
@@ -52,7 +56,8 @@ function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)
 endfunction
 
 // aux functions
-function ViterbiMetric decodeRange(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
+// split into 8 parts
+function ViterbiMetric decodeRange8(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
   provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
 	    Arith#(FixedPoint#(ai,af)));
       let result = (in < start + incr) ?
@@ -73,11 +78,35 @@ function ViterbiMetric decodeRange(FixedPoint#(ai,af) in, FixedPoint#(ai,af) sta
       return result;
 endfunction // ViterbiMetric
 
+// split into 4 parts
+function ViterbiMetric decodeRange4(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
+  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
+	    Arith#(FixedPoint#(ai,af)));
+      let result = (in < start + incr) ?
+		   (startZero ? 1 : 6) :
+		   (in < start + demapMult(2,incr)) ?
+		   (startZero ? 0 : 7) :
+		   (in < start + demapMult(3,incr)) ?
+		   (startZero ? 7 : 0) :
+		   (startZero ? 6 : 1);
+      return result;
+endfunction // ViterbiMetric
+
+// split into 2 parts
+function ViterbiMetric decodeRange2(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
+  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
+	    Arith#(FixedPoint#(ai,af)));
+      let result = (in < start + incr) ?
+		   (startZero ? 0 : 7) :
+		   (startZero ? 7 : 0);
+      return result;
+endfunction // ViterbiMetric
+
 function ViterbiMetric decodeBPSK(Bool negateOutput,
 				  FPComplex#(ai,af) in)
   provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
 	    Arith#(FixedPoint#(ai,af)));
-      return decodeRange(in.rel, -1, fromRational(1,4), !negateOutput);
+      return decodeRange8(in.rel, -1, fromRational(1,4), !negateOutput);
 endfunction // ConfLvl
 
 function Vector#(2, ViterbiMetric) decodeQPSK(Bool negateOutput,
@@ -86,7 +115,7 @@ function Vector#(2, ViterbiMetric) decodeQPSK(Bool negateOutput,
 	    Arith#(FixedPoint#(ai,af)));
 
       function ViterbiMetric decodeQPSKAux(FixedPoint#(ai,af) fp);
-         return decodeRange(fp, fromRational(-707106781,1000000000), fromRational(176776695,1000000000), !negateOutput);
+         return decodeRange8(fp, fromRational(-707106781,1000000000), fromRational(176776695,1000000000), !negateOutput);
       endfunction
 
       Vector#(2, ViterbiMetric) result = newVector;
@@ -103,13 +132,13 @@ function Vector#(4, ViterbiMetric) decodeQAM_16(Bool negateOutput,
 
       // aux funcs
       function ViterbiMetric decodeQAM_16_Even(FixedPoint#(ai,af) x);
-	 return decodeRange(x, fromRational(-316227766,1000000000), fromRational(79056942,1000000000), !negateOutput);
+	 return decodeRange8(x, fromRational(-316227766,1000000000), fromRational(79056942,1000000000), !negateOutput);
       endfunction // ConfLvl      
       
       function ViterbiMetric decodeQAM_16_Odd(FixedPoint#(ai,af) x);
          let result = (x < 0) ?
-		      decodeRange(x, fromRational(-948683298,1000000000), fromRational(79056942,1000000000),!negateOutput) :
-		      decodeRange(x, fromRational(316227766,1000000000), fromRational(79056942,1000000000),negateOutput);      
+		      decodeRange4(x, fromRational(-948683298,1000000000), fromRational(79056942,1000000000),!negateOutput) :
+		      decodeRange4(x, fromRational(316227766,1000000000), fromRational(79056942,1000000000),negateOutput);      
 	 return result;
       endfunction // ConfLvl      
 
@@ -128,24 +157,24 @@ function Vector#(6, ViterbiMetric) decodeQAM_64(Bool negateOutput,
 
       // aux funcs
       function ViterbiMetric decodeQAM_64_0(FixedPoint#(ai,af) x);
-	 return decodeRange(x, fromRational(-154303350,1000000000), fromRational(38575837,1000000000), !negateOutput);
+	 return decodeRange8(x, fromRational(-154303350,1000000000), fromRational(38575837,1000000000), !negateOutput);
       endfunction // ConfLvl      
       
       function ViterbiMetric decodeQAM_64_1(FixedPoint#(ai,af) x);
          let result = (x < 0) ?
-		      decodeRange(x, fromRational(-771516750,1000000000), fromRational(38575837,1000000000),!negateOutput) :
-		      decodeRange(x, fromRational(462910050,1000000000), fromRational(38575837,1000000000),negateOutput);      
+		      decodeRange4(x, fromRational(-771516750,1000000000), fromRational(38575837,1000000000),!negateOutput) :
+		      decodeRange4(x, fromRational(462910050,1000000000), fromRational(38575837,1000000000),negateOutput);      
 	 return result;
       endfunction
       
       function ViterbiMetric decodeQAM_64_2(FixedPoint#(ai,af) x);
 	 let result = (x < fromRational(-617213400,1000000000)) ?
-		      decodeRange(x, fromRational(-1080123450,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
+		      decodeRange2(x, fromRational(-1080123450,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
 		      (x < 0) ? 
-		      decodeRange(x, fromRational(-462910050,1000000000), fromRational(38575837,1000000000),negateOutput) :	
+		      decodeRange2(x, fromRational(-462910050,1000000000), fromRational(38575837,1000000000),negateOutput) :	
 		      (x < fromRational(617213400,1000000000)) ?
-		      decodeRange(x, fromRational(154303350,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
-		      decodeRange(x, fromRational(771516750,1000000000), fromRational(38575837,1000000000),negateOutput);	
+		      decodeRange2(x, fromRational(154303350,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
+		      decodeRange2(x, fromRational(771516750,1000000000), fromRational(38575837,1000000000),negateOutput);	
 	 return result;
       endfunction // ConfLvl      
 
