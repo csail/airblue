@@ -38,6 +38,7 @@ interface Block#(type in_t, type out_t);
     interface Get#(out_t) out;
 endinterface
 
+
 // Transmitter Modules
 // Scrmabler
 typedef Block#(ScramblerMesg#(i_ctrl_t,i_n),

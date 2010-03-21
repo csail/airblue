@@ -24,8 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-//import Controls::*;
-//import FPComplex::*;
+import FShow::*;
 import Vector::*;
 
 // Local includes
@@ -145,3 +144,9 @@ typedef ScramblerMesg#(ctrl_t, n)
 
 
 
+
+instance FShow#(Mesg#(ctrl_t, Vector#(n, decode_t)));
+  function Fmt fshow(Mesg#(ctrl_t, Vector#(n, decode_t)) mesg);
+    return $format(" Mesg ");// + fshow(mesg.control);// + $format(" vec: ") + fshow(mesg.data);
+  endfunction
+endinstance

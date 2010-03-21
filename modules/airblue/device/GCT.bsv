@@ -144,14 +144,20 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
  
   // Really need to deal with calibration mode at some point.
   rule propagateRX(txTimeoutDelay >= txToRxDelayCycles && calibrationMode == 0);
-    $display("Enabling RX");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("Enabling RX");
+      end
     rxPE <= 1;
     txPE <= 0;
     pa_EN <= 1; //pa+EN == 1 to kill antenna gain
   endrule
 
   rule propagateTX(calibrationMode == 0 && rxTimeoutDelay >= rxToTxDelayCycles);  // check rxTimeout for the ghold
-    $display("Enabling TX");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("Enabling TX");
+      end
     txPE <= 1;
     rxPE <= 0;
     pa_EN <= 0;
@@ -172,7 +178,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
     // we need ghold to be low.
     if(txTimeoutDelay < txToRxGHoldDelayCycles) 
       begin
-        $display("GCT: set gHold Low TX");
+        if(`DEBUG_RF_DEVICE == 1)
+          begin
+            $display("GCT: set gHold Low TX");
+          end
         gHoldState <= Held;
         gHold <= 0;
         gHoldTimeout <= ~0;
@@ -180,7 +189,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
       end
     else if(txTimeoutDelay == txToRxGHoldDelayCycles) // receiver on, drop ghold & enter normal behavior
       begin
-        $display("GCT: set gHold High TX");
+        if(`DEBUG_RF_DEVICE == 1)
+          begin
+            $display("GCT: set gHold High TX");
+          end
         gHold <= 1;
         gHoldState <= UnHeld;
         gHoldTimeout <= ~0;

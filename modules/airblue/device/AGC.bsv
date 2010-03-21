@@ -102,8 +102,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
          sweepEntries <= sweepEntries + 1;
        end
      if((sweepTimeout == 0 && searching) || (gainState == Abort && provisionalAdjusting))
-       begin
-         $display("AGC: switching to sweeping state");
+       begin 
+         if(`DEBUG_RF_DEVICE == 1)
+           begin
+             $display("AGC: switching to sweeping state");
+           end
          gainState <= Sweeping;
          sweepTimeout <= sweepTimeoutStart;
          provisionalAdjusting <= True;
@@ -162,8 +165,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
    rule handlePowerAdjusting(adjustReady && searching && gainState == Adjusting);
     Int#(10) adjustmentSuggested <- gainAdjuster.response.get;    
     delay <= fromInteger(valueof(ShortSyncAdjustDelay));
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("AGC gain @ %d : %h, proposed adjust: %d ", cycleCounter, rxGain, adjustmentSuggested);
+      end
 
-    $display("AGC gain @ %d : %h, proposed adjust: %d ", cycleCounter, rxGain, adjustmentSuggested);
     if(adjustmentSuggested < 0 && (rxGainMax - pack(adjustmentSuggested) > rxGain)) // rxGain + adjustment < rxGainMax
       begin
         rxGain <= rxGainMax;
@@ -184,10 +190,13 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
    // always put the new power value to the gain adjuster
   rule drivePower(powerWire.wget matches tagged Valid .power);
     gainAdjuster.request.put(power);
-    $display("AGC power: %h ", power);
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("AGC power: %h ", power);
+      end
   endrule
 
-  rule dispState;
+  rule dispState(`DEBUG_RF_DEVICE == 1);
     $display("AGC @ %d : state: %d", cycleCounter, gainState);
   endrule
 

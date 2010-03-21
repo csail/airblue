@@ -92,6 +92,12 @@ typedef struct {
    Rate rate;
 } RXGlobalCtrl deriving(Eq, Bits);
 
+instance FShow#(RXGlobalCtrl);
+  function Fmt fshow(RXGlobalCtrl ctrl);
+    return $format(" RXGlobalCtrl: firstSymbol: ") + fshow(ctrl.firstSymbol) + $format(" updatePilot: ") + fshow(ctrl.updatePilot) + $format(" viterbiPushZeros ") + fshow(ctrl.viterbiPushZeros) + $format(" Rate: ") + fshow(ctrl.rate);
+  endfunction
+endinstance
+
 // Local Parameters:
 
 // Scrambler:

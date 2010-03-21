@@ -170,13 +170,20 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
   endrule
 
   rule scale;
-   $display("ADC post-infifo");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("ADC post-infifo");
+      end
+
     infifo.deq;
     scaler.in.put(infifo.first);
   endrule
 
   rule grabScale;
-    $display("ADC post-scaler");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("ADC post-scaler");
+      end
     let result <- scaler.out.get;
     scaledwire.wset(result);
     seenFirst <= True;
@@ -219,7 +226,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
   interface Get dataIn;
     method ActionValue#(DACMesg#(RXFPIPrec,RXFPFPrec)) get();
       bramfifo.deq;
-      $display("ADC get");
+      if(`DEBUG_RF_DEVICE == 1)
+        begin
+          $display("ADC get");
+        end
       return bramfifo.first;
     endmethod
   endinterface
@@ -323,7 +333,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
     rxTimeoutDelay <= rxTimeoutDelay + 1;
   endrule  
 
-  rule displayCounts;
+  rule displayCounts(`DEBUG_RF_DEVICE == 1);
     debug(adDebug,$display("AD: rxTimeout %d txTimeout %d",rxTimeoutDelay,txTimeoutDelay));
    $display("AD: txfifo is %s", (txFIFO.notEmpty)?"Not Empty":"Empty");
   endrule
@@ -348,7 +358,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
   rule sendGain(!txENrf.read);
     dacIPart <= dacRXGainRF;
     dacRPart <= dacRXGainRF;
-    $display("AD driving gain wires");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("AD driving gain wires");
+      end
   endrule 
   
   // Need to have some state so we don't miss a packet start
@@ -364,7 +377,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
 //     Bit#(16) preamble_sz = txFIFO.first.header.has_trailer ? fromInteger(preamble_sz_int*2) : fromInteger(preamble_sz_int);
      Bit#(16) preamble_sz = getPreambleCount(txFIFO.first.header.has_trailer);
      Bit#(17) bit_length  = getBitLength(txFIFO.first.header.length);
-     debug(adDebug,$display("AD: begin packet, length = %d",  zeroExtend(preamble_sz) + bit_length));
+     if(`DEBUG_RF_DEVICE == 1)
+       begin
+         $display("AD: begin packet, length = %d",  zeroExtend(preamble_sz) + bit_length);
+       end
+
      preambleCount <= preamble_sz;  // header is 24 bits and always sent as basic rate
      length <= bit_length; // bit length
   endrule  
@@ -377,14 +394,18 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
       end
     else if(sampleCount != 0)
       begin
-        $display("AD Sample tick reset: %d", sampleCount);
+        if(`DEBUG_RF_DEVICE == 1)
+          begin
+            $display("AD Sample tick reset: %d", sampleCount);
+          end
+
         sampleCount <= 0;
         avgSampleCount.inputSample(sampleCount);
         minSampleCount.inputSample(sampleCount);
       end
   endrule
 
-  rule sampleTickSlow;
+  rule sampleTickSlow(`DEBUG_RF_DEVICE == 1);
     if(sampleOutputRF)
       begin
         sampleCountSlow <= sampleCountSlow + 1;
@@ -396,7 +417,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
       end
   endrule
 
-  rule fifoStatus;
+  rule fifoStatus(`DEBUG_RF_DEVICE == 1);
    $display("AD: infifo is %s", (infifo.notEmpty)?"Not Empty":"Empty");
    $display("AD: txEN is %s", (txENrf.read)?"Not Empty":"Empty");
   endrule
@@ -405,7 +426,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
   rule setZeros(!infifo.notEmpty && txENrf.read);
     dacIPart <= {1'b1,0}; 
     dacRPart <= {1'b1,0}; 
-    $display("AD zeroing dac wires"); 
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("AD zeroing dac wires"); 
+      end
   endrule
 
   rule dataLeftovers(infifo.notEmpty && !txENrf.read);
@@ -416,7 +440,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
 
   rule driveDAC(txENrf.read && infifo.notEmpty);
     infifo.deq;
-    $display("AD driving dac wires");
+    if(`DEBUG_RF_DEVICE == 1)
+      begin
+        $display("AD driving dac wires");
+      end
     sampleOutputRF.send;
     FPComplex#(DACIPart,DACFPart) sample = fpcmplxTruncate(infifo.first);
     Bit#(10) iPart = {~(pack(sample.img)[9]) ,truncate(pack(sample.img))};  
@@ -440,8 +467,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
   // we must be ready to rx a packet.
   interface Put dataOut;
      method Action put(DACMesg#(TXFPIPrec,TXFPFPrec) data); //if(length != 0);
+        if(`DEBUG_RF_DEVICE == 1)
+          begin
+            $display("AD: calling data: preamble: %d length: %d chipCount: %d, rate: %d bytes: %d",preambleCount,length,chipCount,txFIFO.first.header.rate,txFIFO.first.header.length);
+            end
 
-       debug(adDebug,$display("AD: calling data: preamble: %d length: %d chipCount: %d, rate: %d bytes: %d",preambleCount,length,chipCount,txFIFO.first.header.rate,txFIFO.first.header.length));
        scalerFIFO.enq(data);
        if(preambleCount > 0) 
          begin
@@ -450,7 +480,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
        else if(chipCount + 1 == fromInteger(valueof(SymbolLen)))
          begin
            chipCount <= 0;
-           debug(adDebug,$display("AD: setting down length"));
+           if(`DEBUG_RF_DEVICE == 1)
+              begin
+                $display("AD: setting down length"); 
+              end
            // we may have pad bits.  the last subtraction may not equal zero
            if(length <= fromInteger(bitsPerSymbol(txFIFO.first.header.rate)))
              begin
@@ -458,11 +491,17 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
                txFIFO.deq;
                completionFIFO.enq(0);
                length <= 0; 
-               debug(adDebug,$display("AD: length done @ $d",fastTicks));
+               if(`DEBUG_RF_DEVICE == 1)
+                 begin
+                   $display("AD: length done @ $d",fastTicks);
+                 end
              end   
            else
              begin
-              debug(adDebug,$display("AD: substraction"));
+               if(`DEBUG_RF_DEVICE == 1)
+                 begin
+                   $display("AD: substraction");
+                 end
               length <= length - fromInteger(bitsPerSymbol(txFIFO.first.header.rate)); 
             end
         end
