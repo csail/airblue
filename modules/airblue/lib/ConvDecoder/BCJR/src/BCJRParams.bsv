@@ -16,11 +16,9 @@ import FShow::*;
 
 // This file contains some parameters for configuring the BCJR encoder.
 
-typedef 64 ReversalGranularity;
-
-typedef TAdd#(TLog#(ReversalGranularity),1) ReversalGranularitySz;
-typedef TMul#(2,ReversalGranularity) ForwardDelay;
-Bit#(ReversalGranularitySz) reversalGranularity = fromInteger(valueof(ReversalGranularity));
+typedef TAdd#(TLog#(`REVERSAL_BUFFER_SIZE),1) ReversalGranularitySz;
+typedef TMul#(2,`REVERSAL_BUFFER_SIZE) ForwardDelay;
+Bit#(`REVERSAL_BUFFER_SIZE) reversalGranularity = `REVERSAL_BUFFER_SIZE;
 
 
 // permutation required after acs

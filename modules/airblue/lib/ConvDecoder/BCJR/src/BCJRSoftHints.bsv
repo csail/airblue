@@ -39,18 +39,18 @@ module mkIBCJR (IViterbi);
 
    // Forward Path Blocks
    PathMetricUnit   pmuForward <- mkPathMetricUnit("BCJR PMU Forward",getPMUOutBCJRForward,getBranchMetricForward);
-   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedFIFOF(valueof(ReversalGranularity)*4);
+   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedFIFOF(`REVERSAL_BUFFER_SIZE*4);
 
    // Reverse Path Blocks
-   ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,ReversalGranularity) revBufferInitial <- mkReversalBuffer("BCJR revInitial");
-   ReversalBuffer#(VPathMetricUnitOut,BCJRBackwardCtrl,ReversalGranularity) revBufferFinal  <- mkReversalBuffer("BCJR revFinal");
+   ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferInitial <- mkReversalBuffer("BCJR revInitial");
+   ReversalBuffer#(VPathMetricUnitOut,BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferFinal  <- mkReversalBuffer("BCJR revFinal");
    PathMetricUnit pmuBackwardEstimator <- mkPathMetricUnit("BCJR PMU Backwards Estimator",getPMUOutBCJRBackward,getBranchMetricBackward);
    PathMetricUnit pmuBackward         <- mkPathMetricUnit("BCJR PMU Backwards",getPMUOutBCJRBackward,getBranchMetricBackward);
-   Reg#(Bit#(ReversalGranularitySz)) revResetCounter <- mkReg(0);
+   Reg#(Bit#(`REVERSAL_BUFFER_SIZE)) revResetCounter <- mkReg(0);
    Reg#(Bool) firstBlock <- mkReg(True);
-   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedFIFOF(4*valueof(ReversalGranularity));
+   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedFIFOF(4*`REVERSAL_BUFFER_SIZE);
    Reg#(Bool) bmuPushLast <- mkReg(False);   
-   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedFIFOF(4*valueof(ReversalGranularity)); // Must cover latency of decision unit   
+   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedFIFOF(4*`REVERSAL_BUFFER_SIZE); // Must cover latency of decision unit   
    
    Reg#(Bool) pmuBackwardReInit <- mkReg(True);
    Reg#(Bool) decisionReInit <- mkReg(True);
@@ -378,7 +378,7 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
    Reg#(Vector#(n,ViterbiOutput)) out_data <- mkReg(newVector);
    Reg#(Bit#(ln)) out_data_count <- mkReg(0);
    FIFO#(DecoderMesg#(ctrl_t,n,ViterbiOutput)) out_q <- mkSizedFIFO(2);
-   FIFO#(ctrl_t) ctrl_q <- mkSizedFIFO(4*valueof(ReversalGranularity));
+   FIFO#(ctrl_t) ctrl_q <- mkSizedFIFO(4*`REVERSAL_BUFFER_SIZE);
 
 
    rule pushDataToBCJR ;

@@ -26,21 +26,21 @@ module mkIBCJR (IViterbi);
 
    // Forward Path Blocks
    PathMetricUnit   pmuForward <- mkPathMetricUnit("BCJR PMU Forward",getPMUOutBCJRForward,getBranchMetricForward);
-   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedFIFOF(valueof(ReversalGranularity)*4);
-   FIFOF#(VPathMetricUnitOut)   pmuForwardOut <- mkSizedFIFOF(valueof(ReversalGranularity)*4);
+   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedFIFOF(`REVERSAL_BUFFER_SIZE*4);
+   FIFOF#(VPathMetricUnitOut)   pmuForwardOut <- mkSizedFIFOF(`REVERSAL_BUFFER_SIZE*4);
    FIFOF#(Vector#(VTotalStates,VPathMetric))   forwardPathMetric <- mkSizedFIFOF(4);
 
    // Reverse Path Blocks
-   ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,ReversalGranularity) revBufferInitial <- mkReversalBuffer("BCJR revInitial");
-   ReversalBuffer#(VPathMetricUnitOut,BCJRBackwardCtrl,ReversalGranularity) revBufferFinal  <- mkReversalBuffer("BCJR revFinal");
+   ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferInitial <- mkReversalBuffer("BCJR revInitial");
+   ReversalBuffer#(VPathMetricUnitOut,BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferFinal  <- mkReversalBuffer("BCJR revFinal");
    PathMetricUnit pmuBackwardEstimator <- mkPathMetricUnit("BCJR PMU Backwards Estimator",getPMUOutBCJRBackward,getBranchMetricBackward);
    PathMetricUnit pmuBackward         <- mkPathMetricUnit("BCJR PMU Backwards",getPMUOutBCJRBackward,getBranchMetricBackward);
-   Reg#(Bit#(ReversalGranularitySz)) revResetCounter <- mkReg(0);
-   Reg#(Bit#(ReversalGranularitySz)) forwardInitCounter <- mkReg(0);
+   Reg#(Bit#(`REVERSAL_BUFFER_SIZE)) revResetCounter <- mkReg(0);
+   Reg#(Bit#(`REVERSAL_BUFFER_SIZE)) forwardInitCounter <- mkReg(0);
    Reg#(Bool) firstBlock <- mkReg(True);
-   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedFIFOF(4*valueof(ReversalGranularity));
+   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedFIFOF(4*valueof(`REVERSAL_BUFFER_SIZE));
    Reg#(Bool) bmuPushLast <- mkReg(False);   
-   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedFIFOF(4*valueof(ReversalGranularity)); // Must cover latency of decision unit   
+   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedFIFOF(4*valueof(`REVERSAL_BUFFER_SIZE)); // Must cover latency of decision unit   
    
    Reg#(Bool) pmuBackwardReInit <- mkReg(True);
    Reg#(Bool) decisionReInit <- mkReg(True);
@@ -125,18 +125,30 @@ module mkIBCJR (IViterbi);
    rule feedEstimates;
      let pmuForwardResult <- pmuForward.out.get();
      pmuForwardOut.enq(pmuForwardResult);
-     $display("BCJR Forward Path counter: %d", forwardInitCounter);
-     
+
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR Forward Path counter: %d", forwardInitCounter);
+       end
+
      if(tpl_1(pmuForwardResult)) 
        begin
-         $display("BCJR Forward Path sends initialization to backward path (final bit)");
+         if(`DEBUG_BCJR == 1)
+           begin
+             $display("BCJR Forward Path sends initialization to backward path (final bit)");
+           end
+
          forwardPathMetric.enq(tpl_1(unzip(tpl_2(pmuForwardResult))));
          forwardInitCounter <= 0;
          firstBlockForward <= True;
        end
-     else if(forwardInitCounter + 1 == fromInteger(valueof(ReversalGranularity)))
+     else if(forwardInitCounter + 1 == `REVERSAL_BUFFER_SIZE)
        begin
-         $display("BCJR Forward Path sends initialization to backward path (block)");
+         if(`DEBUG_BCJR == 1)
+           begin
+             $display("BCJR Forward Path sends initialization to backward path (block)");
+           end
+
          forwardPathMetric.enq(tpl_1(unzip(tpl_2(pmuForwardResult))));
          firstBlockForward <= False;
          forwardInitCounter <= 0;
@@ -146,7 +158,7 @@ module mkIBCJR (IViterbi);
          forwardInitCounter <= forwardInitCounter + 1;
        end
 
-     if(tpl_1(pmuForwardResult)) 
+     if(tpl_1(pmuForwardResult) && (`DEBUG_BCJR == 1)) 
        begin 
          $display("BCJR Forward Path reset");
        end
@@ -156,7 +168,11 @@ module mkIBCJR (IViterbi);
      bitId <= 0;
      revResetCounter <= 0;
      bmuPushLast <= False;
-     $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
+       end
+
      revBufferInitial.inputData.put(tuple2(BCJRBackwardCtrl{last:True, bitId: ~0},?));
    endrule
 
@@ -500,7 +516,7 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl)) (Viterbi#(ctrl_
    Reg#(Bit#(ln)) out_data_count <- mkReg(0);
    Reg#(Bit#(32)) out_total_data_count <- mkReg(0);
    FIFOF#(DecoderMesg#(ctrl_t,n,ViterbiOutput)) out_q <- mkSizedFIFOF(2);
-   FIFOF#(ctrl_t) ctrl_q <- mkSizedFIFOF(4*valueof(ReversalGranularity));
+   FIFOF#(ctrl_t) ctrl_q <- mkSizedFIFOF(4*`REVERSAL_BUFFER_SIZE);
 
    rule dumpBCJRWrapperState(`DEBUG_BCJR==1);
      $display("BCJR Wrapper Diagnostic inQ: ", fshow(in_q));     

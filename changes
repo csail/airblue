@@ -1006,3 +1006,26 @@ Directory modules/airblue/lib/ChannelEstimator/src
  ChannelEstimator.bsv      Locally Modified           93 
 
 Fixed some ambiguous types.
+
+----------
+kfleming    Date: Sun Mar 21 23:05:30 EDT 2010  CSN: CSN-ofdm-99
+                  Mon Mar 22 03:05:30 UTC 2010
+
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/src
+ BCJRParams.bsv            Locally Modified           97 
+ BCJRForwardPathInit.bsv   Locally Modified           98 
+ airblue_bcjr_alpha_init.awb Locally Modified           98 
+ airblue_bcjr_with_soft_hints.awb Locally Modified           97 
+ BCJR.bsv                  Locally Modified           97 
+ airblue_bcjr.awb          Locally Modified           97 
+ BCJRSoftHints.bsv         Locally Modified           97 
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_only_loopback_exe.apm Locally Modified           97 
+
+Directory config/pm/ofdm/library_tests
+ bcjr_test.apm             Locally Modified           97 
+
+
+Killed some prints, made reversal buffer size a parameter
