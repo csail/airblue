@@ -443,7 +443,9 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
       
    rule getSeed(rxState == RX_DATA && isGetSeed && streamQ_usage >= fromInteger(valueOf(PreDataSz)));
       Bit#(PreDataSz) predata = truncate(pack(streamQ.first)); 
-      seed <= tagged Valid getSeedFromPreData(predata);
+      // Use the hard-coded decoder seed instead of the one from the stream
+      // to reduce bit-errors
+      seed <= tagged Valid magicConstantDecoderSeed;
       isGetSeed <= False;
       streamQ.deq(fromInteger(valueOf(PreDataSz)));
       //if (detailedDebugInfo)

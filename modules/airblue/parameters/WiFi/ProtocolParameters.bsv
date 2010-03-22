@@ -103,6 +103,7 @@ endinstance
 // Scrambler:
 typedef 12 ScramblerDataSz;    
 typedef  7 ScramblerShifterSz;
+Bit#(ScramblerShifterSz) magicConstantDecoderSeed = 'b1100011;
 Bit#(ScramblerShifterSz) magicConstantSeed = 'b1101001;
 Bit#(ScramblerShifterSz) scramblerGenPoly = 'b1001000;
 typedef ScramblerCtrl#(ScramblerDataSz,ScramblerShifterSz) 
