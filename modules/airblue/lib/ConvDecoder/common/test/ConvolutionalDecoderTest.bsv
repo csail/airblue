@@ -28,18 +28,7 @@ import ConfigReg::*;
 import GetPut::*;
 import Vector::*;
 import Complex::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import Depuncturer::*;
-// import Mapper::*;
-// import Demapper::*;
-// import Puncturer::*;
-// //import Viterbi::*;
-// import ConvEncoder::*;
-// import FFTIFFT::*;
-// import FPComplex::*;
+import FShow::*;
 
 // Local includes
 `include "asim/provides/airblue_types.bsh"
@@ -85,11 +74,33 @@ typedef enum {
    R7   // 64-QAM 3/4
 } Rate deriving(Eq, Bits);
 
+instance FShow#(Rate);
+   function Fmt fshow (Rate rate);
+     case (rate)
+       R0: return $format("6Mbps");
+       R1: return $format("9Mbps");
+       R2: return $format("12Mbps");
+       R3: return $format("18Mbps");
+       R4: return $format("24Mbps");
+       R5: return $format("36Mbps");
+       R6: return $format("48Mbps");
+       R7: return $format("54Mbps");
+     endcase
+   endfunction
+endinstance
+
 // may be an extra field for DL: sendPremable
 typedef struct {
    Bool       firstSymbol; 
    Rate       rate;
 } TXGlobalCtrl deriving(Eq, Bits);
+
+instance FShow#(TXGlobalCtrl);
+  function Fmt fshow(TXGlobalCtrl ctrl);
+    return $format(" TXGlobalCtrl: firstSymbol: ") + fshow(ctrl.firstSymbol) + $format(" Rate: ") + fshow(ctrl.rate);
+  endfunction
+endinstance
+
 
 function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl);
    Rate new_rate = nextRate;
