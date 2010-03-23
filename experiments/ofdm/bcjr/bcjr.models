@@ -1,0 +1,23 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+bcjr_alpha_1   config/pm/ofdm/bcjr_experiments/bcjr_alpha_1.apm   --bluesim="-m 1000000000"
+bcjr_alpha_2   config/pm/ofdm/bcjr_experiments/bcjr_alpha_2.apm   --bluesim="-m 1000000000"
+bcjr_alpha_4   config/pm/ofdm/bcjr_experiments/bcjr_alpha_4.apm   --bluesim="-m 1000000000"
+bcjr_alpha_8   config/pm/ofdm/bcjr_experiments/bcjr_alpha_8.apm   --bluesim="-m 1000000000"
+bcjr_alpha_16  config/pm/ofdm/bcjr_experiments/bcjr_alpha_16.apm   --bluesim="-m 1000000000"
+bcjr_alpha_32  config/pm/ofdm/bcjr_experiments/bcjr_alpha_32.apm   --bluesim="-m 1000000000"
+bcjr_alpha_64  config/pm/ofdm/bcjr_experiments/bcjr_alpha_64.apm   --bluesim="-m 1000000000"
+
+bcjr_const_1   config/pm/ofdm/bcjr_experiments/bcjr_const_1.apm   --bluesim="-m 1000000000"
+bcjr_const_2   config/pm/ofdm/bcjr_experiments/bcjr_const_2.apm   --bluesim="-m 1000000000"
+bcjr_const_4   config/pm/ofdm/bcjr_experiments/bcjr_const_4.apm   --bluesim="-m 1000000000"
+bcjr_const_8   config/pm/ofdm/bcjr_experiments/bcjr_const_8.apm   --bluesim="-m 1000000000"
+bcjr_const_16  config/pm/ofdm/bcjr_experiments/bcjr_const_16.apm   --bluesim="-m 1000000000"
+bcjr_const_32  config/pm/ofdm/bcjr_experiments/bcjr_const_32.apm   --bluesim="-m 1000000000"
+bcjr_const_64  config/pm/ofdm/bcjr_experiments/bcjr_const_64.apm   --bluesim="-m 1000000000"
+
+
