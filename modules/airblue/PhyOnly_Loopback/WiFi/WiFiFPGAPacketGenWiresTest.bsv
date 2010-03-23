@@ -30,6 +30,7 @@ import Clocks::*;
 import Complex::*;
 import FixedPoint::*;
 import GetPut::*;
+import StmtFSM::*;
 
 // import ClientServerUtils::*;
 // import AvalonSlave::*;
@@ -72,9 +73,7 @@ import GetPut::*;
 
 //import "BDPI" next_rate   = function Rate     nextRate(Rate maxRate);
 //import "BDPI" next_length = function Bit#(32) nextLength();
-
-
-
+import "BDPI" check_ber = function Bool checkBitErrors(Bit#(32) errors);
 
 
 //For the wires test we swap for two transceivers here.
@@ -86,34 +85,56 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
   let transmitterFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset, rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset); 
   let channel <- mkChannel(clocked_by rfClock, reset_by rfReset);
   SyncBitIfc#(Bit#(1)) txPE <- mkSyncBit(basebandClock, basebandReset, rfClock);
-  Reg#(Bool) initialized <- mkReg(False);
-  Reg#(Bool) pushReq <- mkReg(True);
 
 
   // We have to initialize the packet generator on the 
-    Server#(AvalonRequest#(AvalonAddressWidth,AvalonDataWidth),Bit#(AvalonDataWidth)) avalonServerTx <- mkAvalonSlaveDriver(transmitterFPGA.avalonWires);
-    Server#(AvalonRequest#(AvalonAddressWidth,AvalonDataWidth),Bit#(AvalonDataWidth)) avalonServerRx <- mkAvalonSlaveDriver(receiverFPGA.avalonWires);
+  Server#(AvalonRequest#(AvalonAddressWidth,AvalonDataWidth),Bit#(AvalonDataWidth)) avalonServerTx <- mkAvalonSlaveDriver(transmitterFPGA.avalonWires);
+  Server#(AvalonRequest#(AvalonAddressWidth,AvalonDataWidth),Bit#(AvalonDataWidth)) avalonServerRx <- mkAvalonSlaveDriver(receiverFPGA.avalonWires);
 
-  rule init(!initialized);
-    avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
-    initialized <= True;
-  endrule
+  function AvalonRequest#(AvalonAddressWidth,AvalonDataWidth) readRequest(Integer addr);
+    return AvalonRequest{addr:fromInteger(addr),data:~0,command: register_mapper::Read};
+  endfunction
+
+  Reg#(Bool) finished <- mkReg(False);
+
+  Stmt stmt =
+    (seq
+      // enable packet gen
+      avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
+      
+      // wait until simPackets are received
+      while (!finished)
+      seq
+        avalonServerRx.request.put(readRequest(valueof(AddrPacketsRX)));
+        action
+          let count <- avalonServerRx.response.get;
+          finished <= (count == `simPackets);
+        endaction
+      endseq
+
+      // get the BER
+      avalonServerRx.request.put(readRequest(valueof(AddrBER)));
+      action
+        let ber <- avalonServerRx.response.get;
+        $display("BER total: %d", ber);
+
+        if (checkBitErrors(ber))
+          begin
+            $display("PASS");
+            $finish(0);
+          end
+        else
+          begin
+            $display("FAIL");
+            $finish(1);
+          end
+      endaction
+    endseq);
 
 
-  rule pushPacketRx (pushReq);
-    avalonServerRx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrPacketsRX)),data:~0,command: register_mapper::Read});
-    pushReq <= !pushReq;
-  endrule
+  // Instantiate FSM
+  mkAutoFSM(stmt);
 
-  rule pullPacketRx (!pushReq);
-    let count <- avalonServerRx.response.get;
-    if(count == `simPackets)
-      begin
-        $display("PASS"); 
-        $finish;
-      end
-    pushReq <= !pushReq;    
-  endrule
 
   function FPComplex#(2,14) dacToComplex(DACWires dac);
     let in = FPComplex {

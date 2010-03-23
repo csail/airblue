@@ -21,7 +21,7 @@ typedef struct {
   double img;
 } Complex;
 
-double rand_double()
+static double rand_double()
 {
   return rand() / (((double) RAND_MAX) + 1.0);
 }
@@ -30,7 +30,7 @@ double rand_double()
 
 /* Polar (Box-Mueller) method; See Knuth v2, 3rd ed, p122 */
 
-double gaussian ()
+static double gaussian ()
 {
   double x, y, r2;
 
@@ -50,7 +50,7 @@ double gaussian ()
   return y * sqrt (-2.0 * log (r2) / r2);
 }
 
-double get_snr()
+static double get_snr()
 {
   static double snr = 0.0;
   if (snr == 0.0) {
@@ -64,7 +64,7 @@ double get_snr()
 }
 
 /* Computes the standard deviation from SNR */
-double compute_sigma(double snr)
+static double compute_sigma(double snr)
 {
   static double sigma = 0.0;
   if (sigma == 0.0) {
@@ -76,7 +76,7 @@ double compute_sigma(double snr)
   return sigma;
 }
 
-Complex gaussian_complex(double sigma)
+static Complex gaussian_complex(double sigma)
 {
   double mag = sigma * gaussian();
   double rot = rand_double() * PI;
@@ -88,7 +88,7 @@ Complex gaussian_complex(double sigma)
   return ret;
 }
 
-Complex add_complex_noise(Complex signal, double sigma)
+static Complex add_complex_noise(Complex signal, double sigma)
 {
   Complex noise = gaussian_complex(sigma);
   signal.rel += noise.rel;
@@ -96,7 +96,7 @@ Complex add_complex_noise(Complex signal, double sigma)
   return signal;
 }
 
-Complex rotate_complex(Complex signal, double rot)
+static Complex rotate_complex(Complex signal, double rot)
 {
   double rot_real = cos(2 * PI * rot);
   double rot_imag = sin(2 * PI * rot);
@@ -107,7 +107,7 @@ Complex rotate_complex(Complex signal, double rot)
   return ret;
 }
 
-Complex cmplx(short int real, short int imag)
+static Complex cmplx(short int real, short int imag)
 {
   double real_d = real / ((double) SHRT_MAX) * 2.0;
   double imag_d = imag / ((double) SHRT_MAX) * 2.0;
@@ -116,7 +116,7 @@ Complex cmplx(short int real, short int imag)
   return ret;
 }
 
-short int shorten(double x)
+static short int shorten(double x)
 {
   x = (x / 2) * SHRT_MAX;
   if (x > SHRT_MAX) return SHRT_MAX;
@@ -124,7 +124,7 @@ short int shorten(double x)
   return (short int) x;
 }
 
-unsigned int pack(Complex x)
+static unsigned int pack(Complex x)
 {
   short int real = shorten(x.rel);
   short int imag = shorten(x.img);
@@ -135,12 +135,12 @@ unsigned int pack(Complex x)
   return r + i;
 }
 
-double abs2(Complex x)
+static double abs2(Complex x)
 {
   return (x.rel * x.rel) + (x.img * x.img);
 }
 
-void dbg(Complex signal, Complex noisy)
+static void dbg(Complex signal, Complex noisy)
 {
   static Complex signals[400];
   static Complex noises[400];

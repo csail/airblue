@@ -19,9 +19,11 @@
 %generated -t BA mkWiFiFPGAPacketGenWiresTest.ba
 %generated -t BA mkBusTransceiver.ba
 %generated -t BA mkTransceiverPacketGenFPGA.ba
+%generated -t BA check_ber.ba
 
 %attributes airblue
 
 %sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAPacketGenWiresTest.bsv
+%sources -t BDPI_C -v PUBLIC check_ber.c
 
 %AWB_END

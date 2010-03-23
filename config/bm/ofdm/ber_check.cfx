@@ -1,0 +1,27 @@
+: # -*-Perl-*-
+eval 'exec perl -w "$0" ${1+"$@"}'
+   if 0;
+
+##
+## Directory of hasim benchmarks
+##     Remember to set this file as executable
+
+use Asim;
+use strict;
+
+my $gcfg = Asim::GenCFG->new();
+
+
+my @snrs = (15, 12, 11, 10);
+
+foreach my $snr (@snrs) {
+        my $bmark = "ber_check_" . $snr;
+        $gcfg->add(name => $bmark,
+                  tree => [ "benchmarks" ],
+                  setup => "tools/scripts/bmark/setup-bsv-libraries-bmark $bmark --contexts=0",
+                  feeder => "none",
+                  ccount => 800000,
+                  sysflags => "ADDNOISE_SNR=" . $snr,
+                  );
+   }
+$gcfg->action(@ARGV);
