@@ -19,11 +19,14 @@ static double get_snr()
 
 // Table of maximum expected bit-errors
 // First column is SNR, second is max bit-errors
-static int table[5][2] = {
+static int table[8][2] = {
  { 15, 0 },    // 0
+ { 13, 100 },  // 81
  { 12, 400 },  // 352
  { 11, 1000 }, // 986
  { 10, 3000 }, // 2894
+ { 9,  7400 }, // 7295
+ { 8,  18000}, // 16276
  { 7,  30000}  // 26401
 };
 
@@ -31,17 +34,19 @@ int check_ber(int errors)
 {
   double snr = get_snr();
   
-  int max_errors = 0;
-  int i;
-  for (i = 0; i < 5; i++) {
-    if (snr > table[i][0]) 
-      break;
+  int max_errors;
+  int table_snr;
+
+  int i = 0;
+  do {
+    table_snr = table[i][0];
     max_errors = table[i][1];
-  }
+    ++i;
+  } while (i < 8 && snr < table_snr);
 
   if (errors > max_errors) {
-    printf("BER too high! snr=%lf, expected fewer than %d but was %d\n", snr,
-        max_errors, errors);
+    printf("BER too high! snr=%0.2lf db, expected fewer than %d (at %d db) but was %d\n",
+        snr, max_errors, table_snr, errors);
 
     return 0;
   }
