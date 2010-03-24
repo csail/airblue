@@ -190,7 +190,11 @@ module mkTracebackUnit (TracebackUnit);
       method ActionValue#(VOutType) get();
          out_data_q.deq;
          // viterbi doesn't support soft phy hints, just output junk
+         `ifdef SOFT_PHY_HINTS
+         return tuple2(out_data_q.first,?);
+         `else
          return out_data_q.first;
+         `endif
       endmethod
    endinterface
 endmodule

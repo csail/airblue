@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name Airblue Viterbi (no Soft Hints)
+%name Airblue Viterbi
 %desc Convolutional Decoder implemented using the Viterbi algorithm
 %provides airblue_convolutional_decoder
 
