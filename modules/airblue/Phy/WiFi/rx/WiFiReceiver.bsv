@@ -65,6 +65,9 @@ interface WiFiReceiver;
    interface Put#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) in; // from DAC
    interface Get#(RXVector) outRXVector;
    interface Get#(Bit#(8))  outData;
+   `ifdef SOFT_PHY_HINTS
+   interface Get#(Bit#(8))  outSoftPhyHints;
+   `endif
 //   interface Get#(Synchronizer::ControlType) synchronizerStateUpdate;
    interface Get#(ControlType) synchronizerStateUpdate;
    interface ReadOnly#(CoarPowType) synchronizerCoarPower;
@@ -127,5 +130,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiReceiver#( Clock
    method Action abortReq;
       rx_controller.abortReq.put(?);
    endmethod
+   `ifdef SOFT_PHY_HINTS
+   interface outSoftPhyHints = rx_controller.outSoftPhyHints;
+   `endif
       
 endmodule

@@ -161,6 +161,9 @@ interface PreDescramblerRXController;
       outToDescrambler;
    interface Get#(Feedback#(RXVector,RXVectorDecodeError)) outFeedback;
    interface Get#(RXVector)   outRXVector;
+   `ifdef SOFT_PHY_HINTS
+   interface Get#(Bit#(8))  outSoftPhyHints;
+   `endif   
    method    Action abortReq;
 endinterface
 
@@ -184,6 +187,9 @@ interface RXController;
       inFromDescrambler;
    interface Get#(RXVector) outRXVector;
    interface Get#(Bit#(8))  outData;
+   `ifdef SOFT_PHY_HINTS
+   interface Get#(Bit#(8))  outSoftPhyHints;
+   `endif
    interface Get#(RXExternalFeedback) packetFeedback;
    method    Put#(Bit#(0)) abortReq;
    interface Get#(Bit#(0)) abortAck;
@@ -246,7 +252,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkPreDemapperRXControl
       Symbol#(DemapperInDataSz,RXFPIPrec,RXFPFPrec) zeroSymbol = replicate(cmplx(0,0));
       outQ.enq(DemapperMesg{control:rxCtrl, data: zeroSymbol});
       rxState <= (rxState == RX_HTAIL) ? RX_FEEDBACK : RX_IDLE;
-      //if (detailedDebugInfo)
+      if (`DEBUG_RXCTRL == 1)
          $display("PreDemapperRXCtrllr sendZeros rxState:%d rxLength:%d",rxState,rxLength);
    endrule 
 
@@ -317,7 +323,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkPreDemapperRXControl
                   end
             end
 	 endcase
-         //if (detailedDebugInfo)
+         if (`DEBUG_RXCTRL == 1)
 	    $display("PreDemapperRXCtrllr inFromPreDemapper newPacket: %d rxState:%d rxLength:%d",mesg.control,rxState,rxLength);
       endmethod
    endinterface
@@ -334,16 +340,19 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkPreDemapperRXControl
 	    begin
 	       rxState <= RX_DATA;
 	       rxRate  <= packetInfo.header.rate; 
-	       rxLength <= getBitLength(packetInfo.header.length); // no of bits to be received = (16+8*length+6) 
-               //if (detailedDebugInfo)
-	       $display("PreDemapperRXCtrllr valid inFeedback rxState:%d rxLength:%d",rxState,(((packetInfo.header.length + 2) << 3) + 6));
+	       rxLength <= getBitLength(packetInfo.header.length); // no of bits to be received = (16+8*length+6)
+               if (`DEBUG_RXCTRL == 1)
+                  begin
+                     Bit#(TAdd#(4,SizeOf#(PhyPacketLength))) rxLengthByte = (((zeroExtend(packetInfo.header.length) + 2) << 3) + 6);
+	             $display("PreDemapperRXCtrllr valid inFeedback rxState:%d rxLength:%d",rxState,rxLengthByte);
+                  end
 	    end
 	 else // error in decoding package, return to idle, or is trailer
 	    begin
                // received abort.  we should notify the agc at this time.
 	       rxState <= RX_IDLE; 
-               //if (detailedDebugInfo)
-	       $display("PreDemapperRXCtrllr abort inFeedback rxState:%d",rxState);
+               if (`DEBUG_RXCTRL == 1)
+	          $display("PreDemapperRXCtrllr abort inFeedback rxState:%d",rxState);
 	    end
       endmethod
    endinterface
@@ -386,6 +395,10 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    Reg#(Bit#(32))            cycleCount <- mkReg(0);
    Reg#(Bool)                abortReg <- mkReg(False);
 
+   `ifdef SOFT_PHY_HINTS
+   Reg#(Bit#(8))             minSoftPhyHints <- mkReg(maxBound);
+   FIFO#(Bit#(8))            outSoftPhyHintsQ <- mkLFIFO;
+   `endif
    
    // constants
    Bit#(TLog#(HeaderSz)) vOutSz   = fromInteger(valueOf(ViterbiOutDataSz));
@@ -431,12 +444,14 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                      begin
                         abortReg <= True; // don't go to RX_DATA mode
                      end
-                  $display("PreDescramblerRXCtrllr header: %b rate: %b length: %d is_trailer: %d", header, rx_vec.header.rate, rx_vec.header.length, rx_vec.is_trailer);
+                  if (`DEBUG_RXCTRL == 1)
+                     $display("PreDescramblerRXCtrllr header: %b rate: %b length: %d is_trailer: %d", header, rx_vec.header.rate, rx_vec.header.length, rx_vec.is_trailer);
 	       end
             else
                begin
                   abortReg <= True; // don't go to RX_DATA mode
-                  $display("PreDescramblerRXCtrllr header (%b) decode error: %d (0 = ParityError, 1 = RateError, 2 = ZeroFieldError)",header,rx_err);
+                  if (`DEBUG_RXCTRL == 1)
+                     $display("PreDescramblerRXCtrllr header (%b) decode error: %d (0 = ParityError, 1 = RateError, 2 = ZeroFieldError)",header,rx_err);
                end
          end
    endrule
@@ -445,10 +460,13 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
       Bit#(PreDataSz) predata = truncate(pack(streamQ.first)); 
       // Use the hard-coded decoder seed instead of the one from the stream
       // to reduce bit-errors
-      seed <= tagged Valid magicConstantDecoderSeed;
+      if (`MAGIC_DESCRAMBLE_SEED == 1)
+         seed <= tagged Valid magicConstantDecoderSeed;
+      else
+         seed <= tagged Valid getSeedFromPreData(predata);
       isGetSeed <= False;
       streamQ.deq(fromInteger(valueOf(PreDataSz)));
-      //if (detailedDebugInfo)
+      if (`DEBUG_RXCTRL == 1)
          $display("PreDescramblerRXCtrllr getSeed rxState:%d rxLength:%d, seed: %b,  streamQ: %b",rxState,rxLength,getSeedFromPreData(predata), streamQ.first);      
    endrule
    
@@ -469,18 +487,26 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
             dropData <= dropData - zeroExtend(vOutSz);
             streamQ.deq(dInSz);
          end
-      //if (detailedDebugInfo)
+      if (`DEBUG_RXCTRL == 1)
          $display("PreDescramblerRXCtrllr sendData rxState:%d rxLength:%d, streamQ: %b",rxState,rxLength,streamQ.first);
    endrule
    
    rule processInMesgQ(streamQ_free >= vOutSz);
       let mesg = inMesgQ.first;
+      `ifdef SOFT_PHY_HINTS
+      let softHints = tpl_2(unzip(mesg.data));
+      let msgData = tpl_1(unzip(mesg.data));
+      `else
       let msgData = mesg.data;
+      `endif
       case (rxState)
          RX_IDLE: begin
                      inMesgQ.deq();
                      if (mesg.control.firstSymbol) // only process if start of packet
                         begin
+                           `ifdef SOFT_PHY_HINTS
+                           minSoftPhyHints <= maxBound;
+                           `endif
                            rxState <= RX_HEADER;
                            dropData <= zeroExtend(headerSz) - zeroExtend(vOutSz);
 		           streamQ.enq(vOutSz,append(msgData,replicate(0)));
@@ -508,20 +534,49 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                                begin
                                   rxState <= RX_DATA;
                                   dropData <= zeroExtend(rxLength) << 3;
+                                  `ifdef SOFT_PHY_HINTS
+                                  checkData <= getBitLength(rxLength) - fromInteger(valueOf(PostDataSz));
+                                  `endif
                                end
                          end
                       else
                          begin
                             dropData <= dropData - zeroExtend(vOutSz);
                          end
-                      $display("PreDescramblerRXCtrllr rxState:%d dropData:%d @ %d",rxState,dropData,cycleCount); // skip zeros tell zeros skipped
+                      if (`DEBUG_RXCTRL == 1)
+                         $display("PreDescramblerRXCtrllr rxState:%d dropData:%d @ %d",rxState,dropData,cycleCount); // skip zeros tell zeros skipped
                    end
          RX_DATA: begin
                      inMesgQ.deq();
                      streamQ.enq(vOutSz,append(msgData,replicate(0)));
+                     `ifdef SOFT_PHY_HINTS
+                     Bit#(8) minHints = fold(pickSmaller, map(truncate, softHints));
+                     let newMinSoftPhyHints = (minHints < minSoftPhyHints) ? minHints : minSoftPhyHints; 
+                     minSoftPhyHints <= newMinSoftPhyHints;
+                     if (`DEBUG_RXCTRL == 1)
+                        begin
+                           for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
+                              $display("PreDescramblerRXCtrllr softphy hints: %d",softHints[i]);
+                        end
+                     if (checkData > 0)
+                        begin
+                           if (checkData <= zeroExtend(vOutSz)) // last data
+                              begin
+                                 checkData <= 0;
+//                                 outSoftPhyHintsQ.enq(newMinSoftPhyHints);
+                                 if (`DEBUG_RXCTRL == 1)
+                                    $display("PreDescramblerRXCtrllr report min softphy hint of the packet %d",newMinSoftPhyHints);
+                              end
+                           else
+                              begin
+                                 checkData <= checkData - zeroExtend(vOutSz);
+                              end
+                        end
+                     `endif
                   end
       endcase
-      $display("PreDescramblerRXCtrll processInMsgQ rxState:%d rxLength:%d",rxState,rxLength);      
+      if (`DEBUG_RXCTRL == 1)
+         $display("PreDescramblerRXCtrll processInMsgQ rxState:%d rxLength:%d",rxState,rxLength);      
    endrule
    
 
@@ -530,6 +585,9 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    interface outToDescrambler = fifoToGet(outMesgQ);   
    interface outRXVector = fifoToGet(outRXVectorQ);   
    interface outFeedback = fifoToGet(outFeedbackQ);
+   `ifdef SOFT_PHY_HINTS
+   interface outSoftPhyHints = fifoToGet(outSoftPhyHintsQ);
+   `endif
       
    method Action abortReq;
       abortReg <= True;
@@ -574,14 +632,14 @@ module mkPostDescramblerRXController(PostDescramblerRXController);
 //          end              
       streamQ.enq(dInSz,append(unpack(mesg.data),replicate(0)));
       inMesgQ.deq();
-      //if (detailedDebugInfo)
+      if (`DEBUG_RXCTRL == 1)
          $display("PostDescramblerRXCtrllr processInMesgQ rxLength:%d mesg.control.length %d",rxLength,mesg.control.length);      
    endrule
    
    // Seems like a reasonable place to detect end of packet
    rule clearStreamQ(rxLength == 0 && streamQ_usage > 0); // remove junk data
       streamQ.clear();
-      //if (detailedDebugInfo)
+      if (`DEBUG_RXCTRL == 1)
          $display("PostDescramblerRXCtrllr clearStreamQ streamQ_usage: %d",streamQ_usage);      
    endrule
       
@@ -591,8 +649,8 @@ module mkPostDescramblerRXController(PostDescramblerRXController);
      streamQ.deq(8);
      outDataQ.enq(outData);
      rxLength <= rxLength - 1;
-     //if (detailedDebugInfo)
-     $display("PostDescramblerRXCtrllr deqStreamQ data:%h streamQ_usage: %d rxLength: %d @ %d",outData,streamQ_usage,rxLength-1,cycleCount);      
+      if (`DEBUG_RXCTRL == 1)
+         $display("PostDescramblerRXCtrllr deqStreamQ data:%h streamQ_usage: %d rxLength: %d @ %d",outData,streamQ_usage,rxLength-1,cycleCount);      
    endrule
    
    // interface methods
@@ -602,7 +660,8 @@ module mkPostDescramblerRXController(PostDescramblerRXController);
    method Action abortReq;
       outDataQ.clear();
       rxLength <= 0; // no matter what state it is at, reset it the waiting message count to 0, any remaining data should be cleared until the next valid message
-      $display("PostDecramblerRXCtrllr abortReq");
+      if (`DEBUG_RXCTRL == 1)
+         $display("PostDecramblerRXCtrllr abortReq");
    endmethod
       
 endmodule
@@ -616,7 +675,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkRXController(RXContr
    let feedbackFIFO <- mkFIFOF;   
 
    rule checkFIFO(!feedbackFIFO.notFull);
-     $display("RXControl: feedbackFIFO is full"); 
+      if (`DEBUG_RXCTRL == 1)
+         $display("RXControl: feedbackFIFO is full"); 
    endrule
 
    // We must tap out this feedback to other modules to control agc and ghold
@@ -649,6 +709,9 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkRXController(RXContr
    interface inFromDescrambler = postDescramblerCtrllr.inFromDescrambler;
    interface outRXVector = preDescramblerCtrllr.outRXVector;
    interface outData   = postDescramblerCtrllr.outData;
+   `ifdef SOFT_PHY_HINTS
+   interface outSoftPhyHints = preDescramblerCtrllr.outSoftPhyHints;
+   `endif
    interface packetFeedback = fifoToGet(fifofToFifo(feedbackFIFO));
    interface abortAck = preDemapperCtrllr.abortAck;
 

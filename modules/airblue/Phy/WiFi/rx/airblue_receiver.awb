@@ -4,8 +4,8 @@
 
 %AWB_START
 
-%name WiFi Receiver Pipeline (no Soft Hints) 
-%desc WiFi Receiver Pipeline (Exclude FFT which is shared with TX pipeline)
+%name WiFi Receiver Pipeline 
+%desc WiFi Receiver Pipeline (Exclude FFT which is shared with TX pipeline). SoftPHY hints are supported by choosing the right airblue_types.
 %provides airblue_receiver
 
 %requires airblue_synchronizer
@@ -19,6 +19,9 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Decoder.bsv RXController.bsv Receiver.bsv WiFiReceiver.bsv 
+%sources -t BSV -v PUBLIC Decoder.bsv Receiver.bsv WiFiReceiver.bsv RXController.bsv 
+
+%param DEBUG_RXCTRL 0 "Enable debug messages with 1"
+%param MAGIC_DESCRAMBLE_SEED 1 "Enable magic descrambler seed with 1, useful to obtain BER"
 
 %AWB_END
