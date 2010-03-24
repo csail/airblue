@@ -93,7 +93,11 @@ typedef Bit#(VPathMetricSz)                                     VPathMetric;    
 typedef Tuple2#(Bool, 
                 Vector#(FwdSteps, 
                         Vector#(ConvOutSz, VMetric)))        VInType;
+`ifdef SOFT_PHY_HINTS
+typedef Tuple2#(Vector#(FwdSteps, Bit#(ConvInSz)), VPathMetric) VOutType;
+`else
 typedef Vector#(FwdSteps, Bit#(ConvInSz))                    VOutType;
+`endif
 
 // no. extended conolutional generator polynomials = FwdSteps x ConvOutSz
 typedef Tuple2#(Bool,

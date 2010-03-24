@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <stdio.h>
 
-#define BER   0.01   // bit error rate
+#define BER   0   // bit error rate
 double ber = 
 #ifdef BER 
 BER; 

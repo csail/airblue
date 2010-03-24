@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name Airblue Convolutional Decoder Common (no Soft Hints)
+%name Airblue Convolutional Decoder Common
 %desc Common modules shared by both Viterbi and BCJR
 %provides airblue_convolutional_decoder_common
 
