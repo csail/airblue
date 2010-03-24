@@ -48,7 +48,11 @@ typedef Vector#(n, FPComplex#(i_prec, f_prec))
 typedef Bit#(3) ViterbiMetric;
 typedef Bit#(9) SoftPhyHints;
 
+`ifdef SOFT_PHY_HINTS
+typedef Tuple2#(Bit#(1),SoftPhyHints) ViterbiOutput;
+`else
 typedef Bit#(1) ViterbiOutput;
+`endif
 
 typedef Vector#(o_sz,ViterbiMetric)
    DepunctData#(numeric type o_sz);
