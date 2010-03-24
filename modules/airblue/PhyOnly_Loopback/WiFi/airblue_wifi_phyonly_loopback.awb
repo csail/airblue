@@ -20,6 +20,7 @@
 %generated -t BA mkBusTransceiver.ba
 %generated -t BA mkTransceiverPacketGenFPGA.ba
 %generated -t BA check_ber.ba
+%generated -t BA get_rate.ba
 
 %attributes airblue
 

@@ -5,10 +5,14 @@
 # ***************
 
 experiments = bcjr_alpha_1  bcjr_alpha_2 bcjr_alpha_4 bcjr_alpha_8 bcjr_alpha_16 bcjr_alpha_32  bcjr_alpha_64  bcjr_const_1  bcjr_const_2 bcjr_const_4 bcjr_const_8 bcjr_const_16 bcjr_const_32  bcjr_const_64
-config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_10.cfg
-config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_11.cfg
-config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_12.cfg
-config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_15.cfg
+
+
 
 
 

@@ -1,0 +1,7 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+phy_pipeline   config/pm/ofdm/airblue/airblue_wifi_phy_only_loopback_exe.apm      --bluesim="-m 1000000000"

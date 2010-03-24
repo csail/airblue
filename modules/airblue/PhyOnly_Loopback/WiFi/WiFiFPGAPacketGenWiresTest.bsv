@@ -71,7 +71,7 @@ import StmtFSM::*;
 // two mode transmitting and verifying transmission
 //typedef enum {Transmit, Verify} OpMode deriving (Bits,Eq);
 
-//import "BDPI" next_rate   = function Rate     nextRate(Rate maxRate);
+import "BDPI" get_rate   = function Rate getRate();
 //import "BDPI" next_length = function Bit#(32) nextLength();
 import "BDPI" check_ber = function Bool checkBitErrors(Bit#(32) errors);
 
@@ -96,9 +96,12 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
   endfunction
 
   Reg#(Bool) finished <- mkReg(False);
-
+  Reg#(Rate) rate <- mkReg(R0);
   Stmt stmt =
     (seq
+      // set the test rate 
+      rate <= getRate();
+      avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrRate)),data:zeroExtend(pack(rate)),command: register_mapper::Write});
       // enable packet gen
       avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
       

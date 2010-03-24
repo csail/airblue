@@ -12,16 +12,19 @@ use strict;
 my $gcfg = Asim::GenCFG->new();
 
 
-my @snrs = (15, 12, 11, 10);
+my @snrs = (15, 14, 13, 12, 11, 10);
+my @rates = (6,5,4,3,2,1,0);
 
-foreach my $snr (@snrs) {
-        my $bmark = "ber_check_" . $snr;
+foreach my $rate (@rates) {
+  foreach my $snr (@snrs) {
+        my $bmark = "ber_check_rate_" . $rate . "_snr_". $snr;
         $gcfg->add(name => $bmark,
                   tree => [ "benchmarks" ],
                   setup => "tools/scripts/bmark/setup-bsv-libraries-bmark $bmark --contexts=0",
                   feeder => "none",
                   ccount => 800000,
-                  sysflags => "ADDNOISE_SNR=" . $snr,
+                  sysflags => "ADDNOISE_SNR=" . $snr ." WIFI_RATE=" . $rate,
                   );
    }
+}
 $gcfg->action(@ARGV);

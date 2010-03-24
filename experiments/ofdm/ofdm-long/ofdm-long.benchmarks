@@ -1,0 +1,51 @@
+# ***************
+#
+# OFDM benchmarks
+#
+# ***************
+
+experiments = phy_pipeline
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_3_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_4_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_5_snr_15.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_10.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_11.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_12.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_13.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_14.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_6_snr_15.cfg
+
+
