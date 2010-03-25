@@ -18,6 +18,4 @@
 
 %sources -t BSV -v PUBLIC ViterbiTest.bsv
 
-%generated -t BA viterbiMapCtrl.ba
-
 %AWB_END

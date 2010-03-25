@@ -45,8 +45,8 @@ import Vector::*;
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
 
-module mkViterbiInstance(Viterbi#(TXGlobalCtrl,24,12));
-   Viterbi#(TXGlobalCtrl,24,12) viterbi;
+module mkViterbiInstance(Viterbi#(RXGlobalCtrl,24,12));
+   Viterbi#(RXGlobalCtrl,24,12) viterbi;
    viterbi <- mkConvDecoder(viterbiMapCtrl);
    return viterbi;
 endmodule
