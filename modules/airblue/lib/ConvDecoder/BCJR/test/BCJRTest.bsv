@@ -42,8 +42,8 @@ import Vector::*;
 //`define isDebug True // uncomment this line to display error
 
 
-module mkBCJRInstance(Viterbi#(TXGlobalCtrl,24,12));
-   Viterbi#(TXGlobalCtrl,24,12) bcjr;
+module mkBCJRInstance(Viterbi#(RXGlobalCtrl,24,12));
+   Viterbi#(RXGlobalCtrl,24,12) bcjr;
    bcjr <- mkConvDecoder(viterbiMapCtrl);
    return bcjr;
 endmodule
