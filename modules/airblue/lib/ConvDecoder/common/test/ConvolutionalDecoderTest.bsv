@@ -104,6 +104,20 @@ function Bit#(12) getNewLength(Rate rate);
 	     R7: 144; // (216/12)-1
 	  endcase;
 endfunction
+          
+// symbol = no. 12 bits bundle          
+function Bit#(12) getSymCnt(Rate rate);
+   return case (rate)
+	     R0: 2;  // (24/12)
+	     R1: 3;  // (36/12)
+	     R2: 4;  // (48/12)
+	     R3: 6;  // (72/12)
+	     R4: 8;  // (96/12)
+	     R5: 12; // (144/12)
+	     R6: 16; // (192/12)
+	     R7: 18; // (216/12)
+	  endcase;
+endfunction          
 
 // may be an extra field for DL: sendPremable
 typedef struct {
@@ -366,8 +380,9 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
 						 rate:R0});
-
+   
    Reg#(Bit#(12)) counter <- mkReg(0);
+   Reg#(Bit#(12)) fst_cnt <- mkReg(0);
    Reg#(Bit#(12)) scr_cnt <- mkReg(0);
    Reg#(Bit#(12)) dec_cnt <- mkReg(0);
    Reg#(Bit#(12)) des_cnt <- mkReg(0);
@@ -386,11 +401,13 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let fst_symbol = True;
       let new_mesg = makeMesg(bypass_mask, seed, fst_symbol, new_ctrl.rate, new_ctrl.length, new_data);
       let new_counter = new_ctrl.length - 1;
+      let new_fst_cnt = getSymCnt(new_ctrl.rate);
       $display("Testbench sets counter to %d", new_ctrl.length-1);
       ctrl <= new_ctrl;
       $display("ConvEncoder Input: %h", new_data);
       in_data <= new_data;
       counter <= new_counter;
+      fst_cnt <= new_fst_cnt;
       scrambler.in.put(new_mesg);
       `ifdef isDebug
       $display("Conv Encoder In Mesg: rate:%d, data:%b, counter:%d",new_ctrl.rate,new_data,new_counter);
@@ -402,11 +419,13 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Invalid; // no new seed for scrambler
-      let fst_symbol = False;
+      let fst_symbol = fst_cnt > 0;
       let new_mesg = makeMesg(bypass_mask, seed, fst_symbol, new_ctrl.rate, new_ctrl.length, new_data);
       let new_counter = counter - 1;
       in_data <= new_data;
       counter <= new_counter;
+      if (fst_symbol)
+         fst_cnt <= fst_cnt - 1;
       scrambler.in.put(new_mesg);
       $display("ConvEncoder Input: %h", new_data);
       `ifdef isDebug
@@ -439,7 +458,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let mesg <- conv_encoder.out.get;
       puncturer.in.put(mesg);
       `ifdef isDebug
-      $display("Conv Encoder Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
+      $display("Conv Encoder Out Mesg: fst_sym:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
       `endif
    endrule
    
@@ -447,7 +466,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let mesg <- puncturer.out.get;
       mapper.in.put(mesg);
       `ifdef isDebug
-      $display("Puncturer Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
+      $display("Puncturer Out Mesg: fst_sym:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
       `endif
    endrule
    
@@ -479,7 +498,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       demapper.in.put(Mesg{control:freqDomain.control,
                            data:take(freqDomain.data)});
       `ifdef isDebug
-      $display("FFT Out Mesg: rate:%d, data:%h",freqDomain.control.rate,freqDomain.data);
+      $display("FFT Out Mesg: fst_sym:%d, rate:%d, data:%h",freqDomain.control.firstSymbol, freqDomain.control.rate,freqDomain.data);
       `endif
    endrule
    
@@ -487,13 +506,16 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let mesg <- demapper.out.get;
       depuncturer.in.put(mesg);
       `ifdef isDebug
-      $display("Demapper Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
+      $display("Demapper Out Mesg: fst_sym:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
       `endif
    endrule
 
    rule putViterbi(True);
       let mesg <- depuncturer.out.get;     
       Bool push_zeros = False; 
+      `ifdef isDebug
+      $display("Depuncturer Out Mesg: fst_syn:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
+      `endif
       if (mesg.control.firstSymbol && dec_cnt == 0)
          begin
             dec_cnt <= mesg.control.length - 1;
@@ -523,7 +545,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       `ifdef isDebug
       for(Integer i = 0; i < 24; i = i + 1)
          $display("ConvDecoder In %o",mesg.data[i]);
-      $display("Depuncturer Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
+//      $display("Depuncturer Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
       `endif
    endrule
    
