@@ -561,7 +561,7 @@ typedef 10 DepuncturerF3OutSz;
 
 
 function DepunctData#(4) dp1 (DepunctData#(3) x);
-   DepunctData#(4) outVec = replicate(4);
+   DepunctData#(4) outVec = replicate(0);
    outVec[0] = x[0];
    outVec[1] = x[1];
    outVec[2] = x[2];
@@ -569,7 +569,7 @@ function DepunctData#(4) dp1 (DepunctData#(3) x);
 endfunction // Bit
    
 function DepunctData#(6) dp2 (DepunctData#(4) x);
-   DepunctData#(6) outVec = replicate(4);
+   DepunctData#(6) outVec = replicate(0);
    outVec[0] = x[0];
    outVec[1] = x[1];
    outVec[2] = x[2];
@@ -579,7 +579,7 @@ endfunction // Bit
 
 // not used in wifi   
 function DepunctData#(10) dp3 (DepunctData#(6) x);
-   DepunctData#(10) outVec = replicate(4);
+   DepunctData#(10) outVec = replicate(0);
    return outVec;
 endfunction // Bit
 
