@@ -12,7 +12,7 @@ use strict;
 my $gcfg = Asim::GenCFG->new();
 
 
-my @snrs = (15, 14, 13, 12, 11, 10);
+my @snrs = (15, 14, 13, 12, 11, 10, 9, 8, 7);
 my @rates = (6,5,4,3,2,1,0);
 
 foreach my $rate (@rates) {
