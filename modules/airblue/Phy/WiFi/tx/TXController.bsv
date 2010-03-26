@@ -205,7 +205,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
                   txState <= Idle;
                end
 	 end
-      $display("%m TXCtrl fires sendHeader isTrailer? %d",txState == SendTrailer);
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires sendHeader isTrailer? %d",txState == SendTrailer);
+         end
    endrule
    
    // send predata (date come before actual payload) at payload rate 
@@ -215,7 +218,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
             sfifo.enq(fromInteger(valueOf(PreDataSz)),append(unpack(fromMaybe(?,txVector.pre_data)),replicate(0)));
          end
       txState <= SendData;
-      $display("%m TXCtrl fires addPreData");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires addPreData");
+         end
    endrule
    
    rule sendData(txState == SendData 
@@ -238,7 +244,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
          begin
             txState <= SendPadding;
          end
-      $display("%m TXCtrl fires sendData count =  %d", count);
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires sendData count =  %d", count);
+         end
    endrule
      
    rule addTail(txState == SendData
@@ -250,7 +259,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
             sfifo.enq(fromInteger(valueOf(PostDataSz)),append(unpack(fromMaybe(?,txVector.post_data)),replicate(0)));
          end
       postDataAdded <= True;
-      $display("%m TXCtrl fires addTail");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires addTail");
+         end
    endrule
    
    rule addZero(txState == SendData
@@ -262,7 +274,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
       if (sfifo_usage > 0) // only add zero when usage > 0
 	 sfifo.enq(enqSz,replicate(0));
       zeroAdded <= True;
-      $display("%m TXCtrl fires addZero");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires addZero");
+         end
    endrule   
    
 //    rule sendLast( txState == SendData &&
@@ -295,7 +310,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
       let mesg = makeMesg(bypass,seed,fstSym,rate,data);
       outQ.enq(mesg);
       count <= count - zeroExtend(scramblerDataSz);
-      $display("%m TXCtrl fires sendPadding");      
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires sendPadding");      
+         end
    endrule
    
    rule becomeIdleOrAddTrailer(txState == SendPadding 
@@ -309,7 +327,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
          begin
             txState <= Idle;
          end
-      $display("%m TXCtrl fires becomeIdle");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires becomeIdle");
+         end
    endrule
 
 //    rule checkOutQ(True);
@@ -326,7 +347,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
       zeroAdded <= False;
       count <= 0;
       sfifo.enq(fromInteger(valueOf(HeaderSz)),append(unpack(encoderHeader(txVec.header,False)),replicate(0)));
-      $display("%m TXCtrl fires txStart: %d", count);
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires txStart: %d", count);
+         end
    endmethod
    
    method Action txData(Bit#(8) inData) 
@@ -334,7 +358,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXContr
 	  txLength > 0);
       sfifo.enq(8,append(unpack(inData),replicate(0)));
       txLength <= txLength - 1;
-      $display("%m TXCtrl fires txData");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("%m TXCtrl fires txData");
+         end
    endmethod
    
    method Action txEnd();

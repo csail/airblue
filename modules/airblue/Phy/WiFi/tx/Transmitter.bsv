@@ -135,7 +135,7 @@ module mkTransmitterInstance#(
    let cpInsert <- mkCPInsertInstance;
    
    // connections
-   if (detailedDebugInfo)
+   if(`DEBUG_TXCTRL == 1)
       begin
          mkConnectionPrint("Scrm -> Conv",scrambler.out,encoder.in);
          mkConnectionPrint("Enco -> Intr",encoder.out,interleaver.in);

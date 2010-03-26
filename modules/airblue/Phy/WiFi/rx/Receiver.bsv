@@ -146,7 +146,7 @@ module mkReceiverPreDescramblerInstance
     let decoder <- mkDecoderInstance;
     
     // connections
-   if (detailedDebugInfo)
+   if (`DEBUG_RXCTRL == 1)
       begin
          mkConnectionPrint("Dmap -> Dint",demapper.out,deinterleaver.in);
          mkConnectionPrint("Dint -> Deco",deinterleaver.out,decoder.in);
@@ -171,7 +171,7 @@ module mkReceiverPreDescramblerMCDInstance#(Clock viterbiClock, Reset viterbiRes
     let decoder <- mkDecoderMCDInstance(viterbiClock, viterbiReset);
     
     // connections
-   if (detailedDebugInfo)
+   if (`DEBUG_RXCTRL == 1)
       begin
          mkConnectionPrint("Dmap -> Dint",demapper.out,deinterleaver.in);
          mkConnectionPrint("Dint -> Deco",deinterleaver.out,decoder.in);

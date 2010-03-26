@@ -28,5 +28,7 @@
 %generated -t BA mkDecoderMCDInstance.ba
 %generated -t BA mkViterbiInstance.ba
 
+%param DEBUG_TXCTRL 0 "Enable debug messages"
+
 
 %AWB_END

@@ -82,17 +82,26 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiTransmitter#(IFF
    
    // methods
    method Action txStart(TXVector txVec);
-      $display("Transmitter: txStart called length: %d", txVec.header.length);
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("Transmitter: txStart called length: %d", txVec.header.length);
+         end
       tx_controller.txStart(txVec);
    endmethod
    
    method Action txData(Bit#(8) inData);
-      $display("TransmitterHW: txData called: %h", inData);
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("TransmitterHW: txData called: %h", inData);
+         end
       tx_controller.txData(inData);
    endmethod
    
    method Action txEnd();
-      $display("Transmitter: txEnd called");
+      if(`DEBUG_TXCTRL == 1)
+         begin
+            $display("Transmitter: txEnd called");
+         end
       tx_controller.txEnd;
    endmethod
    
