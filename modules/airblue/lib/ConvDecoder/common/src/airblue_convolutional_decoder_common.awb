@@ -10,11 +10,13 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv PathMetricUnit.bsv BranchMetricUnit.bsv       
+%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv PathMetricUnit.bsv  BranchMetricUnit.bsv       
 
 %generated -t BA mkBranchMetricUnit.ba
 %generated -t BA module_permuteForward.ba
 %generated -t BA module_getBranchMetricForward.ba
 %generated -t BA module_acs.ba
+
+%param DEBUG_CONV_DECODER 0 "Enable debug messages"
 
 %AWB_END

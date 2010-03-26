@@ -81,17 +81,9 @@ module mkPathMetricUnit#(String str,
                          getBranchMetric(Vector#(VNoBranchMetric,VBranchMetric) branch_metric))
       (PathMetricUnit);
    
-   // states
-   `ifdef softOut
-
-   Reg#(VPathMetricUnitOut) pmu_out  <- mkReg(tuple2(True,?)); 
-
-   `else
-
-   Reg#(VPathMetricUnitOut) pmu_out  <- mkReg(tuple2(True,unpack('hdeadbeef)));// This may hurt us in the long run, but we assume here  
+   Reg#(VPathMetricUnitOut) pmu_out  <- mkReg(tuple2(True,?));// This may hurt us in the long run, but we assume here  
                                                               // That the first incoming token will have the proper reset
                                                               // values
-   `endif
    
    EHRReg#(2,Bool)          can_read <- mkEHRReg(False);      
 
@@ -106,39 +98,48 @@ module mkPathMetricUnit#(String str,
          Bool new_need_rst = tpl_1(bmu_out);                                   
          Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric)) branch_metric = getBranchMetric(tpl_2(bmu_out));
 
+      
 
-         $display(" %s fires in at %t", str, $time);
-
-	 if(need_rst) 
+	 if(need_rst && (`DEBUG_CONV_DECODER == 1)) 
            begin
              $display("%s resets with ", str,  fshow(initPathMetric)); 
            end
 
          dataIn <= dataIn + 1;
-         $display("%s dataIn: ", str, dataIn + 1);   
+
                                                      
          Vector#(VTotalStates,VPathMetric) path_metric = need_rst ? initPathMetric : tpl_1(unzip(tpl_2(pmu_out)));  
          Vector#(VTotalStates,VACSEntry) res = getPMUOut( path_metric, branch_metric);
          pmu_out <= tuple2(new_need_rst,res);
          can_read[1] <= True;
-         `ifdef isDebug
-         for (Integer i = 0; i < no_states; i = i + 1)
-            begin
-               for (Integer j = 0; j < radix_sz; j = j + 1)
-                  $display("PMU %s state %d radix_in %d branch_metric %b",str,i,j,branch_metric[i][j]); 
-               $display("PMU %s state %d old_metric_sum %b new_metric_sum %b traceback %d need_rst %d",str,i,path_metric[i],tpl_1(res[i]),tpl_2(res[i]),need_rst);
-            end
-         `endif
+
+         if(`DEBUG_CONV_DECODER == 1)
+           begin
+             $display(" %s fires in at %t", str, $time);
+             $display("%s dataIn: ", str, dataIn + 1);   
+             for (Integer i = 0; i < no_states; i = i + 1)
+               begin
+                 for (Integer j = 0; j < radix_sz; j = j + 1)
+                   begin
+                     $display("PMU %s state %d radix_in %d branch_metric %b",str,i,j,branch_metric[i][j]); 
+                   end
+                 $display("PMU %s state %d old_metric_sum %b new_metric_sum %b traceback %d need_rst %d",str,i,path_metric[i],tpl_1(res[i]),tpl_2(res[i]),need_rst);
+               end
+           end
       endmethod  
    endinterface
       
    interface Get out;
       method ActionValue#(VPathMetricUnitOut) get() if (can_read[0]); 
-         $display("PMU %s outputs %h", str, pack(pmu_out));
-         $display("%s fires out at %t", str, $time);
+         if(`DEBUG_CONV_DECODER == 1)
+           begin
+             $display("PMU %s outputs %h", str, pack(pmu_out));
+             $display("%s fires out at %t", str, $time);
+             $display("%s dataOut: ", str, dataOut + 1);   
+           end
+
          can_read[0] <= False;
-         dataOut <= dataOut + 1;
-         $display("%s dataOut: ", str, dataOut + 1);   
+         dataOut <= dataOut + 1;         
          return pmu_out;
       endmethod
    endinterface
