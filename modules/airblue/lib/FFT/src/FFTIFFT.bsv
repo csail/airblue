@@ -237,7 +237,11 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    RWire#(FFTMesg#(DualFFTIFFTControl#(fft_ctrl_t,ifft_ctrl_t),FFTSz,ISz,FSz)) resultWire <- mkRWire; 
   
    rule putInputFFT(preference == FFT || !inQIFFT.notEmpty || !ifftRespTokens.notFull);
-      $display("Dual FFT input");
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual FFT input");
+         end
+      
 
       preference <= IFFT;
       inQFFT.deq;
@@ -246,7 +250,11 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    endrule
    
    rule putInputIFFT(preference == IFFT || !inQFFT.notEmpty || !fftRespTokens.notFull);
-      $display("Dual IFFT input");
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual IFFT input");
+         end
+      
       preference <= FFT;
       inQIFFT.deq;
       Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(inQIFFT.first.data);
@@ -258,14 +266,22 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
  
    
    rule getOutput(True);
-      $display("Dual deq @ %d", $time);
+       if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq @ %d", $time);
+         end
+      
       let mesg <- fftUnit.getOutput;
       resultWire.wset(mesg);
    endrule
 
 
    rule getOutputFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged FFTCtrl .ctrl);
-      $display("Dual deq fft @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq fft @ %d", $time);
+         end
+      
       Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(result.data);
       Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) sndHalfVec = takeTail(result.data);
       let data = append(sndHalfVec,fstHalfVec);
@@ -273,7 +289,11 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    endrule
 
    rule getOutputIFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged IFFTCtrl .ctrl);
-      $display("Dual deq ifft @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq ifft @ %d", $time);
+         end
+      
       outQIFFT.enq(Mesg{control:ctrl,data:result.data});
    endrule
 	       
@@ -281,7 +301,11 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
      interface in = fifoToPut(fifofToFifo(inQIFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get();
-         $display("Dual IFFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual IFFT output");   
+             end
+                
          ifftRespTokens.deq;
          outQIFFT.deq;
          return outQIFFT.first;
@@ -293,7 +317,11 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
      interface in = fifoToPut(fifofToFifo(inQFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get();
-         $display("Dual FFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual FFT output");   
+             end
+          
          fftRespTokens.deq;
          outQFFT.deq;
          return outQFFT.first;
@@ -331,14 +359,22 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
   
    
    rule getOutput(True);
-      $display("Dual deq @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq @ %d", $time);
+         end
+      
       let mesg <- fftUnit.getOutput;
       resultWire.wset(mesg);
    endrule
 
 
    rule getOutputFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged FFTCtrl .ctrl);
-      $display("Dual deq fft @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq fft @ %d", $time);
+         end
+      
       Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(result.data);
       Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) sndHalfVec = takeTail(result.data);
       let data = append(sndHalfVec,fstHalfVec);
@@ -346,7 +382,11 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
    endrule
 
    rule getOutputIFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged IFFTCtrl .ctrl);
-      $display("Dual deq ifft @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq ifft @ %d", $time);
+         end
+      
       outQIFFT.enq(Mesg{control:ctrl,data:result.data});
    endrule
 
@@ -358,7 +398,11 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == IFFT );
-           $display("Dual IFFT input");           
+            if(`DEBUG_FFT == 1)
+               begin
+                  $display("Dual IFFT input");           
+               end
+            
            Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(mesg.data);
            Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) sndHalfVec = takeTail(mesg.data);
            let data = append(sndHalfVec,fstHalfVec);
@@ -369,7 +413,11 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
 
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get();
-         $display("Dual IFFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual IFFT output");   
+             end
+          
          ifftRespTokens.deq;
          outQIFFT.deq;
          return outQIFFT.first;
@@ -381,7 +429,11 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == FFT);
-           $display("Dual FFT input");                      
+            if(`DEBUG_FFT == 1)
+               begin
+                  $display("Dual FFT input");                      
+               end
+            
            fftRespTokens.enq(?);
            fftUnit.putInput(FFT,Mesg{control: tagged FFTCtrl (mesg.control), data: mesg.data});
          endmethod
@@ -389,7 +441,11 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
 
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get();
-         $display("Dual FFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual FFT output");   
+             end
+          
          fftRespTokens.deq;
          outQFFT.deq;
          return outQFFT.first;
@@ -485,7 +541,11 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
    FIFOF#(Bit#(0)) respTokens <- mkSizedFIFOF(valueof(DualFIFODepth));
 
    rule getOutput(True);
-      $display("Dual deq @ %d", $time);
+      if(`DEBUG_FFT == 1)
+         begin
+            $display("Dual deq @ %d", $time);
+         end
+      
       let mesg <- fftUnit.getOutput;
       outQ.enq(mesg);
    endrule
@@ -494,7 +554,11 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg);
-           $display("Dual IFFT input");           
+            if(`DEBUG_FFT == 1)
+               begin
+                  $display("Dual IFFT input");           
+               end
+            
            Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(mesg.data);
            Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) sndHalfVec = takeTail(mesg.data);
            let data = append(sndHalfVec,fstHalfVec);
@@ -505,7 +569,11 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
 
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get() if(outQ.first.control matches tagged IFFTCtrl .ctrl);
-         $display("Dual IFFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual IFFT output");   
+             end
+          
          respTokens.deq;
          outQ.deq;
          return Mesg{control: ctrl, data:outQ.first.data};
@@ -517,7 +585,11 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg);
-           $display("Dual FFT input");                      
+            if(`DEBUG_FFT == 1)
+               begin
+                  $display("Dual FFT input");                      
+               end
+            
            respTokens.enq(?);
            fftUnit.putInput(FFT,Mesg{control: tagged FFTCtrl (mesg.control), data: mesg.data});
          endmethod
@@ -525,7 +597,11 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
 
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get() if(outQ.first.control matches tagged FFTCtrl .ctrl);
-         $display("Dual FFT output");   
+          if(`DEBUG_FFT == 1)
+             begin
+                $display("Dual FFT output");   
+             end
+          
          respTokens.deq;
          outQ.deq;
          Vector#(HalfFFTSz,FPComplex#(ISz,FSz)) fstHalfVec = take(outQ.first.data);
