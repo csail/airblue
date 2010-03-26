@@ -224,13 +224,14 @@ module mkAutoCorrelator(AutoCorrelator);
 
    // mode
    Reg#(Bool) 						   isShort <- mkReg(True); 						   
-   `ifdef debug_mode
    Reg#(Bit#(64)) cycle <- mkReg(0);
    
-   rule tick(True);
-      cycle <= cycle + 1;
-   endrule
-   `endif
+   if(`DEBUG_SYNCHRONIZER == 1)
+      begin
+         rule tick(True);
+            cycle <= cycle + 1;
+         endrule
+      end
    
    method Action putInput(FPComplex#(SyncIntPrec,SyncFractPrec) x);
    begin
@@ -243,18 +244,20 @@ module mkAutoCorrelator(AutoCorrelator);
       corr <= newCorr;
       outQ.enq(newCorr);
 
-      `ifdef debug_mode
-         $write("AutoCorr.input:");
-         cmplxWrite("("," + ","i)",fxptWrite(7),x);
-         $display("");
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("AutoCorr.input:");
+            cmplxWrite("("," + ","i)",fxptWrite(7),x);
+            $display("");
+         end
       if (isShort)
 	begin
 	   delayIn.enq(curIn);
 	   corrSub.enq(corrAdd);
-	   `ifdef debug_mode
-	   $display("RULE at cycle %d AutoCorr.putInput: isShort",cycle);
-	   `endif
+	   if(`DEBUG_SYNCHRONIZER == 1)
+              begin
+	         $display("RULE at cycle %d AutoCorr.putInput: isShort",cycle);
+	      end
 	end
       else
 	begin
@@ -262,9 +265,10 @@ module mkAutoCorrelator(AutoCorrelator);
 	   delayIn.enq(extDelayIn.first);
 	   extCorrSub.enq(corrAdd);
 	   corrSub.enq(extCorrSub.first);
-	   `ifdef debug_mode
-	   $display("RULE at cycle %d AutoCorr.putInput: isLong",cycle);
-	   `endif
+	   if(`DEBUG_SYNCHRONIZER == 1)
+              begin
+	         $display("RULE at cycle %d AutoCorr.putInput: isLong",cycle);
+	      end
 	end // else: !if(isShort)
    end
    endmethod
@@ -278,20 +282,22 @@ module mkAutoCorrelator(AutoCorrelator);
       extCorrSub.clear;
       corr <= cmplx(0,0);
       isShort <= isShortMode;
-      `ifdef debug_mode
-      $display("METHOD at cycle %d AutoCorr.setMode: %d",cycle,isShortMode);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d AutoCorr.setMode: %d",cycle,isShortMode);
+         end
    end
    endmethod
 
    method ActionValue#(CorrType) getCorrelation();
    begin
       outQ.deq;
-      `ifdef debug_mode
-      $write("METHOD at cycle %d AutoCorr.getCorrelation:",cycle);
-      cmplxWrite("("," + ","i)",fxptWrite(7),outQ.first);
-      $display("");
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("METHOD at cycle %d AutoCorr.getCorrelation:",cycle);
+            cmplxWrite("("," + ","i)",fxptWrite(7),outQ.first);
+            $display("");
+         end
       return outQ.first;
    end
    endmethod
@@ -378,9 +384,26 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
    Reg#(TimeState) 					   status  <- mkReg(SNormal); // status for stage 1
    Reg#(TimeState)                                         status2 <- mkReg(LNormal); // statue for stage 2
    
-   `ifdef debug_mode
    Reg#(Bit#(64)) cycle <- mkReg(0);
-   `endif
+
+   if(`DEBUG_SYNCHRONIZER == 1)
+      begin
+
+         rule checkFIFOsStatus(True);
+            $display("TimeEst.coarTimeInQ notFull:%d notEmpty:%d",coarTimeInQ.notFull,coarTimeInQ.notEmpty);
+            $display("TimeEst.coarInPipeQ notFull:%d notEmpty:%d",coarInPipeQ.notFull,coarInPipeQ.notEmpty);
+            $display("TimeEst.coarPowQ notFull:%d notEmpty:%d",coarPowQ.notFull,coarPowQ.notEmpty);
+            $display("TimeEst.fineTimeInQ notFull:%d notEmpty:%d",fineTimeInQ.notFull,fineTimeInQ.notEmpty);
+            $display("TimeEst.fineInPipeQ notFull:%d notEmpty:%d",fineInPipeQ.notFull,fineInPipeQ.notEmpty);
+            $display("TimeEst.fineTimeCorrQ notFull:%d notEmpty:%d",fineTimeCorrQ.notFull,fineTimeCorrQ.notEmpty);
+            $display("TimeEst.timeStatePipeQ notFull:%d notEmpty:%d",timeStatePipeQ.notFull,timeStatePipeQ.notEmpty);
+            $display("TimeEst.outQ notFull:%d notEmpty:%d",outQ.notFull,outQ.notEmpty);      
+         endrule
+   
+         rule tick(True);
+            cycle <= cycle + 1;
+         endrule
+      end
    
    rule procProlog(isProlog); // initial setup
       if (fineTimeInQ.notEmpty) // finish
@@ -394,9 +417,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 	                        delayedData: ?,
                                 autoCorrelation: ?});	   
 	end
-      `ifdef debug_mode
-      $display("RULE at cycle %d TimeEst.procProlog",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d TimeEst.procProlog",cycle);
+         end
    endrule
    
    rule procAutoQToOutQ(True);
@@ -428,9 +452,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 	   autoCorr.putInput(curIn);
 	   timeStatePipeQ.enq(SNormal);
 	end // else: !if(fineTimeInQ.first.control == ShortSync)
-      `ifdef debug_mode
-      $display("RULE at cycle %d TimeEst.procAutoCorrSN",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d TimeEst.procAutoCorrSN",cycle);
+         end
    endrule
 
    rule  procAutoCorrLN(!isProlog && status == LNormal);
@@ -462,14 +487,15 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
             timeStatePipeQ.enq(LNormal);
             autoCorr.putInput(fineTimeInQ.first.delayedData);	
          end
-      `ifdef debug_mode
-      $write("RULE at cycle %d TimeEst.procAutoCorrLN: fineSign: %d + %di,",cycle,fineSign.rel,fineSign.img);
-      $write("input: ");
-      cmplxWrite("("," + ","i), ",fxptWrite(7),fineTimeInQ.first.delayedData);
-      $display("");
-      $display("TimeEst.procAutoCorrLN: fineTimeCorrIn:%h, ",fineTimeCorrIn);
-      $display("TimeEst.procAutoCorrLN: longPreSigns:%h, ",longPreambles);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("RULE at cycle %d TimeEst.procAutoCorrLN: ",cycle);
+            $write("input: ");
+            cmplxWrite("("," + ","i), ",fxptWrite(7),fineTimeInQ.first.delayedData);
+            $display("");
+            $display("TimeEst.procAutoCorrLN: fineTimeCorrIn:%h, ",fineTimeCorrIn);
+            $display("TimeEst.procAutoCorrLN: longPreSigns:%h, ",longPreambles);
+         end
    endrule
 
    rule procTimeEstSN(!isProlog && timeStatePipeQ.first == SNormal);
@@ -481,11 +507,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
       FPComplex#(CoarTimeAccumIntPrec, SyncFractPrec) newCoarCorr = fpcmplxTruncate(newCorr);           
       let newCoarCorrPow = fpcmplxModSq(newCoarCorr);
       FixedPoint#(CoarTimeCorrIntPrec,CoarTimeCorrFractPrec) newCoarPowSq = fxptZeroExtend(fxptMult(newCoarPow,newCoarPow));
-      $write("PLOTSHORTSYNC coarCorrPow: ");
-      fxptWrite(6,newCoarCorrPow);
-      $write(" coarPowSq: ");
-      fxptWrite(6,newCoarPowSq);
-      $display("");
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("PLOTSHORTSYNC coarCorrPow: ");
+            fxptWrite(6,newCoarCorrPow);
+            $write(" coarPowSq: ");
+            fxptWrite(6,newCoarPowSq);
+            $display("");
+         end
 
       if (coarDet)
 	begin
@@ -513,13 +542,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
               begin
                  newCoarPos = 0;
               end
-//           `ifdef debug_mode
-           $write("RULE TimeEst.procTimeEstSN: coarTime: %d, coarCorrPow: ",newCoarTime);
-           fxptWrite(6,newCoarCorrPow);
-           $write(" coarPowSq: ");
-           fxptWrite(6,newCoarPowSq);
-           $display(" coarTimeAdd: %d",coarTimeAdd);
-//           `endif
+           if(`DEBUG_SYNCHRONIZER == 1)
+              begin
+                 $write("RULE TimeEst.procTimeEstSN: coarTime: %d, coarCorrPow: ",newCoarTime);
+                 fxptWrite(6,newCoarCorrPow);
+                 $write(" coarPowSq: ");
+                 fxptWrite(6,newCoarPowSq);
+                 $display(" coarTimeAdd: %d",coarTimeAdd);
+              end
 	end // else: !if(coarDet)
       
       // common state transitions
@@ -543,13 +573,16 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
             if (newCoarPos == fromInteger(lSStart - 1))
                begin
                   outControl = ShortSync;  
-                  $write("SHORTSYNC coarPow: ");
-                  fxptWrite(6,newCoarPow);
-                  $write(" coarCorrPow: ");
-                  fxptWrite(6,newCoarCorrPow);
-                  $write(" coarPowSq: ");
-                  fxptWrite(6,newCoarPowSq);
-                  $display("");
+                  if(`DEBUG_SYNCHRONIZER == 1)
+                     begin
+                        $write("SHORTSYNC coarPow: ");
+                        fxptWrite(6,newCoarPow);
+                        $write(" coarCorrPow: ");
+                        fxptWrite(6,newCoarCorrPow);
+                        $write(" coarPowSq: ");
+                        fxptWrite(6,newCoarPowSq);
+                        $display("");
+                     end
                   
                   // buffer the correlation power and the power square
                   `ifdef instantiateStreamCaptureFIFO
@@ -570,9 +603,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                           data: coarInPipeQ.first(),
                           delayedData: fineInPipeQ.first(),
 			  autoCorrelation: newCorr});
-      `ifdef debug_mode
-      $display("RULE TimeEst.procTimeEstSN: coarPos:%d",newCoarPos);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE TimeEst.procTimeEstSN: coarPos:%d",newCoarPos);
+         end
    endrule
    
    `ifdef instantiateStreamCaptureFIFO
@@ -591,9 +625,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 			  data: coarInPipeQ.first(),
 			  delayedData: fineInPipeQ.first(),
                           autoCorrelation: ?});
-      `ifdef debug_mode
-      $display("RULE at cycle %d TimeEst.procTimeEstST: coarPos:%d",cycle,coarPos + 1);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d TimeEst.procTimeEstST: coarPos:%d",cycle,coarPos + 1);
+         end
    endrule
 
    rule procTimeEstLN(!isProlog && timeStatePipeQ.first == LNormal);
@@ -602,7 +637,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
       ControlType outControl = Idle;
       let newCorr <- autoCorr.getCorrelation;
       let newFineTimeCorrPow = fpcmplxModSq(fineTimeCorrQ.first);
-      $display("PLOTLONGSYNC fineTimeCorrPow: %h",newFineTimeCorrPow);
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("PLOTLONGSYNC fineTimeCorrPow: %h",newFineTimeCorrPow);
+         end
 
       if (status2 == LTrans)
 	 begin
@@ -627,8 +665,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                         coarCorrPowRwire.wset(coarCorrPowReg);
                         coarPowSqRwire.wset(coarPowSqReg);
                         
-                        $display("LONGSYNCPASS coarCorrPow: %d coarPowSq: %d newFinePos:%d",coarCorrPowReg,coarPowSqReg,newFinePos);
-                        `endif
+                        if(`DEBUG_SYNCHRONIZER == 1)
+                           begin
+                              $display("LONGSYNCPASS coarCorrPow: %d coarPowSq: %d newFinePos:%d",coarCorrPowReg,coarPowSqReg,newFinePos);
+                           end
 		     end
 		  else
 		     begin
@@ -637,11 +677,15 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                            begin
                               fineMaxCorrPow <= newFineTimeCorrPow;
                               fineMaxPos <= newCoarPos;
-                              $display("TimeEst.procTimeEstLN: newFineMaxCorrPow:%h, newFineMaxPos:%d",newFineTimeCorrPow,newCoarPos);
+                              if(`DEBUG_SYNCHRONIZER == 1)
+                                 begin
+                                    $display("TimeEst.procTimeEstLN: newFineMaxCorrPow:%h, newFineMaxPos:%d",newFineTimeCorrPow,newCoarPos);
+                                 end
                            end
-                        //                `ifdef debug_mode
-		        $display("TimeEst.procTimeEstLN: newFineTimeCorrPow:%h, maxFineTimePosSq:%h newCoarPos:%d lSyncPos:%d",newFineTimeCorrPow, maxFineTimePowSq, newCoarPos, lSyncPos);
-                        //		`endif
+                        if(`DEBUG_SYNCHRONIZER == 1)
+                           begin
+		              $display("TimeEst.procTimeEstLN: newFineTimeCorrPow:%h, maxFineTimePosSq:%h newCoarPos:%d lSyncPos:%d",newFineTimeCorrPow, maxFineTimePowSq, newCoarPos, lSyncPos);
+                           end
 		     end
 	       end // else: !if(fineDet)
 	   
@@ -666,9 +710,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 			  data: coarInPipeQ.first(),
 			  delayedData: fineInPipeQ.first(),
                           autoCorrelation: newCorr});
-      `ifdef debug_mode
-      $display("RULE at cycle %d TimeEst.procTimeEstLN: coarPos:%d, finePos:%d",cycle,newCoarPos,newFinePos);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d TimeEst.procTimeEstLN: coarPos:%d, finePos:%d",cycle,newCoarPos,newFinePos);
+         end
    endrule
 
    rule procTimeEstLT(!isProlog && timeStatePipeQ.first == LTrans);
@@ -686,48 +731,34 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                           data: coarInPipeQ.first(),
 			  delayedData: fineInPipeQ.first(),
 			  autoCorrelation: ?});
-      `ifdef debug_mode
-      $display("RULE at cycle %d TimeEst.procTimeEstLT",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d TimeEst.procTimeEstLT",cycle);
+         end
    endrule
-   
-   `ifdef debug_mode
-   rule checkFIFOsStatus(True);
-      $display("TimeEst.coarTimeInQ notFull:%d notEmpty:%d",coarTimeInQ.notFull,coarTimeInQ.notEmpty);
-      $display("TimeEst.coarInPipeQ notFull:%d notEmpty:%d",coarInPipeQ.notFull,coarInPipeQ.notEmpty);
-      $display("TimeEst.coarPowQ notFull:%d notEmpty:%d",coarPowQ.notFull,coarPowQ.notEmpty);
-      $display("TimeEst.fineTimeInQ notFull:%d notEmpty:%d",fineTimeInQ.notFull,fineTimeInQ.notEmpty);
-      $display("TimeEst.fineInPipeQ notFull:%d notEmpty:%d",fineInPipeQ.notFull,fineInPipeQ.notEmpty);
-      $display("TimeEst.fineTimeCorrQ notFull:%d notEmpty:%d",fineTimeCorrQ.notFull,fineTimeCorrQ.notEmpty);
-      $display("TimeEst.timeStatePipeQ notFull:%d notEmpty:%d",timeStatePipeQ.notFull,timeStatePipeQ.notEmpty);
-      $display("TimeEst.outQ notFull:%d notEmpty:%d",outQ.notFull,outQ.notEmpty);      
-   endrule
-   
-   rule tick(True);
-      cycle <= cycle + 1;
-   endrule
-   
-   `endif
-
+      
    method Action putCoarTimeIn(FPComplex#(SyncIntPrec,SyncFractPrec) coarTimeIn);
       coarTimeInQ.enq(coarTimeIn);
-      `ifdef debug_mode
-      $display("METHOD at cycle %d TimeEst.putCoarTimeIn",cycle);   
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d TimeEst.putCoarTimeIn",cycle);   
+         end
    endmethod
 
    method Action putFineTimeIn(FineTimeInT fineTimeIn);
       fineTimeInQ.enq(fineTimeIn);
-      `ifdef debug_mode
-      $display("METHOD at cycle %d TimeEst.putFineTimeIn",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d TimeEst.putFineTimeIn",cycle);
+         end
    endmethod
      
    method ActionValue#(FreqEstInT) getFreqEstIn();
       outQ.deq();
-      `ifdef debug_mode
-      $display("METHOD at cycle %d TimeEst.getFreqEstIn",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d TimeEst.getFreqEstIn",cycle);
+         end
       return outQ.first;
    endmethod   
    
@@ -766,9 +797,19 @@ module mkFreqEstimator(FreqEstimator);
    // cordic
    ArcTan#(CorrIntPrec,SyncFractPrec,SyncIntPrec,SyncFractPrec) cordic <- mkArcTan_Pipe(cordicIter,cordicStep); // cos and sin
    
-   `ifdef debug_mode
    Reg#(Bit#(64)) cycle <- mkReg(0);
-   `endif
+   
+   if(`DEBUG_SYNCHRONIZER == 1)
+      begin
+         rule checkFIFO(True);
+            $display("FreqEst.pipeQ notFull:%d, notEmpty: %d",pipeQ.notFull(),pipeQ.notEmpty());
+            $display("FreqEst.outQ notFull:%d, notEmpty: %d",outQ.notFull(),outQ.notEmpty());
+         endrule
+   
+         rule tick(True);
+            cycle <= cycle + 1;
+         endrule
+      end
    
    rule procIdle(pipeQ.first.control == Idle || pipeQ.first.control == Dump);
       let cordicResult <- cordic.getArcTan;
@@ -781,9 +822,10 @@ module mkFreqEstimator(FreqEstimator);
                           data: pipeQ.first.data,
                           delayedData: pipeQ.first.delayedData,
 			  angle: rotAng});
-      `ifdef debug_mode
-      $display("RULE at cycle %d FreqEst.procIdle",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d FreqEst.procIdle",cycle);
+         end
    endrule
 
    rule procNotIdle(pipeQ.first.control != Idle && pipeQ.first.control != Dump);
@@ -805,49 +847,44 @@ module mkFreqEstimator(FreqEstimator);
 	   rotAng <= 0; // next sample rotate by 0
 	   rotAngCounter <= 0;
            freqOffAccum.clear();
-           $write("RULE FreqEst.procNotIdle freqOff: ");
-           fxptWrite(4,newFreqOff);
-           $display("");
+           if(`DEBUG_SYNCHRONIZER == 1)
+              begin
+                 $write("RULE FreqEst.procNotIdle freqOff: ");
+                 fxptWrite(4,newFreqOff);
+                 $display("");
+              end
 	end
       else
 	 begin
 //            noAction;
 	    rotAng <= rotAng + freqOff;
 	 end
-      `ifdef debug_mode
-      $display("RULE at cycle %d FreqEst.procNotIdle",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("RULE at cycle %d FreqEst.procNotIdle",cycle);
+         end
    endrule
-   
-   `ifdef debug_mode
-   rule checkFIFO(True);
-      $display("FreqEst.pipeQ notFull:%d, notEmpty: %d",pipeQ.notFull(),pipeQ.notEmpty());
-      $display("FreqEst.outQ notFull:%d, notEmpty: %d",outQ.notFull(),outQ.notEmpty());
-   endrule
-   
-   rule tick(True);
-      cycle <= cycle + 1;
-   endrule
-   `endif
-   
+      
    method Action putFreqEstIn(FreqEstInT freqEstIn);
       pipeQ.enq(freqEstIn);
 //      if (freqEstIn.control != Idle && freqEstIn.control != Dump)
       cordic.putXY(freqEstIn.autoCorrelation.rel, freqEstIn.autoCorrelation.img); // use cordic
-      `ifdef debug_mode
-      $display("METHOD at cycle %d FreqEst.putFreqEstIn",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d FreqEst.putFreqEstIn",cycle);
+         end
    endmethod
      
    method ActionValue#(FreqRotInT) getFreqRotIn;
       outQ.deq();
-      `ifdef debug_mode
-      $write("METHOD at cycle %d FreqEst.getFreqRotIn: control:%d, ",cycle, outQ.first.control);
-      cmplxWrite("data:("," + ","i), ",fxptWrite(7),outQ.first.data);
-      $write("angle:");
-      fxptWrite(7, rotAng);
-      $display("");
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("METHOD at cycle %d FreqEst.getFreqRotIn: control:%d, ",cycle, outQ.first.control);
+            cmplxWrite("data:("," + ","i), ",fxptWrite(7),outQ.first.data);
+            $write("angle:");
+            fxptWrite(7, rotAng);
+            $display("");
+         end
       return outQ.first;
    endmethod
 endmodule
@@ -871,9 +908,19 @@ module mkFreqRotator(FreqRotator);
    // register
    Reg#(Bool) rotDelayed <- mkReg(True); // rotate data or delayed data?
    
-   `ifdef debug_mode
    Reg#(Bit#(64))      cycle <- mkReg(0);
-   `endif
+   
+   if(`DEBUG_SYNCHRONIZER == 1)
+      begin
+         rule checkFIFO(True);
+            $display("FreqRot.pipeQ notFull:%d, notEmpty: %d",pipeQ.notFull(),pipeQ.notEmpty());
+            $display("FreqRot.outQ notFull:%d, notEmpty: %d",outQ.notFull(),outQ.notEmpty());
+         endrule
+         
+         rule tick(True);
+            cycle <= cycle + 1;
+         endrule
+      end
    
    rule procRot(True);
       let freqRotIn = pipeQ.first;
@@ -900,42 +947,34 @@ module mkFreqRotator(FreqRotator);
       outQ.enq(FreqRotOutT{control: control,
 			   delayedData: newDelayedData,
 			   outData: newOutData});
-      `ifdef debug_mode
-      $write("RULE at cycle %d FreqRot.procRot:",cycle);
-      fxptWrite(7, rotAng);
-      $display("");      				  
-      cmplxWrite("inputCmplx:("," + ","i)",fxptWrite(7),inCmplx);
-      $display("");
-      cmplxWrite("outCmplx:("," + ","i)",fxptWrite(7),outCmplx);
-      $display("");
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $write("RULE at cycle %d FreqRot.procRot:",cycle);
+            fxptWrite(7, rotAng);
+            $display("");      				  
+            cmplxWrite("inputCmplx:("," + ","i)",fxptWrite(7),inCmplx);
+            $display("");
+            cmplxWrite("outCmplx:("," + ","i)",fxptWrite(7),outCmplx);
+            $display("");
+         end
    endrule
-   
-   `ifdef debug_mode
-   rule checkFIFO(True);
-      $display("FreqRot.pipeQ notFull:%d, notEmpty: %d",pipeQ.notFull(),pipeQ.notEmpty());
-      $display("FreqRot.outQ notFull:%d, notEmpty: %d",outQ.notFull(),outQ.notEmpty());
-   endrule
-   
-   rule tick(True);
-      cycle <= cycle + 1;
-   endrule
-   `endif
-   
+      
    method Action putFreqRotIn(FreqRotInT freqRotIn);
       pipeQ.enq(freqRotIn);
       let rotAng = freqRotIn.angle;    
       cordic.putAngle(rotAng);
-      `ifdef debug_mode
-      $display("METHOD at cycle %d FreqRot.putFreqRotIn",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d FreqRot.putFreqRotIn",cycle);
+         end
    endmethod
      
    method ActionValue#(FreqRotOutT) getFreqRotOut();
       outQ.deq();
-      `ifdef debug_mode
-      $display("METHOD at cycle %d FreqRot.getFreqRotOut",cycle);
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("METHOD at cycle %d FreqRot.getFreqRotOut",cycle);
+         end
       return outQ.first;
    endmethod   
 endmodule   
@@ -970,7 +1009,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGainControlSynchroni
 
   // Broadcast any delta...  Uninterested subscribers will drop it.
   rule generateGHoldStart(stateSynchronizer.controlState != ctrlLast); 
-    $display("Synchronizer state broadcast: %d",stateSynchronizer.controlState);
+     if(`DEBUG_SYNCHRONIZER == 1)
+        begin
+           $display("Synchronizer state broadcast: %d",stateSynchronizer.controlState);
+        end
     ctrlQ.enq(stateSynchronizer.controlState);
   endrule
 
@@ -1017,9 +1059,10 @@ module[ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkStatefulSynchronizer(
                                     delayedData: freqEstIn.delayedData,
                                     autoCorrelation: freqEstIn.autoCorrelation};
       freqEst.putFreqEstIn(newFreqEstIn);
-      `ifdef debug_mode
-      $display("ctrlWire %d",freqEstIn.control); 
-      `endif
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            $display("ctrlWire %d",freqEstIn.control); 
+         end
    end
    endrule
 
@@ -1037,15 +1080,18 @@ module[ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkStatefulSynchronizer(
                                    delayedData: freqRotOut.delayedData};
       timeEst.putFineTimeIn(fineTimeIn);
       lastLongSync <= (freqRotOut.control == LongSync);
-          
-      if(freqRotOut.control == LongSync)
-        begin
-          $display("AutoCorr: LongSync!!!");
-        end
-      if(freqRotOut.control == ShortSync)
-        begin
-          $display("AutoCorr: ShortSync!!!");
-        end
+      
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            if(freqRotOut.control == LongSync)
+               begin
+                  $display("AutoCorr: LongSync!!!");
+               end
+            if(freqRotOut.control == ShortSync)
+               begin
+                  $display("AutoCorr: ShortSync!!!");
+               end
+         end
       if (freqRotOut.control != Dump)
 	 begin
 	    let syncCtrl = SyncCtrl{isNewPacket: lastLongSync,
@@ -1063,13 +1109,14 @@ module[ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkStatefulSynchronizer(
          y_last <= y;
          x_last <= x;
          inQ.enq(x);
-         `ifdef debug_mode
-         $write("DC Offset before ");
-         cmplxWrite("("," + ","i)",fxptWrite(7),x);
-         $write(" after ");
-         cmplxWrite("("," + ","i)",fxptWrite(7),y);
-         $display("");
-         `endif
+         if(`DEBUG_SYNCHRONIZER == 1)
+            begin
+               $write("DC Offset before ");
+               cmplxWrite("("," + ","i)",fxptWrite(7),x);
+               $write(" after ");
+               cmplxWrite("("," + ","i)",fxptWrite(7),y);
+               $display("");
+            end
       endmethod
      endinterface
       
