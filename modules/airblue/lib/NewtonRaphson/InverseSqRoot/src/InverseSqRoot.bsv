@@ -56,7 +56,10 @@ module mkSimpleInverseSqRoot (InverseSqRoot#(i_prec,f_prec))
   // it becomes multicycle
   rule setStartPoint;
     let resp <- magnitudeEstimator.response.get;
-    $display("InvSqRt: Magnitude MSB %d", resp);
+    if(`DEBUG_INVERSESQRT == 1)
+      begin
+        $display("InvSqRt: Magnitude MSB %d", resp);
+      end
     u <= determineStartValues()[resp];
     initialized <= True;
   endrule
@@ -68,9 +71,14 @@ module mkSimpleInverseSqRoot (InverseSqRoot#(i_prec,f_prec))
         initialized <= False;
         resultFIFO.enq(u);
       end
-    $write("InvSqRt: Iteration %d, u", iterations);
-    fxptWrite(5,u);
-    $display("");
+
+    if(`DEBUG_INVERSESQRT == 1)
+      begin
+        $write("InvSqRt: Iteration %d, u", iterations);
+        fxptWrite(5,u);
+        $display("");
+      end
+
     u <= 0.5 * u *(3 - root * u * u);
   endrule
 
@@ -81,9 +89,14 @@ module mkSimpleInverseSqRoot (InverseSqRoot#(i_prec,f_prec))
          begin
            iterations <= fromInteger(valueof(ISRIterations)); 
            root <= magnitude; // dealing with unsigned value 
-           $write("InvSqRt: magnitude ");
-           fxptWrite(5,magnitude);
-           $display("");
+
+           if(`DEBUG_INVERSESQRT == 1)
+             begin
+               $write("InvSqRt: magnitude ");
+               fxptWrite(5,magnitude);
+               $display("");
+             end
+
            magnitudeEstimator.request.put(pack(magnitude));
          end
        else 

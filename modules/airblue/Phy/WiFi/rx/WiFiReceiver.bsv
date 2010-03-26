@@ -89,15 +89,30 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiReceiver#( Clock
    let descrambler <- mkDescramblerInstance;
 
    // connections
-   mkConnectionPrint("Sync -> Unse",synchronizer.synchronizer.out,unserializer.in);
-   mkConnectionPrint("Unse -> FFT",unserializer.out,fft.in);
-   mkConnectionPrint("FFT -> CEst",fft.out,channelEstimator.in);
-   mkConnectionPrint("CEst -> RXCtrl0",channelEstimator.out,rx_controller.inFromPreDemapper);
-   mkConnectionPrint("RXCtrl0 -> PreDes",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
-   mkConnectionPrint("PreDes -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
-   mkConnectionPrint("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
-   mkConnectionPrint("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
-   
+   if(`DEBUG_RXCTRL == 1) 
+     begin
+       mkConnectionPrint("Sync -> Unse",synchronizer.synchronizer.out,unserializer.in);
+       mkConnectionPrint("Unse -> FFT",unserializer.out,fft.in);
+       mkConnectionPrint("FFT -> CEst",fft.out,channelEstimator.in);
+       mkConnectionPrint("CEst -> RXCtrl0",channelEstimator.out,rx_controller.inFromPreDemapper);
+       mkConnectionPrint("RXCtrl0 -> PreDes",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+       mkConnectionPrint("PreDes -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+       mkConnectionPrint("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
+       mkConnectionPrint("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
+     end 
+   else
+      begin
+       mkConnection(synchronizer.synchronizer.out,unserializer.in);
+       mkConnection(unserializer.out,fft.in);
+       mkConnection(fft.out,channelEstimator.in);
+       mkConnection(channelEstimator.out,rx_controller.inFromPreDemapper);
+       mkConnection(rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+       mkConnection(receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+       mkConnection(rx_controller.outToDescrambler,descrambler.in);
+       mkConnection(descrambler.out,rx_controller.inFromDescrambler);
+     end 
+ 
+
    mkCBusWideRegR(valueof(AddrSynchronizerPower),synchronizer.coarPow);
 
    // methods
