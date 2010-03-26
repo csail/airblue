@@ -189,10 +189,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
 
-[Airblue Convolutional Decoder Common (no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
-
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
@@ -217,7 +213,8 @@ File=modules/airblue/lib/ConvDecoder/BCJR/test/airblue_bcjr_test.awb
 Packagehint=ofdm
 
 [Airblue BCJR with Alpha Init(no Soft Hints)/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common (no Soft Hints)
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue BCJR with Alpha Init(no Soft Hints)/Params]
-DEBUG_BCJR=1
+[Airblue Convolutional Decoder Common]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
