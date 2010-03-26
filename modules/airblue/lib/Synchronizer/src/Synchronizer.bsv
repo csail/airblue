@@ -664,6 +664,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                         `ifdef instantiateStreamCaptureFIFO
                         coarCorrPowRwire.wset(coarCorrPowReg);
                         coarPowSqRwire.wset(coarPowSqReg);
+                        `endif
                         
                         if(`DEBUG_SYNCHRONIZER == 1)
                            begin
