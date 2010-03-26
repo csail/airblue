@@ -13,5 +13,7 @@
 %sources -t BSV -v PUBLIC Unserializer.bsv
 
 %generated -t BA mkUnserializerInstance.ba
+
+%param DEBUG_UNSERIALIZER 0 "Enable debug messages"
  
 %AWB_END

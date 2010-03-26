@@ -85,31 +85,34 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
    let isNewMsg2 = inMsg2.control.isNewPacket;
    let inData2 = inMsg2.data;
 
-   `ifdef debug_mode
-      rule inQFull (!inQ.notFull);
-        $display("Unserializer inQ full");
-      endrule
-
-      rule inQEmpty (!inQ.notEmpty);
-        $display("Unserializer inQ empty");
-      endrule
+   if(`DEBUG_UNSERIALIZER == 1)
+      begin
+   
+         rule inQFull (!inQ.notFull);
+            $display("Unserializer inQ full");
+         endrule
+         
+         rule inQEmpty (!inQ.notEmpty);
+            $display("Unserializer inQ empty");
+         endrule
  
-      rule inQ2Full (!inQ2.notFull);
-        $display("Unserializer inQ2 full");
-      endrule
+         rule inQ2Full (!inQ2.notFull);
+            $display("Unserializer inQ2 full");
+         endrule
 
-      rule inQ2Empty (!inQ2.notEmpty);
-        $display("Unserializer inQ2 empty");
-      endrule
+         rule inQ2Empty (!inQ2.notEmpty);
+            $display("Unserializer inQ2 empty");
+         endrule
  
-      rule outQEmpty (!outQ.notEmpty(1));
-        $display("Unserializer outQ empty");
-      endrule
-
-      rule outQFull (!outQ.notFull(1));
-        $display("Unserializer outQ full");
-      endrule
-   `endif
+         rule outQEmpty (!outQ.notEmpty(1));
+            $display("Unserializer outQ empty");
+         endrule
+         
+         rule outQFull (!outQ.notFull(1));
+            $display("Unserializer outQ full");
+         endrule
+         
+      end
 
    rule getNewCtrl(isNewMsg);
       let newSkipCheckSz = case (inMsg.control.cpSize) 
@@ -123,9 +126,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
       skipCheckSz <= newSkipCheckSz;
       state <= UN_Skip;
       inQ2.enq(inMsg);
-      `ifdef debug_mode
+      if(`DEBUG_UNSERIALIZER == 1)
          $display("Unserializer Rule getNewCtrl fired: %d data %x", inMsg.control.isNewPacket, inMsg.data);
-      `endif
+      
    endrule
 
    rule skipMsg(!isNewMsg && isSkip);
@@ -137,9 +140,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
 	 end
       else
 	 index <= index - 1;
-      `ifdef debug_mode
+      if(`DEBUG_UNSERIALIZER == 1)
          $display("Unserializer Rule skipMsg fired %d times remained data %x", index, inMsg.data);
-      `endif
+      
    endrule
 
    rule bypassMsg(!isNewMsg && isBypass);
@@ -154,9 +157,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
 	 begin
 	    index <= index - 1;
 	 end
-      `ifdef debug_mode
+      if(`DEBUG_UNSERIALIZER == 1)
 	 $display("Unserializer Rule bypassMsg fired %d times remained data %x",index, inMsg.data);
-      `endif
+      
    endrule
    
    rule getNewCtrl2(isNewMsg2 && !outQ.notEmpty(nSz));
@@ -164,9 +167,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
       inQ2.deq();
       ctrl <= inMsg2.control;
       outQ.clear();
-      `ifdef debug_mode
+      if(`DEBUG_UNSERIALIZER == 1)
          $display("Unserializer Rule getNewCtrl2 fired: %d data %x", inMsg2.control.isNewPacket,inMsg2.data);
-      `endif
+      
    end
    endrule
 
@@ -174,9 +177,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
    begin
       inQ2.deq();
       outQ.enq(1,replicate(inData2));
-      `ifdef debug_mode
+      if(`DEBUG_UNSERIALIZER == 1)
 	 $display("Unserializer Rule bypassMsg2 fired data %x", inMsg2.data);
-      `endif
+      
    end
    endrule
    
@@ -184,9 +187,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
    interface Put in;
      method Action put(UnserializerMesg#(i_prec,f_prec) msg);
         inQ.enq(msg);
-        `ifdef debug_mode
-        $display("Unserializer input isNewPacket %d data %x",msg.control.isNewPacket,msg.data);
-        `endif
+        if(`DEBUG_UNSERIALIZER == 1)
+           $display("Unserializer input isNewPacket %d data %x",msg.control.isNewPacket,msg.data);
+        
      endmethod
    endinterface 
 
@@ -196,9 +199,9 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
          outQ.deq(nSz);
          ctrl <= SyncCtrl{isNewPacket: False,
                           cpSize:  ctrl.cpSize};
-         `ifdef debug_mode
-         $display("Unserializer output isNewPacket %d data %x",ctrl.isNewPacket,outQ.first());
-         `endif
+         if(`DEBUG_UNSERIALIZER == 1)
+            $display("Unserializer output isNewPacket %d data %x",ctrl.isNewPacket,outQ.first());
+         
          return SPMesgFromSync{control: ctrl.isNewPacket, 
                                data:    outQ.first()};
       endmethod
