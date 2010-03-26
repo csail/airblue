@@ -82,8 +82,9 @@ typedef TMul#(VNoExtendedPoly,VMetricMax)                     VBranchMetricMax;
 typedef Bit#(VBranchMetricSz)                                 VBranchMetric; // extended to be able to acuumulate VNoExtendedPoly of VMetric
 
 // path metric unit
-typedef TMul#(FwdSteps,ConvInSz)                                VTBSz; // 1
-typedef 9 VPathMetricSz; // add one more bit using murali method         
+typedef TMul#(FwdSteps,ConvInSz)                              VTBSz; // 1
+typedef TAdd#(TSub#(KSz,1),VBranchMetricSz)                   VPathMetricSz;
+//typedef 9 VPathMetricSz; // add one more bit using murali method         
 //typedef TAdd#(TAdd#(TLog#(TDiv#(KSz,VTBSz)),VBranchMetricSz),1) VPathMetricSz; // add one more bit using murali method
 //typedef TMul#(TDiv#(KSz,VTBSz),VBranchMetricMax)              VPathMetricMax; 
 // // max diff between two states = VBranchMetricMax * ceiling(KSz/ConvInSz)
