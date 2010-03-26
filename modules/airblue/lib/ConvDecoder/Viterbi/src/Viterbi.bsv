@@ -134,9 +134,8 @@ module mkConvDecoder#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t
          end
       else
          in_data_count <= in_data_count + fromInteger(fwd_steps * conv_out_sz);
-      `ifdef isDebug
-      $display("pushDataToViterbi");
-      `endif 
+      if(`DEBUG_VITERBI == 1)
+         $display("pushDataToViterbi");
    endrule
    
    rule pushZerosToViterbi (push_zeros_cnt_down > 0);
@@ -144,9 +143,8 @@ module mkConvDecoder#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t
       VInType v_data = tuple2(need_rst, replicate(replicate(0)));
       viterbi.putData(v_data);
       push_zeros_cnt_down <= push_zeros_cnt_down - 1;
-      `ifdef isDebug
-      $display("pushZerosToViterbi need_rst %d",need_rst);
-      `endif 
+      if(`DEBUG_VITERBI == 1)
+         $display("pushZerosToViterbi need_rst %d",need_rst);
    endrule
 
    // Change to shift at some point?
@@ -174,7 +172,8 @@ module mkConvDecoder#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t
       out_data <= new_out_data;
       if (out_data_count == check_n) // last
          begin
-	    $display("Viterbi out data: %h", new_out_data);
+            if(`DEBUG_VITERBI == 1)
+	       $display("Viterbi out data: %h", new_out_data);
             out_q.enq(Mesg{control:ctrl_q.first, data:new_out_data});
             out_data_count <= 0;
             ctrl_q.deq;
@@ -183,9 +182,8 @@ module mkConvDecoder#(function Bool needPushZeros(ctrl_t ctrl)) (Viterbi#(ctrl_t
          begin
             out_data_count <= out_data_count + fromInteger(fwd_steps * conv_in_sz);
          end
-      `ifdef isDebug
-      $display("pullDataFromViterbi");
-      `endif
+      if(`DEBUG_VITERBI == 1)
+         $display("pullDataFromViterbi");
    endrule
 
    interface in  = fifoToPut(in_q);

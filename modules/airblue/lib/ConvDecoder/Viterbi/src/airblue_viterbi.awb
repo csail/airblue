@@ -18,4 +18,6 @@
 %generated -t BA mkTracebackUnit.ba
 %generated -t BA module_getPMUOutViterbi.ba
 
+%param DEBUG_VITERBI 0 "Enable debug message"
+
 %AWB_END

@@ -125,7 +125,8 @@ module mkTracebackUnit (TracebackUnit);
       method Action put(VPathMetricUnitOut in_tup);
          Bool                                                   need_rst         = tpl_1(in_tup);
          Vector#(VTotalStates,VACSEntry)                        in_data          = tpl_2(in_tup);         
-         $display("Viterbi Forward Vector: ", fshow(tpl_1(unzip(in_data)))); 
+         if(`DEBUG_VITERBI  == 1)
+            $display("Viterbi Forward Vector: ", fshow(tpl_1(unzip(in_data)))); 
 
          Vector#(VTotalStates,VPathMetric)                      path_metric_vec  = newVector;       
          Vector#(VTotalStates,VTBType)                          tb_bits          = newVector;
@@ -166,7 +167,8 @@ module mkTracebackUnit (TracebackUnit);
          soft_outs_reg <= soft_outs;
 
          `endif
-         $display("Viterbi TBSz: %d",tb_count);
+         if(`DEBUG_VITERBI == 1)
+            $display("Viterbi TBSz: %d",tb_count);
          tb_memory <= tpl_1(unzip(shifted_memory));
          if (tb_count != 0)
             tb_count <= tb_count - 1;
@@ -174,14 +176,15 @@ module mkTracebackUnit (TracebackUnit);
             begin
                if (need_rst)
                   tb_count <= fromInteger(no_tb_stages);
-               $display("Traceback Unit Max : %d Bit out: %h", min_idx, res);       
                out_data_q.enq(res);
-               `ifdef isDebug
-               $display("TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
-               `endif
-               `ifdef softOut
-               $display("TBU soft decision %d",soft_out);
-               `endif
+               if(`DEBUG_VITERBI == 1)
+                  begin
+                     $display("Traceback Unit Max : %d Bit out: %h", min_idx, res);       
+                     $display("TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
+                     `ifdef softOut
+                     $display("TBU soft decision %d",soft_out);
+                     `endif
+                  end
             end
       endmethod
    endinterface                
