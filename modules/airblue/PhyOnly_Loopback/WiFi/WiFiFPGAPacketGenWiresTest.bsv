@@ -101,6 +101,7 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
     (seq
       // set the test rate 
       rate <= getRate();
+      $display("Rate %d", rate);
       avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrRate)),data:zeroExtend(pack(rate)),command: register_mapper::Write});
       // enable packet gen
       avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrEnablePacketGen)),data:~0,command: register_mapper::Write});
@@ -213,7 +214,7 @@ module mkWiFiFPGAPacketGenWiresTest ();
   Reset reset <- exposeCurrentReset;
   Clock busClock <- mkAbsoluteClock(1,5);
   Reset busReset <- mkAsyncReset(1,reset,busClock);
-  Clock viterbiClock <- mkAbsoluteClock(1,25);
+  Clock viterbiClock <- mkAbsoluteClock(1,10);
   Reset viterbiReset <- mkAsyncReset(1,reset,viterbiClock);
   Clock rfClock <- mkAbsoluteClock(1,50);
   Reset rfReset <- mkAsyncReset(1,reset,rfClock);
