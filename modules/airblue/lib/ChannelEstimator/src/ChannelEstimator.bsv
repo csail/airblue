@@ -50,7 +50,7 @@ import FixedPoint::*;
 import GetPut::*;
 import Vector::*;
 
-`define isDebug True  // uncomment this line to display error
+//`define isDebug True  // uncomment this line to display error
 `define cordicIters 16 // no. iterations cordic performs before giving result
 `define cordicItersPerStage 8 // no. pipeline iters per stages
 
@@ -201,11 +201,12 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       new_pilot_angle[pilot_get_idx] = tagged Valid angle;
 
       pilot_angle <= new_pilot_angle;
-      `ifdef isDebug
-      $write("pilots angle idx %d ",pilot_get_idx);
-      fxptWrite(5,angle);
-      $display("");
-      `endif
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("pilots angle idx %d ",pilot_get_idx);
+            fxptWrite(5,angle);
+            $display("");
+         end
      
       // for magnitude
       FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec) factor <- inv_sq_root.response.get();
@@ -213,11 +214,12 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       new_pilot_mag[pilot_get_idx] = tagged Valid factor;
       
       pilot_mag <= new_pilot_mag;
-      `ifdef isDebug
-      $write("pilots mag idx %d ",pilot_get_idx);
-      fxptWrite(5,factor);
-      $display("");
-      `endif
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("pilots mag idx %d ",pilot_get_idx);
+            fxptWrite(5,factor);
+            $display("");
+         end
          
       // common state update
       if (pilot_get_idx != fromInteger(valueOf(CEstPNo) - 1)) // can start calculating diff
@@ -238,11 +240,12 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       FixedPoint#(CEstIPrec,CEstFPrec) interpolate_angle = base_angle +affine_coef *  diff_angle;
       
       angle_q.enq(interpolate_angle);
-//      `ifdef isDebug
-      $write("interpolate angle idx %d ",interpolate_idx);
-      fxptWrite(5,interpolate_angle);
-      $display("");
-//      `endif
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("interpolate angle idx %d ",interpolate_idx);
+            fxptWrite(5,interpolate_angle);
+            $display("");
+         end
       
       // for magnitude
       FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec) base_mag = fromMaybe(?,pilot_mag[affine_idx]);
@@ -250,11 +253,12 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec) interpolate_mag = base_mag + fxptSignExtend(affine_coef) *  diff_mag;
       
       mag_q.enq(interpolate_mag);
-//      `ifdef isDebug
-      $write("interpolate magnitude idx %d ",interpolate_idx);
-      fxptWrite(5,interpolate_mag);
-      $display("");
-//      `endif
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("interpolate magnitude idx %d ",interpolate_idx);
+            fxptWrite(5,interpolate_mag);
+            $display("");
+         end
          
       // common state update
       interpolate_idx <= interpolate_idx - 1;
@@ -288,17 +292,18 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    rule correct(True);
       let o_data     = out_reg.data;
       let adj_data   = mag_adjusted_q.first * angle_adjust_q.first; // adjust according to pilot
-      `ifdef isDebug
-      $write("ChannelEstIn %d: ",out_write_idx);
-      fpcmplxWrite(5, o_data[out_write_idx]);
-      $write(" -> ");
-      fpcmplxWrite(5,adj_data);
-      $write(" magnitude adjusted ");
-      fpcmplxWrite(5, mag_adjusted_q.first);
-      $write(" * angle correction cmplx:");
-      fpcmplxWrite(5, angle_adjust_q.first);
-      $display("");
-      `endif
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("ChannelEstIn %d: ",out_write_idx);
+            fpcmplxWrite(5, o_data[out_write_idx]);
+            $write(" -> ");
+            fpcmplxWrite(5,adj_data);
+            $write(" magnitude adjusted ");
+            fpcmplxWrite(5, mag_adjusted_q.first);
+            $write(" * angle correction cmplx:");
+            fpcmplxWrite(5, angle_adjust_q.first);
+            $display("");
+         end
       o_data[out_write_idx] = adj_data;    
       let o_mesg = Mesg{control:out_reg.control, data:o_data};
       mag_adjusted_q.deq;
@@ -344,14 +349,17 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
          pilot_angle <= replicate(tagged Invalid);
          mag_diff <= replicate(tagged Invalid);
          angle_diff <= replicate(tagged Invalid);
-         $display("ChannelEst new message:%d",r_plt);
-         $display("ChannelEst input data:");
-         for(Integer i=0; i<valueOf(CEstInN) ; i=i+1)
+         if(`DEBUG_CHANNEL_ESTIMATOR == 1)
             begin
-               $write("ChannelEstIn %d: ",i);
-               fpcmplxWrite(5,i_data[i]);
-               $display("");
-            end         
+               $display("ChannelEst new message:%d",r_plt);
+               $display("ChannelEst input data:");
+               for(Integer i=0; i<valueOf(CEstInN) ; i=i+1)
+                  begin
+                     $write("ChannelEstIn %d: ",i);
+                     fpcmplxWrite(5,i_data[i]);
+                     $display("");
+                  end         
+            end
       endmethod
    endinterface
 
@@ -361,12 +369,15 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
          can_write_out_symbol <= False;
          can_read_in_symbol <= True;
    
-         for(Integer i=0; i<valueOf(CEstOutN) ; i=i+1)
+         if(`DEBUG_CHANNEL_ESTIMATOR == 1)
             begin
-               $write("ChannelEstOut %d->%d: ",inverseMapping(i),i);
-               fpcmplxWrite(5,out_reg.data[i]);
-               $display("");
-            end 
+               for(Integer i=0; i<valueOf(CEstOutN) ; i=i+1)
+                  begin
+                     $write("ChannelEstOut %d->%d: ",inverseMapping(i),i);
+                     fpcmplxWrite(5,out_reg.data[i]);
+                     $display("");
+                  end 
+            end
          
          return out_reg;
       endmethod
