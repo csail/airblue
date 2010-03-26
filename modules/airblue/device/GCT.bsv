@@ -209,8 +209,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
               pipelineState <= Header;
             end
           HeaderDecoded:  
-            begin
-              $display("GCT: HeaderDecoded @ %d", cycleCounter);
+           begin
+              if(`DEBUG_RF_DEVICE == 1)
+                 begin
+                    $display("GCT: HeaderDecoded @ %d", cycleCounter);
+                 end
               gHoldTimeout <= ~0;
               gHold <= 0;
               gHoldState <= Packet;
@@ -218,7 +221,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
             end 
           DataComplete:
             begin
-               $display("GCT: DataComplete @ %d", cycleCounter);
+              if(`DEBUG_RF_DEVICE == 1)
+                 begin
+                    $display("GCT: DataComplete @ %d", cycleCounter);
+                 end
                gHold <= 1;
                gHoldTimeout <= ~0;
                gHoldState <= UnHeld;
@@ -227,7 +233,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
             end
           Abort:
             begin
-              $display("GCT: Abort @ %d", cycleCounter);
+              if(`DEBUG_RF_DEVICE == 1)
+                 begin
+                    $display("GCT: Abort @ %d", cycleCounter);
+                 end
               gHold <= 1;
               gHoldTimeout <= ~0;
               gHoldState <= UnHeld;
@@ -239,19 +248,28 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
       begin
          case(syncState)
            GHoldStart: begin
-                         $display("GCT: set gHold Low");
+                          if(`DEBUG_RF_DEVICE == 1)
+                             begin
+                                $display("GCT: set gHold Low");
+                             end
                          gHold <= 0;
                          gHoldTimeout <= ~0;
                          pipelineState <= LongSync;
                        end 
            GainStart: begin
-                        $display("GCT: set gHold High");
+                         if(`DEBUG_RF_DEVICE == 1)
+                            begin
+                               $display("GCT: set gHold High");
+                            end
                         gHold <= 1;
                         gHoldTimeout <= ~0;  
                         pipelineState <= ShortSync;
                       end
            TimeOut: begin
-                      $display("GCT: set gHold High");
+                       if(`DEBUG_RF_DEVICE == 1)
+                          begin
+                             $display("GCT: set gHold High");
+                          end
                       gHold <= 1;
                       gHoldTimeout <= ~0;
                       pipelineState <= Idle;
@@ -309,14 +327,20 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
     method Action put(TXVector txvec) if(calibrationMode == 0); // No conflict with counting rule >
       txFIFO.enq(txvec);
       txVectorsReceived <= txVectorsReceived + 1;
-      debug(gctDebug,$display("GCT txFIFO enq"));  
+       if(`DEBUG_RF_DEVICE == 1)
+          begin
+             debug(gctDebug,$display("GCT txFIFO enq"));  
+          end
     endmethod
   endinterface
 
   interface Put txComplete; // This Bit 0 is ugly.
     method Action put(Bit#(0) in);
       txVectorsProcessed <= txVectorsProcessed + 1;
-      debug(gctDebug,$display("GCT txFIFO deq"));  
+       if(`DEBUG_RF_DEVICE == 1)
+          begin
+             debug(gctDebug,$display("GCT txFIFO deq"));  
+          end
       txFIFO.deq; 
     endmethod
   endinterface
