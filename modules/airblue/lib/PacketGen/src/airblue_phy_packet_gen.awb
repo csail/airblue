@@ -14,5 +14,7 @@
 
 %generated -t BA mkPacketCheck.ba
 %generated -t BA mkPacketGen.ba
+
+%param DEBUG_PACKETGEN 0 "Enable debug messages with 1"
  
 %AWB_END

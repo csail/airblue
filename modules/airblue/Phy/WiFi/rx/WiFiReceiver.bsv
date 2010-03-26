@@ -104,22 +104,31 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiReceiver#( Clock
    interface Put in;
       method Action put(SynchronizerMesg#(RXFPIPrec,RXFPFPrec) mesg);
       synchronizer.synchronizer.in.put(mesg);
-      $write("ReceiverHW: in:");
-      fpcmplxWrite(4,mesg);
-      $display("");
+      if(`DEBUG_RXCTRL == 1)
+        begin
+          $write("ReceiverHW: in:");
+          fpcmplxWrite(4,mesg);
+          $display(""); 
+        end
       endmethod
    endinterface
    interface Get outRXVector;  
      method ActionValue#(RXVector) get();
        let rxvector <- rx_controller.outRXVector.get;
-       $display("ReceiverHW: outRXVector %d", rxvector.header.length); 
+       if(`DEBUG_RXCTRL == 1)
+         begin
+           $display("ReceiverHW: outRXVector %d", rxvector.header.length); 
+         end
        return rxvector;
      endmethod
    endinterface
    interface Get outData;
      method ActionValue#(Bit#(8)) get();
        let data <- rx_controller.outData.get;
-       $display("ReceiverHW: outData %h", data); 
+       if(`DEBUG_RXCTRL == 1)
+         begin
+           $display("ReceiverHW: outData %h", data); 
+         end
        return data;
      endmethod
    endinterface 
