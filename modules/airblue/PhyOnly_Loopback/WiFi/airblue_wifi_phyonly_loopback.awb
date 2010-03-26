@@ -27,4 +27,6 @@
 %sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAPacketGenWiresTest.bsv
 %sources -t BDPI_C -v PUBLIC check_ber.c
 
+%param DEBUG_TRANSCEIVER 0 "Enable debug messages"
+
 %AWB_END

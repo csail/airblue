@@ -190,7 +190,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 
    // hook up the DAC/ADC
    mkConnection(transceiver.receiver.in,adc.dataIn);
-   mkConnectionThroughput("CP->DAC",transceiver.transmitter.out,dac.dataOut);
+   if(`DEBUG_TRANSCEIVER == 1)
+      begin
+         mkConnectionThroughput("CP->DAC",transceiver.transmitter.out,dac.dataOut);
+      end
+   else
+      begin
+         mkConnection(transceiver.transmitter.out,dac.dataOut);
+      end
    
    rule sendGainToADC;
      dac.agcGainSet(agc.outputGain);
@@ -217,11 +224,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 
    rule txVecSend;
      // spread the tx vec love
-     TXVector txVec <- packetGen.txVector.get;
-     $display("Transceiver: TX start");
-     transceiver.transmitter.txStart(txVec);
-     gct.txStart.put(txVec);
-     dac.txStart.put(txVec); 
+      TXVector txVec <- packetGen.txVector.get;
+      if(`DEBUG_TRANSCEIVER == 1)
+         begin
+            $display("Transceiver: TX start");
+         end
+      transceiver.transmitter.txStart(txVec);
+      gct.txStart.put(txVec);
+      dac.txStart.put(txVec); 
    endrule
    
    mkConnection(transceiver.transmitter.txData,packetGen.txData.get);   
@@ -266,16 +276,22 @@ module [Module]  mkTransceiverPacketGenFPGAReset#(Clock viterbiClock, Reset vite
   
    //Create a mapping...
    rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  register_mapper::Read);
-     let request <- busSlave.busClient.request.get;
-     let readVal <- ifc.cbus_ifc.read(request.addr);
-     $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
-     busSlave.busClient.response.put(readVal);
+      let request <- busSlave.busClient.request.get;
+      let readVal <- ifc.cbus_ifc.read(request.addr);
+      if(`DEBUG_TRANSCEIVER == 1)
+         begin
+            $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
+         end
+      busSlave.busClient.response.put(readVal);
    endrule
  
    rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  register_mapper::Write);
-     let request <- busSlave.busClient.request.get;
-     $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
-     ifc.cbus_ifc.write(request.addr,request.data);
+      let request <- busSlave.busClient.request.get;
+      if(`DEBUG_TRANSCEIVER == 1)
+         begin
+            $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
+         end
+      ifc.cbus_ifc.write(request.addr,request.data);
    endrule
 
   interface gctWires = ifc.device_ifc.gctWires;      
