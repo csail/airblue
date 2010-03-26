@@ -284,9 +284,6 @@ Packagehint=ofdm
 [Airblue BCJR with Alpha Init(no Soft Hints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue BCJR with Alpha Init(no Soft Hints)/Params]
-REVERSAL_BUFFER_SIZE=8
-
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
 airblue_descrambler=Airblue Descrambler
