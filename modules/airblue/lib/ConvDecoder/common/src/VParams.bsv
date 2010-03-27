@@ -67,6 +67,7 @@ import Vector::*;
 // Begin of type definitions
 ////////////////////////////////////////
 
+typedef SizeOf#(ViterbiMetric)       MetricSz;
 typedef TSub#(KSz,ConvInSz)          VStateSz;
 typedef Bit#(VStateSz)               VState;
 typedef TExp#(VStateSz)              VTotalStates;
