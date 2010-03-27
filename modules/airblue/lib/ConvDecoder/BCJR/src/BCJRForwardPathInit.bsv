@@ -185,7 +185,7 @@ module mkIBCJR (IViterbi);
    let revBufferInitialLast = revBufferCtrl.last; 
    let revBufferInitialId = revBufferCtrl.bitId; 
 
-   rule revBufferInitialData;
+   rule revBufferInitialData(`DEBUG_BCJR == 1);
      $display("BCJR Diagnostic: RevBufferInitial: ", fshow(peekGet(revBufferInitial.outputData)));
    endrule
 
@@ -239,7 +239,11 @@ module mkIBCJR (IViterbi);
                end
            end
          //We get one every block
-         $display("BCJR Backwards Estimator: Deq Forward Path metric");
+         if(`DEBUG_BCJR == 1)
+           begin
+             $display("BCJR Backwards Estimator: Deq Forward Path metric");
+           end
+
          forwardPathMetric.deq();
          firstBlock <= False;
        end
@@ -385,10 +389,14 @@ module mkIBCJR (IViterbi);
    // We cannot put this directly in. 
    // Need a second FIFO.
    rule backwardsPMULast(bmuReverseOut.first.backwardCtrl.last);
-      $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
-      bmuReverseOut.deq;
-      pmuBackwardReInit <= True;
-      backwardPathLast.enq(bmuReverseOut.first.backwardCtrl);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
+       end
+
+     bmuReverseOut.deq;
+     pmuBackwardReInit <= True;
+     backwardPathLast.enq(bmuReverseOut.first.backwardCtrl);
    endrule
 
    
@@ -460,7 +468,11 @@ module mkIBCJR (IViterbi);
      decisionReInit <= True;
      let forwardProbs = pmuForwardOut.first;
      pmuForwardOut.deq;
-     $display("BCJR: Decision Unit is being fed final bitId");
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: Decision Unit is being fed final bitId");
+       end
+
      // assert that this bit is the last one...
      if(!tpl_1(forwardProbs)) 
        begin

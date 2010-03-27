@@ -130,7 +130,11 @@ module mkIBCJR (IViterbi);
      bitId <= 0;
      revResetCounter <= 0;
      bmuPushLast <= False;
-     $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
+       end
+
      revBufferInitial.inputData.put(tuple2(BCJRBackwardCtrl{last:True, bitId: ~0},?));
    endrule
 
@@ -336,7 +340,11 @@ module mkIBCJR (IViterbi);
    // We cannot put this directly in. 
    // Need a second FIFO.
    rule backwardsPMULast(bmuReverseOut.first.backwardCtrl.last);
-      $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
+       end
+
       bmuReverseOut.deq;
       pmuBackwardReInit <= True;
       backwardPathLast.enq(bmuReverseOut.first.backwardCtrl);
@@ -407,7 +415,10 @@ module mkIBCJR (IViterbi);
    rule feedDecisionUnitReplaceFirst(tpl_1(peekGet(revBufferFinal.outputData)).last && !decisionReInit);
      let forwardProbs <- pmuForward.out.get;
      decisionReInit <= True;
-     $display("BCJR: Decision Unit is being fed final bitId");
+     if(`DEBUG_BCJR == 1)
+       begin
+         $display("BCJR: Decision Unit is being fed final bitId");
+       end
      // assert that this bit is the last one...
      if(!tpl_1(forwardProbs)) 
        begin
