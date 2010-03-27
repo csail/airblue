@@ -44,148 +44,97 @@ import Vector::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 
-//`define isDebug True // uncomment this line to display error
-
-// assume no overflow
-function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)
-   provisos (Arith#(FixedPoint#(ai,af)));   
-   FixedPoint#(ai,af) res = 0;
-   for(Integer i = 0; i < m; i = i + 1)
-      res = res + fp;
-   return res;
+// check the input values and convert them to range=[-1,1)
+function FixedPoint#(1,af) convertRange(FixedPoint#(ai,af) fp)
+   provisos (Add#(xxA, 1, ai)); 
+   if (fp >= 1 || fp < -1)
+      if (fp < -1)
+         return minBound;
+      else
+         return maxBound; 
+   else
+      return fxptTruncate(fp); 
 endfunction
 
-// aux functions
-// split into 8 parts
-function ViterbiMetric decodeRange8(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
-      let result = (in < start + incr) ?
-		   (startZero ? 3 : 4) :
-		   (in < start + demapMult(2,incr)) ?
-		   (startZero ? 2 : 5) :
-		   (in < start + demapMult(3,incr)) ?
-		   (startZero ? 1 : 6) :
-		   (in < start + demapMult(4,incr)) ?
-		   (startZero ? 0 : 7) :
-		   (in < start + demapMult(5,incr)) ?
-		   (startZero ? 7 : 0) :
-		   (in < start + demapMult(6,incr)) ?
-		   (startZero ? 6 : 1) :
-		   (in < start + demapMult(7,incr)) ?
-		   (startZero ? 5 : 2) :
-		   (startZero ? 4 : 3);
-      return result;
-endfunction // ViterbiMetric
+function Bit#(a) demap0(FixedPoint#(1,af) fp)
+   provisos (Add#(a,xxA,SizeOf#(FixedPoint#(1,af))));
+   
+   return tpl_1(split(pack(fp))); 
+endfunction
 
-// split into 4 parts
-function ViterbiMetric decodeRange4(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
-      let result = (in < start + incr) ?
-		   (startZero ? 1 : 6) :
-		   (in < start + demapMult(2,incr)) ?
-		   (startZero ? 0 : 7) :
-		   (in < start + demapMult(3,incr)) ?
-		   (startZero ? 7 : 0) :
-		   (startZero ? 6 : 1);
-      return result;
-endfunction // ViterbiMetric
+// half = half the distance
+function Bit#(a) demap1(FixedPoint#(1,af) fp, FixedPoint#(1,af) half)
+   provisos (Add#(a,xxA,SizeOf#(FixedPoint#(1,af))));
+   
+   if (fp > 0)
+      return tpl_1(split(pack(negate(fp) + half)));
+   else
+      return tpl_1(split(pack(fp + half)));   
+endfunction
 
-// split into 2 parts
-function ViterbiMetric decodeRange2(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
-      let result = (in < start + incr) ?
-		   (startZero ? 0 : 7) :
-		   (startZero ? 7 : 0);
-      return result;
-endfunction // ViterbiMetric
+// quarter = quarter of the distance
+function Bit#(a) demap2(FixedPoint#(1,af) fp, FixedPoint#(1,af) quarter)
+   provisos (Add#(a,xxA,SizeOf#(FixedPoint#(1,af))));
+   
+   if (fp > 0)
+      if (fp > 0.5)
+         return tpl_1(split(pack(negate(fp)+quarter+quarter+quarter)));
+      else
+         return tpl_1(split(pack(fp-quarter)));
+   else
+      if (fp < -0.5)
+         return tpl_1(split(pack(fp+quarter+quarter+quarter)));
+      else
+         return tpl_1(split(pack(negate(fp)-quarter)));
 
-function ViterbiMetric decodeBPSK(Bool negateOutput,
+endfunction   
+
+function Bit#(a) decodeBPSK(Bool negateOutput,
 				  FPComplex#(ai,af) in)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
-      return decodeRange8(in.rel, -1, fromRational(1,4), !negateOutput);
+  provisos (Add#(xxA, 1, ai),
+            Add#(a,xxB,SizeOf#(FixedPoint#(1,af))));
+
+   return demap0(convertRange((!negateOutput ? negate(in.rel) : in.rel)));
 endfunction // ConfLvl
 
-function Vector#(2, ViterbiMetric) decodeQPSK(Bool negateOutput,
+function Vector#(2, Bit#(a)) decodeQPSK(Bool negateOutput,
 					      FPComplex#(ai,af) in)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
+  provisos (Add#(xxA, 1, ai),
+            Add#(a,xxB,SizeOf#(FixedPoint#(1,af))));
 
-      function ViterbiMetric decodeQPSKAux(FixedPoint#(ai,af) fp);
-         return decodeRange8(fp, fromRational(-707106781,1000000000), fromRational(176776695,1000000000), !negateOutput);
-      endfunction
-
-      Vector#(2, ViterbiMetric) result = newVector;
-      result[0] = decodeQPSKAux(in.rel);
-      result[1] = decodeQPSKAux(in.img);
-      return result;
+   Vector#(2, Bit#(a)) result = newVector;
+   result[0] = demap0(convertRange((!negateOutput ? negate(in.rel) : in.rel)));
+   result[1] = demap0(convertRange((!negateOutput ? negate(in.img) : in.img)));
+   return result;
 endfunction // ConfLvl      
 
 
-function Vector#(4, ViterbiMetric) decodeQAM_16(Bool negateOutput,
+function Vector#(4, Bit#(a)) decodeQAM_16(Bool negateOutput,
 						FPComplex#(ai,af) in)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
+  provisos (Add#(xxA, 1, ai),
+            Add#(a,xxB,SizeOf#(FixedPoint#(1,af))));
 
-      // aux funcs
-      function ViterbiMetric decodeQAM_16_Even(FixedPoint#(ai,af) x);
-	 return decodeRange8(x, fromRational(-316227766,1000000000), fromRational(79056942,1000000000), !negateOutput);
-      endfunction // ConfLvl      
-      
-      function ViterbiMetric decodeQAM_16_Odd(FixedPoint#(ai,af) x);
-         let result = (x < 0) ?
-		      decodeRange4(x, fromRational(-948683298,1000000000), fromRational(79056942,1000000000),!negateOutput) :
-		      decodeRange4(x, fromRational(316227766,1000000000), fromRational(79056942,1000000000),negateOutput);      
-	 return result;
-      endfunction // ConfLvl      
-
-      Vector#(4, ViterbiMetric) result = newVector;
-      result[0] = decodeQAM_16_Even(in.rel);
-      result[1] = decodeQAM_16_Odd(in.rel);
-      result[2] = decodeQAM_16_Even(in.img);
-      result[3] = decodeQAM_16_Odd(in.img);
-      return result;
+   Vector#(4, Bit#(a)) result = newVector;
+   result[0] = demap0(convertRange((!negateOutput ? negate(in.rel) : in.rel)));
+   result[1] = demap1(convertRange((!negateOutput ? negate(in.rel) : in.rel)),0.632455532034); // 4/sqrt(10)/2
+   result[2] = demap0(convertRange((!negateOutput ? negate(in.img) : in.img)));
+   result[3] = demap1(convertRange((!negateOutput ? negate(in.img) : in.img)),0.632455532034);
+   return result;
 endfunction
 
-function Vector#(6, ViterbiMetric) decodeQAM_64(Bool negateOutput,
+function Vector#(6, Bit#(a)) decodeQAM_64(Bool negateOutput,
 						FPComplex#(ai,af) in)
-  provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
-	    Arith#(FixedPoint#(ai,af)));
+  provisos (Add#(xxA, 1, ai),
+            Add#(a,xxB,SizeOf#(FixedPoint#(1,af))));
 
-      // aux funcs
-      function ViterbiMetric decodeQAM_64_0(FixedPoint#(ai,af) x);
-	 return decodeRange8(x, fromRational(-154303350,1000000000), fromRational(38575837,1000000000), !negateOutput);
-      endfunction // ConfLvl      
-      
-      function ViterbiMetric decodeQAM_64_1(FixedPoint#(ai,af) x);
-         let result = (x < 0) ?
-		      decodeRange4(x, fromRational(-771516750,1000000000), fromRational(38575837,1000000000),!negateOutput) :
-		      decodeRange4(x, fromRational(462910050,1000000000), fromRational(38575837,1000000000),negateOutput);      
-	 return result;
-      endfunction
-      
-      function ViterbiMetric decodeQAM_64_2(FixedPoint#(ai,af) x);
-	 let result = (x < fromRational(-617213400,1000000000)) ?
-		      decodeRange2(x, fromRational(-1080123450,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
-		      (x < 0) ? 
-		      decodeRange2(x, fromRational(-462910050,1000000000), fromRational(38575837,1000000000),negateOutput) :	
-		      (x < fromRational(617213400,1000000000)) ?
-		      decodeRange2(x, fromRational(154303350,1000000000), fromRational(38575837,1000000000),!negateOutput) :	
-		      decodeRange2(x, fromRational(771516750,1000000000), fromRational(38575837,1000000000),negateOutput);	
-	 return result;
-      endfunction // ConfLvl      
-
-      Vector#(6, ViterbiMetric) result = newVector;
-      result[0] = decodeQAM_64_0(in.rel);
-      result[1] = decodeQAM_64_1(in.rel);
-      result[2] = decodeQAM_64_2(in.rel);
-      result[3] = decodeQAM_64_0(in.img);
-      result[4] = decodeQAM_64_1(in.img);
-      result[5] = decodeQAM_64_2(in.img);
-      return result;
+   Vector#(6, Bit#(a)) result = newVector;
+   result[0] = demap0(convertRange((!negateOutput ? negate(in.rel) : in.rel)));
+   result[1] = demap1(convertRange((!negateOutput ? negate(in.rel) : in.rel)),0.617213399848); // 8/sqrt(42)/2
+   result[2] = demap2(convertRange((!negateOutput ? negate(in.rel) : in.rel)),0.308606699924);// 8/sqrt(42)/4
+   result[3] = demap0(convertRange((!negateOutput ? negate(in.img) : in.img)));
+   result[4] = demap1(convertRange((!negateOutput ? negate(in.img) : in.img)),0.617213399848);
+   result[5] = demap2(convertRange((!negateOutput ? negate(in.img) : in.img)),0.308606699924);
+   return result;
 endfunction 
 
 // mkMapper definition, 
@@ -197,9 +146,7 @@ module mkDemapper#(function Modulation mapCtrl(ctrl_t inCtrl),
 		   Bool negateOutput) 
    (Demapper#(ctrl_t,i_n,o_n,i_prec,f_prec,ViterbiMetric))
    provisos(Bits#(ctrl_t,ctrl_sz),
-	    Add#(1,xxA,i_prec), 
-	    Literal#(FixedPoint#(i_prec,f_prec)), 
-	    Arith#(FixedPoint#(i_prec,f_prec)),
+	    Add#(xxA,1,i_prec), 
 	    Mul#(2,qpsk_n,o_n), 
 	    Mul#(4,qam16_n,o_n), 
 	    Mul#(6,qam64_n,o_n),
@@ -207,9 +154,9 @@ module mkDemapper#(function Modulation mapCtrl(ctrl_t inCtrl),
 	    Mul#(xxC,qpsk_n,i_n),
 	    Mul#(xxD,qam16_n,i_n),
 	    Mul#(xxE,qam64_n,i_n),
-	    Log#(i_n,idx_sz),
-            Add#(i_prec,f_prec,TAdd#(i_prec,f_prec)),
-            Add#(4,xxF,TAdd#(32,f_prec)));
+            Log#(i_n,idx_sz),
+            Add#(4,xxF,TAdd#(32,f_prec)),
+            Add#(SizeOf#(ViterbiMetric),xxG,SizeOf#(FixedPoint#(1,f_prec))));
    
    // constants
    Bit#(idx_sz) bpskSz = fromInteger(valueOf(xxB)-1);
