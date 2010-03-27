@@ -45,7 +45,7 @@ typedef Vector#(n, FPComplex#(i_prec, f_prec))
 		numeric type f_prec); 
 
 // Viterbi Metric
-typedef Bit#(3) ViterbiMetric;
+typedef Bit#(5) ViterbiMetric;
 typedef Bit#(9) SoftPhyHints;
 
 `ifdef SOFT_PHY_HINTS
