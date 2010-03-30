@@ -22,7 +22,7 @@ static double get_snr()
 int get_rate()
 {
   int rate = DEFAULT_RATE;
-  char* rate_str = getenv("WIFI_RATE");
+  char* rate_str = getenv("ADDERROR_RATE");
   if (rate_str) {
     rate = strtod(rate_str, NULL);
   }

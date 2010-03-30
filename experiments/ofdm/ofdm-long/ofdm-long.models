@@ -4,4 +4,10 @@
 #
 # ***************
 
-phy_pipeline   config/pm/ofdm/airblue/airblue_wifi_phy_only_loopback_exe.apm      --bluesim="-m 1000000000"
+bcjr   config/pm/ofdm/library_tests/bcjr_test.apm      --bluesim="-m 1000000000"
+
+bcjr_new_demap   config/pm/ofdm/library_tests/bcjr_new_demapper_test.apm      --bluesim="-m 1000000000"
+
+viterbi   config/pm/ofdm/library_tests/bcjr_test.apm      --bluesim="-m 1000000000"
+
+viterbi_new_demap   config/pm/ofdm/library_tests/viterbi_new_demapper_test.apm      --bluesim="-m 1000000000"

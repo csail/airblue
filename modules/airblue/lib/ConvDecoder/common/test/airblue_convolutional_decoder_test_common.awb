@@ -27,5 +27,8 @@
 %generated -t BA finishTime.ba
 %generated -t BA getConvOutBER.ba
 %generated -t BA nextRate.ba
+%generated -t BA check_ber.ba
+
+%param DEBUG_CONV_DECODER_TEST 0 "Enable Debug Messages"
 
 %AWB_END
