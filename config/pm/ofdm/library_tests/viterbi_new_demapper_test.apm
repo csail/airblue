@@ -9,7 +9,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=viterbi_test
+File=viterbi_new_mapper_test
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -59,9 +59,6 @@ hw_only_application=Airblue Viterbi Test
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
 Packagehint=ofdm
 
-[Airblue Demapper]
-File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
-Packagehint=ofdm
 
 [Airblue Viterbi Test/Requires]
 airblue_types=Airblue types (no SoftHints)
@@ -87,7 +84,7 @@ airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
-airblue_demapper=Airblue Demapper
+airblue_demapper=Airblue Soft-Decision Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue Noisy Channel
 airblue_descrambler=Airblue Descrambler
@@ -211,6 +208,10 @@ Packagehint=ofdm
 
 [Airblue Noisy Channel]
 File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
+Packagehint=ofdm
+
+[Airblue Soft-Decision Demapper]
+File=modules/airblue/lib/Mapper/src/airblue_demapper_soft.awb
 Packagehint=ofdm
 
 [Airblue Descrambler]

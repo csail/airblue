@@ -79,6 +79,8 @@ airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue Noisy Channel
+airblue_descrambler=Airblue Descrambler
+airblue_scrambler=Airblue Scrambler
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -217,4 +219,12 @@ airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue Convolutional Decoder Common]
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[Airblue Descrambler]
+File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
+Packagehint=ofdm
+
+[Airblue Scrambler]
+File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
