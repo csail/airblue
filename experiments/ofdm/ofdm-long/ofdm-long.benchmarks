@@ -4,7 +4,7 @@
 #
 # ***************
 
-experiments = bcjr bcjr_new_demap viterbri viterbi_new_demap
+experiments = bcjr bcjr_new_demap viterbi viterbi_new_demap
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_2.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_3.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_4.cfg
