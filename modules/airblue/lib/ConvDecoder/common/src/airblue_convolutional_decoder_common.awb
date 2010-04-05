@@ -17,6 +17,11 @@
 %generated -t BA module_getBranchMetricForward.ba
 %generated -t BA module_acs.ba
 
+%generated -t VERILOG mkBranchMetricUnit.v
+%generated -t VERILOG module_permuteForward.v
+%generated -t VERILOG module_getBranchMetricForward.v
+%generated -t VERILOG module_acs.v
+
 %param DEBUG_CONV_DECODER 0 "Enable debug messages"
 
 %AWB_END

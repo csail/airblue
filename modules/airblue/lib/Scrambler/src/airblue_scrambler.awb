@@ -13,5 +13,6 @@
 %sources -t BSV -v PUBLIC Scrambler.bsv
 
 %generated -t BA mkScramblerInstance.ba
+%generated -t VERILOG mkScramblerInstance.v
  
 %AWB_END

@@ -32,20 +32,6 @@ import FixedPoint::*;
 import GetPut::*;
 import StmtFSM::*;
 
-// import ClientServerUtils::*;
-// import AvalonSlave::*;
-// import AvalonCommon::*;
-// import RegisterMapper::*;
-
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import Transceiver::*;
-// import LibraryFunctions::*;
-// import FPComplex::*;
-// import AD::*;
-// import GCT::*;
 
 // Local includes
 `include "asim/provides/airblue_common.bsh"
@@ -56,31 +42,20 @@ import StmtFSM::*;
 `include "asim/provides/client_server_utils.bsh"
 `include "asim/provides/register_mapper.bsh"
 `include "asim/provides/airblue_channel.bsh"
+`include "asim/provides/fpga_components.bsh"
+`include "asim/provides/clocks_device.bsh"
 
-//Bool detailedDebugInfo=True;
-
-// no. cycles to terminate (in case get into deadlock)
-//`define timeout  2000000000
-
-// no. cycles to wait before the test declare a packet is lost 
-//`define waitTime 1000000
-
-// simulation length in terms of no. packet
-`define simPackets 50
-
-// two mode transmitting and verifying transmission
-//typedef enum {Transmit, Verify} OpMode deriving (Bits,Eq);
-
-import "BDPI" get_rate   = function Rate getRate();
-//import "BDPI" next_length = function Bit#(32) nextLength();
-import "BDPI" check_ber = function Bool checkBitErrors(Bit#(32) errors);
-
+`include "asim/rrr/remote_client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
 //For the wires test we swap for two transceivers here.
-(*synthesize*)
-module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();
+module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();
   Clock busClock <- exposeCurrentClock;
   Reset busReset <- exposeCurrentReset;
+
+  // Instantiate host communications
+
+  ClientStub_SIMPLEHOSTCONTROLRRR client_stub <- mkClientStub_SIMPLEHOSTCONTROLRRR();
+
   let receiverFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset,rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset);
   let transmitterFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset, rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset); 
   let channel <- mkChannel(clocked_by rfClock, reset_by rfReset);
@@ -100,7 +75,11 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
   Stmt stmt =
     (seq
       // set the test rate 
-      rate <= getRate();
+      client_stub.makeRequest_GetRate(?);
+      action
+        let rateBits <- client_stub.getResponse_GetRate();
+        rate <= unpack(truncate(rateBits));
+      endaction
       $display("Rate %d", rate);
       avalonServerTx.request.put(AvalonRequest{addr:fromInteger(valueof(AddrRate)),data:zeroExtend(pack(rate)),command: register_mapper::Write});
       // enable packet gen
@@ -112,7 +91,7 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
         avalonServerRx.request.put(readRequest(valueof(AddrPacketsRX)));
         action
           let count <- avalonServerRx.response.get;
-          finished <= (count == `simPackets);
+          finished <= (count == `SIM_PACKETS);
         endaction
       endseq
 
@@ -121,8 +100,11 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
       action
         let ber <- avalonServerRx.response.get;
         $display("BER total: %d", ber);
-
-        if (checkBitErrors(ber))
+        client_stub.makeRequest_CheckBER(ber);
+      endaction
+      action
+        let checkResult <- client_stub.getResponse_CheckBER();
+        if (checkResult == 1)
           begin
             $display("PASS");
             $finish(0);
@@ -130,9 +112,9 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
         else
           begin
             $display("FAIL");
-            $finish(1);
+          $finish(1);
           end
-      endaction
+        endaction
     endseq);
 
 
@@ -181,49 +163,20 @@ module [Module] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock 
     receiverFPGA.adcWires.adcIPart(fxptToDAC(sample.img));
   endrule
 
-//  rule connectRXTX(txPE.read == 1);
-//    receiverFPGA.adcWires.adcRPart(transmitterFPGA.dacWires.dacRPart);    
-//    receiverFPGA.adcWires.adcIPart(transmitterFPGA.dacWires.dacIPart); 
-//    FPComplex#(DACIPart,DACFPart) sample;  
-//    sample.img = unpack({~(transmitterFPGA.dacWires.dacIPart[9]) ,truncate(transmitterFPGA.dacWires.dacIPart)}); 
-//    sample.rel = unpack({~(transmitterFPGA.dacWires.dacRPart[9]) ,truncate(transmitterFPGA.dacWires.dacRPart)}); 
-//    FPComplex#(RXFPIPrec,RXFPFPrec) sampleExt = fpcmplxSignExtend(sample);
-//    FPComplex#(RXFPIPrec,RXFPFPrec) sampleConj = FPComplex{rel:sampleExt.rel,img:-1*sampleExt.img};
-//    let magnitude = fpcmplxMult(sampleExt,sampleConj);
-//    $write("TXMAG: ");
-//    fpcmplxWrite(5,magnitude);
-//    $display("");
-//  endrule
-//
-//  rule connectRXTXOff(txPE.read == 0);
-//    $display("AD: No transmit, sending zeros");
-//    receiverFPGA.adcWires.adcRPart({1'b1,0});    
-//    receiverFPGA.adcWires.adcIPart({1'b1,0}); 
-//    if((transmitterFPGA.dacWires.dacRPart !=  {1'b1,0} ||   
-//       transmitterFPGA.dacWires.dacIPart !=  {1'b1,0}) && transmitterFPGA.dacWires.dacModeSelect != 0) 
-//      begin
-//        $display("AD attempts to transfer non-zero data while not transmitting: %h %h %h",transmitterFPGA.dacWires.dacRPart, transmitterFPGA.dacWires.dacIPart, transmitterFPGA.dacWires.dacModeSelect);
-//        $finish;
-//      end   
-//  endrule
-
 endmodule
 
-(*synthesize*)
-module mkWiFiFPGAPacketGenWiresTest ();
+module [CONNECTED_MODULE] mkWiFiFPGAPacketGenWiresTest ();
   Reset reset <- exposeCurrentReset;
-  Clock busClock <- mkAbsoluteClock(1,5);
-  Reset busReset <- mkAsyncReset(1,reset,busClock);
-  Clock viterbiClock <- mkAbsoluteClock(1,10);
-  Reset viterbiReset <- mkAsyncReset(1,reset,viterbiClock);
-  Clock rfClock <- mkAbsoluteClock(1,50);
-  Reset rfReset <- mkAsyncReset(1,reset,rfClock);
-  Clock basebandClock <- mkAbsoluteClock(1,40);
-  Reset basebandReset <- mkAsyncReset(1,reset,basebandClock);
-  let m <- mkWiFiFPGAPacketGenWiresTestClocks(viterbiClock, viterbiReset, basebandClock, basebandReset, rfClock, rfReset, clocked_by busClock, reset_by busReset);
+  Clock busClock <- exposeCurrentClock;
+  Reset busReset <- exposeCurrentReset;
+  UserClock viterbi <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
+  UserClock rf <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,20);
+  UserClock baseband <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,40);
+
+  let m <- mkWiFiFPGAPacketGenWiresTestClocks(viterbi.clk, viterbi.rst, baseband.clk, baseband.rst, rf.clk, rf.rst, clocked_by busClock, reset_by busReset);
 endmodule
                                
-module mkHWOnlyApplication (Empty);
+module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    let test <- mkWiFiFPGAPacketGenWiresTest();
    return test;
 endmodule                         
@@ -242,10 +195,7 @@ function Reg#(regType) mkRegFromActions(function regType readAction(), function 
 endfunction
 
 
-
-
-
-module [Module] mkWiFiFPGAPacketGenWiresTestClocks#(Clock viterbiClock, Reset viterbiReset,Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();   
+module [CONNECTED_MODULE] mkWiFiFPGAPacketGenWiresTestClocks#(Clock viterbiClock, Reset viterbiReset,Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();   
    Clock clock <- exposeCurrentClock;
    Reset reset <- exposeCurrentReset;
    // state elements

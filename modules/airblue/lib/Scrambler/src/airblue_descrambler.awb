@@ -13,5 +13,6 @@
 %sources -t BSV -v PUBLIC Descrambler.bsv
 
 %generated -t BA mkDescramblerInstance.ba
+%generated -t VERILOG mkDescramblerInstance.v
  
 %AWB_END

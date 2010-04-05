@@ -15,5 +15,6 @@
 %sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv BasicSHIM.bsv
 
 %generated -t BA mkSHIM.ba
+%generated -t VERILOG mkSHIM.v
  
 %AWB_END

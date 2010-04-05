@@ -14,5 +14,8 @@
 
 %generated -t BA mkMACPacketGen.ba
 %generated -t BA mkMACPacketCheck.ba
+
+%generated -t VERILOG mkMACPacketGen.v
+%generated -t VERILOG mkMACPacketCheck.v
  
 %AWB_END

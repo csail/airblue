@@ -13,6 +13,7 @@
 %sources -t BSV -v PUBLIC Unserializer.bsv
 
 %generated -t BA mkUnserializerInstance.ba
+%generated -t VERILOG mkUnserializerInstance.v
 
 %param DEBUG_UNSERIALIZER 0 "Enable debug messages"
  

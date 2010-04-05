@@ -27,5 +27,9 @@
 %generated -t BA mkSynchronizerTest.ba
 %generated -t BA mkStatefulSynchronizerInstance.ba
 %generated -t BA mkPacketGenerator.ba
+
+%generated -t VERILOG mkSynchronizerTest.v
+%generated -t VERILOG mkStatefulSynchronizerInstance.v
+%generated -t VERILOG mkPacketGenerator.v
  
 %AWB_END

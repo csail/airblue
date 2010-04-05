@@ -19,6 +19,14 @@
 %generated -t BA module_fftPermute.ba
 %generated -t BA module_fftPermuteRes.ba
 
+%generated -t VERILOG mkFFTIFFT.v
+%generated -t VERILOG mkWiFiFFTIFFT.v
+%generated -t VERILOG mkOneStage.v
+%generated -t VERILOG mkFFTBflys_RWire.v
+%generated -t VERILOG module_genOmegaVecs.v
+%generated -t VERILOG module_fftPermute.v
+%generated -t VERILOG module_fftPermuteRes.v
+
 %param DEBUG_FFT 0 "Enable debug messages"
 
 %AWB_END

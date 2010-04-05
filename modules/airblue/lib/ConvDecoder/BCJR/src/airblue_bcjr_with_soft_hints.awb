@@ -18,6 +18,10 @@
 %generated -t BA mkDecisionUnit.ba
 %generated -t BA module_getBranchMetricBackward.ba
 
+%generated -t VERILOG mkIBCJR.v
+%generated -t VERILOG mkDecisionUnit.v
+%generated -t VERILOG module_getBranchMetricBackward.v
+
 %param DEBUG_BCJR 0 "Enable debug messages"
 %param REVERSAL_BUFFER_SIZE 64 "Enable debug messages"
 

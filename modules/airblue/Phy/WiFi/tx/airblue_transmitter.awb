@@ -28,6 +28,14 @@
 %generated -t BA mkDecoderMCDInstance.ba
 %generated -t BA mkViterbiInstance.ba
 
+%generated -t VERILOG mkEncoderInstance.v
+%generated -t VERILOG mkPilotInsertInstance.v
+%generated -t VERILOG mkCPInsertInstance.v
+%generated -t VERILOG mkPreDescramblerRXController.v
+%generated -t VERILOG mkPostDescramblerRXController.v
+%generated -t VERILOG mkDecoderMCDInstance.v
+%generated -t VERILOG mkViterbiInstance.v
+
 %param DEBUG_TXCTRL 0 "Enable debug messages"
 
 

@@ -24,4 +24,8 @@
 %generated -t BA mkTransceiverMACPacketGenFPGA.ba
 %generated -t BA mkWiFiFPGAMACPacketGenWiresTest.ba
 
+%generated -t VERILOG mkBusMacVectorSpec.v
+%generated -t VERILOG mkTransceiverMACPacketGenFPGA.v
+%generated -t VERILOG mkWiFiFPGAMACPacketGenWiresTest.v
+
 %AWB_END

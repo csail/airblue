@@ -27,6 +27,21 @@
 %generated -t BA mkFreqRotator.ba
 %generated -t BA mkFreqEst_FreqOffAccumSub.ba
 
+%generated -t VERILOG mkAutoCorrelator.v
+%generated -t VERILOG mkAutoCorr_DelayIn.v
+%generated -t VERILOG mkAutoCorr_CorrSub.v
+%generated -t VERILOG mkAutoCorr_ExtDelayIn.v
+%generated -t VERILOG mkAutoCorr_ExtCorrSub.v
+
+%generated -t VERILOG mkTimeEst_FineDelay.v
+%generated -t VERILOG mkTimeEst_CoarTimeSub.v
+%generated -t VERILOG mkTimeEst_CoarPowSub.v
+%generated -t VERILOG mkTimeEst_FineDelaySign.v
+
+%generated -t VERILOG mkFreqEstimator.v
+%generated -t VERILOG mkFreqRotator.v
+%generated -t VERILOG mkFreqEst_FreqOffAccumSub.v
+
 %param DEBUG_SYNCHRONIZER 0 "Enable debug messages"
  
 %AWB_END

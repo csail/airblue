@@ -9,7 +9,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=airblue_wifi_phy_only_loopback_exe
+File=airblue_wifi_phy_only_loopback_htg
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -36,7 +36,7 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-htg-v5-pcie.apm
 Packagehint=platforms
 
 [WiFi Phy Only Loopback/Requires]
@@ -46,7 +46,7 @@ airblue_shared=Airblue Shared Libraries
 airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
-airblue_channel=Airblue Noisy Channel
+airblue_channel=Airblue Clear Channel
 airblue_host_control=Simple RRR Host Control
 
 [Airblue Special FIFOs]
@@ -265,10 +265,6 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
-
 [Airblue BCJR with Alpha Init(no Soft Hints)]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
 Packagehint=ofdm
@@ -327,6 +323,13 @@ application_env=Soft Connections Hybrid Application Environment
 File=modules/project/xilinx_post_synth.awb
 Packagehint=platforms
 
+[Airblue Clear Channel]
+File=modules/airblue/lib/Channel/airblue_clear_channel.awb
+Packagehint=ofdm
+
 [Simple RRR Host Control]
 File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
 Packagehint=ofdm
+
+[FPGA Environment/Params]
+MODEL_CLOCK_MULTIPLIER=1

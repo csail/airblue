@@ -250,7 +250,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 endmodule
 
 (* synthesize *)
-module [Module]  mkTransceiverPacketGenFPGA#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
+module  mkTransceiverPacketGenFPGA#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
    Clock asicClock <- exposeCurrentClock;
    Reset asicReset <- exposeCurrentReset;
    // do we want to line up the edges?

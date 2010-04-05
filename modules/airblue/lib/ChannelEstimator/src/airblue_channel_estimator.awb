@@ -15,6 +15,7 @@
 %sources -t BSV -v PUBLIC ChannelEstimator.bsv ChannelEstimatorTypes.bsv
 
 %generated -t BA mkChannelEstimatorInstance.ba
+%generated -t VERILOG mkChannelEstimatorInstance.v
 
 %param DEBUG_CHANNEL_ESTIMATOR 0 "Enable debug messages"
 

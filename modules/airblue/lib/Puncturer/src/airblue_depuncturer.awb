@@ -11,6 +11,7 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC Depuncturer.bsv
+%generated -t VERILOG mkDepuncturerInstance.v
 %generated -t BA mkDepuncturerInstance.ba
  
 %AWB_END

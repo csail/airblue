@@ -16,4 +16,6 @@
 %generated -t BA mkChannel.ba 
 %generated -t BA addNoise.ba
  
+%generated -t VERILOG mkChannel.v 
+
 %AWB_END
