@@ -59,7 +59,7 @@ import "BDPI" nextRate =
        function Rate nextRate();      
              
 import "BDPI" check_ber = 
-       function Bool checkBER(Bit#(32) errors, Bit#(32) totals);      
+       function ActionValue#(Bool) checkBER(Bit#(32) errors, Bit#(32) totals);      
        
        
 // import "BDPI" viterbiMapCtrl = 
@@ -556,7 +556,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       Maybe#(Bit#(7)) seed = tagged Invalid;
       if (mesg.control.firstSymbol && des_cnt == 0)
          begin
-            des_cnt <= mesg.control.length - 1;
+           des_cnt <= mesg.control.length - 1;
             seed = tagged Valid magicConstantSeed;
          end
       else
@@ -625,7 +625,8 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
             $display("Convolutional encoder BER was set as %d percent",getConvOutBER);
             $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);
  
-            if(checkBER(errors, total))
+            let result <- checkBER(errors, total);
+            if(result)
                begin
                   $display("PASS");
                   $finish(0);
