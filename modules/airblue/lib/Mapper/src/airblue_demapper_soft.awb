@@ -12,7 +12,7 @@
 
 %sources -t BSV -v PUBLIC DemapperSoft.bsv 
 %generated -t BA mkDemapperInstance.ba
-%generated -t V mkDemapperInstance.v
+%generated -t VERILOG mkDemapperInstance.v
 
 %param DEBUG_DEMAPPER 0 "Enable debug messages"
 
