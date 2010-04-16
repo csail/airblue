@@ -9,7 +9,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=bcjr_alpha_64
+File=bcjr_const_16_synth
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -29,7 +29,7 @@ Packagehint=hasim
 
 [Model]
 DefaultAttributes=airblue
-model=HW/SW Hybrid Project Foundation
+model=HW/SW Hybrid Pipeline Build
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
@@ -46,11 +46,8 @@ airblue_shared=Airblue Shared Libraries
 airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
-airblue_channel=Airblue Noisy Channel
-
-[HW/SW Hybrid Project Foundation]
-File=modules/project/project-hybrid.awb
-Packagehint=platforms
+airblue_channel=Airblue Clear Channel
+airblue_host_control=Simple RRR Host Control
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
@@ -71,11 +68,6 @@ Packagehint=ofdm
 [WiFi Phy Only Loopback]
 File=modules/airblue/PhyOnly_Loopback/WiFi/airblue_wifi_phyonly_loopback.awb
 Packagehint=ofdm
-
-[HW/SW Hybrid Project Foundation/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
 
 [Airblue Pilot Insert]
 File=modules/airblue/lib/PilotInsert/src/airblue_pilot_insert.awb
@@ -273,16 +265,12 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
-
-[Airblue BCJR with Alpha Init(no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
-Packagehint=ofdm
-
-[Airblue BCJR with Alpha Init(no Soft Hints)/Requires]
+[Airblue BCJR (no Soft Hints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Airblue BCJR (no Soft Hints)]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
 
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
@@ -290,7 +278,7 @@ airblue_descrambler=Airblue Descrambler
 airblue_channel_estimator=Airblue Channel Estimator
 airblue_synchronizer=Airblue Synchronizer
 airblue_deinterleaver=Airblue Deinterleaver
-airblue_convolutional_decoder=Airblue BCJR with Alpha Init(no Soft Hints)
+airblue_convolutional_decoder=Airblue BCJR (no Soft Hints)
 airblue_demapper=Airblue Demapper
 airblue_unserializer=Airblue Unserializer
 
@@ -300,4 +288,65 @@ Packagehint=ofdm
 
 [WiFi Receiver Pipeline]
 File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[FPGA Build Pipeline/Requires]
+post_synthesis_tool=Xilinx Post-synthesis Toolchain
+synthesis_tool=BCJR top level
+
+[Xilinx Post-synthesis Toolchain/Requires]
+xilinx_ngd=Xilinx NGD
+xilinx_bitgen=Xilinx BITGEN
+xilinx_par=Xilinx PAR
+xilinx_map=Xilinx MAP
+xilinx_loader=Xilinx LOADER
+
+[FPGA Build Pipeline]
+File=modules/project/build-pipeline.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Pipeline Build]
+File=modules/project/project-pipeline.awb
+Packagehint=platforms
+
+[Xilinx BITGEN]
+File=modules/project/xilinx_bitgen.awb
+Packagehint=platforms
+
+[Xilinx LOADER]
+File=modules/project/xilinx_loader.awb
+Packagehint=platforms
+
+[Xilinx NGD]
+File=modules/project/xilinx_ngd.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Pipeline Build/Requires]
+fpga_build_pipeline=FPGA Build Pipeline
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
+
+[Xilinx Post-synthesis Toolchain]
+File=modules/project/xilinx_post_synth.awb
+Packagehint=platforms
+
+[Xilinx PAR]
+File=modules/project/xilinx_par.awb
+Packagehint=platforms
+
+[Xilinx MAP]
+File=modules/project/xilinx_map.awb
+Packagehint=platforms
+
+[Airblue Clear Channel]
+File=modules/airblue/lib/Channel/airblue_clear_channel.awb
+Packagehint=ofdm
+
+[BCJR top level]
+File=modules/airblue/synthesis_tools/synplify.awb
 Packagehint=ofdm
