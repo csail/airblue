@@ -66,17 +66,6 @@ function Tuple2#(ctrl_t, comp_t) chooseMax (Tuple2#(ctrl_t, comp_t) in1,
  return ((tpl_2(in1) - tpl_2(in2)) < unpack({1'b1,0})) ? in1 : in2;
 endfunction // Tuple2
 
-
-function Tuple2#(ctrl_t, comp_t) chooseMin (Tuple2#(ctrl_t, comp_t) in1, 
-                                            Tuple2#(ctrl_t, comp_t) in2)
-  provisos
-  (Arith#(comp_t), Literal#(comp_t),
-   Bits#(comp_t, comp_t_sz), Ord#(comp_t));
-  
-  let diff = tpl_2(in1) - tpl_2(in2); 
-  return (diff  < 0) ? in1 : in2;
-endfunction // Tuple2
-
 function Bit#(asz) getMSBs (Bit#(bsz) in_data)
    provisos (Add#(asz,xxA,bsz));
    return tpl_1(split(in_data));

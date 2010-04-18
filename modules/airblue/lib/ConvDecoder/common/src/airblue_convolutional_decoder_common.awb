@@ -10,7 +10,7 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv PathMetricUnit.bsv  BranchMetricUnit.bsv       
+%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv PathMetricUnit.bsv PathMetricUnitGamma.bsv BranchMetricUnit.bsv       
 
 %generated -t BA mkBranchMetricUnit.ba
 %generated -t BA module_permuteForward.ba

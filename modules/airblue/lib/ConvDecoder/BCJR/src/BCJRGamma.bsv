@@ -6,12 +6,26 @@ import Vector::*;
 import FShow::*;
 import Probe::*;
 
+// import ReversalBuffer::*;
+
+// import Interfaces::*;
+// import DataTypes::*;
+// import Viterbi::*;
+// import BCJRParams::*;
+// import IViterbi::*;
+// import BranchMetricUnit::*;
+// import PathMetricUnit::*;
+// import DecisionUnit::*;
+// import ProtocolParameters::*;
+// import VParams::*;
+
+//`include "../../../WiFiFPGA/Macros.bsv"
+
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/reversal_buffer.bsh"
-`include "asim/provides/librl_bsv.bsh"
 
 /////////////////////////////////////////////////////////
 // Begin of BCJR Module 
@@ -23,13 +37,9 @@ module mkIBCJR (IViterbi);
    BranchMetricUnit bmu <- mkBranchMetricUnit; 
    Reg#(BCJRBitId) bitId <- mkReg(0);
 
-   // magic sizing variable 
-   Bit#(TMul#(`REVERSAL_BUFFER_SIZE,4)) bigFIFO = 0;
-
    // Forward Path Blocks
-   PathMetricUnit   pmuForward <- mkPathMetricUnit("BCJR PMU Forward",getPMUOutBCJRForward,getBranchMetricForward);
-   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedBRAMFIFOF(bigFIFO);
-
+   PathMetricUnit   pmuForward <- mkPathMetricUnitGamma("BCJR PMU Forward",getPMUOutBCJRForwardGamm,getBranchMetricForward, getBranchMetricBackward);
+   FIFOF#(VBranchMetricUnitOut) bmuForwardOut <- mkSizedFIFOF(`REVERSAL_BUFFER_SIZE*4);
 
    // Reverse Path Blocks
    ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferInitial <- mkReversalBuffer("BCJR revInitial");
@@ -38,9 +48,9 @@ module mkIBCJR (IViterbi);
    PathMetricUnit pmuBackward         <- mkPathMetricUnit("BCJR PMU Backwards",getPMUOutBCJRBackward,getBranchMetricBackward);
    Reg#(Bit#(`REVERSAL_BUFFER_SIZE)) revResetCounter <- mkReg(0);
    Reg#(Bool) firstBlock <- mkReg(True);
-   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedBRAMFIFOF(bigFIFO);
+   FIFOF#(BackwardPathCtrl) bmuReverseOut <- mkSizedFIFOF(4*valueof(`REVERSAL_BUFFER_SIZE));
    Reg#(Bool) bmuPushLast <- mkReg(False);   
-   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedBRAMFIFOF(bigFIFO); // Must cover latency of decision unit   
+   FIFOF#(BCJRBackwardCtrl) backwardPathLast <- mkSizedFIFOF(4*valueof(`REVERSAL_BUFFER_SIZE)); // Must cover latency of decision unit   
    
    Reg#(Bool) pmuBackwardReInit <- mkReg(True);
    Reg#(Bool) decisionReInit <- mkReg(True);
@@ -120,11 +130,7 @@ module mkIBCJR (IViterbi);
      bitId <= 0;
      revResetCounter <= 0;
      bmuPushLast <= False;
-     if(`DEBUG_BCJR == 1)
-       begin
-         $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
-       end
-
+     $display("BCJR initial push last, total bits: %d @ %d", bitId, clockCycles);
      revBufferInitial.inputData.put(tuple2(BCJRBackwardCtrl{last:True, bitId: ~0},?));
    endrule
 
@@ -330,11 +336,7 @@ module mkIBCJR (IViterbi);
    // We cannot put this directly in. 
    // Need a second FIFO.
    rule backwardsPMULast(bmuReverseOut.first.backwardCtrl.last);
-     if(`DEBUG_BCJR == 1)
-       begin
-         $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
-       end
-
+      $display("BCJR PMU Last got last pmuBackwardReInit: %d @ %d", pmuBackwardReInit, clockCycles);
       bmuReverseOut.deq;
       pmuBackwardReInit <= True;
       backwardPathLast.enq(bmuReverseOut.first.backwardCtrl);
@@ -405,10 +407,7 @@ module mkIBCJR (IViterbi);
    rule feedDecisionUnitReplaceFirst(tpl_1(peekGet(revBufferFinal.outputData)).last && !decisionReInit);
      let forwardProbs <- pmuForward.out.get;
      decisionReInit <= True;
-     if(`DEBUG_BCJR == 1)
-       begin
-         $display("BCJR: Decision Unit is being fed final bitId");
-       end
+     $display("BCJR: Decision Unit is being fed final bitId");
      // assert that this bit is the last one...
      if(!tpl_1(forwardProbs)) 
        begin

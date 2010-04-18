@@ -87,6 +87,25 @@ function Vector#(VTotalStates,VACSEntry) getPMUOutBCJRForward
    return permuteForward(out_vec);   
 endfunction
 
+function Tuple2#(Vector#(VTotalStates,VACSEntry),
+                 Vector#(VTotalStates,VACSEntry)) getPMUOutBCJRForwardGamma
+         (Vector#(VTotalStates, VPathMetric) path_metric,
+          Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric)) branch_metric_forward,
+          Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric)) branch_metric_backward);
+   Vector#(VTotalStates,VACSEntry)                                      path_vec           = newVector;
+   Vector#(VTotalStates,VACSEntry)                                      gamma_vec           = newVector;
+   Vector#(VNoACS, Vector#(VRadixSz, VPathMetric))                      tmp_path_metric   = unpack(pack(path_metric));
+
+   Vector#(VNoACS, Vector#(VRadixSz, Vector#(VRadixSz, VBranchMetric))) tmp_branch_metric = unpack(pack(branch_metric_forward));
+   path_vec = unpack(pack(zipWith(acs,tmp_path_metric,tmp_branch_metric)));
+
+   Vector#(VTotalStates,VPathMetric) gammas = map(signExtend,map(fold( \+ ), branch_metric_backward));
+   Vector#(VTotalStates, VPathMetric) gamma_temp = zipWith( \+ ,tpl_1(unzip(path_vec)),
+                                                                gammas);
+
+   return tuple2(permuteForward(path_vec),permuteForward(zip(gamma_temp,tpl_2(unzip(path_vec)))));   
+endfunction
+
 // Misc Defines
 
 typedef Bit#(24) BCJRBitId;

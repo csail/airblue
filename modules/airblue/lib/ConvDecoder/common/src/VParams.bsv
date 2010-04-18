@@ -251,6 +251,18 @@ function Vector#(VTotalStates,VACSEntry) getPMUOutViterbi
 endfunction
 
 
+function Tuple2#(ctrl_t, comp_t) chooseMin (Tuple2#(ctrl_t, comp_t) in1, 
+                                            Tuple2#(ctrl_t, comp_t) in2)
+  provisos
+  (Arith#(comp_t), Literal#(comp_t),
+   Bits#(comp_t, comp_t_sz), Ord#(comp_t));
+  
+  let diff = tpl_2(in1) - tpl_2(in2); 
+  return (diff  < 0) ? in1 : in2;
+endfunction // Tuple2
+
+
+
 /////////////////////////////////////////////////////////////////////////
 // constants
 
