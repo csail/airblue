@@ -32,8 +32,8 @@ DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=platforms
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
 
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
@@ -105,37 +105,13 @@ Packagehint=ofdm
 File=modules/airblue/lib/airblue_shared.awb
 Packagehint=ofdm
 
-[Register Mapping Utilities]
-File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
-Packagehint=bsv-libraries
-
-[FIFO Utility]
-File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
-Packagehint=bsv-libraries
-
-[Vector Utilities]
-File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
-Packagehint=bsv-libraries
-
 [StreamCaptureFIFO]
 File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
-
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
 
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
 Packagehint=ofdm
-
-[Avalon Bus Intefaces]
-File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
-Packagehint=bsv-libraries
-
-[RegisterLibrary]
-File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
-Packagehint=bsv-libraries
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -145,27 +121,17 @@ Packagehint=ofdm
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
 Packagehint=ofdm
 
-[CBus Utilities]
-File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
-Packagehint=bsv-libraries
-
 [Airblue Shared Libraries/Requires]
 stream_capture_fifo=StreamCaptureFIFO
-fifo_utils=FIFO Utility
 spi=SPI
 commit_fifo=CommitFIFO
 reversal_buffer=ReversalBuffer
 client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
-vector_utils=Vector Utilities
-debug_utils=Debug Utilities
-c_bus_utils=CBus Utilities
 airblue_common=Airblue common library
 stat_min=Min collector
-avalon=Avalon Bus Intefaces
 airblue_shift_regs=Airblue Shifted Registers
 stat_averager=Averager collector
-register_mapper=Register Mapping Utilities
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
@@ -183,9 +149,6 @@ Packagehint=bsv-libraries
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
 Packagehint=bsv-libraries
 
-[Register Mapping Utilities/Requires]
-register_library=RegisterLibrary
-
 [SPI]
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
@@ -202,12 +165,9 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
 
-
-
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
-
 
 [Airblue Noisy Channel]
 File=modules/airblue/lib/Channel/airblue_noisy_channel.awb

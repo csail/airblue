@@ -47,8 +47,8 @@ Packagehint=ofdm
 hw_only_application=Airblue WiFi Synchronizer Test
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=platforms
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
 
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
@@ -111,7 +111,6 @@ Packagehint=ofdm
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
-
 
 [Airblue Noisy Channel]
 File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
