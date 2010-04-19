@@ -36,7 +36,7 @@ AIRBLUE_DRIVER_CLASS::Main()
   while(clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX) < 50){sleep(5);}
   printf("Done waiting for packets\n");
   ber = clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_BER);
-  check_ber(ber);
+  result = check_ber(ber);
   if(result) {
     printf("Test PASSed, ber was %d",ber);
   } else {
