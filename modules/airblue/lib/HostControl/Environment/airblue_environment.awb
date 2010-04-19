@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Environment 
+%desc functions for interfacing with the environment 
+%provides airblue_environment
+
+%attributes ofdm
+
+%sources -t H    -v PUBLIC  check_ber.h
+%sources -t CPP  -v PRIVATE check_ber.cpp
+
+
+%AWB_END
