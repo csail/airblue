@@ -1,0 +1,9 @@
+service CBUSVECTORCONTROLRRR
+{
+    server hw (bsv,connection) <- sw (cpp, method)
+    {
+       method Read(in UINT32[32] index, in UINT32[32] addr, out UINT32[32] data);  
+       method Write(in UINT32[32] index, in UINT32[32] addr, in UINT32[32] data);  
+    };
+
+ };

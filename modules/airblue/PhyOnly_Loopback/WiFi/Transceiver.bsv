@@ -33,31 +33,6 @@ import LFSR::*;
 import ClientServer::*;
 import Clocks::*;
 
-// import AvalonSlave::*;
-// import AvalonCommon::*;
-// import CBusUtils::*;
-// import SPIMaster::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import LibraryFunctions::*;
-// import FPComplex::*;
-// import Synchronizer::*;
-// import FPComplex::*;
-// import PacketGen::*;
-// import WiFiReceiver::*;
-// import WiFiTransmitter::*;
-// import MACPhyParameters::*;
-
-// import GCT::*;
-// import AD::*;
-// import Power::*;
-// import AGC::*;
-// import OutOfBand::*;
-
 // Local includes
 `include "asim/provides/airblue_device.bsh"
 `include "asim/provides/airblue_types.bsh"
@@ -71,6 +46,7 @@ import Clocks::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_phy_packet_gen.bsh"
 `include "asim/provides/airblue_phy.bsh"
+`include "asim/dict/AIRBLUE_REGISTER_MAP.bsh"
 
 interface TransceiverASICWires;
   interface GCTWires gctWires;      
@@ -87,7 +63,7 @@ interface TransceiverFPGA;
   interface DACWires dacWires;
   interface SPIMasterWires#(SPISlaveCount) spiWires;
   interface PowerCtrlWires powerCtrlWires;
-  interface AvalonSlaveWires#(AvalonAddressWidth,AvalonDataWidth) avalonWires;
+  interface CBus#(AvalonAddressWidth,AvalonDataWidth) busWires;
   interface OutOfBandWires oobWires;
 endinterface
 
@@ -123,21 +99,21 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 
 
    // packet Gen externals
-   mkCBusWideRegRW(valueof(AddrEnablePacketGen),packetGen.enablePacketGen);
+   mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,packetGen.enablePacketGen);
    mkCBusWideRegR(valueof(AddrPacketsTX),packetGen.packetsTX);
    mkCBusWideRegRW(valueof(AddrMinPacketLength),packetGen.minPacketLength);
    mkCBusWideRegRW(valueof(AddrMaxPacketLength),packetGen.maxPacketLength);
    mkCBusWideRegRW(valueof(AddrPacketLengthMask),packetGen.packetLengthMask);
    mkCBusWideRegRW(valueof(AddrPacketDelay),packetGen.packetDelay);
-   mkCBusWideRegRW(valueof(AddrRate),packetGen.rate);
+   mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_RATE,packetGen.rate);
    mkCBusWideRegR(valueof(AddrCycleCountTX),packetGen.cycleCount);
 
    // packet check externals
-   mkCBusWideRegR(valueof(AddrPacketsRX),packetCheck.packetsRX);
+   mkCBusWideRegR(`AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX,packetCheck.packetsRX);
    mkCBusWideRegR(valueof(AddrPacketsRXCorrect),packetCheck.packetsRXCorrect);
    mkCBusWideRegR(valueof(AddrGetBytesRX),packetCheck.bytesRX);
    mkCBusWideRegR(valueof(AddrGetBytesRXCorrect),packetCheck.bytesRXCorrect);
-   mkCBusWideRegR(valueof(AddrBER),packetCheck.ber);
+   mkCBusWideRegR(`AIRBLUE_REGISTER_MAP_ADDR_BER,packetCheck.ber);
 
 
    // hook up TX controlflow
@@ -269,37 +245,15 @@ module [Module]  mkTransceiverPacketGenFPGAReset#(Clock viterbiClock, Reset vite
    Clock asicClock <- exposeCurrentClock;
    Reset asicReset <- exposeCurrentReset;
 
-
-   AvalonSlave#(AvalonAddressWidth,AvalonDataWidth) busSlave <- mkAvalonSlave(asicClock,asicReset,clocked_by busClock, reset_by busReset);
    // Build up CReg interface   
    let ifc <- exposeCBusIFC(mkTransceiverPacketGenFPGAMonad(viterbiClock,viterbiReset,rfClock, rfReset));
-  
-   //Create a mapping...
-   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  register_mapper::Read);
-      let request <- busSlave.busClient.request.get;
-      let readVal <- ifc.cbus_ifc.read(request.addr);
-      if(`DEBUG_TRANSCEIVER == 1)
-         begin
-            $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
-         end
-      busSlave.busClient.response.put(readVal);
-   endrule
- 
-   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  register_mapper::Write);
-      let request <- busSlave.busClient.request.get;
-      if(`DEBUG_TRANSCEIVER == 1)
-         begin
-            $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
-         end
-      ifc.cbus_ifc.write(request.addr,request.data);
-   endrule
 
   interface gctWires = ifc.device_ifc.gctWires;      
   interface adcWires = ifc.device_ifc.adcWires;
   interface dacWires = ifc.device_ifc.dacWires;
   interface spiWires = ifc.device_ifc.spiWires;
   interface powerCtrlWires = ifc.device_ifc.powerCtrlWires;
-  interface avalonWires = busSlave.slaveWires;
+  interface busWires = ifc.cbus_ifc;
   interface oobWires = ifc.device_ifc.oobWires;
 endmodule
 

@@ -1,0 +1,4 @@
+def AIRBLUE.REGISTER_MAP.ADDR_RATE "Packet Gen Rate";
+def AIRBLUE.REGISTER_MAP.ADDR_ENABLE_PACKET_GEN "Packet Gen Enable Packet Gen";
+def AIRBLUE.REGISTER_MAP.ADDR_PACKETS_RX "Packet Check Packets Received";
+def AIRBLUE.REGISTER_MAP.ADDR_BER "Packet Check BER";

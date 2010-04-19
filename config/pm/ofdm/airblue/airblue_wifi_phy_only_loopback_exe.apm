@@ -2,7 +2,7 @@
 [Soft Connections Hybrid Application Environment/Requires]
 platform_services=Platform Services
 soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
+connected_application=Airblue application
 
 [Global]
 SaveParameters=0
@@ -47,7 +47,7 @@ airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
 airblue_channel=Airblue Noisy Channel
-airblue_host_control=Simple RRR Host Control
+airblue_host_control=CBus Vector RRR Host Control
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
@@ -140,13 +140,6 @@ Packagehint=ofdm
 [CommitFIFO]
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
 Packagehint=bsv-libraries
-
-[HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
-
-[HW only hybrid application/Requires]
-hw_only_application=WiFi Phy Only Loopback
 
 [WiFi Transmitter Pipeline]
 File=modules/airblue/Phy/WiFi/tx/airblue_transmitter.awb
@@ -286,10 +279,6 @@ application_env=Soft Connections Hybrid Application Environment
 File=modules/project/xilinx_post_synth.awb
 Packagehint=platforms
 
-[Simple RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
-Packagehint=ofdm
-
 [Xilinx BITGEN]
 File=modules/project/xilinx_bitgen.awb
 Packagehint=platforms
@@ -313,3 +302,29 @@ Packagehint=platforms
 [ReversalBufferBRAM]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer_bram.awb
 Packagehint=bsv-libraries
+
+[CBus Vector RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
+Packagehint=ofdm
+
+[Airblue application]
+File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
+Packagehint=ofdm
+
+[Airblue application/Requires]
+airblue_driver_application=RXTX Simulation Driver
+hw_only_application=WiFi Phy Only Loopback
+
+[RXTX Simulation Driver]
+File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
+Packagehint=ofdm
+
+[RXTX Simulation Driver/Requires]
+airblue_environment=Airblue Environment
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[HW/SW Hybrid Pipeline Build/Params]
+WAIT_FOR_HARDWARE=0

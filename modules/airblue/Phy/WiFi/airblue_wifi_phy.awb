@@ -16,4 +16,6 @@
 
 %sources -t BSV -v PUBLIC WiFiTransceiver.bsv
 
+%sources -t DICT -v PUBLIC WiFiRegisterMap.dic
+
 %AWB_END

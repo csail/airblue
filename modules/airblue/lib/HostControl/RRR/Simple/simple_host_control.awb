@@ -7,13 +7,12 @@
 %name Simple RRR Host Control 
 %desc Simple RRR Host Control 
 %provides airblue_host_control
+%requires airblue_environment
 
 %attributes ofdm
 
 %sources -t H    -v PUBLIC  SimpleHostControl.h
 %sources -t CPP  -v PRIVATE SimpleHostControl.cpp
-%sources -t H    -v PUBLIC  check_ber.h
-%sources -t CPP  -v PRIVATE check_ber.cpp
 %sources -t RRR  -v PUBLIC  SimpleHostControl.rrr
 
 

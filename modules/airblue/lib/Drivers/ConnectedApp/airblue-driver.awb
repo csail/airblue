@@ -1,0 +1,15 @@
+
+%name Airblue application
+%desc Application for interfacing with the airblue system
+
+%provides connected_application
+
+%requires hw_only_application
+%requires airblue_driver_application
+
+%public  airblue-driver.h
+%public  airblue-driver.bsv
+%private airblue-driver.cpp
+
+%param SYNTH_BOUNDARY mkConnectedApplication "name of synthesis boundary"
+
