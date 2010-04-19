@@ -262,9 +262,9 @@ module mkSynchronizerTest(Empty);
    rule finishTest(cycle > 300000);
       $display("Cycle %d: simulation ends, detection success = %d, misses = %d, false +v = %d",cycle,detected,misses,false);
       if (misses == 0 && false == 0)
-         $display("Pass");
+         $display("PASS");
       else
-         $display("Fail");
+         $display("FAIL");
       $finish();
    endrule
    
