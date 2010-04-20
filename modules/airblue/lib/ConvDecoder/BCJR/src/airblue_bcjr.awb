@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name Airblue BCJR (no Soft Hints)
+%name Airblue BCJR
 %desc Convolutional Decoder implemented using BCJR algorithm (support Soft-Phy-Hints too)   
 %provides airblue_convolutional_decoder
 
@@ -12,7 +12,11 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnit.bsv 
+%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnit.bsv BackwardPath.bsv ForwardPath.bsv
+
+%generated -t BA mkIBCJR.ba
+%generated -t BA mkDecisionUnit.ba
+%generated -t BA module_getBranchMetricBackward.ba
 
 %generated -t VERILOG mkIBCJR.v
 %generated -t VERILOG mkDecisionUnit.v

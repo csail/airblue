@@ -95,10 +95,42 @@ typedef Bit#(VPathMetricSz)                                     VPathMetric;    
 typedef Tuple2#(Bool, 
                 Vector#(FwdSteps, 
                         Vector#(ConvOutSz, VMetric)))        VInType;
+
+typedef Vector#(FwdSteps, Bit#(ConvInSz)) VOutData;
+
+typedef struct {
+   VOutData data;
+   VPathMetric path_metric;
+} VSoftOut deriving (Eq,Bits);
+
+typeclass VOut#(type vout_t, type viterbi_t)
+    dependencies (vout_t determines viterbi_t, viterbi_t determines vout_t);
+  function viterbi_t select(vout_t x, Integer i, Integer j);
+  function vout_t create_vout(VOutData data, VPathMetric path_metric);
+endtypeclass
+
+instance VOut#(VSoftOut, ViterbiSoftOutput);
+  function ViterbiSoftOutput select(VSoftOut x, Integer i, Integer j);
+    return tuple2(x.data[i][j], x.path_metric);
+  endfunction
+  function VSoftOut create_vout(VOutData data, VPathMetric path_metric);
+    return VSoftOut { data: data, path_metric: path_metric };
+  endfunction
+endinstance
+
+instance VOut#(VOutData, ViterbiHardOutput);
+  function ViterbiHardOutput select(VOutData x, Integer i, Integer j);
+    return x[i][j];
+  endfunction
+  function VOutData create_vout(VOutData data, VPathMetric path_metric);
+    return data;
+  endfunction
+endinstance
+
 `ifdef SOFT_PHY_HINTS
-typedef Tuple2#(Vector#(FwdSteps, Bit#(ConvInSz)), VPathMetric) VOutType;
+typedef VSoftOut VOutType;
 `else
-typedef Vector#(FwdSteps, Bit#(ConvInSz))                    VOutType;
+typedef VOutData VOutType;
 `endif
 
 // no. extended conolutional generator polynomials = FwdSteps x ConvOutSz

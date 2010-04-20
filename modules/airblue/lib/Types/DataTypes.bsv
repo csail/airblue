@@ -46,12 +46,15 @@ typedef Vector#(n, FPComplex#(i_prec, f_prec))
 
 // Viterbi Metric
 typedef Bit#(5) ViterbiMetric;
-typedef Bit#(9) SoftPhyHints;
+typedef Bit#(12) SoftPhyHints;
+
+typedef Bit#(1) ViterbiHardOutput;
+typedef Tuple2#(ViterbiHardOutput,SoftPhyHints) ViterbiSoftOutput;
 
 `ifdef SOFT_PHY_HINTS
-typedef Tuple2#(Bit#(1),SoftPhyHints) ViterbiOutput;
+typedef ViterbiSoftOutput ViterbiOutput;
 `else
-typedef Bit#(1) ViterbiOutput;
+typedef ViterbiHardOutput ViterbiOutput;
 `endif
 
 typedef Vector#(o_sz,ViterbiMetric)

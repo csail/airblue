@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name Airblue BCJR with Alpha Init(no Soft Hints)
+%name Airblue BCJR with Alpha Init
 %desc uses forward path alphas to salt the backward path   
 %provides airblue_convolutional_decoder
 
@@ -12,7 +12,7 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC BCJRForwardPathInit.bsv BCJRParams.bsv DecisionUnit.bsv 
+%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnit.bsv BackwardPath.bsv ForwardPathAlphaInit.bsv
 
 %generated -t BA mkIBCJR.ba
 %generated -t BA mkDecisionUnit.ba

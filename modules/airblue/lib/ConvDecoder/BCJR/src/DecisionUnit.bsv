@@ -105,7 +105,7 @@ module mkDecisionUnit (DecisionUnit);
       ExtendedPathMetric                 other_min_path_metric = tpl_2(other_min_tpl);
       ExtendedPathMetric                 soft_phy_hints = min_path_metric - other_min_path_metric;
       
-      let out = res;
+      VOutType out = create_vout(res, soft_phy_hints);
 
 
       out_data_q.enq(out);
