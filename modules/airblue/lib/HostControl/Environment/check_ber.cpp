@@ -29,7 +29,7 @@ int get_rate()
   int rate = DEFAULT_RATE;
   char* rate_str = getenv("ADDERROR_RATE");
   if (rate_str) {
-    rate = strtod(rate_str, NULL);
+    rate = atoi(rate_str);
   }
 
   return rate;
