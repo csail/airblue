@@ -13,11 +13,7 @@
 %requires airblue_shift_regs
 %requires airblue_types
 %requires airblue_synchronizer
-%requires register_library
-%requires c_bus_utils
 %requires stream_capture_fifo
-%requires debug_utils
-%requires vector_utils
 %requires airblue_channel
 
 %attributes airblue

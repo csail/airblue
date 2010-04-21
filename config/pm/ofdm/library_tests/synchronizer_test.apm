@@ -35,10 +35,6 @@ Packagehint=hasim
 DefaultAttributes=airblue
 model=HW/SW Hybrid Project Foundation
 
-[StreamCaptureFIFO]
-File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
-
 [Airblue Synchronizer]
 File=modules/airblue/lib/Synchronizer/src/airblue_synchronizer.awb
 Packagehint=ofdm
@@ -53,14 +49,6 @@ Packagehint=bsv-libraries
 [HW/SW Hybrid Project Foundation]
 File=modules/project/project-hybrid.awb
 Packagehint=platforms
-
-[RegisterLibrary]
-File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
-Packagehint=bsv-libraries
-
-[CBus Utilities]
-File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
-Packagehint=bsv-libraries
 
 [Soft Connections Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
@@ -79,26 +67,14 @@ application_env=Soft Connections Hybrid Application Environment
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=ofdm
 
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
-Packagehint=bsv-libraries
-
-[Vector Utilities]
-File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
-Packagehint=bsv-libraries
-
 [Airblue WiFi Synchronizer Test/Requires]
-c_bus_utils=CBus Utilities
-stream_capture_fifo=StreamCaptureFIFO
 airblue_types=Airblue types (no SoftHints)
 airblue_common=Airblue common library
 airblue_shift_regs=Airblue Shifted Registers
 airblue_synchronizer=Airblue Synchronizer
-vector_utils=Vector Utilities
-register_library=RegisterLibrary
-debug_utils=Debug Utilities
 airblue_channel=Airblue Noisy Channel
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+stream_capture_fifo=StreamCaptureFIFO
 
 [Airblue WiFi Synchronizer Test]
 File=modules/airblue/lib/Synchronizer/test/airblue_synchronizer_test.awb
@@ -115,3 +91,7 @@ Packagehint=ofdm
 [Airblue Noisy Channel]
 File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
 Packagehint=ofdm
+
+[StreamCaptureFIFO]
+File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
+Packagehint=bsv-libraries
