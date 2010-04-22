@@ -857,8 +857,8 @@ module mkFreqEstimator(FreqEstimator);
 	end
       else
 	 begin
-//            noAction;
-	    rotAng <= rotAng + freqOff;
+            noAction; // turn off freq offset rotation
+//	    rotAng <= rotAng + freqOff; // turn on freq offset rotation
 	 end
       if(`DEBUG_SYNCHRONIZER == 1)
          begin
