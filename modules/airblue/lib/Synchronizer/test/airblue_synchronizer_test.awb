@@ -19,13 +19,17 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC SynchronizerTest.bsv
+%sources -t BDPI_C -v PUBLIC nextRandData.c
 
 %generated -t BA mkSynchronizerTest.ba
 %generated -t BA mkStatefulSynchronizerInstance.ba
 %generated -t BA mkPacketGenerator.ba
+%generated -t BA nextRandData.ba
 
 %generated -t VERILOG mkSynchronizerTest.v
 %generated -t VERILOG mkStatefulSynchronizerInstance.v
 %generated -t VERILOG mkPacketGenerator.v
+
+%param RAND_DATA_FROM_C 1 "Enable random data generated from C instead of LSRR" 
  
 %AWB_END

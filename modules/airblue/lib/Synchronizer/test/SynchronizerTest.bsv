@@ -53,6 +53,9 @@ import Vector::*;
 // to deal with the case where synchronizer may output some initialization junk samples, will try to adjust the expected position accordingly 
 `define SyncPosAdjustment 11 
 
+import "BDPI" nextRandData = 
+    function Bit#(32) nextRandData();
+
 interface PacketGenerator;
    interface Get#(Bit#(16))         nextLength; // start the next random packet, return packet length
    interface Get#(FPComplex#(2,14)) nextData;   // get the next data
@@ -126,7 +129,18 @@ module mkPacketGenerator (PacketGenerator);
             Data: begin
                      i_lfsr.next();
                      q_lfsr.next();
-                     let out_sample = cmplx(unpack(i_lfsr.value()),unpack(q_lfsr.value()));
+                     FPComplex#(2,14) out_sample;
+                     if (`RAND_DATA_FROM_C == 1)
+                        begin
+                           let out = nextRandData();
+                           let outRel = truncate(out);
+                           let outImg = tpl_1(split(out));
+                           out_sample = cmplx(unpack(outRel), unpack(outImg));
+                        end
+                     else
+                        begin
+                           out_sample = cmplx(unpack(i_lfsr.value()), unpack(q_lfsr.value()));
+                        end
                      if (counter == len) 
                         begin
                            len_lfsr.next();
