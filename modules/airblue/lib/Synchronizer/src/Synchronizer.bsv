@@ -857,8 +857,7 @@ module mkFreqEstimator(FreqEstimator);
 	end
       else
 	 begin
-            noAction; // turn off freq offset rotation
-//	    rotAng <= rotAng + freqOff; // turn on freq offset rotation
+	    rotAng <= rotAng + freqOff;
 	 end
       if(`DEBUG_SYNCHRONIZER == 1)
          begin
@@ -932,7 +931,8 @@ module mkFreqRotator(FreqRotator);
       let newOutData = freqRotIn.delayedData;
       let rotCosSinPair <- cordic.getCosSinPair;
       FPComplex#(SyncIntPrec,SyncFractPrec) rotCmplx = fpcmplxTruncate(cmplx(rotCosSinPair.cos, rotCosSinPair.sin));
-      FPComplex#(SyncIntPrec,SyncFractPrec) outCmplx = fpcmplxTruncate(fpcmplxMult(inCmplx, rotCmplx));
+//      FPComplex#(SyncIntPrec,SyncFractPrec) outCmplx = fpcmplxTruncate(fpcmplxMult(inCmplx, rotCmplx)); // turn on for freq offset compensation
+      FPComplex#(SyncIntPrec,SyncFractPrec) outCmplx = inCmplx; // turn off freq offset compensation
       if (rotDelayed)
          newOutData = outCmplx;
       else
@@ -948,8 +948,8 @@ module mkFreqRotator(FreqRotator);
       outQ.enq(FreqRotOutT{control: control,
 			   delayedData: newDelayedData,
 			   outData: newOutData});
-      if(`DEBUG_SYNCHRONIZER == 1)
-         begin
+     if(`DEBUG_SYNCHRONIZER == 1)
+        begin
             $write("RULE at cycle %d FreqRot.procRot:",cycle);
             fxptWrite(7, rotAng);
             $display("");      				  
@@ -957,7 +957,7 @@ module mkFreqRotator(FreqRotator);
             $display("");
             cmplxWrite("outCmplx:("," + ","i)",fxptWrite(7),outCmplx);
             $display("");
-         end
+        end
    endrule
       
    method Action putFreqRotIn(FreqRotInT freqRotIn);
