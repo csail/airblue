@@ -2,19 +2,14 @@ import GetPut::*;
 import ClientServer::*;
 import CBus::*;
 import FIFOF::*;
-
-// import Synchronizer::*;
-// import FPGAParameters::*;
-// import MACPhyParameters::*;
-
-// import SPIMaster::*;
-// import Debug::*;
+import Clocks::*;
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/debug_utils.bsh"
 `include "asim/provides/spi.bsh"
+`include "asim/provides/rf_driver.bsh"
 
 // These are time constants for enabling/disabling the rx/tx
 
@@ -27,28 +22,29 @@ typedef Bit#(TAdd#(1,TAdd#(SPIAddrSz,SPIDataSz))) SPIRawBits;
 
 // should define a type for the SPI  probably need to pack it myself.
 
-interface GCTWires;
- (* always_ready, always_enabled, prefix="", result="gct_tx_pe" *)
- method Bit#(1) txPE();   
- (* always_ready, always_enabled, prefix="", result="gct_rx_pe" *) 
- method Bit#(1) rxPE();
- (* always_ready, always_enabled, prefix="", result="gct_rx_tx_switch" *)
- method Bit#(1) rxTxSwitch();   
- (* always_ready, always_enabled, prefix="", result="gct_rx_tx_switch_n" *)
- method Bit#(1) rxTxSwitchN();   
- (* always_ready, always_enabled, prefix="", result="gct_ghold" *) 
- method Bit#(1) gHold();
- (* always_ready, always_enabled, prefix="", result="gct_rx_rfg1" *) 
- method Bit#(1) rxRFG1();
- (* always_ready, always_enabled, prefix="", result="gct_rx_rfg2" *) 
- method Bit#(1) rxRFG2();
- method Bit#(1) pa_EN();
+interface GCT_WIRES;
+  (* always_ready, always_enabled, prefix="", result="gct_tx_pe" *)
+  method Bit#(1) txPE();   
+  (* always_ready, always_enabled, prefix="", result="gct_rx_pe" *) 
+  method Bit#(1) rxPE();
+  (* always_ready, always_enabled, prefix="", result="gct_rx_tx_switch" *)
+  method Bit#(1) rxTxSwitch();   
+  (* always_ready, always_enabled, prefix="", result="gct_rx_tx_switch_n" *)
+  method Bit#(1) rxTxSwitchN();   
+  (* always_ready, always_enabled, prefix="", result="gct_ghold" *) 
+  method Bit#(1) gHold();
+  (* always_ready, always_enabled, prefix="", result="gct_rx_rfg1" *) 
+  method Bit#(1) rxRFG1();
+  (* always_ready, always_enabled, prefix="", result="gct_rx_rfg2" *) 
+  method Bit#(1) rxRFG2();
+  method Bit#(1) pa_EN();
+  interface SPIMasterWires#(SPISlaveCount) spiWires; 
+  interface Clock basebandClock;
+  interface Reset basebandReset;
 endinterface
 
-interface GCT;
-  interface Put#(SPIRawBits) spiCommand;
-  interface GCTWires gctWires;      
-  interface SPIMasterWires#(SPISlaveCount) spiWires;
+interface GCT_DRIVER;
+  interface Put#(SPIMasterRequest#(SPISlaveCount,SPIRawBits)) spiCommand;
   interface Put#(ControlType) synchronizerStateUpdate;
   interface Put#(RXExternalFeedback) packetFeedback;
   interface Put#(TXVector) txStart;
@@ -56,6 +52,11 @@ interface GCT;
   interface Get#(Bool) rxBusy;
   interface Get#(Bool) txBusy;
 endinterface
+
+interface GCT_DEVICE;
+  interface GCT_WIRES gct_wires;
+  interface GCT_DRIVER gct_driver;
+endinterface 
 
 typedef enum {
   Held,
@@ -74,10 +75,13 @@ typedef enum {
   Data = 6
 } PipeState deriving (Bits,Eq);
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
+module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT_DEVICE)
   provisos(Add#(1,xxx,AvalonDataWidth));
   
   Reg#(Bool) initialized <- mkReg(False);
+
+  Clock clock <- exposeCurrentClock();
+  Reset reset <- exposeCurrentReset();
 
   /* These regs drive the grt digital signals. */
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrDCCCalibration = CRAddr{a: fromInteger(valueof(AddrDCCCalibration)) , o: 0};
@@ -294,14 +298,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
     let data <- spiMaster.server.response.get;
   endrule
 
-  interface Put spiCommand;
-    method Action put(SPIRawBits command);
-      spiMaster.server.request.put(SPIMasterRequest{slave:0, data:command});
-    endmethod
-  endinterface
-
-  interface spiWires = spiMaster.wires; 
-  interface GCTWires gctWires;
+  interface GCT_WIRES gct_wires;
+    interface spiWires = spiMaster.wires; 
     method txPE = txPE._read;   
     method rxPE = rxPE._read;
     method rxTxSwitch = txPE._read | calibrationMode;   // Shut off during calibration
@@ -310,58 +308,70 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGCT (GCT)
     method rxRFG1 = rxRFG1._read;
     method rxRFG2 = rxRFG2._read;
     method pa_EN = pa_EN._read;
+    interface basebandClock = clock;
+    interface basebandReset = reset;
   endinterface
 
-  // We chould probably only care about this if we are rxing
-  // otherwise we should drop this crap
-  interface Put synchronizerStateUpdate;
-    method Action put(ControlType ctrl);
-      
-      syncWire.wset(ctrl);
-    endmethod
-  endinterface
-
-
-  // no tx start when calibrating
-  interface Put txStart;
-    method Action put(TXVector txvec) if(calibrationMode == 0); // No conflict with counting rule >
-      txFIFO.enq(txvec);
-      txVectorsReceived <= txVectorsReceived + 1;
-       if(`DEBUG_RF_DEVICE == 1)
-          begin
+  
+  interface GCT_DRIVER gct_driver;
+    // no tx start when calibrating
+    interface Put txStart;
+      method Action put(TXVector txvec) if(calibrationMode == 0); // No conflict with counting rule >
+        txFIFO.enq(txvec);
+        txVectorsReceived <= txVectorsReceived + 1;
+         if(`DEBUG_RF_DEVICE == 1)
+           begin
              debug(gctDebug,$display("GCT txFIFO enq"));  
-          end
-    endmethod
-  endinterface
+           end
+      endmethod
+    endinterface
 
-  interface Put txComplete; // This Bit 0 is ugly.
-    method Action put(Bit#(0) in);
-      txVectorsProcessed <= txVectorsProcessed + 1;
-       if(`DEBUG_RF_DEVICE == 1)
+    interface Put spiCommand;
+      method Action put(SPIMasterRequest#(SPISlaveCount,SPIRawBits) command);
+       spiMaster.server.request.put(command);
+      endmethod
+    endinterface
+
+    interface Put txComplete; // This Bit 0 is ugly.
+      method Action put(Bit#(0) in);
+        txVectorsProcessed <= txVectorsProcessed + 1;
+        if(`DEBUG_RF_DEVICE == 1)
           begin
-             debug(gctDebug,$display("GCT txFIFO deq"));  
+            debug(gctDebug,$display("GCT txFIFO deq"));  
           end
-      txFIFO.deq; 
-    endmethod
+        txFIFO.deq; 
+      endmethod
+    endinterface
+
+    interface Put packetFeedback;
+      method Action put(RXExternalFeedback feedback);
+        feedbackWire.wset(feedback);      
+      endmethod
+    endinterface
+
+    // XXX need to check RX state here as well....
+    // this name is misleading...
+    interface Get txBusy;
+      method ActionValue#(Bool) get();
+        return  txPE == 1;      
+      endmethod
+    endinterface 
+
+    // We chould probably only care about this if we are rxing
+    // otherwise we should drop this crap
+   interface Put synchronizerStateUpdate;
+     method Action put(ControlType ctrl);
+     
+       syncWire.wset(ctrl);
+     endmethod
+   endinterface
+
+
+
+    interface Get rxBusy; // Is this correct? We may want to ignore longSync/shortSync 
+      method ActionValue#(Bool) get();
+        return  pipelineState == LongSync || pipelineState == Data || pipelineState == Header;//pipelineState != Idle;      
+      endmethod
+    endinterface 
   endinterface
-
-  interface Put packetFeedback;
-    method Action put(RXExternalFeedback feedback);
-      feedbackWire.wset(feedback);      
-    endmethod
-  endinterface
-
-  // XXX need to check RX state here as well....
-  // this name is misleading...
-  interface Get txBusy;
-    method ActionValue#(Bool) get();
-      return  txPE == 1;      
-    endmethod
-  endinterface 
-
-  interface Get rxBusy; // Is this correct? We may want to ignore longSync/shortSync 
-    method ActionValue#(Bool) get();
-      return  pipelineState == LongSync || pipelineState == Data || pipelineState == Header;//pipelineState != Idle;      
-    endmethod
-  endinterface 
 endmodule

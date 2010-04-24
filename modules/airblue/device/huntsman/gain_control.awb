@@ -1,0 +1,9 @@
+%name Airblue 1.0 Gain Control
+%desc Old-style Airblue 1.0 Gain Control
+%provides gain_control
+
+%attributes airblue huntsman
+
+%sources -t BSV -v PUBLIC AGC.bsv 
+
+%AWB_END

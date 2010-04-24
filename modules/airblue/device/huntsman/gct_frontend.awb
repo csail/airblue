@@ -1,0 +1,10 @@
+%name GCT RF Frontend Control
+%desc Interface for GCT frontend chip
+%provides rf_frontend
+
+%attributes airblue huntsman
+%requires gct_driver
+
+%sources -t BSV -v PUBLIC GCT.bsv 
+
+%AWB_END

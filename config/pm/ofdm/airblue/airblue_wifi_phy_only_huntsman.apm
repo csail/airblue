@@ -1,6 +1,6 @@
 
 [Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services
+platform_services=Airblue Services
 soft_connections_lib=Soft Connections Library
 connected_application=Airblue application
 
@@ -9,7 +9,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=airblue_wifi_phy_only_loopback_exe
+File=airblue_wifi_phy_only_huntsman
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -23,10 +23,6 @@ Packagehint=hasim
 File=config/pm/hasim/submodels/common/soft-connections-lib.apm
 Packagehint=hasim
 
-[Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
-Packagehint=hasim
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
@@ -36,22 +32,8 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
-
-[WiFi Phy Only Loopback/Requires]
-airblue_types=Airblue types (no SoftHints)
-airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_shared=Airblue Shared Libraries
-airblue_phy=WiFi Phy Transceiver
-airblue_phy_packet_gen=Airblue Phy Only PacketGen
-airblue_channel=Airblue Noisy Channel
-airblue_host_control=CBus Vector RRR Host Control
-rf_frontend=GCT RF Frontend Control
-analog_digital=Huntsman AD
-digital_scaler=Digital Scaler
-gain_control=Airblue 1.0 Gain Control
-rf_driver=Simulation Frontend Driver
+File=config/pm/ofdm/submodels/huntsman-jtag.apm
+Packagehint=ofdm
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
@@ -67,10 +49,6 @@ Packagehint=platforms
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
-Packagehint=ofdm
-
-[WiFi Phy Only Loopback]
-File=modules/airblue/PhyOnly_Loopback/WiFi/airblue_wifi_phyonly_loopback.awb
 Packagehint=ofdm
 
 [Airblue Pilot Insert]
@@ -119,7 +97,7 @@ airblue_special_fifos=Airblue Special FIFOs
 airblue_shift_regs=Airblue Shifted Registers
 stream_capture_fifo=StreamCaptureFIFO
 commit_fifo=CommitFIFO
-reversal_buffer=ReversalBufferBRAM
+reversal_buffer=ReversalBuffer
 spi=SPI
 stat_min=Min collector
 stat_averager=Averager collector
@@ -143,6 +121,10 @@ Packagehint=ofdm
 
 [CommitFIFO]
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
+Packagehint=bsv-libraries
+
+[ReversalBuffer]
+File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
 Packagehint=bsv-libraries
 
 [WiFi Transmitter Pipeline]
@@ -217,10 +199,6 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
-
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
 airblue_descrambler=Airblue Descrambler
@@ -239,20 +217,9 @@ Packagehint=ofdm
 File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
-[Synplify Synthesis Tool]
-File=modules/project/synplify.awb
-Packagehint=platforms
-
 [FPGA Build Pipeline/Requires]
-post_synthesis_tool=Xilinx Post-synthesis Toolchain
+post_synthesis_tool=Altera Post-synthesis Toolchain
 synthesis_tool=Synplify Synthesis Tool
-
-[Xilinx Post-synthesis Toolchain/Requires]
-xilinx_ngd=Xilinx NGD
-xilinx_bitgen=Xilinx BITGEN
-xilinx_par=Xilinx PAR
-xilinx_map=Xilinx MAP
-xilinx_loader=Xilinx LOADER
 
 [FPGA Build Pipeline]
 File=modules/project/build-pipeline.awb
@@ -268,74 +235,37 @@ project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
 
-[Xilinx Post-synthesis Toolchain]
-File=modules/project/xilinx_post_synth.awb
+[Altera Post-synthesis Toolchain]
+File=modules/project/altera_post_synth.awb
 Packagehint=platforms
 
-[Xilinx BITGEN]
-File=modules/project/xilinx_bitgen.awb
+[FPGA Environment/Params]
+MODEL_CLOCK_DIVIDER=1
+MODEL_CLOCK_MULTIPLIER=1
+
+[Synplify Synthesis Tool]
+File=modules/project/synplify.awb
 Packagehint=platforms
-
-[Xilinx LOADER]
-File=modules/project/xilinx_loader.awb
-Packagehint=platforms
-
-[Xilinx NGD]
-File=modules/project/xilinx_ngd.awb
-Packagehint=platforms
-
-[Xilinx PAR]
-File=modules/project/xilinx_par.awb
-Packagehint=platforms
-
-[Xilinx MAP]
-File=modules/project/xilinx_map.awb
-Packagehint=platforms
-
-[ReversalBufferBRAM]
-File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer_bram.awb
-Packagehint=bsv-libraries
-
-[CBus Vector RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
-Packagehint=ofdm
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=RXTX Simulation Driver
-hw_only_application=WiFi Phy Only Loopback
-
-[RXTX Simulation Driver]
-File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
-Packagehint=ofdm
-
-[RXTX Simulation Driver/Requires]
-airblue_environment=Airblue Environment
+airblue_driver_application=Basic PHY Driver
+hw_only_application=WiFi Phy Only
 
 [Airblue Environment]
 File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
 Packagehint=ofdm
 
-[HW/SW Hybrid Pipeline Build/Params]
-WAIT_FOR_HARDWARE=0
-
-[Huntsman AD]
-File=modules/airblue/device/huntsman/analog_digital.awb
-Packagehint=ofdm
-
-[Airblue 1.0 Gain Control]
-File=modules/airblue/device/huntsman/gain_control.awb
-Packagehint=ofdm
-
-[GCT RF Frontend Control]
-File=modules/airblue/device/huntsman/gct_frontend.awb
-Packagehint=ofdm
-
-[GCT RF Frontend Control/Requires]
-gct_driver=Simulation Driver
+[WiFi Phy Only/Requires]
+airblue_host_control=CBus RRR Host Control
+airblue_phy=WiFi Phy Transceiver
+airblue_types=Airblue types (no SoftHints)
+airblue_phy_packet_gen=Airblue Phy Only PacketGen
+airblue_shared=Airblue Shared Libraries
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
 [Airblue BCJR with Alpha Init]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
@@ -344,14 +274,60 @@ Packagehint=ofdm
 [Airblue BCJR with Alpha Init/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Simulation Frontend Driver]
-File=modules/airblue/device/simulation/rf-driver.awb
+[WiFi Phy Only]
+File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
 Packagehint=ofdm
 
-[Digital Scaler]
-File=modules/airblue/device/huntsman/scaler.awb
+[CBus RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CBus/cbus_host_control.awb
 Packagehint=ofdm
 
-[Simulation Driver]
-File=modules/airblue/device/simulation/gct-driver.awb
+[Basic PHY Driver/Requires]
+airblue_environment=Airblue Environment
+
+[Basic PHY Driver]
+File=modules/airblue/lib/Drivers/BasicPHY/rxtx.awb
+Packagehint=ofdm
+
+[Common Services/Requires]
+stats_service=Stats Service
+assertions_service=Assertions Service
+debug_scan_service=Debug Scan Services
+streams_service=Streams Service
+dynamic_parameters_service=Dynamic Parameter Service
+
+[Streams Service]
+File=modules/hasim/util/platform-services/common-services/streams-service/streams-service.awb
+Packagehint=hasim
+
+[Stats Service]
+File=modules/hasim/util/platform-services/common-services/stats-service/stats-service.awb
+Packagehint=hasim
+
+[Common Services]
+File=modules/hasim/util/platform-services/common-services/common-services-standard.awb
+Packagehint=hasim
+
+[Assertions Service]
+File=modules/hasim/util/platform-services/common-services/assertions-service/assertions-service.awb
+Packagehint=hasim
+
+[Airblue Services/Requires]
+common_services=Common Services
+airblue_service=Airblue Service
+
+[Debug Scan Services]
+File=modules/hasim/util/platform-services/common-services/debug-scan-service/debug-scan-service.awb
+Packagehint=hasim
+
+[Dynamic Parameter Service]
+File=modules/hasim/util/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
+Packagehint=hasim
+
+[Airblue Services]
+File=modules/airblue/device/deviceServices/airblue-services.awb
+Packagehint=ofdm
+
+[Airblue Service]
+File=modules/airblue/device/deviceServices/airblue-service/airblue-service.awb
 Packagehint=ofdm

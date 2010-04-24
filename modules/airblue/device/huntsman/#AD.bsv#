@@ -6,24 +6,6 @@ import CBus::*;
 import FIFOF::*;
 import FixedPoint::*;
 
-// import FPGAParameters::*;
-// import DataTypes::*;
-// import FPComplex::*;
-// import ProtocolParameters::*;
-// import Scaler::*;
-// import Interfaces::*;
-// import Synchronizer::*;
-// import MACPhyParameters::*;
-
-// import BRAMFIFO::*;
-// import FIFOUtility::*;
-// import CBusUtils::*;
-// import Averager::*;
-// import StreamCaptureFIFO::*;
-// import TriggeredStreamCaptureFIFOF::*;
-// import Min::*;
-// import Debug::*;
-
 // this file wraps the ADC and DAC control chips.  Mostly, we're registering logic.
 // Local includes
 `include "asim/provides/debug_utils.bsh"
@@ -37,11 +19,13 @@ import FixedPoint::*;
 //`include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/stat_min.bsh"
 `include "asim/provides/stat_averager.bsh"
-
+`include "asim/provides/rf_driver.bsh"
+`include "asim/provides/digital_scaler.bsh"
+`include "asim/dict/AIRBLUE_RF_REGISTER_MAP.bsh"
 
 Bool adDebug = True;
 
-interface DACWires;
+interface DAC_WIRES;
  (* always_ready, always_enabled, prefix="", result="dac_gain_ctrl" *) 
   method Bit#(1) dacGainCtrl();
  (* always_ready, always_enabled, prefix="", result="dac_pwd" *) 
@@ -60,15 +44,19 @@ interface DACWires;
  interface Clock dacClk2; 
 endinterface
 
-interface DAC;
+interface DAC_DRIVER;
   interface Put#(DACMesg#(TXFPIPrec,TXFPFPrec)) dataOut;
-  interface DACWires dacWires;
   interface Put#(TXVector) txStart;
   method Action agcGainSet(Bit#(10) gain);
   method ActionValue#(Bit#(0)) txComplete();
 endinterface 
 
-interface ADCWires;
+interface DAC_DEVICE;
+  interface DAC_DRIVER dac_driver;
+  interface DAC_WIRES  dac_wires;
+endinterface
+
+interface ADC_WIRES;
   (* always_ready, always_enabled, prefix="", result="adc_dcs" *) 
   method Bit#(1) adcDCS();
   (* always_ready, always_enabled, prefix="", result="adc_dfs" *) 
@@ -86,43 +74,36 @@ interface ADCWires;
  (* always_ready, always_enabled, prefix="", result="adc_imag" *) 
   method Action adcIPart(Bit#(10) iin);
   interface Clock adcClk;
+  interface Reset adcRst;
+  interface Clock basebandClock;
+  interface Reset basebandReset;
 endinterface
 
-interface ADC;
+interface ADC_DRIVER;
   interface Get#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) dataIn;
 //  interface Put#(Synchronizer::ControlType) synchronizerStateUpdate;
   interface Put#(ControlType) synchronizerStateUpdate;
-  interface ADCWires adcWires;
   method ActionValue#(FPComplex#(ADCIPart,ADCFPart)) agcSampleBypass();
   method Action triggerCapture();
 endinterface 
+
+interface ADC_DEVICE;
+  interface ADC_DRIVER adc_driver;
+  interface ADC_WIRES  adc_wires;
+endinterface
 
 function Integer divCeil(Integer a, Integer b);
    return (a+b-1)/b;
 endfunction
 
-// These functions are used to determine the length of a packet
-// refactor at some point
-// function Integer bitsPerSymbol(Rate rate);
-//       // data bis per ofdm symbol 
-//    return case (rate)
-// 		      R0: 12;
-// 		      R1: 18;
-// 		      R2: 24;
-// 		      R3: 36;
-// 		      R4: 48;
-// 		      R5: 72;
-// 		      R6: 96;
-// 		      R7: 108;
-//           endcase;
-// endfunction
 
 // 80 chips / symbol  
 // 320 to start
 
 // should we disable sometimes?
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandClock, Reset basebandReset) (ADC);
+module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandClock, Reset basebandReset) (ADC_DEVICE);
   Clock clock <- exposeCurrentClock;
+  Reset reset <- exposeCurrentReset;
   SyncFIFOIfc#(DACMesg#(RXFPIPrec,RXFPFPrec)) infifo <- mkSyncFIFOFromCC(16,basebandClock);
   //SyncFIFOIfc#(DACMesg#(RXFPIPrec,RXFPFPrec)) infifoStream <- mkSyncFIFOFromCC(16,basebandClock);
   FIFO#(FPComplex#(RXFPIPrec,RXFPFPrec)) bramfifo <- mkSizedFIFO(2048,clocked_by basebandClock, reset_by basebandReset); // sounds reasonable.
@@ -140,7 +121,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
   // probably want a more general solution here
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrADCSampleCountLow = CRAddr{a: fromInteger(valueof(AddrADCSampleCountLow)) , o: 0};
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrADCSampleCountHigh = CRAddr{a: fromInteger(valueof(AddrADCSampleCountHigh)) , o: 0};
- CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrADCDropCounter = CRAddr{a: fromInteger(valueof(AddrADCDropCounter)) , o: 0};
+ CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrADCDropCounter = CRAddr{a:`AIRBLUE_RF_REGISTER_MAP_ADC_DROP_COUNTER, o: 0};
 
   // These defaults were determined by an analysis of the data sheet
   Reg#(Bit#(1)) adcDCS <- mkCBRegRW(addrADCDCS,1,clocked_by basebandClock, reset_by basebandReset); 
@@ -213,28 +194,35 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
     streamfifo.enq(data);
   endrule
 
-  method Action triggerCapture();
-    triggerCaptureWire.send;
-  endmethod
 
-  interface Put synchronizerStateUpdate;
-    method Action put(ControlType ctrl);
-      syncWire.wset(ctrl);
+  interface ADC_DRIVER adc_driver;
+    method Action triggerCapture();
+      triggerCaptureWire.send;
+    endmethod
+
+    interface Put synchronizerStateUpdate;
+      method Action put(ControlType ctrl);
+        syncWire.wset(ctrl);
+      endmethod
+    endinterface
+
+    interface Get dataIn;
+      method ActionValue#(DACMesg#(RXFPIPrec,RXFPFPrec)) get();
+        bramfifo.deq;
+        if(`DEBUG_RF_DEVICE == 1)
+          begin
+            $display("ADC get");
+          end
+        return bramfifo.first;
+      endmethod
+    endinterface
+
+    method ActionValue#(FPComplex#(ADCIPart,ADCFPart)) agcSampleBypass();
+      return sample;
     endmethod
   endinterface
 
-  interface Get dataIn;
-    method ActionValue#(DACMesg#(RXFPIPrec,RXFPFPrec)) get();
-      bramfifo.deq;
-      if(`DEBUG_RF_DEVICE == 1)
-        begin
-          $display("ADC get");
-        end
-      return bramfifo.first;
-    endmethod
-  endinterface
-
-  interface ADCWires adcWires;
+  interface ADC_WIRES adc_wires;
     method adcDCS = adcDCS._read;
     method adcDFS = adcDFS._read;
     method adcMuxSel = adcMuxSel._read;
@@ -244,16 +232,15 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkADC#(Clock basebandC
     method adcRPart = adcRPart._write;
     method adcIPart = adcIPart._write;
     interface adcClk = clock;
+    interface adcRst = reset;
+    interface basebandClock = basebandClock;
+    interface basebandReset = basebandReset;
   endinterface 
-
-  method ActionValue#(FPComplex#(ADCIPart,ADCFPart)) agcSampleBypass();
-    return sample;
-  endmethod
  
 endmodule
 
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandClock, Reset basebandReset) (DAC);
+module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandClock, Reset basebandReset) (DAC_DEVICE);
   Clock clock <- exposeCurrentClock;
   ClockDividerIfc invClock <- mkClockInverter;  
   SyncFIFOIfc#(DACMesg#(TXFPIPrec,TXFPFPrec)) infifo <- mkSyncFIFOToCC(16,basebandClock,basebandReset);
@@ -464,57 +451,74 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
     scaler.in.put(scalerFIFO.first);
   endrule
 
-  // we must be ready to rx a packet.
-  interface Put dataOut;
-     method Action put(DACMesg#(TXFPIPrec,TXFPFPrec) data); //if(length != 0);
+  interface DAC_DRIVER dac_driver;
+    // we must be ready to rx a packet.
+    interface Put dataOut;
+      method Action put(DACMesg#(TXFPIPrec,TXFPFPrec) data); //if(length != 0);
         if(`DEBUG_RF_DEVICE == 1)
           begin
             $display("AD: calling data: preamble: %d length: %d chipCount: %d, rate: %d bytes: %d",preambleCount,length,chipCount,txFIFO.first.header.rate,txFIFO.first.header.length);
-            end
+          end
 
-       scalerFIFO.enq(data);
-       if(preambleCount > 0) 
-         begin
-           preambleCount <= preambleCount - 1;
-         end
-       else if(chipCount + 1 == fromInteger(valueof(SymbolLen)))
-         begin
-           chipCount <= 0;
-           if(`DEBUG_RF_DEVICE == 1)
+        scalerFIFO.enq(data);
+        if(preambleCount > 0) 
+          begin
+            preambleCount <= preambleCount - 1;
+          end
+        else if(chipCount + 1 == fromInteger(valueof(SymbolLen)))
+          begin
+            chipCount <= 0;
+            if(`DEBUG_RF_DEVICE == 1)
               begin
                 $display("AD: setting down length"); 
               end
-           // we may have pad bits.  the last subtraction may not equal zero
-           if(length <= fromInteger(bitsPerSymbol(txFIFO.first.header.rate)))
-             begin
-               // at this point we should send the deq pulse
-               txFIFO.deq;
-               completionFIFO.enq(0);
-               length <= 0; 
-               if(`DEBUG_RF_DEVICE == 1)
-                 begin
-                   $display("AD: length done @ $d",fastTicks);
-                 end
-             end   
-           else
-             begin
-               if(`DEBUG_RF_DEVICE == 1)
-                 begin
-                   $display("AD: substraction");
-                 end
-              length <= length - fromInteger(bitsPerSymbol(txFIFO.first.header.rate)); 
-            end
-        end
-      else
-        begin
-         chipCount <= chipCount + 1;
-        end
-     endmethod
+            // we may have pad bits.  the last subtraction may not equal zero
+            if(length <= fromInteger(bitsPerSymbol(txFIFO.first.header.rate)))
+              begin
+                // at this point we should send the deq pulse
+                txFIFO.deq;
+                completionFIFO.enq(0);
+                length <= 0; 
+                if(`DEBUG_RF_DEVICE == 1)
+                  begin
+                    $display("AD: length done @ $d",fastTicks);
+                  end
+              end   
+            else
+              begin
+                if(`DEBUG_RF_DEVICE == 1)
+                  begin
+                    $display("AD: substraction");
+                  end
+               length <= length - fromInteger(bitsPerSymbol(txFIFO.first.header.rate)); 
+              end
+          end
+        else
+          begin
+           chipCount <= chipCount + 1;
+          end
+      endmethod
+    endinterface
+
+
+
+    interface Put txStart;
+      method Action put(TXVector txvec);
+        txFIFO.enq(txvec);
+      endmethod
+    endinterface
+
+    method Action agcGainSet(Bit#(10) gain);
+      dacRXGainRF <= gain;
+    endmethod
+
+    method ActionValue#(Bit#(0)) txComplete();
+      completionFIFO.deq;
+      return 0;
+    endmethod
   endinterface
 
-
-
-  interface DACWires dacWires; 
+  interface DAC_WIRES dac_wires; 
     method dacGainCtrl = dacGainCtrl._read;
     method dacPwd = dacPwd._read;
     method dacMode = dacMode._read;
@@ -526,20 +530,6 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkDAC#(Clock basebandC
     interface dacWrt2 = invClock.slowClock; 
     interface dacClk1 = invClock.slowClock; 
     interface dacClk2 = invClock.slowClock; 
+
   endinterface
-
-  interface Put txStart;
-    method Action put(TXVector txvec);
-      txFIFO.enq(txvec);
-    endmethod
-  endinterface
-
-  method Action agcGainSet(Bit#(10) gain);
-    dacRXGainRF <= gain;
-  endmethod
-
-  method ActionValue#(Bit#(0)) txComplete();
-    completionFIFO.deq;
-    return 0;
-  endmethod
 endmodule

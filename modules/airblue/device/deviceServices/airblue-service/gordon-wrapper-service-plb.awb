@@ -1,0 +1,15 @@
+%name Gordon Wrapper Service With PLB
+%desc Gordon Wrapper Service With PLB
+
+%provides gordon_wrapper_service
+%requires plb_device_debug
+
+%attributes hybrid connected
+
+%public gordon-wrapper-service-plb.bsv
+%public gordon-wrapper-service-plb.rrr
+%public gordon-wrapper-service.h
+
+
+
+

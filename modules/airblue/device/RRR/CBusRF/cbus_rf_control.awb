@@ -1,0 +1,16 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name CBusRF RRR Host Control 
+%desc This disaster of a module is required by RRR, which does not permit multiple instances of the same kind 
+%provides airblue_rf_control
+
+%attributes ofdm
+
+%sources -t RRR  -v PUBLIC  CBusRFControl.rrr
+
+
+%AWB_END

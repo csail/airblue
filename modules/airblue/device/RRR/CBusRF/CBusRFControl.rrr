@@ -1,0 +1,9 @@
+service CBUSRFRRR
+{
+    server hw (bsv,connection) <- sw (cpp, method)
+    {
+       method RFRead(in UINT32[32] addr, out UINT32[32] data);  
+       method RFWrite(in UINT32[32] addr, in UINT32[32] data);  
+    };
+
+ };

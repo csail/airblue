@@ -18,14 +18,24 @@ import Vector::*;
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/stream_capture_fifo.bsh"
+`include "asim/provides/rf_driver.bsh"
 
 typedef Server#(CoarPowType,Int#(10)) GainAdjuster;
 
-interface AGC; 
+interface AGC_DRIVER; 
   interface Put#(ControlType) synchronizerStateUpdate;
   interface Put#(RXExternalFeedback) packetFeedback;
   method Action inputPower(CoarPowType power);
   method Bit#(10) outputGain();
+endinterface
+
+interface AGC_WIRES;
+
+endinterface 
+
+interface AGC_DEVICE;
+  interface AGC_WIRES agc_wires;
+  interface AGC_DRIVER agc_driver;
 endinterface
 
 typedef enum {
@@ -49,7 +59,7 @@ typedef 512       SweepAdjustDelay; // how long before changing the gain again i
 
 
 // most everything here should be baseband...
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
+module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC_DEVICE);
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrRXGain = CRAddr{a: fromInteger(valueof(AddrRXGain)) , o: 0};
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrRXGainMin = CRAddr{a: fromInteger(valueof(AddrRXGainMin)) , o: 0};
   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrRXGainMax = CRAddr{a: fromInteger(valueof(AddrRXGainMax)) , o: 0};
@@ -276,27 +286,29 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkAGC (AGC);
     rxGain <= fromInteger(valueof(CalibrationGain));
   endrule
 
+  interface AGC_DRIVER agc_driver;
+    interface Put synchronizerStateUpdate;
+      method Action put(ControlType ctrl);
+        syncWire.wset(ctrl);
+      endmethod
+    endinterface
 
-  interface Put synchronizerStateUpdate;
-    method Action put(ControlType ctrl);
-      syncWire.wset(ctrl);
+    interface Put packetFeedback;
+      method Action put(RXExternalFeedback feedback);
+        feedbackFIFO.enq(feedback);
+      endmethod
+    endinterface
+
+    method Action inputPower(CoarPowType power);
+      powerWire.wset(power);
     endmethod
-  endinterface
 
-  interface Put packetFeedback;
-    method Action put(RXExternalFeedback feedback);
-      feedbackFIFO.enq(feedback);
+    method Bit#(10) outputGain();
+      return rxGain;
     endmethod
-  endinterface
-
-  method Action inputPower(CoarPowType power);
-    powerWire.wset(power);
-  endmethod
-
-  method Bit#(10) outputGain();
-    return rxGain;
-  endmethod
-
+  endinterface 
+  
+  interface agc_wires = ?;
 endmodule
 
 

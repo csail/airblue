@@ -1,0 +1,9 @@
+%name Huntsman Board Control
+%desc Huntsman Board Control
+%provides board_control
+
+%attributes airblue huntsman
+
+%sources -t BSV -v PUBLIC Board.bsv 
+
+%AWB_END

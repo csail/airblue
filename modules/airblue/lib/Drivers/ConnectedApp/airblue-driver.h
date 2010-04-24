@@ -3,12 +3,14 @@
 
 #include "asim/provides/virtual_platform.h"
 #include "asim/provides/airblue_driver_application.h"
+#include "asim/provides/rf_driver.h"
 
 typedef class CONNECTED_APPLICATION_CLASS* CONNECTED_APPLICATION;
 class CONNECTED_APPLICATION_CLASS  : public PLATFORMS_MODULE_CLASS
 {
   private:
     AIRBLUE_DRIVER airblueDriver;
+    RF_DRIVER      airblueFrontend;
 
   public:
     CONNECTED_APPLICATION_CLASS(VIRTUAL_PLATFORM vp);

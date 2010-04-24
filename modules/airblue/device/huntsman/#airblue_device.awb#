@@ -6,7 +6,7 @@
 
 %name Huntsman RF Modules
 %desc Huntsman RF Modules
-%provides airblue_rf_device
+%provides airblue_device huntsman
 
 %attributes airblue
 
@@ -17,6 +17,5 @@
 %requires rf_frontend
 %requires board_control
 %requires rf_driver
-%requires digital_scaler
 
 %AWB_END

@@ -38,7 +38,6 @@ import CBus::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_device.bsh"
 `include "asim/provides/client_server_utils.bsh"
 `include "asim/provides/register_mapper.bsh"
 `include "asim/provides/register_library.bsh"
@@ -46,6 +45,9 @@ import CBus::*;
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/clocks_device.bsh"
 `include "asim/rrr/remote_server_stub_CBUSVECTORCONTROLRRR.bsh"
+`include "asim/provides/analog_digital.bsh"
+`include "asim/provides/gain_control.bsh"
+`include "asim/provides/rf_frontend.bsh"
 
 //For the wires test we swap for two transceivers here.
 module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();
@@ -62,7 +64,7 @@ module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiRes
   SyncBitIfc#(Bit#(1)) txPE <- mkSyncBit(basebandClock, basebandReset, rfClock);
 
 
-  function FPComplex#(2,14) dacToComplex(DACWires dac);
+  function FPComplex#(2,14) dacToComplex(DAC_WIRES dac);
     let in = FPComplex {
       rel: FixedPoint {
         i: ~dac.dacRPart[9],

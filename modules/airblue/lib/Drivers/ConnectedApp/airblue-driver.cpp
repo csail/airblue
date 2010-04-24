@@ -7,7 +7,8 @@ using namespace std;
  
 // constructor
 CONNECTED_APPLICATION_CLASS::CONNECTED_APPLICATION_CLASS(VIRTUAL_PLATFORM vp): 
-  airblueDriver(new AIRBLUE_DRIVER_CLASS(this))
+  airblueDriver(new AIRBLUE_DRIVER_CLASS(this)),
+  airblueFrontend(new RF_DRIVER_CLASS(this))
 {
 }
 
@@ -27,6 +28,7 @@ void
 CONNECTED_APPLICATION_CLASS::Main()
 {
   // Eventually we'll call the frontend initialization here. 
+  airblueFrontend->Main();
   airblueDriver->Main();
 }
 

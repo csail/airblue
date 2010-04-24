@@ -174,7 +174,7 @@ File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root
 Packagehint=ofdm
 
 [Airblue FPGA device specific modules]
-File=modules/airblue/device/airblue_device.awb
+File=modules/airblue/device/huntsman/airblue_device.awb
 Packagehint=ofdm
 
 [Airblue Channel Estimator]

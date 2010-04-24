@@ -1,0 +1,9 @@
+%name Digital Scaler
+%desc Digital Scaler
+%provides digital_scaler
+
+%attributes airblue huntsman
+
+%sources -t BSV -v PUBLIC Scaler.bsv 
+
+%AWB_END
