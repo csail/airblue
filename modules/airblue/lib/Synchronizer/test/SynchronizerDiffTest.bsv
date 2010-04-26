@@ -55,12 +55,11 @@ endmodule
 
    
 module mkHWOnlyApplication (Empty);   
-   let test <- mkSynchronizerTest();
+   let test <- mkSynchronizerDiffTest();
 endmodule
-
    
 (* synthesize *)
-module mkSynchronizerTest(Empty);
+module mkSynchronizerDiffTest(Empty);
    // states
    StatefulSynchronizer#(2,14) statefulSynchronizer <- mkStatefulSynchronizerInstance();
    Synchronizer#(2,14) synchronizer = statefulSynchronizer.synchronizer;
@@ -81,6 +80,10 @@ module mkSynchronizerTest(Empty);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    FIFOF#(Bit#(32)) deq_fifo <- mkSizedFIFOF(4);
 
+   FIFOF#(Bool) isDataFifo <- mkSizedFIFOF(8);
+   FIFOF#(FPComplex#(2,14)) inData <- mkSizedFIFOF(1000);
+   FIFOF#(FPComplex#(2,14)) outData <- mkSizedFIFOF(1000);
+
    let expected_pos = expected_sync_pos_fifo.first();
    
    rule printState;
@@ -98,30 +101,70 @@ module mkSynchronizerTest(Empty);
    
    rule toChannel(inCounter > 0);
       FPComplex#(2,14) inCmplx <- generator.nextData.get();
+      isDataFifo.enq(generator.isData);
       inCounter <= inCounter - 1;
       channel.in.put(inCmplx);
    endrule
 
    rule toSynchronizer(True);
       FPComplex#(2,14) inCmplx <- channel.out.get(); 
+      if (isDataFifo.first)
+         begin
+            inData.enq(inCmplx);
+         end
+      isDataFifo.deq;
       synchronizer.in.put(inCmplx);
       $write("Cycle %d: %m toSynchronizer data = ",cycle);
       cmplxWrite("("," + "," i)",fxptWrite(7),inCmplx);
       $display("");
    endrule
 
+   Reg#(Bit#(16)) dataIdx <- mkReg(0);
+   Reg#(Bool) compareReg <- mkReg(False);
+
    rule fromSynchronizer(True);
       let result <- synchronizer.out.get;
       let resultCmplx = result.data;
+      let idx = dataIdx;
+      let compare = compareReg;
       outCounter <= outCounter + 1;
+      if (result.control.isNewPacket)
+         begin
+            idx = 0;
+            compareReg <= True;
+            compare = True;
+            deq_fifo.enq(outCounter);
+         end
+
       $write("Cycle %d: %m fromSynchronizer data = ", cycle);
       cmplxWrite("("," + ","i)",fxptWrite(7),resultCmplx);
       $display("");
-      if (result.control.isNewPacket)
-         begin
-            deq_fifo.enq(outCounter);
-         end
+
+      if (compare && idx < 1740 - 320)
+        begin
+          outData.enq(resultCmplx);
+       end
+      
+      dataIdx <= idx + 1;
    endrule
+
+   // This breaks if the synchronizer makes a mistake.
+   rule compare;
+     let actual = outData.first;
+     outData.deq();
+
+     FPComplex#(2,14) expected = inData.first;
+     inData.deq;
+     FPComplex#(2,14) diff = expected - actual;
+ 
+     //$write("idx=%d", idx);
+     $write("expected = ");
+     cmplxWrite("("," + ","i)",fxptWrite(7),expected);
+     $write(" diff = ");
+     cmplxWrite("("," + ","i)",fxptWrite(7),diff);
+     $display("");
+   endrule
+ 
    
    rule missPacket(outCounter > expected_pos + 320);
       misses <= misses + 1;
@@ -165,7 +208,7 @@ module mkSynchronizerTest(Empty);
       cycle <= cycle + 1;
    endrule
    
-   rule finishTest(cycle > 300000);
+   rule finishTest(cycle > 3000000);
       $display("Cycle %d: simulation ends, detection success = %d, misses = %d, false +v = %d",cycle,detected,misses,false);
       if (misses == 0 && false == 0)
          $display("PASS");
@@ -175,3 +218,6 @@ module mkSynchronizerTest(Empty);
    endrule
    
 endmodule   
+
+
+

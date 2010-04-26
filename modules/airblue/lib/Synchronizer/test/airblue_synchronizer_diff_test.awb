@@ -4,8 +4,8 @@
 
 %AWB_START
 
-%name Airblue WiFi Synchronizer Test
-%desc Airblue WiFi Synchronizer Test
+%name Airblue WiFi Synchronizer Difference Test
+%desc Airblue WiFi Synchronizer Difference Test
 %provides hw_only_application
 
 %requires airblue_parameters
@@ -19,12 +19,12 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC SynchronizerTest.bsv
+%sources -t BSV -v PUBLIC SynchronizerDiffTest.bsv
 
-%generated -t BA mkSynchronizerTest.ba
+%generated -t BA mkSynchronizerDiffTest.ba
 %generated -t BA mkStatefulSynchronizerInstance.ba
 
-%generated -t VERILOG mkSynchronizerTest.v
+%generated -t VERILOG mkSynchronizerDiffTest.v
 %generated -t VERILOG mkStatefulSynchronizerInstance.v
 
 %AWB_END
