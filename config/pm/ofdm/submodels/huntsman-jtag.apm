@@ -171,10 +171,6 @@ Packagehint=platforms
 File=config/pm/hasim/submodels/fpgaenv/std-virtual-devices-null-mem.apm
 Packagehint=platforms
 
-[ArriaII Dev Board JTAG Mapping]
-File=modules/bluespec/common/fpgaenv/physical-platform/development_board_arriaII_gx/jtag/arriaII_dev/altera-arriaIIgx_dev-jtag.awb
-Packagehint=platforms
-
 [Single-Ended Crystal Clocks Device (ALTERA)/Params]
 CRYSTAL_CLOCK_FREQ=40
 
@@ -215,7 +211,7 @@ gct_driver=Driver for GCT Device
 
 [Airblue JTAG Physical Platform/Requires]
 clocks_device=Single-Ended Crystal Clocks Device (ALTERA)
-altera_jtag_physical_mapping=ArriaII Dev Board JTAG Mapping
+altera_jtag_physical_mapping=Airblue 1.0 Cyclone III JTAG Mapping
 physical_platform_utils=Common Physical Platform Utilities
 led_device=General LED Device
 jtag_device=Altera JTAG
@@ -246,3 +242,7 @@ airblue_rf_control=CBusRF RRR Host Control
 [SPI RRR]
 File=modules/bsv-libraries/bluespec/SPI/rrr/spi_master_rrr.awb
 Packagehint=bsv-libraries
+
+[Airblue 1.0 Cyclone III JTAG Mapping]
+File=modules/bluespec/common/fpgaenv/physical-platform/airblue_cycloneiii/airblue_cycloneiii-jtag.awb
+Packagehint=platforms
