@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <stdio.h>
 
+#define PI (4*atan2(1,1))
 #define SIGNAL_POWER 0.0125
 
 typedef struct {
@@ -19,9 +20,10 @@ static double rand_double()
 
 static Complex rand_cmplx()
 {
-   double avg_signal_mag = sqrt(SIGNAL_POWER)/2;
-   double rand_rel = rand_double() * avg_signal_mag;
-   double rand_img = rand_double() * avg_signal_mag;
+   double avg_signal_mag = sqrt(SIGNAL_POWER);
+   double rand_ang = 2* PI * rand_double();
+   double rand_rel = avg_signal_mag * cos(rand_ang);
+   double rand_img = avg_signal_mag * sin(rand_ang);
 
    Complex ret = {rand_rel, rand_img};
    return ret;
