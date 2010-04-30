@@ -1,0 +1,30 @@
+: # -*-Perl-*-
+eval 'exec perl -w "$0" ${1+"$@"}'
+   if 0;
+
+##
+## Directory of hasim benchmarks
+##     Remember to set this file as executable
+
+use Asim;
+use strict;
+
+my $gcfg = Asim::GenCFG->new();
+
+
+my @snrs = (20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2);
+my @rates = (7,6,5,4,3,2,1,0);
+
+foreach my $rate (@rates) {
+  foreach my $snr (@snrs) {
+        my $bmark = "softphy_" . $rate . "_snr_". $snr;
+        $gcfg->add(name => $bmark,
+                  tree => [ "benchmarks" ],
+                  setup => "tools/scripts/bmarks/setup-softphy-bmark $bmark --contexts=0",
+                  feeder => "none",
+                  ccount => 800000,
+                  sysflags => "ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate,
+                  );
+   }
+}
+$gcfg->action(@ARGV);
