@@ -1,0 +1,8 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+bcjr_soft   config/pm/ofdm/airblue/airblue_wifi_phy_only_softhints.apm  --bluesim="-m 1000000000"
+
