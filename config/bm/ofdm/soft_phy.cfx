@@ -17,7 +17,7 @@ my @rates = (7,6,5,4,3,2,1,0);
 
 foreach my $rate (@rates) {
   foreach my $snr (@snrs) {
-        my $bmark = "softphy_" . $rate . "_snr_". $snr;
+        my $bmark = "soft_phy_rate_" . $rate . "_snr_". $snr;
         $gcfg->add(name => $bmark,
                   tree => [ "benchmarks" ],
                   setup => "tools/scripts/bmarks/setup-softphy-bmark $bmark --contexts=0",

@@ -162,14 +162,9 @@ airblue_pilot_insert=Airblue Pilot Insert
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
 
-
 [Min collector]
 File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
 Packagehint=bsv-libraries
-
-
-
-
 
 [Averager collector]
 File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
@@ -195,7 +190,6 @@ Packagehint=ofdm
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
-
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
@@ -224,19 +218,12 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
 [Synplify Synthesis Tool]
-File=modules/project/synplify.awb
+File=modules/project/synopsis/synplify.awb
 Packagehint=platforms
 
 [FPGA Build Pipeline/Requires]
-post_synthesis_tool=Xilinx Post-synthesis Toolchain
+post_synthesis_tool=Altera Post-synthesis Toolchain
 synthesis_tool=Synplify Synthesis Tool
-
-[Xilinx Post-synthesis Toolchain/Requires]
-xilinx_ngd=Xilinx NGD
-xilinx_bitgen=Xilinx BITGEN
-xilinx_par=Xilinx PAR
-xilinx_map=Xilinx MAP
-xilinx_loader=Xilinx LOADER
 
 [FPGA Build Pipeline]
 File=modules/project/build-pipeline.awb
@@ -251,30 +238,6 @@ fpga_build_pipeline=FPGA Build Pipeline
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
-
-[Xilinx Post-synthesis Toolchain]
-File=modules/project/xilinx_post_synth.awb
-Packagehint=platforms
-
-[Xilinx BITGEN]
-File=modules/project/xilinx_bitgen.awb
-Packagehint=platforms
-
-[Xilinx LOADER]
-File=modules/project/xilinx_loader.awb
-Packagehint=platforms
-
-[Xilinx NGD]
-File=modules/project/xilinx_ngd.awb
-Packagehint=platforms
-
-[Xilinx PAR]
-File=modules/project/xilinx_par.awb
-Packagehint=platforms
-
-[Xilinx MAP]
-File=modules/project/xilinx_map.awb
-Packagehint=platforms
 
 [ReversalBufferBRAM]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer_bram.awb
@@ -353,3 +316,7 @@ DEBUG_RXCTRL=1
 [Airblue Null Channel Estimator]
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator_null.awb
 Packagehint=ofdm
+
+[Altera Post-synthesis Toolchain]
+File=modules/project/altera/altera_post_synth.awb
+Packagehint=platforms

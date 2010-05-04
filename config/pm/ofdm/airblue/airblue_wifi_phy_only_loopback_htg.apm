@@ -43,7 +43,6 @@ Packagehint=platforms
 airblue_types=Airblue types (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_shared=Airblue Shared Libraries
-airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
 airblue_channel=Airblue Clear Channel
@@ -177,10 +176,6 @@ airblue_magnitude_estimator=Airblue Magnitude Estimator
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
 Packagehint=ofdm
 
-[Airblue FPGA device specific modules]
-File=modules/airblue/device/airblue_device.awb
-Packagehint=ofdm
-
 [Airblue Channel Estimator]
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
 Packagehint=ofdm
@@ -221,20 +216,13 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue BCJR with Alpha Init(no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
-Packagehint=ofdm
-
-[Airblue BCJR with Alpha Init(no Soft Hints)/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
-
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
 airblue_descrambler=Airblue Descrambler
 airblue_channel_estimator=Airblue Channel Estimator
 airblue_synchronizer=Airblue Synchronizer
 airblue_deinterleaver=Airblue Deinterleaver
-airblue_convolutional_decoder=Airblue BCJR with Alpha Init(no Soft Hints)
+airblue_convolutional_decoder=Airblue BCJR with Alpha Init
 airblue_demapper=Airblue Demapper
 airblue_unserializer=Airblue Unserializer
 
@@ -247,12 +235,12 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
 [Synplify Synthesis Tool]
-File=modules/project/synplify.awb
+File=modules/project/synopsis/synplify.awb
 Packagehint=platforms
 
 [FPGA Build Pipeline/Requires]
-post_synthesis_tool=Altera Post-synthesis Toolchain
 synthesis_tool=Synplify Synthesis Tool
+post_synthesis_tool=Altera Post-synthesis Toolchain
 
 [FPGA Build Pipeline]
 File=modules/project/build-pipeline.awb
@@ -274,10 +262,6 @@ Packagehint=ofdm
 
 [FPGA Environment/Params]
 MODEL_CLOCK_MULTIPLIER=1
-
-[Altera Post-synthesis Toolchain]
-File=modules/project/altera_post_synth.awb
-Packagehint=platforms
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
@@ -301,3 +285,14 @@ Packagehint=ofdm
 [CBus Vector RRR Host Control]
 File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
 Packagehint=ofdm
+
+[Airblue BCJR with Alpha Init]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
+Packagehint=ofdm
+
+[Airblue BCJR with Alpha Init/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Altera Post-synthesis Toolchain]
+File=modules/project/altera/altera_post_synth.awb
+Packagehint=platforms

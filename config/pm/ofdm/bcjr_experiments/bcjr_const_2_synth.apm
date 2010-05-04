@@ -43,7 +43,6 @@ Packagehint=platforms
 airblue_types=Airblue types (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_shared=Airblue Shared Libraries
-airblue_device=Airblue FPGA device specific modules
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
 airblue_channel=Airblue Clear Channel
@@ -109,31 +108,17 @@ Packagehint=ofdm
 File=modules/airblue/lib/airblue_shared.awb
 Packagehint=ofdm
 
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
-Packagehint=bsv-libraries
-
-[Avalon Bus Intefaces]
-File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
-Packagehint=bsv-libraries
-
 [Airblue Shared Libraries/Requires]
 airblue_common=Airblue common library
-avalon=Avalon Bus Intefaces
 airblue_special_fifos=Airblue Special FIFOs
-debug_utils=Debug Utilities
 airblue_shift_regs=Airblue Shifted Registers
-c_bus_utils=CBus Utilities
 stream_capture_fifo=StreamCaptureFIFO
 commit_fifo=CommitFIFO
 reversal_buffer=ReversalBuffer
 spi=SPI
-fifo_utils=FIFO Utility
 stat_min=Min collector
 stat_averager=Averager collector
 client_server_utils=ClientServer Utilities
-register_mapper=Register Mapping Utilities
-vector_utils=Vector Utilities
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -141,14 +126,6 @@ Packagehint=ofdm
 
 [StreamCaptureFIFO]
 File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
-
-[RegisterLibrary]
-File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
-Packagehint=bsv-libraries
-
-[CBus Utilities]
-File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
 Packagehint=bsv-libraries
 
 [Airblue Synchronizer]
@@ -191,10 +168,6 @@ airblue_pilot_insert=Airblue Pilot Insert
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
 
-[FIFO Utility]
-File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
-Packagehint=bsv-libraries
-
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
 Packagehint=ofdm
@@ -208,10 +181,6 @@ airblue_magnitude_estimator=Airblue Magnitude Estimator
 
 [Airblue Inverse Square Root]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
-Packagehint=ofdm
-
-[Airblue FPGA device specific modules]
-File=modules/airblue/device/airblue_device.awb
 Packagehint=ofdm
 
 [Airblue Channel Estimator]
@@ -238,20 +207,9 @@ airblue_fft=Airblue Folded FFT/IFFT
 File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
 Packagehint=bsv-libraries
 
-[Register Mapping Utilities/Requires]
-register_library=RegisterLibrary
-
-[Register Mapping Utilities]
-File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
-Packagehint=bsv-libraries
-
 [Airblue Phy Only PacketGen]
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen.awb
 Packagehint=ofdm
-
-[Vector Utilities]
-File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
-Packagehint=bsv-libraries
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
@@ -265,20 +223,13 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue BCJR (no Soft Hints)/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
-
-[Airblue BCJR (no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
-Packagehint=ofdm
-
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
 airblue_descrambler=Airblue Descrambler
 airblue_channel_estimator=Airblue Channel Estimator
 airblue_synchronizer=Airblue Synchronizer
 airblue_deinterleaver=Airblue Deinterleaver
-airblue_convolutional_decoder=Airblue BCJR (no Soft Hints)
+airblue_convolutional_decoder=Airblue BCJR
 airblue_demapper=Airblue Demapper
 airblue_unserializer=Airblue Unserializer
 
@@ -295,15 +246,8 @@ File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
 Packagehint=ofdm
 
 [FPGA Build Pipeline/Requires]
-post_synthesis_tool=Xilinx Post-synthesis Toolchain
-synthesis_tool=BCJR top level
-
-[Xilinx Post-synthesis Toolchain/Requires]
-xilinx_ngd=Xilinx NGD
-xilinx_bitgen=Xilinx BITGEN
-xilinx_par=Xilinx PAR
-xilinx_map=Xilinx MAP
-xilinx_loader=Xilinx LOADER
+synthesis_tool=Synplify Synthesis Tool
+post_synthesis_tool=Altera Post-synthesis Toolchain
 
 [FPGA Build Pipeline]
 File=modules/project/build-pipeline.awb
@@ -313,40 +257,27 @@ Packagehint=platforms
 File=modules/project/project-pipeline.awb
 Packagehint=platforms
 
-[Xilinx BITGEN]
-File=modules/project/xilinx_bitgen.awb
-Packagehint=platforms
-
-[Xilinx LOADER]
-File=modules/project/xilinx_loader.awb
-Packagehint=platforms
-
-[Xilinx NGD]
-File=modules/project/xilinx_ngd.awb
-Packagehint=platforms
-
 [HW/SW Hybrid Pipeline Build/Requires]
 fpga_build_pipeline=FPGA Build Pipeline
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
 
-[Xilinx Post-synthesis Toolchain]
-File=modules/project/xilinx_post_synth.awb
-Packagehint=platforms
-
-[Xilinx PAR]
-File=modules/project/xilinx_par.awb
-Packagehint=platforms
-
-[Xilinx MAP]
-File=modules/project/xilinx_map.awb
-Packagehint=platforms
-
 [Airblue Clear Channel]
 File=modules/airblue/lib/Channel/airblue_clear_channel.awb
 Packagehint=ofdm
 
-[BCJR top level]
-File=modules/airblue/synthesis_tools/synplify.awb
+[Synplify Synthesis Tool]
+File=modules/project/synopsis/synplify.awb
+Packagehint=platforms
+
+[Airblue BCJR/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Airblue BCJR]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
 Packagehint=ofdm
+
+[Altera Post-synthesis Toolchain]
+File=modules/project/altera/altera_post_synth.awb
+Packagehint=platforms

@@ -240,19 +240,12 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
 [Synplify Synthesis Tool]
-File=modules/project/synplify.awb
+File=modules/project/synopsis/synplify.awb
 Packagehint=platforms
 
 [FPGA Build Pipeline/Requires]
-post_synthesis_tool=Xilinx Post-synthesis Toolchain
 synthesis_tool=Synplify Synthesis Tool
-
-[Xilinx Post-synthesis Toolchain/Requires]
-xilinx_ngd=Xilinx NGD
-xilinx_bitgen=Xilinx BITGEN
-xilinx_par=Xilinx PAR
-xilinx_map=Xilinx MAP
-xilinx_loader=Xilinx LOADER
+post_synthesis_tool=Altera Post-synthesis Toolchain
 
 [FPGA Build Pipeline]
 File=modules/project/build-pipeline.awb
@@ -267,30 +260,6 @@ fpga_build_pipeline=FPGA Build Pipeline
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
-
-[Xilinx Post-synthesis Toolchain]
-File=modules/project/xilinx_post_synth.awb
-Packagehint=platforms
-
-[Xilinx BITGEN]
-File=modules/project/xilinx_bitgen.awb
-Packagehint=platforms
-
-[Xilinx LOADER]
-File=modules/project/xilinx_loader.awb
-Packagehint=platforms
-
-[Xilinx NGD]
-File=modules/project/xilinx_ngd.awb
-Packagehint=platforms
-
-[Xilinx PAR]
-File=modules/project/xilinx_par.awb
-Packagehint=platforms
-
-[Xilinx MAP]
-File=modules/project/xilinx_map.awb
-Packagehint=platforms
 
 [ReversalBufferBRAM]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer_bram.awb
@@ -355,3 +324,7 @@ Packagehint=ofdm
 [Simulation Driver]
 File=modules/airblue/device/simulation/gct-driver.awb
 Packagehint=ofdm
+
+[Altera Post-synthesis Toolchain]
+File=modules/project/altera/altera_post_synth.awb
+Packagehint=platforms
