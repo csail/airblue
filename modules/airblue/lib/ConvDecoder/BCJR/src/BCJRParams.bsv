@@ -160,3 +160,36 @@ instance ReversalBufferCtrl#(BCJRBackwardCtrl);
     return !x.last; 
   endfunction 
 endinstance
+
+typedef struct {
+  Vector#(FwdSteps,Bit#(ConvInSz)) res;
+  ExtendedPathMetric               soft_phy_hints;
+} DecisionOutType deriving(Bits,Eq);
+ 
+function ActionValue#(DecisionOutType) calculateDecision(Vector#(VTotalStates,ExtendedPathMetric) in_data);
+  actionvalue
+    Vector#(VTotalStates,Tuple2#(VState,ExtendedPathMetric)) path_metric_sums = zip(genWith(fromInteger), in_data);
+    Tuple2#(VState,ExtendedPathMetric)                       min_tpl          = fold(chooseMax, path_metric_sums);
+    VState                                                   min_idx          = tpl_1(min_tpl);
+    ExtendedPathMetric                                       min_path_metric  = tpl_2(min_tpl);
+    Vector#(FwdSteps,Bit#(ConvInSz))                         res              = unpack(pack(truncateLSB(min_idx)));
+    Vector#(TDiv#(VTotalStates,2),Tuple2#(VState,ExtendedPathMetric)) zero_sums = take(path_metric_sums);
+    Vector#(TDiv#(VTotalStates,2),Tuple2#(VState,ExtendedPathMetric)) one_sums = takeTail(path_metric_sums);
+
+    let                                other_path_metric_sums = (pack(res) == {1'b1} ? zero_sums : one_sums);
+    Tuple2#(VState,ExtendedPathMetric) other_min_tpl = fold(chooseMax, other_path_metric_sums);
+    VState                             other_min_idx = tpl_1(other_min_tpl);
+    ExtendedPathMetric                 other_min_path_metric = tpl_2(other_min_tpl);
+    ExtendedPathMetric                 soft_phy_hints = min_path_metric - other_min_path_metric;
+      
+    if(`DEBUG_BCJR == 1) 
+      begin
+        $display("path_metric_sums: ", fshow(path_metric_sums));
+        $display("other_path_metric_sums: ", fshow(other_path_metric_sums));
+        $display("zero_sums: ", fshow(zero_sums));
+        $display("one_sums: ", fshow(one_sums)); 
+        $display("Decision Unit Max : %d (%h, check %h) Bit out: %h Other bit: %d (%h, check %h), hints (diff of two bits) %h", min_idx, min_path_metric, tpl_2(path_metric_sums[min_idx]), res, other_min_idx, other_min_path_metric, tpl_2(path_metric_sums[other_min_idx]),soft_phy_hints);
+      end
+    return DecisionOutType{res: res, soft_phy_hints: soft_phy_hints};
+  endactionvalue
+endfunction

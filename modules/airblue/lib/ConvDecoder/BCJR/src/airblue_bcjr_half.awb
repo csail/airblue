@@ -1,0 +1,28 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue BCJR With soft phy calculated on only on the forward path result.
+%desc Convolutional Decoder implemented using BCJR algorithm (support Soft-Phy-Hints too)   
+%provides airblue_convolutional_decoder
+
+%requires airblue_convolutional_decoder_common
+
+%attributes airblue
+	    
+%sources -t BSV -v PUBLIC BCJR.bsv BCJRParams.bsv DecisionUnitForwardHalf.bsv BackwardPath.bsv ForwardPath.bsv
+
+%generated -t BA mkIBCJR.ba
+%generated -t BA mkDecisionUnit.ba
+%generated -t BA module_getBranchMetricBackward.ba
+
+%generated -t VERILOG mkIBCJR.v
+%generated -t VERILOG mkDecisionUnit.v
+%generated -t VERILOG module_getBranchMetricBackward.v
+
+%param DEBUG_BCJR 0 "Enable debug messages"
+%param REVERSAL_BUFFER_SIZE 64 "Enable debug messages"
+
+%AWB_END

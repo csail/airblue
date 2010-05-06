@@ -86,15 +86,18 @@ module mkDecisionUnit (DecisionUnit);
   
    FIFO#(VOutType)                                 out_data_q <- mkSizedFIFO(2);
    FIFO#(Vector#(VTotalStates,ExtendedPathMetric)) combinedQ  <- mkLFIFO;
-   
+   FIFO#(ExtendedPathMetric)                       softPhy <- mkFIFO();   
+
    rule computeTree;
       let                               in_data          = combinedQ.first;
       combinedQ.deq;
-      
+ 
       DecisionOutType decision <- calculateDecision(in_data);
-      VOutType out = create_vout(decision.res, decision.soft_phy_hints);
-
+      VOutType out = create_vout(decision.res, softPhy.first());
+      softPhy.deq;
       out_data_q.enq(out);
+
+      
    endrule
 
    interface Put in;
@@ -146,7 +149,9 @@ module mkDecisionUnit (DecisionUnit);
             end 
         end
 
-      let combinedProbs = zipWith( \+ , map(signExtend,tpl_1(unzip(vecA))), map(signExtend,tpl_1(unzip(vecB))));
+        let combinedProbs = zipWith( \+ , map(signExtend,tpl_1(unzip(vecA))), map(signExtend,tpl_1(unzip(vecB))));
+        DecisionOutType decision <- calculateDecision(map(signExtend,tpl_1(unzip(vecA))));
+        softPhy.enq(decision.soft_phy_hints);
       //$display("Decision: Combined probs: ", fshow(combinedProbs));
         combinedQ.enq(combinedProbs);
       endmethod
