@@ -49,19 +49,16 @@ import FIFO::*;
 // testing wifi setting
 `define isDebug True // uncomment this line to display error
 
-import "BDPI" addError = 
-       function Bit#(24) addError();
-
-import "BDPI" addNoise = 
-       function Bit#(32) addNoise(Bit#(16) rel, Bit#(16) img, Bit#(32) rot, Bit#(32) res); 
+import "BDPI" awgn =
+       function ActionValue#(FPComplex#(2,14)) awgn(FPComplex#(2,14) data);
 
 import "BDPI" getConvOutBER =
-       function Bit#(7) getConvOutBER();       
+       function Bit#(7) getConvOutBER();
        
-import "BDPI" nextRate = 
+import "BDPI" nextRate =
        function Rate nextRate();      
              
-import "BDPI" check_ber = 
+import "BDPI" check_ber =
        function ActionValue#(Bool) checkBER(Bit#(32) errors, Bit#(32) totals);      
        
        
@@ -491,15 +488,8 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
     Mesg#(TXGlobalCtrl,
           Vector#(64,FPComplex#(2,14))) timeDomain <- ifft.out.get;
    
-    // doesn't vector have length or something?
-    for(Integer i = 0; i < 64; i = i+1) 
-      begin
-        let rawNoisyData = addNoise(pack(timeDomain.data[i].rel), 
-                                    pack(timeDomain.data[i].img),
-                                    0,0);
-        timeDomain.data[i].img = unpack(truncateLSB(rawNoisyData));
-        timeDomain.data[i].rel = unpack(truncate(rawNoisyData));
-      end    
+    // add AWGN
+    timeDomain.data <- mapM(awgn, timeDomain.data);
 
     fft.in.put(timeDomain);//(timeDomainPlusError);
    endrule 
