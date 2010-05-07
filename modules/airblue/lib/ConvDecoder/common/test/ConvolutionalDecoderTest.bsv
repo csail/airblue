@@ -29,12 +29,15 @@ import GetPut::*;
 import Vector::*;
 import Complex::*;
 import FShow::*;
+import FIFO::*;
 
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_fft.bsh"
 `include "asim/provides/airblue_convolutional_encoder.bsh"
+`include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_mapper.bsh"
 `include "asim/provides/airblue_demapper.bsh"
 `include "asim/provides/airblue_puncturer.bsh"
@@ -384,7 +387,11 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
 						 rate:R0});
-   
+
+   `ifdef SOFT_PHY_HINTS
+     FIFO#(Vector#(12, Bit#(12)))  outSoftPhyHintsQ <- mkSizedFIFO(256);
+   `endif   
+
    Reg#(Bit#(12)) counter <- mkReg(0);
    Reg#(Bit#(12)) fst_cnt <- mkReg(0);
    Reg#(Bit#(12)) scr_cnt <- mkReg(0);
@@ -569,13 +576,33 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let rxDCtrl = RXDescramblerCtrl{seed: seed, bypass: 0};
       let rxGCtrl = mesg.control;
       let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, globalCtrl: rxGCtrl};
-      descrambler.in.put(Mesg{control: rxCtrl, data: pack(mesg.data)});    
+      // Need to extract 
+      `ifdef SOFT_PHY_HINTS
+         let softHints = tpl_2(unzip(mesg.data));
+         let msgData = pack(tpl_1(unzip(mesg.data)));
+      `else
+         let msgData = mesg.data;
+      `endif
+      if (`SOFT_PHY_HINTS == 1)
+        begin
+          outSoftPhyHintsQ.enq(softHints);
+        end
+      descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
  
    rule getOutput(True);
       let mesg <- descrambler.out.get;      
       let expected_data = out_data + 1; 
       let diff = mesg.data ^ expected_data; // try to get the bits that are different
+      if (`SOFT_PHY_HINTS == 1)
+        begin
+          for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
+            begin
+              $display("PreDescramblerRXCtrllr softphy hints: %d err: %d",outSoftPhyHintsQ.first[i],diff[i]);
+            end
+            outSoftPhyHintsQ.deq;
+        end
+
       let no_error_bits = countOnes(diff); // one = error bit
       if (mesg.control.globalCtrl.firstSymbol && out_cnt == 0)
          begin
@@ -621,6 +648,8 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       cycle <= cycle + 1;
       if (cycle == finishTime())
 	 begin
+            $display("PacketGen: Packet bit errors:          %d, Packet bit length: %d, BER total:          %d", errors, total, errors);
+
             $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
             $display("Convolutional encoder BER was set as %d percent",getConvOutBER);
             $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);

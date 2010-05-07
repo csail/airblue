@@ -14,7 +14,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 // 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 // OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -407,10 +407,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    let streamQ_usage = streamQ.usage;
    let streamQ_free  = streamQ.free;
 
-   function Bit#(a) pickSmaller (Bit#(a) x, Bit#(a) y);
-      return (x < y) ? x : y;
-   endfunction
-      
    // rules
    rule tickClock(True);
       cycleCount <= cycleCount + 1;
@@ -550,7 +546,7 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                      inMesgQ.deq();
                      streamQ.enq(vOutSz,append(msgData,replicate(0)));
                      `ifdef SOFT_PHY_HINTS
-                     Bit#(8) minHints = fold(pickSmaller, map(truncate, softHints));
+                     Bit#(8) minHints = fold(min, map(truncate, softHints));
                      let newMinSoftPhyHints = (minHints < minSoftPhyHints) ? minHints : minSoftPhyHints; 
                      minSoftPhyHints <= newMinSoftPhyHints;
                      if (`DEBUG_RXCTRL == 1)

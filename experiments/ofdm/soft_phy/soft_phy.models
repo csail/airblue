@@ -4,5 +4,5 @@
 #
 # ***************
 
-bcjr_soft   config/pm/ofdm/airblue/airblue_wifi_phy_only_softhints.apm  --bluesim="-m 1000000000"
+bcjr_soft   config/pm/ofdm/library_tests/bcjr_test_softphy.apm  --bluesim="-m 1000000000"
 
