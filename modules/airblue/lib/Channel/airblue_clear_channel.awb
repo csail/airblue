@@ -10,7 +10,7 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Channel.bsv ClearChannel.bsv
+%sources -t BSV -v PUBLIC ClearChannel.bsv
 
 %generated -t BA mkChannel.ba 
 %generated -t VERILOG mkChannel.v 

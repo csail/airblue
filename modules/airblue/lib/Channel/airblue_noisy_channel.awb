@@ -10,11 +10,12 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Channel.bsv NoisyChannel.bsv
-%sources -t BDPI_C -v PUBLIC addNoise.c
+%sources -t BSV -v PUBLIC SimulationChannel.bsv
+%sources -t BDPI_H -v PUBLIC util.h
+%sources -t BDPI_C -v PUBLIC awgn.c jakes.c util.c
 
 %generated -t BA mkChannel.ba 
-%generated -t BA addNoise.ba
+%generated -t BA awgn.ba rayleigh_channel.ba isset.ba
  
 %generated -t VERILOG mkChannel.v 
 
