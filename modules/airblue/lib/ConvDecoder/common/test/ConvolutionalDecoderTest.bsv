@@ -574,6 +574,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       `else
          let msgData = pack(mesg.data);
       `endif
+
       descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
  
@@ -586,8 +587,9 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
            begin
              $display("PreDescramblerRXCtrllr softphy hints: %d err: %d",outSoftPhyHintsQ.first[i],diff[i]);
            end
-         outSoftPhyHintsQ.deq;
-      `endif
+
+           outSoftPhyHintsQ.deq;
+       `endif
 
       let no_error_bits = countOnes(diff); // one = error bit
       if (mesg.control.globalCtrl.firstSymbol && out_cnt == 0)
