@@ -572,7 +572,7 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
          let msgData = pack(tpl_1(unzip(mesg.data)));
          outSoftPhyHintsQ.enq(softHints);
       `else
-         let msgData = mesg.data;
+         let msgData = pack(mesg.data);
       `endif
       descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
@@ -581,14 +581,13 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       let mesg <- descrambler.out.get;      
       let expected_data = out_data + 1; 
       let diff = mesg.data ^ expected_data; // try to get the bits that are different
-      if (`SOFT_PHY_HINTS == 1)
-        begin
-          for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
-            begin
-              $display("PreDescramblerRXCtrllr softphy hints: %d err: %d",outSoftPhyHintsQ.first[i],diff[i]);
-            end
-            outSoftPhyHintsQ.deq;
-        end
+      `ifdef SOFT_PHY_HINTS
+         for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
+           begin
+             $display("PreDescramblerRXCtrllr softphy hints: %d err: %d",outSoftPhyHintsQ.first[i],diff[i]);
+           end
+         outSoftPhyHintsQ.deq;
+      `endif
 
       let no_error_bits = countOnes(diff); // one = error bit
       if (mesg.control.globalCtrl.firstSymbol && out_cnt == 0)
