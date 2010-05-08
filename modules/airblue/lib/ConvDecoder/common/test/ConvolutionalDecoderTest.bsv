@@ -570,13 +570,10 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
       `ifdef SOFT_PHY_HINTS
          let softHints = tpl_2(unzip(mesg.data));
          let msgData = pack(tpl_1(unzip(mesg.data)));
+         outSoftPhyHintsQ.enq(softHints);
       `else
          let msgData = mesg.data;
       `endif
-      if (`SOFT_PHY_HINTS == 1)
-        begin
-          outSoftPhyHintsQ.enq(softHints);
-        end
       descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
  
