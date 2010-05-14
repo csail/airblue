@@ -23,7 +23,6 @@ Packagehint=hasim
 File=config/pm/hasim/submodels/common/soft-connections-lib.apm
 Packagehint=hasim
 
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
@@ -32,11 +31,9 @@ model=HW/SW Hybrid Pipeline Build
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-evaluation-arriaII-jtag.apm
 Packagehint=platforms
 
-
 [Soft Connections Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
 Packagehint=platforms
-
 
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
@@ -212,7 +209,3 @@ application_env=Soft Connections Hybrid Application Environment
 File=modules/project/altera/altera_post_synth.awb
 Packagehint=platforms
 
-[FPGA Environment/Params]
-MODEL_CLOCK_DIVIDER=1
-MAKE_ALL_TARGET=exe
-MODEL_CLOCK_MULTIPLIER=1
