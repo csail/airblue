@@ -32,9 +32,12 @@ import FShow::*;
 import FIFO::*;
 
 // Local includes
+`include "asim/provides/soft_connections.bsh"
+
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_common.bsh"
+`include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/airblue_fft.bsh"
 `include "asim/provides/airblue_convolutional_encoder.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
@@ -48,9 +51,6 @@ import FIFO::*;
 
 // testing wifi setting
 `define isDebug True // uncomment this line to display error
-
-import "BDPI" awgn =
-       function ActionValue#(FPComplex#(2,14)) awgn(FPComplex#(2,14) data);
 
 import "BDPI" getConvOutBER =
        function Bit#(7) getConvOutBER();
@@ -368,7 +368,7 @@ module mkDescramblerInstance
    return block;
 endmodule           
 
-module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder) (Empty);
+module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder) (Empty);
 
    // state elements
    let conv_encoder <- mkConvEncoderInstance;
@@ -381,6 +381,10 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
    let fft  <- mkFFTInstance;
    let scrambler <- mkScramblerInstance;
    let descrambler <- mkDescramblerInstance;
+
+   // channel
+   FIFO#(TXGlobalCtrl) ctrlFifo <- mkSizedFIFO(256);
+   let channel <- mkStreamChannel;
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
 						 rate:R0});
@@ -484,15 +488,21 @@ module mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalD
                       data:append(mesg.data,replicate(0))});
    endrule
 
-   rule modifyChannel;
-    Mesg#(TXGlobalCtrl,
-          Vector#(64,FPComplex#(2,14))) timeDomain <- ifft.out.get;
-   
-    // add AWGN
-    timeDomain.data <- mapM(awgn, timeDomain.data);
+   rule getIFFT (channel.notFull(64));
+      Mesg#(TXGlobalCtrl, Vector#(64,FPComplex#(2,14))) mesg <- ifft.out.get();
+      ctrlFifo.enq(mesg.control);
+      channel.enq(64, append(mesg.data, ?));
+   endrule
 
-    fft.in.put(timeDomain);//(timeDomainPlusError);
-   endrule 
+   rule putFFT (channel.notEmpty(64));
+      fft.in.put(Mesg {
+         control: ctrlFifo.first,
+         data: take(channel.first)
+      });
+
+      ctrlFifo.deq();
+      channel.deq(64);
+   endrule
 
    rule putDemapper(True);
       let freqDomain <- fft.out.get;

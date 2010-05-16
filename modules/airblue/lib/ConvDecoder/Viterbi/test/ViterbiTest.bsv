@@ -40,6 +40,7 @@ import Vector::*;
 // import ConvolutionalDecoderTest::*;
 
 // Local includes
+`include "asim/provides/soft_connections.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_convolutional_decoder.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
@@ -57,7 +58,7 @@ endmodule
 // (* synthesize *)
 // module mkViterbiTest (Empty);
    
-module mkHWOnlyApplication (Empty);
+module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    let viterbi <- mkViterbiInstance;
    let viterbiTest <- mkConvolutionalDecoderTest(viterbi);
 endmodule
