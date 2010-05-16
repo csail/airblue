@@ -43,6 +43,11 @@ airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
 airblue_channel=Airblue Clear Channel
 airblue_host_control=CBus Vector RRR Host Control
+rf_frontend=GCT RF Frontend Control
+analog_digital=Huntsman AD
+digital_scaler=Digital Scaler
+gain_control=Airblue 1.0 Gain Control
+rf_driver=Driver for Huntsman Device
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
@@ -297,3 +302,44 @@ airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 [Altera Post-synthesis Toolchain]
 File=modules/project/altera/altera_post_synth.awb
 Packagehint=platforms
+
+[Huntsman AD]
+File=modules/airblue/device/huntsman/analog_digital.awb
+Packagehint=ofdm
+
+[Digital Scaler]
+File=modules/airblue/device/huntsman/scaler.awb
+Packagehint=ofdm
+
+[Airblue 1.0 Gain Control]
+File=modules/airblue/device/huntsman/gain_control.awb
+Packagehint=ofdm
+
+[Driver for GCT Device]
+File=modules/airblue/device/huntsman/gct-driver.awb
+Packagehint=ofdm
+
+[SPI RRR]
+File=modules/bsv-libraries/bluespec/SPI/rrr/spi_master_rrr.awb
+Packagehint=bsv-libraries
+
+[GCT RF Frontend Control]
+File=modules/airblue/device/huntsman/gct_frontend.awb
+Packagehint=ofdm
+
+[GCT RF Frontend Control/Requires]
+gct_driver=Driver for GCT Device
+
+[Driver for GCT Device/Requires]
+spi_master_rrr=SPI RRR
+
+[CBusRF RRR Host Control]
+File=modules/airblue/device/RRR/CBusRF/cbus_rf_control.awb
+Packagehint=ofdm
+
+[Driver for Huntsman Device]
+File=modules/airblue/device/huntsman/rf-driver.awb
+Packagehint=ofdm
+
+[Driver for Huntsman Device/Requires]
+airblue_rf_control=CBusRF RRR Host Control
