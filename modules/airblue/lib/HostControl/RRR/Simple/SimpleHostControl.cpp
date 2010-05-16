@@ -71,7 +71,14 @@ SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetRate(UINT32 dummy)
 
 // F2HTwoWayMsg
 UINT32
-SIMPLEHOSTCONTROLRRR_SERVER_CLASS::CheckBER(UINT32 errors)
+SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetFinishCycles(UINT32 dummy)
 {
-   return check_ber(errors);
+   return get_finish_cycles();
+}
+
+// F2HTwoWayMsg
+UINT32
+SIMPLEHOSTCONTROLRRR_SERVER_CLASS::CheckBER(UINT32 errors, UINT32 total)
+{
+   return check_ber(errors, total);
 }

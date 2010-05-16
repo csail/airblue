@@ -76,9 +76,10 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
-airblue_channel=Airblue Noisy Channel
+airblue_channel=Airblue RRR Channel
 airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
+airblue_host_control=Simple RRR Host Control
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -156,9 +157,6 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
 
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
@@ -209,3 +207,20 @@ application_env=Soft Connections Hybrid Application Environment
 File=modules/project/altera/altera_post_synth.awb
 Packagehint=platforms
 
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment
+
+[FPGA Environment/Params]
+MODEL_CLOCK_MULTIPLIER=2
+
+[Airblue RRR Channel]
+File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
+Packagehint=ofdm

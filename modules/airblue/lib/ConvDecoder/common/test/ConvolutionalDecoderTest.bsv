@@ -30,6 +30,7 @@ import Vector::*;
 import Complex::*;
 import FShow::*;
 import FIFO::*;
+import StmtFSM::*;
 
 // Local includes
 `include "asim/provides/soft_connections.bsh"
@@ -48,25 +49,10 @@ import FIFO::*;
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_scrambler.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
+`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
 // testing wifi setting
 `define isDebug True // uncomment this line to display error
-
-import "BDPI" getConvOutBER =
-       function Bit#(7) getConvOutBER();
-       
-import "BDPI" nextRate =
-       function Rate nextRate();      
-             
-import "BDPI" check_ber =
-       function ActionValue#(Bool) checkBER(Bit#(32) errors, Bit#(32) totals);      
-       
-       
-// import "BDPI" viterbiMapCtrl = 
-//        function Bool viterbiMapCtrl(TXGlobalCtrl ctrl);
-             
-import "BDPI" finishTime =
-       function Bit#(32) finishTime();
 
 // Global Parameters:
 typedef enum {
@@ -150,8 +136,7 @@ instance FShow#(RXGlobalCtrl);
 endinstance
 
 
-function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl);
-   Rate new_rate = nextRate;
+function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl, Rate new_rate);
    Bit#(12) new_length = getNewLength(new_rate);
    return TXGlobalCtrl{ firstSymbol: False, rate: new_rate, length: new_length};
 endfunction
@@ -386,6 +371,15 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    FIFO#(TXGlobalCtrl) ctrlFifo <- mkSizedFIFO(256);
    let channel <- mkStreamChannel;
 
+   // host control
+   ClientStub_SIMPLEHOSTCONTROLRRR client_stub <- mkClientStub_SIMPLEHOSTCONTROLRRR;
+
+   // runtime parameters
+   Reg#(Rate) rate <- mkRegU;
+   Reg#(Bit#(32)) finishTime <- mkRegU;
+   Reg#(Bool) initialized <- mkReg(False);
+   Reg#(Bool) done <- mkReg(False);
+
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
 						 rate:R0});
 
@@ -404,9 +398,29 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    Reg#(Bit#(12)) out_data <- mkReg(0);
    Reg#(Bit#(32)) errors <- mkConfigReg(0); // accumulated errors
    Reg#(Bit#(32)) total <- mkConfigReg(0); // total bits received
+
+   Stmt initStmt = (seq
+      client_stub.makeRequest_GetRate(0);
+      client_stub.makeRequest_GetFinishCycles(0);
+      action
+         let resp <- client_stub.getResponse_GetRate();
+         rate <= unpack(truncate(resp));
+      endaction
+      action
+         let resp <- client_stub.getResponse_GetFinishCycles();
+         finishTime <= resp;
+      endaction
+      initialized <= True;
+   endseq);
+
+   FSM initFSM <- mkFSM(initStmt);
+
+   rule init (!initialized);
+      initFSM.start();
+   endrule
    
-   rule putNewRate(counter == 0);
-      let new_ctrl = nextCtrl(ctrl);
+   rule putNewRate(counter == 0 && initialized);
+      let new_ctrl = nextCtrl(ctrl, rate);
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Valid magicConstantSeed;
@@ -644,33 +658,32 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       
    rule tick(True);
       cycle <= cycle + 1;
-      if (cycle == finishTime())
-	 begin
-            $display("PacketGen: Packet bit errors:          %d, Packet bit length: %d, BER total:          %d", errors, total, errors);
+   endrule
 
-            $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
-            $display("Convolutional encoder BER was set as %d percent",getConvOutBER);
-            $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);
+   rule finish_makeRequest (cycle >= finishTime && !done);
+      $display("PacketGen: Packet bit errors:          %d, Packet bit length: %d, BER total:          %d", errors, total, errors);
+
+      $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
+      //$display("Convolutional encoder BER was set as %d percent",getConvOutBER);
+      $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);
  
-            let result <- checkBER(errors, total);
-            if(result)
-               begin
-                  $display("PASS");
-                  $finish(0);
-               end 
-            else
-               begin
-                  $display("FAIL");
-                  $finish(1);
-               end
+      client_stub.makeRequest_CheckBER(errors, total);
+      done <= True;
+   endrule
 
+   rule finish_getResponse (done);
+      let resp <- client_stub.getResponse_CheckBER();
+      Bool result = unpack(truncate(resp));
+      if(result)
+         begin
+            $display("PASS");
+            $finish(0);
+         end 
+      else
+         begin
+            $display("FAIL");
+            $finish(1);
          end
    endrule
    
 endmodule
-   
-   
-
-
-
-

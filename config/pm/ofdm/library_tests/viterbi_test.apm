@@ -92,6 +92,7 @@ airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue Noisy Channel
 airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
+airblue_host_control=Simple RRR Host Control
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -191,3 +192,14 @@ Packagehint=ofdm
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
+
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment

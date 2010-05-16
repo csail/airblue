@@ -88,6 +88,7 @@ airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue Noisy Channel
 airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
+airblue_host_control=Simple RRR Host Control
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -101,19 +102,13 @@ Packagehint=ofdm
 File=modules/airblue/lib/airblue_shared.awb
 Packagehint=ofdm
 
-
-
-
 [StreamCaptureFIFO]
 File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
 Packagehint=bsv-libraries
 
-
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
 Packagehint=ofdm
-
-
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -122,7 +117,6 @@ Packagehint=ofdm
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
 Packagehint=ofdm
-
 
 [Airblue Shared Libraries/Requires]
 stream_capture_fifo=StreamCaptureFIFO
@@ -151,7 +145,6 @@ Packagehint=bsv-libraries
 [CommitFIFO]
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
 Packagehint=bsv-libraries
-
 
 [SPI]
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
@@ -199,3 +192,14 @@ Packagehint=ofdm
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
+
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment

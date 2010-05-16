@@ -2,8 +2,9 @@ service SIMPLEHOSTCONTROLRRR
 {
     server sw (cpp, method) <- hw (bsv, connection) 
     {
-       method GetRate (in UINT32[32] rate, out UINT32[32] value);  
-       method CheckBER (in UINT32[32] dummy, out UINT32[32] errors);
+       method GetRate (out UINT32[32] rate, in UINT32[32] value);
+       method GetFinishCycles (out UINT32[32] cycles, in UINT32[32] dummy);
+       method CheckBER (out UINT32[32] dummy, in UINT32[32] errors, in UINT32[32] total);
     };
 
  };
