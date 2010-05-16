@@ -1,0 +1,29 @@
+service CHANNEL_RRR
+{
+    server sw (cpp, method) <- hw (bsv, connection) 
+    {
+        method Channel (in UINT8[8] size,
+                        in UINT32[32] in0,
+                        in UINT32[32] in1,
+                        in UINT32[32] in2,
+                        in UINT32[32] in3,
+                        in UINT32[32] in4,
+                        in UINT32[32] in5,
+                        in UINT32[32] in6,
+                        in UINT32[32] in7,
+                        in UINT32[32] in8,
+                        in UINT32[32] in9,
+                        in UINT32[32] cycle,
+                        out UINT8[8] out_size,
+                        out UINT32[32] out0,
+                        out UINT32[32] out1,
+                        out UINT32[32] out2,
+                        out UINT32[32] out3,
+                        out UINT32[32] out4,
+                        out UINT32[32] out5,
+                        out UINT32[32] out6,
+                        out UINT32[32] out7,
+                        out UINT32[32] out8,
+                        out UINT32[32] out9);
+    };
+}

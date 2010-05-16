@@ -9,6 +9,15 @@
 
 #define SIGNAL_POWER 0.0125
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
+int awgn(unsigned int data);
+int cfo(unsigned int data, int cycle);
+int rayleigh_channel(unsigned int data, int cycle);
+unsigned char isset(const char *str);
+
 typedef struct {
   double rel;
   double img;
@@ -19,6 +28,7 @@ double rand_double();
 double gaussian();
 
 double getenvd(const char*, double d);
+
 
 double get_snr();
 
@@ -39,5 +49,9 @@ unsigned int pack(Complex x);
 Complex unpack(unsigned int x);
 
 double abs2(Complex x);
+
+#ifdef __cplusplus 
+}
+#endif
 
 #endif

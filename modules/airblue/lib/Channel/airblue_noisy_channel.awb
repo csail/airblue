@@ -12,11 +12,8 @@
 
 %sources -t BSV -v PUBLIC SimulationChannel.bsv
 %sources -t BDPI_H -v PUBLIC util.h
-%sources -t BDPI_C -v PUBLIC awgn.c jakes.c util.c
+%sources -t BDPI_C -v PUBLIC awgn.c jakes.c freq_offset.c util.c
 
-%generated -t BA mkChannel.ba 
-%generated -t BA awgn.ba rayleigh_channel.ba isset.ba
+%generated -t BA awgn.ba rayleigh_channel.ba cfo.ba isset.ba
  
-%generated -t VERILOG mkChannel.v 
-
 %AWB_END
