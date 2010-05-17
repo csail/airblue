@@ -35,8 +35,14 @@ AIRBLUE_DRIVER_CLASS::Main()
   clientStub->Write(1,AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,~0);
   while(clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX) < 50){sleep(5);}
   printf("Done waiting for packets\n");
+
+  // get number of bit errors
   ber = clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_BER);
-  result = check_ber(ber);
+
+  // TODO: get total number of bits
+  int total = 0;
+
+  result = check_ber(ber, total);
   if(result) {
     printf("Test PASSed, ber was %d",ber);
   } else {
