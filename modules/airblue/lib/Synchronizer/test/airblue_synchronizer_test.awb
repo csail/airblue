@@ -9,11 +9,9 @@
 %provides hw_only_application
 
 %requires airblue_parameters
-%requires airblue_common
-%requires airblue_shift_regs
+%requires airblue_shared
 %requires airblue_types
 %requires airblue_synchronizer
-%requires stream_capture_fifo
 %requires airblue_synchronizer_packetgen
 %requires airblue_channel
 

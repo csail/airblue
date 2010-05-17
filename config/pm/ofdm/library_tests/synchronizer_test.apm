@@ -69,13 +69,11 @@ Packagehint=ofdm
 
 [Airblue WiFi Synchronizer Test/Requires]
 airblue_types=Airblue types (no SoftHints)
-airblue_common=Airblue common library
-airblue_shift_regs=Airblue Shifted Registers
 airblue_synchronizer=Airblue Synchronizer
 airblue_channel=Airblue Noisy Channel
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-stream_capture_fifo=StreamCaptureFIFO
 airblue_synchronizer_packetgen=Airblue WiFi Synchronizer Test Packet Gen Random
+airblue_shared=Airblue Shared Libraries
 
 [Airblue WiFi Synchronizer Test]
 File=modules/airblue/lib/Synchronizer/test/airblue_synchronizer_test.awb
@@ -100,3 +98,47 @@ Packagehint=bsv-libraries
 [Airblue WiFi Synchronizer Test Packet Gen Random]
 File=modules/airblue/lib/Synchronizer/test/airblue_synchronizer_packetgen_random.awb
 Packagehint=ofdm
+
+[CommitFIFO]
+File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
+Packagehint=bsv-libraries
+
+[Airblue Shared Libraries]
+File=modules/airblue/lib/airblue_shared.awb
+Packagehint=ofdm
+
+[SPI]
+File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
+Packagehint=bsv-libraries
+
+[Airblue Special FIFOs]
+File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
+Packagehint=ofdm
+
+[ReversalBuffer]
+File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
+Packagehint=bsv-libraries
+
+[Airblue Shared Libraries/Requires]
+stream_capture_fifo=StreamCaptureFIFO
+stat_min=Min collector
+airblue_common=Airblue common library
+spi=SPI
+commit_fifo=CommitFIFO
+airblue_shift_regs=Airblue Shifted Registers
+reversal_buffer=ReversalBuffer
+stat_averager=Averager collector
+client_server_utils=ClientServer Utilities
+airblue_special_fifos=Airblue Special FIFOs
+
+[ClientServer Utilities]
+File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
+Packagehint=bsv-libraries
+
+[Averager collector]
+File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
+Packagehint=bsv-libraries
+
+[Min collector]
+File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
+Packagehint=bsv-libraries
