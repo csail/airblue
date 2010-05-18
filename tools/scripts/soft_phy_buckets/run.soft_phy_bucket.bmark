@@ -439,7 +439,7 @@ sub ExecModel($) {
 #     open(STDOUT, ">&", $pty) or die $!;
 
     # Run model
-    my $result = system("${cmd} 2>&1 | grep \"bit errors\\|softphy\"| tee hardware.out");
+    my $result = system("${cmd} 2>&1 | grep \"bit errors\\|softphy\\|h\"| tee hardware.out");
 
     # Send ^d to end child logging thread
     print "\cD";

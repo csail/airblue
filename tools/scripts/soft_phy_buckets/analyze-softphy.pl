@@ -48,7 +48,7 @@ sub process_softphy {
 
     while(my $line = <SOFTPHY>) {
        
-        if($line =~ m/softphy\shints:\s+(\d+)\s+err:\s+(\d+)/) {
+        if($line =~ m/h:\s+(\d+)\s+e:\s+(\d+)/) {
             $total_softphy[$1] = $total_softphy[$1] + 1;
             if($2) {
                 $actual_bers[$1] = $actual_bers[$1] + 1;

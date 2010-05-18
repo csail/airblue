@@ -160,7 +160,7 @@ if ($feeder eq 'm5') {
     system("(cd $srcdir; tar cf - ./m5_configs) | tar xf -");
 }
 
-system("cp -f ${srcdir}/run.bmark run");
+system("ln -s ${srcdir}/run.soft_phy_bucket.bmark run");
 system("ln -s ${srcdir}/analyze-softphy.pl analyze-softphy.pl");
 system("ln -s ${srcdir}/plot-ber.gp plot-ber.gp");
 chmod(0755, "run");

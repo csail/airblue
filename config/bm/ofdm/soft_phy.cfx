@@ -19,7 +19,7 @@ foreach my $rate (@rates) {
   foreach my $snr (@snrs) {
         my $bmark = "soft_phy_rate_" . $rate . "_snr_". $snr;
         $gcfg->add(name => $bmark,
-                  tree => [ "benchmarks" ],
+                  tree => [ "softphy" ],
                   setup => "tools/scripts/bmarks/setup-softphy-bmark $bmark --contexts=0",
                   feeder => "none",
                   ccount => 800000,
@@ -28,7 +28,7 @@ foreach my $rate (@rates) {
 
         my $bmark2 = "soft_phy_ratio_rate_" . $rate . "_snr_". $snr;
         $gcfg->add(name => $bmark2,
-                  tree => [ "benchmarks" ],
+                  tree => [ "buckets" ],
                   setup => "tools/scripts/soft_phy_buckets/setup-softphy-buckets $bmark --contexts=0",
                   feeder => "none",
                   ccount => 800000,

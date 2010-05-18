@@ -4,8 +4,8 @@ set xlabel "SoftPHY Hints"
 set ylabel "Error Percentage"
 
 set log y
-set xrange[255:0]
-set yrange[0.0001:1]
+set xrange[64:0]
+set yrange[0.000001:1]
 
 plot \
 'meansoft-vs-ber.dat' u 1:2 pt 2 ps 1 t '', \

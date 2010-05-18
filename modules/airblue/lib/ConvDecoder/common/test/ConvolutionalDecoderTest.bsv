@@ -609,7 +609,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       `ifdef SOFT_PHY_HINTS
          for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
            begin
-             $display("PreDescramblerRXCtrllr softphy hints: %d err: %d",outSoftPhyHintsQ.first[i],diff[i]);
+             $display("h: %d e: %d",outSoftPhyHintsQ.first[i],diff[i]);
            end
 
            outSoftPhyHintsQ.deq;
