@@ -8,7 +8,7 @@
 %desc Test for Convolutional Decoder implemented using BCJR algorithm (support Soft-Phy-Hints too)   
 %provides hw_only_application
 
-%requires airblue_convolutional_decoder_test_common
+%requires airblue_convolutional_decoder_test
 %requires airblue_convolutional_decoder
 %requires airblue_types
 %requires airblue_parameters

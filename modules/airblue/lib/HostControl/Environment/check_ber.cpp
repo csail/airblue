@@ -35,6 +35,19 @@ int get_rate()
   return rate;
 }
 
+
+#define DEFAULT_PACKET_SIZE 256 // Packet size in bytes
+int get_packet_size()
+{
+  int packet_size = DEFAULT_PACKET_SIZE;
+  char* packet_size_str = getenv("AIRBLUE_PACKET_SIZE");
+  if (packet_size_str) {
+    packet_size = atoi(packet_size_str);
+  }
+
+  return packet_size;
+}
+
 #define FTIME_DEFAULT 200000
 unsigned int ftime = 
 #ifdef FTIME 

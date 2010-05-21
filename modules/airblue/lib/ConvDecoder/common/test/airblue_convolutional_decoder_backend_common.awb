@@ -1,0 +1,17 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Convolutional Decoder Test PassCheck Backend 
+%desc This backend checks that the ber is within some bounds. 
+
+%provides airblue_convolutional_decoder_backend
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC ConvolutionalDecoderTestBackendCommon.bsv
+
+
+%AWB_END

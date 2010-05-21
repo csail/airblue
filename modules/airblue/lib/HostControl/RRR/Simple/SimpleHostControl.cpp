@@ -62,11 +62,17 @@ SIMPLEHOSTCONTROLRRR_SERVER_CLASS::Poll()
 // RRR service methods
 //
 
-// F2HTwoWayMsg
+
 UINT32
 SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetRate(UINT32 dummy)
 {
    return get_rate();
+}
+
+UINT32
+SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetPacketSize(UINT32 dummy)
+{
+   return get_packet_size();
 }
 
 // F2HTwoWayMsg

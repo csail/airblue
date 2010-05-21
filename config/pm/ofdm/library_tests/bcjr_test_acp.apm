@@ -55,7 +55,7 @@ File=modules/airblue/lib/FFT/src/airblue_fft.awb
 Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test template]
-File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test.awb
 Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test template/Requires]
@@ -69,6 +69,8 @@ airblue_channel=Airblue RRR Channel
 airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
 airblue_host_control=Simple RRR Host Control
+airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
+airblue_convolutional_decoder_backend=Airblue Convolutional Decoder Test PassCheck Backend
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -151,7 +153,7 @@ airblue_types=Airblue types (no SoftHints)
 airblue_shared=Airblue Shared Libraries
 airblue_convolutional_decoder=Airblue BCJR with Alpha Init
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test template
+airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
 
 [Airblue BCJR Test]
 File=modules/airblue/lib/ConvDecoder/BCJR/test/airblue_bcjr_test.awb
@@ -207,3 +209,11 @@ application_env=Soft Connections Hybrid Application Environment
 [FPGA Environment/Params]
 MODEL_CLOCK_DIVIDER=6
 MODEL_CLOCK_MULTIPLIER=2
+
+[Airblue Convolutional Decoder Test PassCheck Backend]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test Common Definitions]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+Packagehint=ofdm

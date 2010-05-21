@@ -37,6 +37,7 @@ import Vector::*;
 `include "asim/provides/soft_connections.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_convolutional_decoder.bsh"
+`include "asim/provides/airblue_convolutional_decoder_test.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
 // testing wifi setting

@@ -38,6 +38,7 @@ class SIMPLEHOSTCONTROLRRR_SERVER_CLASS: public RRR_SERVER_CLASS,
     // RRR service methods
     //
     UINT32 GetRate (UINT32 dummy);
+    UINT32 GetPacketSize (UINT32 dummy);
     UINT32 GetFinishCycles (UINT32 dummy);
     UINT32 CheckBER(UINT32 errors, UINT32 total);
 };
