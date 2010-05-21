@@ -114,12 +114,9 @@ endinterface
 
 
 // begin of auxiliary functions
-function CORDICData#(vfsz,afsz) executeStage(Bit#(4) stage, CORDICData#(vfsz, afsz) inData)
-  provisos (Arith#(FixedPoint#(2,vfsz)), 
-	    Arith#(FixedPoint#(1,afsz)));
-
+function CORDICData#(vfsz,afsz) executeStage(Bit#(4) stage, CORDICData#(vfsz, afsz) inData);
       Vector#(16, FixedPoint#(1,afsz)) arcTan_LUT = Vector::toVector(List::cons(
-						  fromRational(450000000000,3600000000000), List::cons(  //45.0000000000
+                                                  fromRational(450000000000,3600000000000), List::cons(  //45.0000000000
                                                   fromRational(265650511771,3600000000000), List::cons(  //26.5650511771
                                                   fromRational(140362434679,3600000000000), List::cons(  //14.0362434679
                                                   fromRational( 71250163489,3600000000000), List::cons(  // 7.1250163489
@@ -146,26 +143,21 @@ function CORDICData#(vfsz,afsz) executeStage(Bit#(4) stage, CORDICData#(vfsz, af
       return CORDICData{x:newx, y:newy, beta:newBeta, mode:inData.mode, quad:inData.quad};
 endfunction
 
-function CORDICData#(vfsz,afsz) execute(CORDICData#(vfsz,afsz) inData, Integer steps)
-  provisos (Arith#(FixedPoint#(1,afsz)),
-	    Arith#(FixedPoint#(2,vfsz)));
-
+function CORDICData#(vfsz,afsz) execute(CORDICData#(vfsz,afsz) inData, Integer steps);
       CORDICData#(vfsz,afsz) v = inData;
       Integer maxN = (steps > 16) ? 15 : steps - 1;
       for(Integer i = 0; i < maxN ; i = i + 1)
-	begin
-	   Bit#(4) stage = fromInteger(i);
-	   v = executeStage(stage, v);
-	end
+        begin
+           Bit#(4) stage = fromInteger(i);
+           v = executeStage(stage, v);
+        end
       return v;
 endfunction // CORDICData
 
 // right shift
 function FixedPoint#(1,rf) convertFP(FixedPoint#(ni,nf) x)
   provisos (Add#(xxA, nf, rf), 
-	    Add#(xxA, 1, ni), 
-	    Add#(xxA, TAdd#(ni,nf), TAdd#(ni,rf)),
-	    Add#(xxB, TAdd#(1,rf), TAdd#(ni,rf)));
+            Add#(xxA, 1, ni));
 
       FixedPoint#(ni,rf) inX = fxptSignExtend(x) >> valueOf(xxA);
       FixedPoint#(1,rf) outX =  fxptTruncate(inX); // as if doing right shift by xxA  
@@ -175,29 +167,21 @@ endfunction // FixedPoint
 
 // setup the input for cordic data in rotation mode
 function CORDICData#(vfsz,afsz) getRotateModeInData(FixedPoint#(aisz,afsz) beta)
-  provisos (Add#(xxA,1,aisz),
-	    Add#(2,afszl2,afsz),
-	    Add#(3,afszl2,TAdd#(1,afsz)),
-	    Add#(aisz,afsz,TAdd#(aisz,afsz)),
-	    Literal#(FixedPoint#(2,vfsz)));
+  provisos (Add#(2,afszl2,afsz));
 
-      Bit#(afsz) tempBeta = pack(fxptGetFrac(beta));
-      Tuple2#(Bit#(2), Bit#(afszl2)) {inQuad, betaLSBs} = split(pack(tempBeta));
-      FixedPoint#(1,afsz) inBeta = unpack(zeroExtend(betaLSBs));      
+      Tuple2#(Bit#(2), Bit#(afszl2)) {inQuad, betaLSBs} = split(pack(fxptGetFrac(beta)));
+      FixedPoint#(1,afsz) inBeta = FixedPoint {
+        i: 0,
+        f: extend(betaLSBs)
+      };
       return CORDICData{x:fromRational(607253,1000000),y:0,beta:inBeta,mode:RotateMode, quad:inQuad};
 endfunction // CORDICData
 
 // setup the input for cordic data in vector mode
 function CORDICData#(rfsz,afsz) getVectorModeInData(FixedPoint#(visz,vfsz) a, FixedPoint#(visz,vfsz) b)
   provisos (Add#(xxA, vfsz, rfsz), 
-	    Add#(xxA, 1, visz), 
-	    Add#(xxA, TAdd#(visz,vfsz), TAdd#(visz,rfsz)),
-	    Add#(xxB, TAdd#(1,rfsz), TAdd#(visz,rfsz)),
-	    Add#(1,TAdd#(1,rfsz),TAdd#(2,rfsz)),
-	    Arith#(FixedPoint#(1,rfsz)),
-	    Literal#(FixedPoint#(1,afsz)));
+            Add#(xxA, 1, visz));
 
-      
       FixedPoint#(1,rfsz) x = convertFP(a); // right shifD      FixedPoint#(1,rf) inY = convertFP(y);
       FixedPoint#(1,rfsz) y = convertFP(b); // right shifD      FixedPoint#(1,rf) inY = convertFP(y);
       let xIsNeg = x < 0;
@@ -212,41 +196,32 @@ endfunction // CORDICData
 
 // setup the input for cordic
 function CORDICData#(vfsz,afsz) getCORDICInData(CORDICData#(vfsz,afsz) inData)
-  provisos (Add#(1, afsz, TAdd#(1, afsz)),
-	    Add#(1, TAdd#(1, vfsz), TAdd#(2, vfsz)),
-	    Add#(2, afszl2, afsz),
-	    Add#(3, afszl2, TAdd#(1, afsz)),
-	    Arith#(FixedPoint::FixedPoint#(1, vfsz)),
-	    Literal#(FixedPoint::FixedPoint#(2, vfsz)));
+  provisos (Add#(2, afszl2, afsz));
 
       FixedPoint#(1,vfsz) inX = fxptTruncate(inData.x);
       FixedPoint#(1,vfsz) inY = fxptTruncate(inData.y);
       let result = (inData.mode == RotateMode) ? 
-		   getRotateModeInData(inData.beta) : 
-		   getVectorModeInData(inX,inY);
+                   getRotateModeInData(inData.beta) : 
+                   getVectorModeInData(inX,inY);
       return result;
 endfunction // CORDICData
 
 // translate the cordic data into result rotation mode
 function CosSinPair#(visz,vfsz) getRotateModeOutData(CORDICData#(vfsz,afsz) cData)
-  provisos (Add#(1,TAdd#(1,vfsz),TAdd#(2,vfsz)),
-	    Add#(xxA,1,visz),
-	    Add#(xxA,TAdd#(1,vfsz),TAdd#(visz,vfsz)),
-	    Arith#(FixedPoint#(1,vfsz)),
-	    Literal#(FixedPoint#(2,vfsz)));
-      
+  provisos (Add#(xxA,1,visz));
+
       FixedPoint#(1,vfsz) max = maxBound;
       let tempX = (cData.x >= 1) ? max : ((cData.x < 0) ? 0 : fxptTruncate(cData.x)); // overflow detection
       let tempY = (cData.y >= 1) ? max : ((cData.y < 0) ? 0 : fxptTruncate(cData.y)); // overflow detection
       let negateX = negate(tempX);
       let negateY = negate(tempY);
       let {cosV, sinV} = case (cData.quad)
-			   2'b00: tuple2(tempX, tempY);
-			   2'b01: tuple2(negateY, tempX);
-			   2'b10: tuple2(negateX, negateY);
-			   2'b11: tuple2(tempY, negateX);
-			 endcase; // case(cData.quad)
-      return CosSinPair{cos: fxptSignExtend(cosV), sin: fxptSignExtend(sinV)};	   
+                           2'b00: tuple2(tempX, tempY);
+                           2'b01: tuple2(negateY, tempX);
+                           2'b10: tuple2(negateX, negateY);
+                           2'b11: tuple2(tempY, negateX);
+                         endcase; // case(cData.quad)
+      return CosSinPair{cos: fxptSignExtend(cosV), sin: fxptSignExtend(sinV)};     
 endfunction // CORDICData
 
 
@@ -254,28 +229,22 @@ endfunction // CORDICData
 // translate the cordic data into result vector mode
 // output range: (-0.5,0.5]
 function FixedPoint#(aisz,afsz) getVectorModeOutData(CORDICData#(vfsz,afsz) cData)
-  provisos (Add#(xxA,1,aisz),
-	    Add#(xxA,TAdd#(1,afsz),TAdd#(aisz,afsz)),
-	    Arith#(FixedPoint#(1,afsz)));
+  provisos (Add#(xxA,1,aisz));
 
       let angle = cData.beta;
       Tuple2#(FixedPoint#(1,afsz),FixedPoint#(1,afsz))
-	tempTuple = case (cData.quad)
-			2'b00 : tuple2(0, angle);
-			2'b01 : tuple2(((angle < 0) ? fromRational(-1,2) : fromRational(1,2)), negate(angle));
-			2'b10 : tuple2(fromRational(1,4), negate(angle));
-			2'b11 : tuple2(fromRational(-1,4), angle);
-		      endcase;
+        tempTuple = case (cData.quad)
+                        2'b00 : tuple2(0, angle);
+                        2'b01 : tuple2(((angle < 0) ? fromRational(-1,2) : fromRational(1,2)), negate(angle));
+                        2'b10 : tuple2(fromRational(1,4), negate(angle));
+                        2'b11 : tuple2(fromRational(-1,4), angle);
+                      endcase;
       FixedPoint#(1,afsz) result = tpl_1(tempTuple) + tpl_2(tempTuple);
       return fxptSignExtend(result);
 endfunction // CORDICData
 
 // translate the cordic data into result
-function CORDICData#(vfsz,afsz) getCORDICOutData(CORDICData#(vfsz,afsz) cData)
-  provisos (Add#(1,TAdd#(1,vfsz),TAdd#(2,vfsz)),
-	    Arith#(FixedPoint#(1,vfsz)),
-	    Arith#(FixedPoint#(1,afsz)),
-	    Literal#(FixedPoint#(2,vfsz)));
+function CORDICData#(vfsz,afsz) getCORDICOutData(CORDICData#(vfsz,afsz) cData);
 
       CosSinPair#(1,vfsz) cosSinPair = getRotateModeOutData(cData);
       FixedPoint#(2,vfsz) cosV = fxptSignExtend(cosSinPair.cos);
@@ -292,18 +261,9 @@ endfunction // CORDICData
 // output: tuple2(cos(angle), sin(angle))
 function CosSinPair#(ni, nf) getCosSinPair(FixedPoint#(hi, hf) angle, Integer steps)
   provisos (Add#(xxA,1,hi),
-	    Add#(2,hfl2,hf),
-	    Add#(3,hfl2,TAdd#(1,hf)),
-	    Add#(hi,hf,TAdd#(hi,hf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Add#(1,TAdd#(1,nf),TAdd#(2,nf)),
-	    Add#(xxB,1,ni),
-	    Add#(xxB,TAdd#(1,nf),TAdd#(ni,nf)),
-	    Arith#(FixedPoint#(1,nf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Arith#(FixedPoint#(1,hf)),
-	    Arith#(FixedPoint#(2,nf)));
-          
+            Add#(2,hfl2,hf),
+            Add#(xxB,1,ni));
+
       CORDICData#(nf,hf) inData  = getRotateModeInData(angle);
       CORDICData#(nf,hf) outData = execute(inData, steps);
       CosSinPair#(ni,nf)  result  = getRotateModeOutData(outData);
@@ -316,17 +276,8 @@ endfunction // CosSinPair
 // output: cos(angle)
 function FixedPoint#(ni, nf) cos(FixedPoint#(hi, hf) angle, Integer steps)
   provisos (Add#(xxA,1,hi),
-	    Add#(2,hfl2,hf),
-	    Add#(3,hfl2,TAdd#(1,hf)),
-	    Add#(hi,hf,TAdd#(hi,hf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Add#(1,TAdd#(1,nf),TAdd#(2,nf)),
-	    Add#(xxB,1,ni),
-	    Add#(xxB,TAdd#(1,nf),TAdd#(ni,nf)),
-	    Arith#(FixedPoint#(1,nf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Arith#(FixedPoint#(1,hf)),
-	    Arith#(FixedPoint#(2,nf)));
+            Add#(2,hfl2,hf),
+            Add#(xxB,1,ni));
 
       let result = getCosSinPair(angle, steps);
       return result.cos;
@@ -338,17 +289,8 @@ endfunction // FixedPoint
 // output: sin(angle)
 function FixedPoint#(ni, nf) sin(FixedPoint#(hi, hf) angle, Integer precision)
   provisos (Add#(xxA,1,hi),
-	    Add#(2,hfl2,hf),
-	    Add#(3,hfl2,TAdd#(1,hf)),
-	    Add#(hi,hf,TAdd#(hi,hf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Add#(1,TAdd#(1,nf),TAdd#(2,nf)),
-	    Add#(xxB,1,ni),
-	    Add#(xxB,TAdd#(1,nf),TAdd#(ni,nf)),
-	    Arith#(FixedPoint#(1,nf)),
-	    Literal#(FixedPoint#(2,nf)),
-	    Arith#(FixedPoint#(1,hf)),
-	    Arith#(FixedPoint#(2,nf)));
+            Add#(2,hfl2,hf),
+            Add#(xxB,1,ni));
 
       let result = getCosSinPair(angle, precision);
       return result.sin;
@@ -358,17 +300,9 @@ endfunction // FixedPoint
 //        precision (no of iterations executed, max 16)
 // output: atan(y/x) (in terms of no of full circle, e.g. pi = 1/2) 
 function FixedPoint#(hi, hf) atan(FixedPoint#(ni, nf) x, FixedPoint#(ni,nf) y, Integer steps)
-  provisos (Add#(xxA, nf, rf), 
-	    Add#(xxA, TAdd#(ni,nf), TAdd#(ni,rf)),
-	    Add#(xxA, 1, ni),
-	    Add#(xxB, TAdd#(1,rf), TAdd#(ni,rf)),
-	    Add#(xxC, TAdd#(1,hf), TAdd#(hi,hf)),
-	    Add#(xxC, 1, hi),
-	    Add#(1,TAdd#(1,rf),TAdd#(2,rf)),
-	    Arith#(FixedPoint#(1,rf)),
-	    Arith#(FixedPoint#(1,hf)),
-	    Arith#(FixedPoint#(2,rf)),
-	    Literal#(FixedPoint#(1,hf)));
+  provisos (Add#(xxA, 1, hi),
+            Add#(xxB, 1, ni),
+            Add#(xxB, nf, rf));
 
       CORDICData#(rf,hf) inData  = getVectorModeInData(x,y);
       CORDICData#(rf,hf) outData = execute(inData, steps);
@@ -407,13 +341,8 @@ endmodule
 
 // for making cordic pipeline
 module [Module] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afsz))
-  provisos (Arith#(FixedPoint#(2, vfsz)),
-	    Add#(1, afsz, TAdd#(1, afsz)),
-	    Arith#(FixedPoint#(1, vfsz)),
-	    Add#(3, afszl2, TAdd#(1, afsz)),
-	    Add#(2, afszl2, afsz),
-	    Add#(1, TAdd#(1, vfsz), TAdd#(2, vfsz)));
-   
+  provisos (Add#(2, xxA, afsz));
+
    CORDIC#(vfsz,afsz) cordic <- mkCORDIC(mkPipeline_Sync(numStages, step, executeStage));
 
    method Action putCORDICData(CORDICData#(vfsz,afsz) x);
@@ -429,17 +358,9 @@ endmodule
 
 // for making CosAndSin pipeline
 module [Module] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(visz, vfsz, aisz, afsz))
-  provisos (Arith#(FixedPoint#(2, vfsz)),
-	    Arith#(FixedPoint#(1, afsz)),
-	    Add#(xxA, 1, aisz),
-	    Add#(2, afszl2, afsz),
-	    Add#(3, afszl2, TAdd#(1, afsz)),
-	    Add#(aisz, afsz, TAdd#(aisz, afsz)),
-	    Add#(1, TAdd#(1, vfsz), TAdd#(2, vfsz)),
-	    Add#(xxB, 1, visz),
-	    Add#(xxB, TAdd#(1, vfsz), TAdd#(visz, vfsz)),
-	    Arith#(FixedPoint#(1, vfsz)));
-   
+  provisos (Add#(2,xxA,afsz),
+            Add#(1,xxB,visz));
+
    CORDIC#(vfsz,afsz) cordic <- mkCORDIC(mkPipeline_Sync(numStages, step, executeStage));
 
    method Action putAngle(FixedPoint#(aisz,afsz) beta);
@@ -455,19 +376,11 @@ endmodule
 
 // for making ArcTan  pipeline
 module [Module] mkArcTan_Pipe#(Integer numStages, Integer step)(ArcTan#(visz,vfsz,aisz,afsz))
-  provisos (Add#(xxA, vfsz, rf), 
-	    Add#(xxA, TAdd#(visz,vfsz), TAdd#(visz,rf)),
-	    Add#(xxA, 1, visz),
-	    Add#(xxB, TAdd#(1,rf), TAdd#(visz,rf)),
-	    Add#(xxC, TAdd#(1,afsz), TAdd#(aisz,afsz)),
-	    Add#(xxC, 1, aisz),
-	    Add#(1,TAdd#(1,rf),TAdd#(2,rf)),
-	    Arith#(FixedPoint#(1,rf)),
-	    Arith#(FixedPoint#(1,afsz)),
-	    Arith#(FixedPoint#(2,rf)),
-	    Literal#(FixedPoint#(1,afsz)));
+  provisos (Add#(2,xxA,afsz),
+            Add#(1,xxB,visz),
+            Add#(xxB,vfsz,rf),
+            Add#(xxC,1,aisz));
 
-   
    CORDIC#(rf,afsz) cordic <- mkCORDIC(mkPipeline_Sync(numStages, step, executeStage));
 
    method Action putXY(FixedPoint#(visz,vfsz) x, FixedPoint#(visz,vfsz) y);
@@ -484,11 +397,3 @@ endmodule // mkArcTan_Pipe
 
 // End of Modules
 /////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
