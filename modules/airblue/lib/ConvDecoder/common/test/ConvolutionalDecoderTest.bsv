@@ -537,7 +537,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       let mesg <- depuncturer.out.get;     
       Bool push_zeros = False; 
       if (`DEBUG_CONV_DECODER_TEST == 1)
-         $display("Depuncturer Out Mesg: fst_syn:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
+        begin
+          $display("Depuncturer Out Mesg: fst_syn:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
+          $display("Depuncturer dec_cnt: %d", dec_cnt);
+        end
       if (mesg.control.firstSymbol && dec_cnt == 0)
          begin
             dec_cnt <= mesg.control.length - 1;
@@ -558,6 +561,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
                   $finish;
                end
          end
+     
       let rx_ctrl = RXGlobalCtrl{firstSymbol: mesg.control.firstSymbol,
                                  rate: mesg.control.rate,
                                  length: mesg.control.length,
@@ -575,21 +579,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    rule putDescrambler(True);
       let mesg <- convolutionalDecoder.out.get;
       Maybe#(Bit#(7)) seed = tagged Invalid;
-      if (mesg.control.firstSymbol && des_cnt == 0)
-         begin
-           des_cnt <= mesg.control.length - 1;
-            seed = tagged Valid magicConstantSeed;
-         end
-      else
-         begin
-            if (des_cnt > 0) 
-               begin
-                  des_cnt <= des_cnt - 1;
-               end            
-         end
-      let rxDCtrl = RXDescramblerCtrl{seed: seed, bypass: 0};
-      let rxGCtrl = mesg.control;
-      let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, globalCtrl: rxGCtrl};
+
       // Need to extract 
       `ifdef SOFT_PHY_HINTS
          let softHints = tpl_2(unzip(mesg.data));
@@ -598,6 +588,22 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       `else
          let msgData = pack(mesg.data);
       `endif
+
+      if (mesg.control.firstSymbol && des_cnt == 0)
+         begin
+           des_cnt <= mesg.control.length - 1;
+           seed = tagged Valid magicConstantSeed;
+         end
+      else
+         begin
+            if (des_cnt > 0) 
+               begin                   
+                  des_cnt <= des_cnt - 1;
+               end            
+         end
+      let rxDCtrl = RXDescramblerCtrl{seed: seed, bypass: 0};
+      let rxGCtrl = mesg.control;
+      let rxCtrl = RXDescramblerAndGlobalCtrl{descramblerCtrl: rxDCtrl, globalCtrl: rxGCtrl};
 
       descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
@@ -638,6 +644,13 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
                begin
                   out_cnt <= out_cnt - 1;
                   out_data <= out_data + 1;
+                  $display("Dep out_cnt: %d", out_cnt); 
+                  `ifdef SOFT_PHY_HINTS
+                     if(`DEBUG_CONV_DECODER_TEST == 1 && out_cnt == 1) 
+                       begin
+                         $display("EOP");
+                       end
+                  `endif
                   if (out_cnt > 1) // ignore the last data because of the zeroing of data to push state back to 0
                      begin
                         errors <= errors + zeroExtend(pack(no_error_bits));

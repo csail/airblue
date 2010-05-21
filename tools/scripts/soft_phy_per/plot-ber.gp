@@ -1,11 +1,12 @@
 set terminal postscript eps color enhanced "Times-Roman" 32 
 
-set xlabel "SoftPHY Hints"
-set ylabel "Error Percentage"
+set xlabel "Actual Packet BER"
+set ylabel "Project Packet BER"
 
 set log y
-set xrange[64:0]
-set yrange[0.000001:1]
+set log x
+set xrange[0.000001:10]
+set yrange[0.000001:10]
 
 plot \
 'meansoft-vs-ber.dat' u 1:2 pt 2 ps 1 t '', \

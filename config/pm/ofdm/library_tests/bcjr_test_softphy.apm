@@ -203,3 +203,6 @@ Packagehint=ofdm
 
 [Simple RRR Host Control/Requires]
 airblue_environment=Airblue Environment
+
+[Airblue Convolutional Decoder Test template/Params]
+DEBUG_CONV_DECODER_TEST=1
