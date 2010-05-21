@@ -12,7 +12,7 @@ BER;
 #endif
 
 //#define FTIME 1000000 // no. cycles the testbench run
-#define FTIME_DEFAULT 200000
+#define FTIME_DEFAULT 50000000000
 unsigned int ftime = 
 #ifdef FTIME 
 FTIME; 

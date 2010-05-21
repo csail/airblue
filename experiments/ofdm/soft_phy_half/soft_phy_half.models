@@ -1,0 +1,8 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+bcjr_soft_half   config/pm/ofdm/library_tests/bcjr_test_softphy_half.apm  --bluesim="-m 1000000000"
+
