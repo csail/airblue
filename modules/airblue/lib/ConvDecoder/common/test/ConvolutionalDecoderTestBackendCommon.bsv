@@ -42,12 +42,16 @@ import StmtFSM::*;
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
-//`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
+`include "asim/provides/starter_service.bsh"
+
 
 typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
 
 
 module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder, ClientStub_SIMPLEHOSTCONTROLRRR client_stub) (ConvolutionalDecoderTestBackend);
+
+   // Starter service sink
+   Connection_Send#(Bit#(8)) endSim <- mkConnection_Send("vdev_starter_finish_run");
 
    // runtime parameters
    Reg#(Rate) rate <- mkRegU;
@@ -205,13 +209,13 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       Bool result = unpack(truncate(resp));
       if(result)
          begin
-            $display("PASS");
-            $finish(0);
+            $display("PASS");            
+            endSim.send(0);
          end 
       else
          begin
-            $display("FAIL");
-            $finish(1);
+            $display("FAIL");            
+            endSim.send(1);
          end
    endrule
    
