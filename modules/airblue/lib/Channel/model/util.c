@@ -56,18 +56,6 @@ double get_snr()
   return getenvd("ADDNOISE_SNR", DEFAULT_SNR);
 }
 
-/* Computes the standard deviation from SNR */
-double compute_sigma(double snr)
-{
-  static double sigma = 0.0;
-  if (sigma == 0.0) {
-    // variance is: SIGNAL_POWER * pow(10, snr * -0.1)
-    // sigma/std dev is: sqrt(variance)
-    sigma =  sqrt(SIGNAL_POWER) * pow(10, snr * -0.05);
-  }
-  return sigma;
-}
-
 Complex gaussian_complex(double sigma)
 {
   double mag = sigma * gaussian();
@@ -78,14 +66,6 @@ Complex gaussian_complex(double sigma)
 
   Complex ret = { rel, img };
   return ret;
-}
-
-Complex add_complex_noise(Complex signal, double sigma)
-{
-  Complex noise = gaussian_complex(sigma);
-  signal.rel += noise.rel;
-  signal.img += noise.img;
-  return signal;
 }
 
 Complex mult_complex(Complex a, Complex b)

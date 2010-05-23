@@ -100,17 +100,20 @@ Complex get_sample_coeff(double d_time)
   return ret;
 }
 
-int rayleigh_channel(unsigned int data, int cycle)
+Complex rayleigh_channel(Complex signal, int cycle)
 {
   double d_time = cycle * sample_time;
-
-  Complex signal = unpack(data);
 
   // Rayleigh fading
   Complex coeff = get_sample_coeff(d_time);
   Complex faded = mult_complex(signal, coeff);
 
-  return pack(faded);
+  return faded;
+}
+
+int rayleigh_channel_bdpi(unsigned int data, int cycle)
+{
+  return pack(rayleigh_channel(unpack(data), cycle));
 }
 
 #ifdef JAKES_TEST

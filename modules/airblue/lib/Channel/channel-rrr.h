@@ -13,6 +13,7 @@
 #include "asim/rrr/server_stub_CHANNEL_RRR.h"
 #undef TYPES_ONLY
 
+#include "channel.h"
 
 typedef class CHANNEL_RRR_SERVER_CLASS* CHANNEL_RRR_SERVER;
 class CHANNEL_RRR_SERVER_CLASS: public RRR_SERVER_CLASS, public PLATFORMS_MODULE_CLASS
@@ -21,10 +22,7 @@ class CHANNEL_RRR_SERVER_CLASS: public RRR_SERVER_CLASS, public PLATFORMS_MODULE
     // self-instantiation
     static CHANNEL_RRR_SERVER_CLASS instance;
 
-    bool enable_awgn;
-    bool enable_fading;
-    bool enable_cfo;
-    bool foo;
+    channel ch;
 
     // server stub
     RRR_SERVER_STUB serverStub;

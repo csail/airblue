@@ -44,21 +44,32 @@ static void dbg(Complex signal, Complex noisy)
   full |= (idx == 0);
 }
 
-int awgn(unsigned int data)
+Complex add_complex_noise(Complex signal, double sigma)
+{
+  Complex noise = gaussian_complex(sigma);
+  signal.rel += noise.rel;
+  signal.img += noise.img;
+  return signal;
+}
+
+/* Computes the standard deviation from SNR */
+double compute_sigma(double snr)
+{
+  return  sqrt(SIGNAL_POWER) * pow(10, snr * -0.05);
+}
+
+Complex awgn(Complex signal, double snr)
+{
+  // add noise
+  double sigma = compute_sigma(snr);
+  return add_complex_noise(signal, sigma);
+}
+
+int awgn_bdpi(unsigned int data)
 {
   Complex signal = unpack(data);
 
-  // rotate
-  //double delta_rot = rot * rand_double() * 200000 * TIME_STEP;
-  //Complex rotated = rotate_complex(signal, delta_rot);
-
-  // add noise
-  double sigma = compute_sigma(get_snr());
-  Complex noisy = add_complex_noise(signal, sigma);
-
-  // dbg(signal, noisy);
-
-  return pack(noisy);
+  return pack(awgn(signal, get_snr()));
 }
 
 /** Test Case **/

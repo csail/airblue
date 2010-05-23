@@ -1,5 +1,5 @@
-#ifndef CHANNEL_H
-#define CHANNEL_H
+#ifndef _CHANNEL_UTIL_
+#define _CHANNEL_UTIL_
 
 //Noise variance
 #define DEFAULT_SNR 30 // signal to noise ratio
@@ -13,22 +13,25 @@
 extern "C" {
 #endif
 
-int awgn(unsigned int data);
-int cfo(unsigned int data, int cycle);
-int rayleigh_channel(unsigned int data, int cycle);
-unsigned char isset(const char *str);
-
 typedef struct {
   double rel;
   double img;
 } Complex;
 
-double rand_double();
+Complex awgn(Complex data, double snr);
+Complex cfo(Complex data, double freq_offset, int cycle);
+Complex rayleigh_channel(Complex data, int cycle);
 
+int awgn_bdpi(unsigned int data);
+int cfo_bdpi(unsigned int data, int cycle);
+int rayleigh_channel_bdpi(unsigned int data, int cycle);
+
+
+double rand_double();
 double gaussian();
 
 double getenvd(const char*, double d);
-
+unsigned char isset(const char *str);
 
 double get_snr();
 

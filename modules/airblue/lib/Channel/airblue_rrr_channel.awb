@@ -5,16 +5,16 @@
 %AWB_START
 
 %name Airblue RRR Channel
-%desc Airblue RRR Channel that connects a tx node to a rx node and capable of adding noises, multipath and fading effect
+%desc Airblue RRR Channel (over RRR)
 %provides airblue_channel
 
 %attributes airblue
 
+%requires airblue_channel_model_sw
+
 %sources -t BSV -v PUBLIC ChannelRRR.bsv
-%sources -t H   -v PUBLIC util.h
 %sources -t RRR -v PUBLIC channel-rrr.rrr
 %sources -t H   -v PUBLIC channel-rrr.h
-%sources -t CPP -v PUBLIC awgn.c jakes.c freq_offset.c util.c
 %sources -t CPP -v PUBLIC channel-rrr.cpp
 
 %AWB_END

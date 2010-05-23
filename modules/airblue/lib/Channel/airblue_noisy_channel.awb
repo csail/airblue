@@ -5,15 +5,16 @@
 %AWB_START
 
 %name Airblue Noisy Channel
-%desc Airblue Noisy Channel that connects a tx node to a rx node and capable of adding noises, multipath and fading effect
+%desc Airblue Noisy Channel (over BDPI)
 %provides airblue_channel
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC SimulationChannel.bsv
-%sources -t BDPI_H -v PUBLIC util.h
-%sources -t BDPI_C -v PUBLIC awgn.c jakes.c freq_offset.c util.c
+%requires airblue_channel_model_bdpi
 
-%generated -t BA awgn.ba rayleigh_channel.ba cfo.ba isset.ba
- 
+%sources -t BSV -v PUBLIC SimulationChannel.bsv
+%sources -t BDPI_C -v PRIVATE channel-bdpi.cpp
+
+%generated -t BA channel_bdpi.ba
+
 %AWB_END

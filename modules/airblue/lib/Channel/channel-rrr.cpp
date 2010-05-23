@@ -36,10 +36,6 @@ void
 CHANNEL_RRR_SERVER_CLASS::Init(PLATFORMS_MODULE p)
 {
     parent = p;
-
-    enable_awgn = isset("ADDNOISE_SNR");
-    enable_fading = isset("JAKES_DOPPLER");
-    enable_cfo = isset("CHANNEL_CFO");
 }
 
 // uninit
@@ -78,21 +74,8 @@ CHANNEL_RRR_SERVER_CLASS::Channel (
   };
 
   for (int i = 0; i < size; i++) {
-    UINT32 sample = samples[i];
-
-    if (enable_cfo) {
-      sample = cfo(sample, cycle + i);
-    }
- 
-    if (enable_fading) {
-      sample = rayleigh_channel(sample, cycle + i);
-    }
-
-    if (enable_awgn) {
-      sample = awgn(sample);
-    }
-    
-    samples[i] = sample;
+    Complex signal = unpack(samples[i]);
+    samples[i] = pack(ch.apply(signal));
   }
 
   OUT_TYPE_Channel out = {
@@ -100,6 +83,6 @@ CHANNEL_RRR_SERVER_CLASS::Channel (
     samples[0], samples[1], samples[2], samples[3], samples[4],
     samples[5], samples[6], samples[7], samples[8], samples[9]
   };
+
   return out;
-  //return sample;
 }

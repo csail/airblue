@@ -9,16 +9,8 @@ import Vector::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
 
-import "BDPI" function ActionValue#(FPComplex#(2,14)) 
-    awgn(FPComplex#(2,14) data);
-
-import "BDPI" function ActionValue#(FPComplex#(2,14))
-    rayleigh_channel(FPComplex#(2,14) data, Bit#(32) cycle);
-
-import "BDPI" function ActionValue#(FPComplex#(2,14))
-    cfo(FPComplex#(2,14) data, Bit#(32) cycle);
-
-import "BDPI" function Bool isset(String name);
+import "BDPI" channel_bdpi =
+    function ActionValue#(FPComplex#(2,14)) channel(FPComplex#(2,14) data);
 
 
 interface Channel#(type ai, type af);
@@ -57,45 +49,16 @@ endinterface
 
 module mkStreamChannel(StreamChannel);
 
-   StreamFIFO#(80, 7, FPComplex#(2,14)) queue <- mkStreamFIFO;
-
-   Reg#(Bit#(32)) cycle <- mkReg(0);
- 
-   Reg#(Bool) init <- mkReg(False);
- 
-   // additive white gaussian noise
-   Reg#(Bool) enableNoise <- mkReg(False);
- 
-   // rayleigh fading channel
-   Reg#(Bool) enableFading <- mkReg(False);
- 
-   // carrier frequency offset
-   Reg#(Bool) enableCFO <- mkReg(False);
- 
-   rule initialize (!init);
-      init <= True;
-      enableNoise <= isset("ADDNOISE_SNR");
-      enableFading <= isset("JAKES_DOPPLER");
-      enableCFO <= isset("CHANNEL_CFO");
-   endrule
+   StreamFIFO#(64, 7, FPComplex#(2,14)) queue <- mkStreamFIFO;
 
    method Action enq(Bit#(7) size, Vector#(64, FPComplex#(2,14)) data);
       for (Integer n = 0; fromInteger(n) < size; n=n+1)
         begin
           Bit#(32) i = fromInteger(n);
+          data[i] <- channel(data[i]);
+       end
 
-          if (enableCFO)
-             data[i] <- cfo(data[i], cycle + i);
-     
-          if (enableFading)
-             data[i] <- rayleigh_channel(data[i], cycle + i);
-     
-          if (enableNoise)
-             data[i] <- awgn(data[i]);
-        end
-
-      cycle <= cycle + extend(size);
-      queue.enq(extend(size), append(data, ?));
+      queue.enq(extend(size), data);
    endmethod
 
    method Action deq(Bit#(7) size);
@@ -103,7 +66,7 @@ module mkStreamChannel(StreamChannel);
    endmethod
 
    method Vector#(64, FPComplex#(2,14)) first;
-      return take(queue.first);
+      return queue.first;
    endmethod
 
    method Bool notEmpty(Bit#(7) size);
