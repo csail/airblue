@@ -217,24 +217,14 @@ Packagehint=ofdm
 File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
-[Synplify Synthesis Tool]
-File=modules/project/synopsis/synplify.awb
-Packagehint=platforms
 
-[FPGA Build Pipeline/Requires]
-post_synthesis_tool=Altera Post-synthesis Toolchain
-synthesis_tool=Synplify Synthesis Tool
 
-[FPGA Build Pipeline]
-File=modules/project/build-pipeline.awb
-Packagehint=platforms
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/project/project-pipeline.awb
 Packagehint=platforms
 
 [HW/SW Hybrid Pipeline Build/Requires]
-fpga_build_pipeline=FPGA Build Pipeline
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
@@ -310,9 +300,6 @@ DEBUG_RXCTRL=1
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator_null.awb
 Packagehint=ofdm
 
-[Altera Post-synthesis Toolchain]
-File=modules/project/altera/altera_post_synth.awb
-Packagehint=platforms
 
 [Airblue BCJR With soft phy calculated on only on the forward path result.]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_half.awb
@@ -320,3 +307,10 @@ Packagehint=ofdm
 
 [Airblue BCJR With soft phy calculated on only on the forward path result./Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Airblue BDPI Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_bdpi.awb
+Packagehint=ofdm
+
+[Airblue Noisy Channel/Requires]
+airblue_channel_model_bdpi=Airblue BDPI Channel Model

@@ -261,10 +261,6 @@ Packagehint=ofdm
 MODEL_CLOCK_DIVIDER=5
 MODEL_CLOCK_MULTIPLIER=2
 
-[Platform Services with No Memory Service]
-File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
-Packagehint=hasim
-
 [Synplify Synthesis Tool]
 File=modules/project/synopsis/synplify.awb
 Packagehint=platforms
@@ -343,3 +339,8 @@ Packagehint=ofdm
 
 [Driver for Huntsman Device/Requires]
 airblue_rf_control=CBusRF RRR Host Control
+
+
+[Platform Services with No Memory Service]
+File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
+Packagehint=hasim

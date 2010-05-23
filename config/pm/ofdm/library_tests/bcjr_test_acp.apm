@@ -217,3 +217,10 @@ Packagehint=ofdm
 [Airblue Convolutional Decoder Test Common Definitions]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
 Packagehint=ofdm
+
+[Airblue RRR Channel/Requires]
+airblue_channel_model_sw=Airblue SW Channel Model
+
+[Airblue SW Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_sw.awb
+Packagehint=ofdm

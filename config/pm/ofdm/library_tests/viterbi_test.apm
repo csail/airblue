@@ -203,3 +203,10 @@ Packagehint=ofdm
 
 [Simple RRR Host Control/Requires]
 airblue_environment=Airblue Environment
+
+[Airblue BDPI Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_bdpi.awb
+Packagehint=ofdm
+
+[Airblue Noisy Channel/Requires]
+airblue_channel_model_bdpi=Airblue BDPI Channel Model

@@ -213,3 +213,10 @@ Packagehint=ofdm
 [Airblue RRR Channel]
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
 Packagehint=ofdm
+
+[Airblue RRR Channel/Requires]
+airblue_channel_model_sw=Airblue SW Channel Model
+
+[Airblue SW Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_sw.awb
+Packagehint=ofdm
