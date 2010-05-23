@@ -22,7 +22,7 @@ foreach my $rate (@rates) {
                   tree => [ "softphy" ],
                   setup => "tools/scripts/bmarks/setup-softphy-bmark $bmark --contexts=0",
                   feeder => "none",
-                  ccount => 80000000,
+                  ccount => 8000000000,
                   sysflags => "ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate,
                   );
 
@@ -31,7 +31,7 @@ foreach my $rate (@rates) {
                   tree => [ "buckets" ],
                   setup => "tools/scripts/soft_phy_buckets/setup-softphy-buckets $bmark --contexts=0",
                   feeder => "none",
-                  ccount => 80000000,
+                  ccount => 8000000000,
                   sysflags => "ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate,
                   );
 
@@ -40,7 +40,7 @@ foreach my $rate (@rates) {
                   tree => [ "packet_ber" ],
                   setup => "tools/scripts/soft_phy_per/setup-softphy-per $bmark --contexts=0",
                   feeder => "none",
-                  ccount => 80000000,
+                  ccount => 8000000000,
                   sysflags => "ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate,
                   );
    }
