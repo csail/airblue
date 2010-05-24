@@ -15,4 +15,24 @@
 
 %param DEBUG_CONV_DECODER_TEST 0 "Enable Debug Messages"
 
+%generated -t BA mkFFTInstance.ba
+%generated -t BA mkIFFTInstance.ba
+%generated -t BA mkScramblerInstance.ba
+%generated -t BA mkPuncturerInstance.ba
+%generated -t BA mkDemapperInstance.ba
+%generated -t BA mkConvEncoderInstance.ba
+%generated -t BA mkDescramblerInstance.ba
+%generated -t BA mkDepuncturerInstance.ba
+%generated -t BA mkMapperInstance.ba
+
+%generated -t VERILOG mkFFTInstance.v
+%generated -t VERILOG mkIFFTInstance.v
+%generated -t VERILOG mkScramblerInstance.v
+%generated -t VERILOG mkPuncturerInstance.v
+%generated -t VERILOG mkDemapperInstance.v
+%generated -t VERILOG mkConvEncoderInstance.v
+%generated -t VERILOG mkDescramblerInstance.v
+%generated -t VERILOG mkDepuncturerInstance.v
+%generated -t VERILOG mkMapperInstance.v
+
 %AWB_END

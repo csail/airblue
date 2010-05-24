@@ -1,0 +1,293 @@
+
+[Global]
+SaveParameters=0
+Description=Hybrid ACP M2 Compute Environment - No Central Cache (Nallatech)
+File=acp-altera
+Version=2.1
+Type=HAsim
+Name=Hybrid Altera ACP M2 Compute Environment - No Central Cache (Nallatech)
+Class=Asim::Model
+DefaultBenchmark=
+DefaultRunOpts=
+
+[Model]
+DefaultAttributes=bluespec acp-m2c
+model=FPGA Environment
+
+[FPGA Environment/Requires]
+virtual_platform=Standard Virtual Platform
+fpga_components=Hardware FPGA Components for Virtex 5
+librl_bsv=Altera RL Bluespec Library
+build_pipeline=FPGA Build Pipeline
+
+[Standard Virtual Platform]
+File=modules/bluespec/common/fpgaenv/virtual-platform/std-virtual-platform.awb
+Packagehint=platforms
+
+[Standard Virtual Platform/Requires]
+virtual_devices=Standard Virtual Devices
+low_level_platform_interface=Low Level Platform Interface Hybrid
+umf=Little-Endian Unified Message Format
+
+[FPGA Environment]
+File=modules/bluespec/common/fpgaenv/fpga-environment.awb
+Packagehint=platforms
+
+[Standard Virtual Devices]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/std-virtual-devices.awb
+Packagehint=platforms
+
+[RRR Clients and Servers]
+File=modules/bluespec/common/fpgaenv/virtual-platform/rrr/basic/basic-rrr.awb
+Packagehint=platforms
+
+[Basic Virtual Channel Multiplexer]
+File=modules/bluespec/common/fpgaenv/virtual-platform/channelio/basic/basic-channelio.awb
+Packagehint=platforms
+
+[Basic Virtual Channel Multiplexer/Requires]
+physical_channel=Nallatech Edge Physical Channel
+
+[Low Level Platform Interface Hybrid]
+File=modules/bluespec/common/fpgaenv/low-level-platform-interface/hybrid-llpi.awb
+Packagehint=platforms
+
+[Low Level Platform Interface Hybrid/Requires]
+physical_platform=ACP M2 Compute Module (Nallatech)
+channelio=Basic Virtual Channel Multiplexer
+rrr=RRR Clients and Servers
+physical_platform_debugger=Null Physical Platform Debugger
+local_mem=Local Memory Interface using BRAM
+remote_memory=Null Remote Memory
+
+[Null Physical Platform Debugger]
+File=modules/bluespec/common/fpgaenv/physical-platform/debuggers/null/null-debugger.awb
+Packagehint=platforms
+
+[Common Physical Platform Utilities]
+File=modules/bluespec/common/fpgaenv/physical-platform/utils/utils.awb
+Packagehint=platforms
+
+[Local Memory Interface using BRAM/Params]
+LOCAL_MEM_ADDR_BITS=16
+
+[Local Memory Interface using BRAM]
+File=modules/bluespec/common/fpgaenv/low-level-platform-interface/local-mem/local-mem-bram.awb
+Packagehint=platforms
+
+[Null Clocks Device]
+File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/clocks/null/null-clocks-device.awb
+Packagehint=platforms
+
+[Hardware FPGA Components for Virtex 5]
+File=modules/bluespec/common/fpgaenv/fpga-components/hardware-fpga-components-virtex5.awb
+Packagehint=platforms
+
+[Null Remote Memory]
+File=modules/bluespec/common/fpgaenv/low-level-platform-interface/remote-memory/null/null-remote-memory.awb
+Packagehint=platforms
+
+[Nallatech Edge Physical Device]
+File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/nallatech-edge/nallatech-edge-device.awb
+Packagehint=platform-acp
+
+[ACP M2 Compute Module (Nallatech)/Requires]
+clocks_device=Null Clocks Device
+physical_platform_utils=Common Physical Platform Utilities
+nallatech_edge_device=Nallatech Edge Physical Device
+
+[ACP M2 Compute Module (Nallatech)]
+File=modules/bluespec/common/fpgaenv/physical-platform/acp-m2c-nallatech/acp-m2c.awb
+Packagehint=platform-acp
+
+[Nallatech Edge Physical Channel]
+File=modules/bluespec/common/fpgaenv/virtual-platform/channelio/physical-channel/nallatech-edge/nallatech-edge-channel.awb
+Packagehint=platform-acp
+
+[Little-Endian Unified Message Format]
+File=modules/bluespec/common/fpgaenv/virtual-platform/umf/little-endian/umf-little-endian.awb
+Packagehint=platforms
+
+[Little-Endian Unified Message Format/Params]
+UMF_CHUNK_BYTES=8
+
+[NULL Central Cache]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/central-cache/null-central-cache.awb
+Packagehint=platforms
+
+[Hybrid Streams Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/streams-device/hybrid-streams.awb
+Packagehint=platforms
+
+[Assertions Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/assertions-device/assertions-device.awb
+Packagehint=platforms
+
+[Starter Virtual Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/starter/starter-device.awb
+Packagehint=platforms
+
+[Debug Scan Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/debug-scan-device/debug-scan-device.awb
+Packagehint=platforms
+
+[Dynamic Parameters Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/dynamic-parameters-device/dynamic-parameters-device.awb
+Packagehint=platforms
+
+[Base Common Devices/Requires]
+stats_device=Stats Device
+dynamic_parameters_device=Dynamic Parameters Device
+streams_device=Hybrid Streams Device
+assertions_device=Assertions Device
+debug_scan_device=Debug Scan Device
+
+[Null Shared Memory]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/shared-memory/null/null-shared-memory.awb
+Packagehint=platforms
+
+[Standard Virtual Devices/Requires]
+starter_device=Starter Virtual Device
+central_cache=NULL Central Cache
+scratchpad_memory=Hybrid Scratchpad Memory Device
+shared_memory=Null Shared Memory
+common_utility_devices=Base Common Devices
+front_panel=Hybrid Front Panel
+
+[Stats Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/stats-device/stats-device.awb
+Packagehint=platforms
+
+[Base Common Devices]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/common-utility-devices.awb
+Packagehint=platforms
+
+[Hybrid Front Panel]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/front-panel/hybrid/hybrid-fp.awb
+Packagehint=platforms
+
+[Hybrid Scratchpad Memory Device]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/memory/hybrid/hybrid-mem-scratch.awb
+Packagehint=platforms
+
+[Hybrid Scratchpad Memory Device/Requires]
+scratchpad_memory_common=Scratchpad Memory Common Definitions
+
+[Scratchpad Memory Common Definitions]
+File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/memory/common/mem-scratch-common.awb
+Packagehint=platforms
+
+[RRR Common Module]
+File=modules/bluespec/common/fpgaenv/virtual-platform/rrr/rrr_common/rrr_common.awb
+Packagehint=platforms
+
+[RRR Clients and Servers/Requires]
+rrr_common=RRR Common Module
+
+[FPGA Build Pipeline]
+File=modules/project/pipelines/fpga-build-pipeline.awb
+Packagehint=platforms
+
+[Xilinx BITGEN]
+File=modules/project/xilinx/xilinx_bitgen.awb
+Packagehint=platforms
+
+[Xilinx LOADER]
+File=modules/project/xilinx/xilinx_loader.awb
+Packagehint=platforms
+
+[Xilinx NGD]
+File=modules/project/xilinx/xilinx_ngd.awb
+Packagehint=platforms
+
+[FPGA Build Pipeline/Requires]
+post_synthesis_tool=Xilinx Post-synthesis Toolchain
+synthesis_tool=XST Synthesis Tool
+
+[XST Synthesis Tool]
+File=modules/project/xilinx/xst.awb
+Packagehint=platforms
+
+[Xilinx Post-synthesis Toolchain]
+File=modules/project/xilinx/xilinx_post_synth.awb
+Packagehint=platforms
+
+[Xilinx PAR]
+File=modules/project/xilinx/xilinx_par.awb
+Packagehint=platforms
+
+[Xilinx Post-synthesis Toolchain/Requires]
+xilinx_ngd=Xilinx NGD
+xilinx_bitgen=Xilinx BITGEN
+xilinx_par=Xilinx PAR
+xilinx_map=Xilinx MAP
+xilinx_loader=Xilinx LOADER
+
+[Xilinx MAP]
+File=modules/project/xilinx/xilinx_map.awb
+Packagehint=platforms
+
+[FIFO Utility]
+File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
+Packagehint=bsv-libraries
+
+[Vector Utilities]
+File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
+Packagehint=bsv-libraries
+
+[Debug Utilities]
+File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+Packagehint=bsv-libraries
+
+[RL Bluespec Storage Library]
+File=modules/bluespec/librl/storage/librl-bsv-storage.awb
+Packagehint=platforms
+
+[Avalon Bus Intefaces]
+File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
+Packagehint=bsv-libraries
+
+[Register Mapping Utilities/Requires]
+register_library=RegisterLibrary
+
+[RL Bluespec Cache Managers]
+File=modules/bluespec/librl/storage/cache/librl-cache.awb
+Packagehint=platforms
+
+[Altera RL Bluespec Library]
+File=modules/bsv-libraries/bluespec/librl-mit/librl-mit.awb
+Packagehint=bsv-libraries
+
+[Common Altera Platform Utilities]
+File=modules/bluespec/common/fpgaenv/physical-platform/utils/altera/altera_utils.awb
+Packagehint=platforms
+
+[Register Mapping Utilities]
+File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
+Packagehint=bsv-libraries
+
+[Altera RL Bluespec Library/Requires]
+altera_utils=Common Altera Platform Utilities
+librl_bsv_storage=RL Bluespec Storage Library
+librl_bsv_base=RL Bluespec Base Library
+librl_bsv_cache=RL Bluespec Cache Managers
+
+[RegisterLibrary]
+File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
+Packagehint=bsv-libraries
+
+[CBus Utilities]
+File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
+Packagehint=bsv-libraries
+
+[Common Altera Platform Utilities/Requires]
+c_bus_utils=CBus Utilities
+fifo_utils=FIFO Utility
+vector_utils=Vector Utilities
+avalon=Avalon Bus Intefaces
+debug_utils=Debug Utilities
+register_mapper=Register Mapping Utilities
+
+[RL Bluespec Base Library]
+File=modules/bluespec/librl/base/librl-bsv-base.awb
+Packagehint=platforms

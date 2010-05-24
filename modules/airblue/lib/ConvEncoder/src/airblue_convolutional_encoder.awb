@@ -11,7 +11,5 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC ConvEncoder.bsv
-%generated -t BA mkConvEncoderInstance.ba
-%generated -t VERILOG mkConvEncoderInstance.v
 
 %AWB_END

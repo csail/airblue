@@ -28,8 +28,8 @@ DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-evaluation-arriaII-jtag.apm
-Packagehint=platforms
+File=config/pm/ofdm/submodels/acp-altera.apm
+Packagehint=ofdm
 
 [Soft Connections Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
@@ -50,10 +50,6 @@ Packagehint=ofdm
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
 Packagehint=ofdm
 
-[Airblue FFT/IFFT]
-File=modules/airblue/lib/FFT/src/airblue_fft.awb
-Packagehint=ofdm
-
 [Airblue Convolutional Decoder Test template]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test.awb
 Packagehint=ofdm
@@ -62,7 +58,7 @@ Packagehint=ofdm
 airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
-airblue_fft=Airblue FFT/IFFT
+airblue_fft=Airblue Folded FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue RRR Channel
@@ -197,19 +193,6 @@ Packagehint=hasim
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
 Packagehint=ofdm
 
-[HW/SW Hybrid Pipeline Build]
-File=modules/project/project-pipeline.awb
-Packagehint=platforms
-
-[HW/SW Hybrid Pipeline Build/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
-
-[FPGA Environment/Params]
-MODEL_CLOCK_DIVIDER=6
-MODEL_CLOCK_MULTIPLIER=2
-
 [Airblue Convolutional Decoder Test PassCheck Backend]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
 Packagehint=ofdm
@@ -224,3 +207,21 @@ airblue_channel_model_sw=Airblue SW Channel Model
 [Airblue SW Channel Model]
 File=modules/airblue/lib/Channel/model/channel_model_sw.awb
 Packagehint=ofdm
+
+[Airblue Folded FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
+Packagehint=ofdm
+
+
+
+[FPGA Environment/Params]
+MODEL_CLOCK_FREQ=10
+
+[HW/SW Hybrid Pipeline Build]
+File=modules/project/project-pipeline.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Pipeline Build/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment

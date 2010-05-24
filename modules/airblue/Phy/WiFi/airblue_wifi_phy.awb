@@ -16,6 +16,9 @@
 
 %sources -t BSV -v PUBLIC WiFiTransceiver.bsv
 
+%generated -t VERILOG mkWiFiFFTIFFT.v
+%generated -t BA mkWiFiFFTIFFT.ba
+
 %sources -t DICT -v PUBLIC WiFiRegisterMap.dic
 
 %AWB_END

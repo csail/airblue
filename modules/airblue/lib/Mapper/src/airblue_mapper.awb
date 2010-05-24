@@ -12,7 +12,4 @@
 
 %sources -t BSV -v PUBLIC Mapper.bsv 
 
-%generated -t BA mkMapperInstance.ba
-%generated -t VERILOG mkMapperInstance.v
-
 %AWB_END

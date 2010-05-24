@@ -12,7 +12,6 @@
 
 %sources -t BSV -v PUBLIC FParams.bsv FFTIFFT_Library.bsv FFTIFFT.bsv
 %generated -t BA mkFFTIFFT.ba
-%generated -t BA mkWiFiFFTIFFT.ba
 %generated -t BA mkOneStage.ba
 %generated -t BA mkFFTBflys_RWire.ba
 %generated -t BA module_genOmegaVecs.ba
@@ -20,7 +19,6 @@
 %generated -t BA module_fftPermuteRes.ba
 
 %generated -t VERILOG mkFFTIFFT.v
-%generated -t VERILOG mkWiFiFFTIFFT.v
 %generated -t VERILOG mkOneStage.v
 %generated -t VERILOG mkFFTBflys_RWire.v
 %generated -t VERILOG module_genOmegaVecs.v

@@ -21,12 +21,17 @@
 %sources -t BSV -v PUBLIC Encoder.bsv TXController.bsv Transmitter.bsv WiFiTransmitter.bsv
 
 %generated -t BA mkEncoderInstance.ba
+%generated -t BA mkConvEncoderInstance.ba
 %generated -t BA mkPilotInsertInstance.ba
 %generated -t BA mkCPInsertInstance.ba
 %generated -t BA mkPreDescramblerRXController.ba
 %generated -t BA mkPostDescramblerRXController.ba
 %generated -t BA mkDecoderMCDInstance.ba
 %generated -t BA mkViterbiInstance.ba
+%generated -t BA mkScramblerInstance.ba
+%generated -t BA mkPuncturerInstance.ba
+%generated -t BA mkMapperInstance.ba
+
 
 %generated -t VERILOG mkEncoderInstance.v
 %generated -t VERILOG mkPilotInsertInstance.v
@@ -35,6 +40,11 @@
 %generated -t VERILOG mkPostDescramblerRXController.v
 %generated -t VERILOG mkDecoderMCDInstance.v
 %generated -t VERILOG mkViterbiInstance.v
+%generated -t VERILOG mkScramblerInstance.v
+%generated -t VERILOG mkPuncturerInstance.v
+%generated -t VERILOG mkMapperInstance.v
+%generated -t VERILOG mkConvEncoderInstance.v
+
 
 %param DEBUG_TXCTRL 0 "Enable debug messages"
 
