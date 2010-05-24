@@ -19,7 +19,7 @@ void init_synchronizer_data()
   for (int i = 0; i < SIZE; i++) {
     double real, imag;
     in >> real >> imag;
-    data[i] = { real, imag };
+    data[i] = cmplx(real, imag);
   }
 
   in.close();
