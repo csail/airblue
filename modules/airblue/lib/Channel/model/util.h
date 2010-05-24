@@ -42,11 +42,12 @@ Complex gaussian_complex(double sigma);
 
 Complex add_complex_noise(Complex signal, double sigma);
 
+Complex add_complex(Complex a, Complex b);
 Complex mult_complex(Complex a, Complex b);
 
 Complex rotate_complex(Complex signal, double rot);
 
-Complex cmplx(short int real, short int imag);
+Complex cmplx(double real, double imag);
 
 unsigned int pack(Complex x);
 Complex unpack(unsigned int x);

@@ -68,6 +68,15 @@ Complex gaussian_complex(double sigma)
   return ret;
 }
 
+Complex add_complex(Complex a, Complex b)
+{
+  Complex res = {
+    rel: a.rel + b.rel,
+    img: a.img + b.img
+  };
+  return res;
+}
+
 Complex mult_complex(Complex a, Complex b)
 {
   Complex res = {
@@ -88,13 +97,9 @@ Complex rotate_complex(Complex signal, double rot)
   return ret;
 }
 
-Complex cmplx(short int real, short int imag)
+Complex cmplx(double real, double imag)
 {
-  double real_d = real / ((double) SHRT_MAX) * 2.0;
-  double imag_d = imag / ((double) SHRT_MAX) * 2.0;
-
-  Complex ret = { real_d, imag_d };
-  return ret;
+  Complex ret = { real, imag };
 }
 
 static short int shorten(double x)
