@@ -19,6 +19,7 @@ static double get_snr()
     if (snr == 0)
       snr = DEFAULT_SNR;
   }
+
   return snr;
 }
 
@@ -48,7 +49,7 @@ int get_packet_size()
   return packet_size;
 }
 
-#define FTIME_DEFAULT 200000
+#define FTIME_DEFAULT 20000000
 unsigned int ftime = 
 #ifdef FTIME 
 FTIME; 
@@ -56,13 +57,13 @@ FTIME;
 (unsigned int)-1;
 #endif
 
-unsigned int get_finish_cycles()
+long long get_finish_cycles()
 {
   if (ftime == (unsigned int)-1) {
     char* ftime_str = getenv("ADDERROR_CYCLES");
-    unsigned int new_ftime = 0;
+    long long new_ftime = 0;
     if (ftime_str)
-      new_ftime = atoi(ftime_str);
+      new_ftime = strtoll(ftime_str,NULL,10);
     if (!new_ftime)
       new_ftime = FTIME_DEFAULT;
     ftime = new_ftime;
@@ -72,7 +73,7 @@ unsigned int get_finish_cycles()
 
 // Table of maximum expected bit-errors for various rates/noise levels
 // First column is SNR, second is max bit-errors
-static int table[8][8][2] = {
+static long long table[8][8][2] = {
  // Rate 7
  {
   { 15, 0 },    // 0
@@ -171,13 +172,15 @@ static int table[8][8][2] = {
 
 };
 
-int check_ber(int errors, int total)
+long long check_ber(long long errors, long long total)
 {
   double snr = get_snr();
   int rate = get_rate();
   
-  int max_errors;
-  int table_snr;
+  printf("Check errors %llu total %llu\n", errors, total);
+
+  long long max_errors;
+  long long table_snr;
 
   int i = 0;
   do {

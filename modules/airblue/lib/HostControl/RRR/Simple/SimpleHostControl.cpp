@@ -76,15 +76,15 @@ SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetPacketSize(UINT32 dummy)
 }
 
 // F2HTwoWayMsg
-UINT32
+UINT64
 SIMPLEHOSTCONTROLRRR_SERVER_CLASS::GetFinishCycles(UINT32 dummy)
 {
    return get_finish_cycles();
 }
 
 // F2HTwoWayMsg
-UINT32
-SIMPLEHOSTCONTROLRRR_SERVER_CLASS::CheckBER(UINT32 errors, UINT32 total)
+UINT64
+SIMPLEHOSTCONTROLRRR_SERVER_CLASS::CheckBER(UINT64 errors, UINT64 total)
 {
    return check_ber(errors, total);
 }

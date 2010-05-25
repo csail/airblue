@@ -55,7 +55,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
 
    // runtime parameters
    Reg#(Rate) rate <- mkRegU;
-   Reg#(Bit#(32)) finishTime <- mkRegU;
+   Reg#(Bit#(48)) finishTime <- mkRegU;
    Reg#(Bool) initialized <- mkReg(False);
    Reg#(Bool) done <- mkReg(False);
 
@@ -73,16 +73,16 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    Reg#(Bit#(12)) des_cnt <- mkReg(0);
    Reg#(Bit#(12)) out_cnt <- mkReg(0);
    Reg#(Bit#(12)) in_data <- mkReg(0);
-   Reg#(Bit#(32)) cycle <- mkReg(0);
+   Reg#(Bit#(48)) cycle <- mkReg(0);
    Reg#(Bit#(12)) out_data <- mkReg(0);
-   Reg#(Bit#(32)) errors <- mkConfigReg(0); // accumulated errors
-   Reg#(Bit#(32)) total <- mkConfigReg(0); // total bits received
+   Reg#(Bit#(48)) errors <- mkConfigReg(0); // accumulated errors
+   Reg#(Bit#(48)) total <- mkConfigReg(0); // total bits received
 
    Stmt initStmt = (seq
       client_stub.makeRequest_GetFinishCycles(0);
       action
          let resp <- client_stub.getResponse_GetFinishCycles();
-         finishTime <= resp;
+         finishTime <= truncate(resp);
       endaction
       initialized <= True;
    endseq);
@@ -193,14 +193,14 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       cycle <= cycle + 1;
    endrule
 
-   rule finish_makeRequest (cycle >= finishTime && !done);
+   rule finish_makeRequest (total >= finishTime && !done && initialized);
       $display("PacketGen: Packet bit errors:          %d, Packet bit length: %d, BER total:          %d", errors, total, errors);
 
       $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
       //$display("Convolutional encoder BER was set as %d percent",getConvOutBER);
       $display("ConvolutionalDecoder performance total bit errors %d out of %d bits received",errors,total);
  
-      client_stub.makeRequest_CheckBER(errors, total);
+      client_stub.makeRequest_CheckBER(zeroExtend(errors), zeroExtend(total));
       done <= True;
    endrule
 

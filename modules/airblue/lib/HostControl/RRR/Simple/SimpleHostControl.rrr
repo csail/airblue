@@ -4,8 +4,8 @@ service SIMPLEHOSTCONTROLRRR
     {
        method GetRate (out UINT32[32] rate, in UINT32[32] value);
        method GetPacketSize (out UINT32[32] packet_size, in UINT32[32] value);
-       method GetFinishCycles (out UINT32[32] cycles, in UINT32[32] dummy);
-       method CheckBER (out UINT32[32] dummy, in UINT32[32] errors, in UINT32[32] total);
+       method GetFinishCycles (out UINT64[64] cycles, in UINT64[64] dummy);
+       method CheckBER (out UINT64[64] dummy, in UINT64[64] errors, in UINT64[64] total);
     };
 
  };
