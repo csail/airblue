@@ -46,13 +46,10 @@ sub process_softphy {
         $total_softphy[$i] = 0;
     }
 
-    while(my $line = <SOFTPHY>) {
-       
-        if($line =~ m/h:\s+(\d+)\s+e:\s+(\d+)/) {
-            $total_softphy[$1] = $total_softphy[$1] + 1;
-            if($2) {
-                $actual_bers[$1] = $actual_bers[$1] + 1;
-	    }
+    while(my $line = <SOFTPHY>) {       
+        if($line =~ m/Bucket\s+(\d+)\s+errors\s+(\d+)\s+total\s+(\d+)/) {
+            $total_softphy[$1] =$3;
+	    $actual_ber[$1] = $2;            
         }
     }
 
