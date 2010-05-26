@@ -67,7 +67,7 @@ CHANNEL_RRR_SERVER_CLASS::Channel (
     UINT32 data5, UINT32 data6, UINT32 data7, UINT32 data8, UINT32 data9,
     UINT32 cycle )
 {
-
+  
   UINT32 samples[] = {
     data0, data1, data2, data3, data4,
     data5, data6, data7, data8, data9

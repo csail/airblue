@@ -1,0 +1,7 @@
+service SOFT_PHY_BUCKET_RRR
+{
+    server hw (bsv,connection) <- sw (cpp, method)
+    {
+       method ReadBucket(in UINT32[32] addr, out UINT64[64] error, out UINT64[64] total);
+    };
+};

@@ -1,0 +1,11 @@
+
+%name SoftPhy Bucket Test Driver
+%desc Drives the SoftPhy bucket test
+
+%provides airblue_driver_application
+
+%public  soft_phy_bucket.h
+%private soft_phy_bucket.cpp
+
+
+

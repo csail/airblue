@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name SoftPhy Bucket Backend
+%desc This backend records information about SoftPhy buckets
+
+%provides airblue_convolutional_decoder_backend
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC SoftPhyBucketBackend.bsv
+%sources -t RRR -v PUBLIC SoftPhyBucket.rrr
+%sources -t CPP -v PUBLIC SoftPhyBucket.cpp
+%sources -t H   -v PUBLIC SoftPhyBucket.h
+
+%AWB_END
