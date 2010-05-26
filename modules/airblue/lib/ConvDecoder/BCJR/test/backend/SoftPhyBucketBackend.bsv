@@ -144,37 +144,33 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    endrule
 
    rule getOutput(total < finishTime);
+      let mesg = descMesgs.first();
+      let expected_data = out_data + 1; 
+      let diff = mesg.data ^ expected_data; // try to get the bits that are different
+      if(diff[bitIndex] == 1)
+         begin
+           errorCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), errorCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
+         end
+
+      totalCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), totalCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
+
       if(bitIndex == 0) 
         begin
           descMesgs.deq();     
           outSoftPhyHintsQ.deq();
           bitIndex <= 11;
-        end
-      else
-        begin
-          bitIndex <= bitIndex - 1;
-        end
-
-      let mesg = descMesgs.first();
-      let expected_data = out_data + 1; 
-      let diff = mesg.data ^ expected_data; // try to get the bits that are different
-      
-      if(diff[bitIndex] == 1)
-        begin
-          errorCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), errorCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
-        end
-
-      totalCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), totalCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
-
-      let no_error_bits = countOnes(diff); // one = error bit
-      if (mesg.control.globalCtrl.firstSymbol && out_cnt == 0)
-         begin
-            out_cnt <= mesg.control.globalCtrl.length - 1;
-            errors <= errors + zeroExtend(pack(no_error_bits));
-            total <= total + 12;
-            out_data <= out_data + 1;
-            if (`DEBUG_CONV_DECODER_TEST == 1)
-               begin
+          // All the stuff that we used to do in a single cycle, we'll do 
+          // here 
+    
+          let no_error_bits = countOnes(diff); // one = error bit
+          if (mesg.control.globalCtrl.firstSymbol && out_cnt == 0)
+            begin
+              out_cnt <= mesg.control.globalCtrl.length - 1;
+              errors <= errors + zeroExtend(pack(no_error_bits));
+              total <= total + 12;
+              out_data <= out_data + 1;
+              if (`DEBUG_CONV_DECODER_TEST == 1)
+                begin
                   for(Integer i = 0; i < 12; i = i + 1)
                      begin
                   //            $display("Expected %b",expected_data[i]);
@@ -182,10 +178,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
                      end
                   $display("Cycle: %d ConvolutionalDecoder Out Mesg: rate:%d, data:%b, no_error_bits: %d",cycle,mesg.control.globalCtrl.rate,mesg.data,no_error_bits);
                end
-         end
-      else
-         begin
-            if (out_cnt > 0)
+            end
+          else
+            begin
+              if (out_cnt > 0)
                begin
                   out_cnt <= out_cnt - 1;
                   out_data <= out_data + 1;
@@ -210,13 +206,17 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
                            end
                      end
                end
-         end
+          end
+        end
+      else
+        begin
+          bitIndex <= bitIndex - 1;
+        end
    endrule
       
    //handle polling the rams
    // This rule may well require a scheduling pragma
    rule handleExternalReqsTop(total >= finishTime && initialized && !done);
-     //$display("Dumping bucket %d", dumpAddr);
      backend_stub.makeRequest_SendBucket(zeroExtend(dumpAddr),zeroExtend(errorCounts.sub(dumpAddr)),zeroExtend(totalCounts.sub(dumpAddr)));
      if(dumpAddr + 1 == 0)
        begin
@@ -227,12 +227,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
  
    rule drainResps;
      let dummy <- backend_stub.getResponse_SendBucket();
-     //$display("Dumped bucket %d", dumpAddr);
    endrule
 
    // this will probably work because we are dumping a lot of data.  
    rule handleExternalReqs(done);
-     $display("Sending done, total %d error %d", total,errors);
      endSim.send(0);
    endrule
 
