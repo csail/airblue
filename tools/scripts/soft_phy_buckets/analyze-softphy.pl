@@ -49,7 +49,7 @@ sub process_softphy {
     while(my $line = <SOFTPHY>) {       
         if($line =~ m/Bucket\s+(\d+)\s+errors\s+(\d+)\s+total\s+(\d+)/) {
             $total_softphy[$1] =$3;
-	    $actual_ber[$1] = $2;            
+	    $actual_bers[$1] = $2;            
         }
     }
 

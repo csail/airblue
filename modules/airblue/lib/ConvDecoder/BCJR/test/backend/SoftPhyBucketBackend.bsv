@@ -138,7 +138,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
      descMesgs.enq(mesg); 
    endrule
 
-   rule sinkOutput(total >= finishTime);
+   rule sinkOutput(total >= finishTime || !initialized);
      descMesgs.deq();     
      outSoftPhyHintsQ.deq();
    endrule
@@ -234,7 +234,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
      endSim.send(0);
    endrule
 
-   method Action put(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric) mesg) if(initialized);
+   method Action put(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric) mesg);
       Bool push_zeros = False; 
       if (`DEBUG_CONV_DECODER_TEST == 1)
         begin
