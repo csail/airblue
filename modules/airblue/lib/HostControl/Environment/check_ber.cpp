@@ -60,7 +60,7 @@ FTIME;
 long long get_finish_cycles()
 {
   if (ftime == (unsigned int)-1) {
-    char* ftime_str = getenv("ADDERROR_CYCLES");
+    char* ftime_str = getenv("AIRBLUE_BITS_CYCLES");
     long long new_ftime = 0;
     if (ftime_str)
       new_ftime = strtoll(ftime_str,NULL,10);
