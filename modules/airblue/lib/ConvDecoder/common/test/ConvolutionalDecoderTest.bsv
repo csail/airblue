@@ -82,6 +82,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    // runtime parameters
    Reg#(Rate) rate <- mkRegU;
    Reg#(Bool) initialized <- mkReg(False);
+   Reg#(Bit#(12)) length <- mkReg(1);
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
 						 rate:R0});
@@ -95,9 +96,14 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
 
    Stmt initStmt = (seq
       client_stub.makeRequest_GetRate(0);
+      client_stub.makeRequest_GetPacketSize(0);
       action
          let resp <- client_stub.getResponse_GetRate();
          rate <= unpack(truncate(resp));
+      endaction
+      action
+         let resp <- client_stub.getResponse_GetPacketSize();
+         length <= unpack(truncate(resp));
       endaction
       initialized <= True;
    endseq);
@@ -109,7 +115,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    endrule
    
    rule putNewRate(counter == 0 && initialized);
-      let new_ctrl = nextCtrl(ctrl, rate);
+      let new_ctrl = nextCtrl(ctrl, rate, 144*length);
+      $display("DecoderTests new packet r %d l %d", rate, 144*length);
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Valid magicConstantSeed;

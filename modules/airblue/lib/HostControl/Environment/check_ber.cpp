@@ -37,7 +37,7 @@ int get_rate()
 }
 
 
-#define DEFAULT_PACKET_SIZE 256 // Packet size in bytes
+#define DEFAULT_PACKET_SIZE 32 // Packet size in bytes
 int get_packet_size()
 {
   int packet_size = DEFAULT_PACKET_SIZE;

@@ -126,8 +126,7 @@ instance FShow#(RXGlobalCtrl);
 endinstance
 
 
-function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl, Rate new_rate);
-   Bit#(12) new_length = getNewLength(new_rate);
+function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl, Rate new_rate, Bit#(12) new_length);
    return TXGlobalCtrl{ firstSymbol: False, rate: new_rate, length: new_length};
 endfunction
 
