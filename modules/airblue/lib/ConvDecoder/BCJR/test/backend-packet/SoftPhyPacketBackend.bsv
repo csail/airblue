@@ -30,6 +30,7 @@ import Vector::*;
 import Complex::*;
 import FShow::*;
 import FIFO::*;
+import FIFOF::*;
 import StmtFSM::*;
 import FixedPoint::*;
 
@@ -70,7 +71,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
  
    FIFO#(Vector#(12, Bit#(12)))  outSoftPhyHintsQ <- mkSizedFIFO(256);
    SoftHintAvg softHintAvg <- mkSoftHintAvg;
-   FIFO#(Tuple2#(Bit#(32),Bit#(32))) actualBER <- mkFIFO;
+   FIFOF#(Tuple2#(Bit#(32),Bit#(32))) actualBER <- mkFIFOF;
  
    // Pipeline elements
    let descrambler <- mkDescramblerInstance;
@@ -220,7 +221,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    endrule
 
    // this will probably work because we are dumping a lot of data.  
-   rule handleExternalReqs(done);
+   rule handleExternalReqs(total >= finishTime && initialized &&
+        !actualBER.notEmpty);
      endSim.send(0);
    endrule
 
