@@ -1,0 +1,8 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+bcjr_soft_half   config/pm/ofdm/library_tests/soft_phy_half_bucket_test_exe.apm  --bluesim=""
+

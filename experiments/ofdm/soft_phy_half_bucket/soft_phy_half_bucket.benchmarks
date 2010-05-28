@@ -4,7 +4,7 @@
 #
 # ***************
 
-experiments = bcjr_soft
+experiments = bcjr_soft_half
 config/bm/ofdm/soft_phy.cfx/long_cpu_buckets/soft_phy_ratio_rate_0_snr_2.cfg
 config/bm/ofdm/soft_phy.cfx/long_cpu_buckets/soft_phy_ratio_rate_0_snr_3.cfg
 config/bm/ofdm/soft_phy.cfx/long_cpu_buckets/soft_phy_ratio_rate_0_snr_4.cfg
