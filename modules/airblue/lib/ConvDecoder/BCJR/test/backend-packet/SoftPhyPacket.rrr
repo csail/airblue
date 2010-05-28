@@ -1,0 +1,7 @@
+service SOFT_PHY_PACKET_RRR
+{
+    server sw (cpp, method) <- hw (bsv, connection) 
+    {
+       method SendPacket(out UINT32[32] dummy, in UINT32[32] predicted_ber, in UINT32[32] errors, in UINT32[32] total);
+    };
+};

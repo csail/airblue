@@ -1,0 +1,20 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name SoftPhy Packet Backend
+%desc Records average BER in packets
+
+%provides airblue_convolutional_decoder_backend
+%requires airblue_softhint_avg
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC SoftPhyPacketBackend.bsv
+%sources -t RRR -v PUBLIC SoftPhyPacket.rrr
+%sources -t CPP -v PUBLIC SoftPhyPacket.cpp
+%sources -t H   -v PUBLIC SoftPhyPacket.h
+
+%AWB_END

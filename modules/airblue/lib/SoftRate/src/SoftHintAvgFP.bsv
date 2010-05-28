@@ -36,7 +36,8 @@ module mkSoftHintAvg (SoftHintAvg#(n))
 
       if (inQ.first.isNewPacket)
         begin
-          berSumQ.enq(tuple2(expectedBER,bits));
+          if (bits > 0)
+             berSumQ.enq(tuple2(expectedBER,bits));
           bits <= fromInteger(valueOf(n));
           expectedBER <= sum;
           minHint <= fold(min, hints);
