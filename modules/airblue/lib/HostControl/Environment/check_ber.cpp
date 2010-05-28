@@ -190,7 +190,7 @@ long long check_ber(long long errors, long long total)
   } while (i < 8 && snr < table_snr);
 
   if (errors > max_errors) {
-    printf("BER too high! snr=%0.2lf db, expected fewer than %d (at %d db) but was %d\n",
+    printf("BER too high! snr=%0.2lf db, expected fewer than %ld (at %ld db) but was %ld\n",
         snr, max_errors, table_snr, errors);
 
     return 0;
