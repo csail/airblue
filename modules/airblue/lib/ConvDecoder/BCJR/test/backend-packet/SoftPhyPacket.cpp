@@ -70,7 +70,7 @@ SOFT_PHY_PACKET_RRR_SERVER_CLASS::SendPacket(INT32 predicted_ber_fp, UINT32 erro
 
   double predicted_ber = predicted_ber_fp / (65536.0);
 
-  printf("Packet predicted: 2^%lf actual: 2^%lf  bits:%u\n", predicted_ber, actual_ber_lg, total);
+  printf("Packet predicted: 2^%lf actual: 2^%lf errors:%u bits:%u\n", predicted_ber, actual_ber_lg, errors, total);
   fflush(stdout);
   return 0;
 }

@@ -21,6 +21,7 @@ def main():
 
     for filename in files:
         contents = open(filename, 'r').readlines()
+	print contents
         for line in contents:
             m = p.match(line)
             if m != None:

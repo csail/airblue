@@ -439,7 +439,7 @@ sub ExecModel($) {
 #     open(STDOUT, ">&", $pty) or die $!;
 
     # Run model
-    my $result = system("${cmd} 2>&1 | grep \"EOP\\|softphy\\|h\"| tee hardware.out");
+    my $result = system("${cmd} 2>&1 | tee hardware.out");
 
     # Send ^d to end child logging thread
     print "\cD";
@@ -492,9 +492,6 @@ sub CompareOutput() {
     my $result = 1;
 
     ## Grep for PASS
-    
-    `perl analyze-softphy.pl hardware.out`;
-    `gnuplot plot-ber.gp > plot.eps`;
 
     return $result;
 }

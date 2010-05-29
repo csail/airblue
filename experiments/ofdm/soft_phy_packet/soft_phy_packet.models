@@ -1,0 +1,7 @@
+# ***************
+#
+# OFDM models
+#
+# ***************
+
+bcjr_soft   config/pm/ofdm/library_tests/soft_phy_packet_test_exe.apm  --bluesim=" "

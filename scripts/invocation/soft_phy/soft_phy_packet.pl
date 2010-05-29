@@ -7,5 +7,5 @@ chomp($working_dir);
 
 print "working dir is $working_dir\n";
 
-`regression.launcher --package=ofdm --runtype=soft_phy_bucket --runcmds="\\"-completioncmd=$working_dir/aggregate-ber-packets.py $working_dir/plot-packets.gp\\""`;
+`regression.launcher --package=ofdm --runtype=soft_phy_packet --runcmds="\\"-completioncmd=$working_dir/aggregate-ber-packets.py $working_dir/plot-packets.gp\\""`;
 
