@@ -17,4 +17,6 @@
 %sources -t CPP -v PUBLIC SoftPhyPacket.cpp
 %sources -t H   -v PUBLIC SoftPhyPacket.h
 
+%param AVERAGE_SW 0 "Enable software averaging of hints"
+
 %AWB_END

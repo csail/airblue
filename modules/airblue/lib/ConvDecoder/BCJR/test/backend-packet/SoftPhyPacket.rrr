@@ -3,5 +3,6 @@ service SOFT_PHY_PACKET_RRR
     server sw (cpp, method) <- hw (bsv, connection) 
     {
        method SendPacket(out UINT32[32] dummy, in UINT32[32] predicted_ber, in UINT32[32] errors, in UINT32[32] total);
+       method SendHints(in UINT32[32] hints_1, in UINT32[32] hints_2, in UINT32[32] hints_3, in UINT8[8] rate, in UINT8[8] last);
     };
 };

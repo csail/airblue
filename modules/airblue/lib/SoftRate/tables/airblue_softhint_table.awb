@@ -1,0 +1,20 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue SoftPhy hint table
+%desc Airblue SoftPhy hint table 
+%provides airblue_softhint_table
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC table_log_r0.bsv table_log_r1.bsv table_log_r2.bsv
+%sources -t BSV -v PUBLIC table_log_r3.bsv table_log_r4.bsv table_log_r5.bsv
+%sources -t BSV -v PUBLIC table_log_r6.bsv table_log_r7.bsv
+
+%sources -t H   -v PUBLIC table_r0.h table_r1.h table_r2.h table_r3.h
+%sources -t H   -v PUBLIC table_r4.h table_r5.h table_r6.h table_r7.h
+
+%AWB_END

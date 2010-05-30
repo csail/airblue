@@ -74,7 +74,7 @@ module mkSoftHintAvg (SoftHintAvg);
       let hint = inQ.first.hint;
       let rate = inQ.first.rate;
 
-      nextBer <= tagged Valid getBER(hint, rate);
+      nextBer <= tagged Valid getBER_log(hint, rate);
       bits <= bits + 1;
 
       if (inQ.first.isLast)

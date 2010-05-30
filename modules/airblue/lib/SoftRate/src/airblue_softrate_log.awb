@@ -8,13 +8,11 @@
 %desc Airblue SoftPhy hint average (log based)
 %provides airblue_softhint_avg
 
+%requires airblue_softhint_table
+
 %attributes airblue
 
 %sources -t BSV -v PUBLIC SoftHintAvgLog.bsv SoftHintParamsLog.bsv
-
-%sources -t BSV -v PUBLIC table_log_r0.bsv table_log_r1.bsv table_log_r2.bsv
-%sources -t BSV -v PUBLIC table_log_r3.bsv table_log_r4.bsv table_log_r5.bsv
-%sources -t BSV -v PUBLIC table_log_r6.bsv table_log_r7.bsv
 
 %param DEBUG_SOFTHINT 0 "Enable debug messages with 1"
 

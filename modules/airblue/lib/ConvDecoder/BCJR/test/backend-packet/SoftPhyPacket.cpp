@@ -15,7 +15,8 @@ using namespace std;
 SOFT_PHY_PACKET_RRR_SERVER_CLASS SOFT_PHY_PACKET_RRR_SERVER_CLASS::instance;
 
 // constructor
-SOFT_PHY_PACKET_RRR_SERVER_CLASS::SOFT_PHY_PACKET_RRR_SERVER_CLASS()
+SOFT_PHY_PACKET_RRR_SERVER_CLASS::SOFT_PHY_PACKET_RRR_SERVER_CLASS() :
+    ber_sum(0), bits(0)
 {
     serverStub = new SOFT_PHY_PACKET_RRR_SERVER_STUB_CLASS(this);
 }
@@ -73,4 +74,34 @@ SOFT_PHY_PACKET_RRR_SERVER_CLASS::SendPacket(INT32 predicted_ber_fp, UINT32 erro
   printf("Packet predicted: 2^%lf actual: 2^%lf errors:%u bits:%u\n", predicted_ber, actual_ber_lg, errors, total);
   fflush(stdout);
   return 0;
+}
+
+void
+SOFT_PHY_PACKET_RRR_SERVER_CLASS::SendHints(UINT32 hints_1, UINT32 hints_2, UINT32 hints_3, UINT8 rate, UINT8 last)
+{
+    //printf("hints: ");
+    UINT32 hints[3] = { hints_1, hints_2, hints_3 };
+    for (int j = 0; j < 3; j++) {
+        UINT32 shift = 0;
+        for (int i = 0; i < 4; i++) {
+            UINT8 hint = (hints[j] >> shift) & 0xFF;
+            //printf("%2hhu ", hint);
+
+            ber_sum += get_ber(hint, rate);
+            bits++;
+
+            shift = shift + 8;
+        }
+    }
+    //printf("\n");
+
+
+    if (last) {
+        double avg_ber = ber_sum / bits;
+        printf("Packet sw prediction: %lf 2^%lf\n", avg_ber, log(avg_ber) / log(2.0));
+        fflush(stdout);
+
+        bits = 0;
+        ber_sum = 0.0;
+    }
 }

@@ -61,7 +61,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    ClientStub_SOFT_PHY_PACKET_RRR backend_stub <- mkClientStub_SOFT_PHY_PACKET_RRR;
 
    // runtime parameters
-   Reg#(Rate) rate <- mkRegU;
    Reg#(Bit#(48)) finishTime <- mkRegU;
    Reg#(Bool) done <- mkReg(False);
    Reg#(Bool) initialized <- mkReg(False);
@@ -156,12 +155,14 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       let next_total = packet_total;
 
       Bool last = (out_cnt == 2 && bitIndex == 0);
+      let hints = outSoftPhyHintsQ.first;
+      let rate = mesg.control.globalCtrl.rate;
 
       if (out_cnt > 1)
         begin
           softHintAvg.in.put(SoftHintMesg {
-             rate: unpack(pack(mesg.control.globalCtrl.rate)), // EEEK! two definitions of rate
-             hint: outSoftPhyHintsQ.first[bitIndex],
+             rate: unpack(pack(rate)), // EEEK! two definitions of rate
+             hint: hints[bitIndex],
              isLast: last
           });
 
@@ -175,6 +176,20 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
           descMesgs.deq();     
           outSoftPhyHintsQ.deq();
           bitIndex <= 11;
+
+          if (`AVERAGE_SW == 1 && out_cnt > 1)
+            begin
+              Vector#(4, Bit#(8)) hints1 = map(truncate, takeAt(0, hints));
+              Vector#(4, Bit#(8)) hints2 = map(truncate, takeAt(4, hints));
+              Vector#(4, Bit#(8)) hints3 = map(truncate, takeAt(8, hints));
+
+              backend_stub.makeRequest_SendHints(
+                 pack(hints1),
+                 pack(hints2),
+                 pack(hints3),
+                 extend(pack(rate)),
+                 extend(pack(last)));
+            end
 
           if (out_cnt > 0 || mesg.control.globalCtrl.firstSymbol)
             begin

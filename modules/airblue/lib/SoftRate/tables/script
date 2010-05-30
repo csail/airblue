@@ -1,0 +1,9 @@
+#!/bin/bash
+
+py=../../../../../scripts/softhints/computer-ber.py
+dir=~/Downloads
+
+for (( i=0; $i<8; i=$i+1 )); do
+    $py -l $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_log_r$i.bsv
+    $py -c $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_r$i.h
+done

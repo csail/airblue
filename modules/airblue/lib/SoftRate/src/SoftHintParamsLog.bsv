@@ -3,6 +3,7 @@ import GetPut::*;
 import Real::*;
 
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_softhint_table.bsh"
 
 typedef Bit#(16) PacketBitLength;
 typedef FixedPoint#(7,4) BitErrorRate;
@@ -33,16 +34,17 @@ endfunction
 //   return res;
 //endfunction
 
-function BitErrorRate getBER(SoftPhyHints hint, Rate rate);
+function BitErrorRate getBER_log(SoftPhyHints hint, Rate rate);
+   Bit#(8) h = truncate(hint);
    case (rate) matches
-      R0: return getBER_R0(hint);
-      R1: return getBER_R1(hint);
-      R2: return getBER_R2(hint);
-      R3: return getBER_R3(hint);
-      R4: return getBER_R4(hint);
-      R5: return getBER_R4(hint);
-      R6: return getBER_R6(hint);
-      R7: return getBER_R7(hint);
+      R0: return get_ber_r0_log(h);
+      R1: return get_ber_r1_log(h);
+      R2: return get_ber_r2_log(h);
+      R3: return get_ber_r3_log(h);
+      R4: return get_ber_r4_log(h);
+      R5: return get_ber_r4_log(h);
+      R6: return get_ber_r6_log(h);
+      R7: return get_ber_r7_log(h);
    endcase
 endfunction
 
