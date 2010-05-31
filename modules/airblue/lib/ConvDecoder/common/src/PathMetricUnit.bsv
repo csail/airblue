@@ -75,10 +75,10 @@ endfunction
 
 module mkPathMetricUnit#(String str, 
                          function Vector#(VTotalStates,VACSEntry) getPMUOut
-                         (Vector#(VTotalStates, VPathMetric) path_metric,
-                         Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric)) branch_metric),
+                            (Vector#(VTotalStates, VPathMetric) path_metric,
+                             Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric)) branch_metric),
                          function  Vector#(VTotalStates,Vector#(VRadixSz,VBranchMetric))
-                         getBranchMetric(Vector#(VNoBranchMetric,VBranchMetric) branch_metric))
+                            getBranchMetric(Vector#(VNoBranchMetric,VBranchMetric) branch_metric))
       (PathMetricUnit);
    
    Reg#(VPathMetricUnitOut) pmu_out  <- mkReg(tuple2(True,?));// This may hurt us in the long run, but we assume here  

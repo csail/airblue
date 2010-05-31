@@ -1,0 +1,28 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name Airblue Convolutional Decoder Common (Viterbi SoftHints)
+%desc Common modules shared by both Viterbi and BCJR
+%provides airblue_convolutional_decoder_common
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC VParams.bsv IViterbi.bsv ConvDecoder.bsv PathMetricUnit.bsv PathMetricUnitGamma.bsv BranchMetricUnit.bsv       
+
+%generated -t BA mkBranchMetricUnit.ba
+%generated -t BA module_permuteForward.ba
+%generated -t BA module_getBranchMetricForward.ba
+%generated -t BA module_acs.ba
+
+%generated -t VERILOG mkBranchMetricUnit.v
+%generated -t VERILOG module_permuteForward.v
+%generated -t VERILOG module_getBranchMetricForward.v
+%generated -t VERILOG module_acs.v
+
+%param DEBUG_CONV_DECODER 0 "Enable debug messages"
+%param SOFT_PHY_HINTS_VITERBI 0 "Enable viterbi soft hints output with this declaration"
+
+%AWB_END

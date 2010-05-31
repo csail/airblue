@@ -43,20 +43,16 @@ import FShow::*;
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
 
-//`define isDebug True // uncomment this line to display error
-
-//`define softOut True // comment this line if soft output viterbi is not needed 
-
 /////////////////////////////////////////////////////////////////////////
 // Definition of TracebackUnit Interface and usefule types
 
 interface TracebackUnit;
    method Put#(VPathMetricUnitOut)  in;
-   method Get#(VOutType) out;
+   method Get#(VState) out;
+   method Vector#(VRadixSz,VTBMemoryEntry) getTBPaths(VState state); // useful to SOVA 
 endinterface
 
 typedef TMul#(VNoTBStages, VTBSz)            VTBMemoryWidth;
-typedef TSub#(VTBMemoryWidth,VStateSz)       VSoftWidth; 
 typedef Bit#(VTBMemoryWidth)                 VTBMemoryEntry;
 
 /////////////////////////////////////////////////////////////////////////
@@ -73,36 +69,18 @@ function Bit#(asz) getMSBs (Bit#(bsz) in_data)
    return tpl_1(split(in_data));
 endfunction
 
-// function VTBMemoryEntry getTBPath(Vector#(VRadixSz,VTBMemoryEntry) tb_mems,
-//                                   VTBType                          tb_bits);
-//    return tb_mems[tb_bits];
-// endfunction
-
 function atype getTBPath(Vector#(VRadixSz,atype) tb_mems,
                          VTBType                 tb_bits);
    return tb_mems[tb_bits];
 endfunction
 
-function Tuple2#(Bit#(bsz),Bit#(asz)) shiftInMSBs (Bit#(bsz) old_data,
+function Tuple2#(Bit#(bsz),Bit#(csz)) shiftInMSBs (Bit#(bsz) old_data,
                                                    Bit#(asz) shift_in_data)
-   provisos (Add#(asz,bsz,absz), Add#(bsz,asz,absz));
-   return split({shift_in_data, old_data});
-endfunction
-
-
-function  Vector#(VSoftWidth,VPathMetric) getSoftOuts (Vector#(VSoftWidth,VPathMetric)        soft_outs,
-                                                       Tuple2#(VTBMemoryEntry,VTBMemoryEntry) tb_paths,
-                                                       VPathMetric                            delta);
-   VTBMemoryEntry                        best_path        = tpl_1(tb_paths);
-   VTBMemoryEntry                        second_best_path = tpl_2(tb_paths);
-   VTBMemoryEntry                        diff_path        = best_path ^ second_best_path; // positions where best_path and second_best_path will be 1, otherwise 0
-   Vector#(VSoftWidth,VPathMetric)       new_soft_outs     = soft_outs;                     
-   for (Integer i = 0; i < valueOf(VSoftWidth); i = i + 1)
-      if (i != valueOf(VSoftWidth)-1)
-         new_soft_outs[i] = (diff_path[i] == 1 && (delta < new_soft_outs[i+1])) ? delta : new_soft_outs[i+1];
-      else
-         new_soft_outs[i] = (diff_path[i] == 1) ? delta : maxBound;
-   return new_soft_outs;
+   provisos (Add#(asz,bsz,absz), Add#(bsz,asz,absz), Add#(xxA,csz,absz));
+   Bit#(absz) concat_data = {shift_in_data, old_data}; 
+   Bit#(bsz)  tup1        = tpl_1(split(concat_data));
+   Bit#(csz)  tup2        = tpl_2(split(concat_data));
+   return tuple2(tup1,tup2);
 endfunction
 
 
@@ -115,60 +93,41 @@ module mkTracebackUnit (TracebackUnit);
    // states
    Reg#(VTBStageIdx)                          tb_count   <- mkReg(fromInteger(no_tb_stages)); // output the first value after counting to 0 (skip first NoTBStages)
    Reg#(Vector#(VTotalStates,VTBMemoryEntry)) tb_memory  <- mkReg(replicate(0));
-   FIFO#(Vector#(FwdSteps,Bit#(ConvInSz)))    out_data_q <- mkSizedFIFO(2);
+   FIFO#(VState)                              out_data_q <- mkSizedFIFO(2);
    
-   `ifdef softOut 
-   Reg#(Vector#(VTotalStates,Vector#(VSoftWidth,VPathMetric)))  soft_outs_reg  <- mkReg(replicate(maxBound)); // for each traceback column, there is a soft output
-   `endif
+   Vector#(VRadixSz,Vector#(VTotalStates,VTBMemoryEntry)) expanded_memory  = replicate(tb_memory);
+   Vector#(VTotalStates,Vector#(VRadixSz,VTBMemoryEntry)) repack_memory    = unpack(pack(expanded_memory));
    
    interface Put in;
       method Action put(VPathMetricUnitOut in_tup);
          Bool                                                   need_rst         = tpl_1(in_tup);
          Vector#(VTotalStates,VACSEntry)                        in_data          = tpl_2(in_tup);         
-         if(`DEBUG_VITERBI  == 1)
-            $display("Viterbi Forward Vector: ", fshow(tpl_1(unzip(in_data)))); 
+         if(`DEBUG_CONV_DECODER  == 1)
+            $display("%m Viterbi Forward Vector: ", fshow(tpl_1(unzip(in_data)))); 
 
          Vector#(VTotalStates,VPathMetric)                      path_metric_vec  = newVector;       
          Vector#(VTotalStates,VTBType)                          tb_bits          = newVector;
 
-         `ifdef softOut
-         Vector#(VTotalStates,VTBType)                          sb_tb_bits       = newVector; // second best traceback bits
-         Vector#(VTotalStates,VPathMetric)                      delta_vec        = newVector;
-         `endif
 
          for(Integer i = 0; i < valueOf(VTotalStates); i = i + 1)
             begin
                path_metric_vec[i] = tpl_1(in_data[i]);
                tb_bits[i]         = tpl_2(in_data[i]);
-
-               `ifdef softOut
-               sb_tb_bits[i]      = tpl_3(in_data[i]);
-               delta_vec[i]       = tpl_4(in_data[i]);
-               `endif
-
             end
          Vector#(VTotalStates,Tuple2#(VState,VPathMetric))      path_metric_sums = zip(genWith(fromInteger), path_metric_vec);
-         VState                                                 min_idx          = tpl_1(fold(chooseMax, path_metric_sums));
-      	 
-
-         Vector#(VRadixSz,Vector#(VTotalStates,VTBMemoryEntry)) expanded_memory  = replicate(tb_memory);
-         Vector#(VTotalStates,Vector#(VRadixSz,VTBMemoryEntry)) repack_memory    = unpack(pack(expanded_memory));
+         VState                                                 min_idx;
+         if(`VITERBI_TB_MAX_PATH == 1) // traceback from the most likely path or 0? 
+            min_idx          = tpl_1(fold(chooseMax, path_metric_sums));
+      	 else
+            min_idx          = 0;
+         
          Vector#(VTotalStates,VTBMemoryEntry)                   tb_path_memory   = zipWith(getTBPath, repack_memory, tb_bits);                  
          Vector#(VTotalStates,VState)                           state_id         = genWith(fromInteger);
-         Vector#(VTotalStates,Tuple2#(VTBMemoryEntry,VTBType))  shifted_memory   = zipWith(shiftInMSBs, tb_path_memory, map(getMSBs,state_id));
-         Vector#(FwdSteps,Bit#(ConvInSz))                       res              = unpack(pack(tpl_2(shifted_memory[min_idx]))); 
-         `ifdef softOut
-         Vector#(VRadixSz,Vector#(VTotalStates,Vector#(VSoftWidth,VPathMetric))) expanded_soft_outs = replicate(soft_outs_reg);
-         Vector#(VTotalStates,Vector#(VRadixSz,Vector#(VSoftWidth,VPathMetric))) repack_soft_outs   = unpack(pack(expanded_soft_outs));
-         Vector#(VTotalStates,Vector#(VSoftWidth,VPathMetric))                   temp_soft_outs     = zipWith(getTBPath, repack_soft_outs, tb_bits);
-         Vector#(VTotalStates,VTBMemoryEntry)                   sb_tb_path_memory = zipWith(getTBPath, repack_memory, sb_tb_bits);
-         Vector#(VTotalStates,Vector#(VSoftWidth,VPathMetric))  soft_outs         = zipWith3(getSoftOuts,temp_soft_outs, zip(tb_path_memory,sb_tb_path_memory), delta_vec);
-         VPathMetric                                            soft_out          = soft_outs_reg[min_idx][0]; 
-         soft_outs_reg <= soft_outs;
-
-         `endif
-         if(`DEBUG_VITERBI == 1)
-            $display("Viterbi TBSz: %d",tb_count);
+         Vector#(VTotalStates,VTBType)                          state_msbs       = map(getMSBs,state_id);
+         Vector#(VTotalStates,Tuple2#(VTBMemoryEntry,VState))   shifted_memory   = zipWith(shiftInMSBs, tb_path_memory, state_msbs);
+         VState                                                 res              = tpl_2(shifted_memory[min_idx]); 
+         if(`DEBUG_CONV_DECODER == 1)
+            $display("%m Viterbi TBSz: %d",tb_count);
          tb_memory <= tpl_1(unzip(shifted_memory));
          if (tb_count != 0)
             tb_count <= tb_count - 1;
@@ -177,29 +136,27 @@ module mkTracebackUnit (TracebackUnit);
                if (need_rst)
                   tb_count <= fromInteger(no_tb_stages);
                out_data_q.enq(res);
-               if(`DEBUG_VITERBI == 1)
+               if(`DEBUG_CONV_DECODER == 1)
                   begin
-                     $display("Traceback Unit Max : %d Bit out: %h", min_idx, res);       
-                     $display("TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
-                     `ifdef softOut
-                     $display("TBU soft decision %d",soft_out);
-                     `endif
+                     $display("%m Traceback Unit Max : %d Bit out: %h", min_idx, res);       
+                     $display("%m TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
                   end
             end
       endmethod
    endinterface                
    
    interface Get out;
-      method ActionValue#(VOutType) get();
+      method ActionValue#(VState) get();
          out_data_q.deq;
          // viterbi doesn't support soft phy hints, just output junk
-         `ifdef SOFT_PHY_HINTS
-         return tuple2(out_data_q.first,?);
-         `else
          return out_data_q.first;
-         `endif
       endmethod
    endinterface
+   
+   method Vector#(VRadixSz,VTBMemoryEntry) getTBPaths(VState state);
+      return repack_memory[state];
+   endmethod
+
 endmodule
 
 

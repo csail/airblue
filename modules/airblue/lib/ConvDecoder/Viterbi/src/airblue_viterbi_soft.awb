@@ -4,7 +4,7 @@
 
 %AWB_START
 
-%name Airblue Viterbi (no SoftHints)
+%name Airblue Viterbi (with SoftHints)
 %desc Convolutional Decoder implemented using the Viterbi algorithm
 %provides airblue_convolutional_decoder
 
@@ -12,16 +12,18 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC Viterbi.bsv TracebackUnit.bsv HardTracebackUnit.bsv      
+%sources -t BSV -v PUBLIC Viterbi.bsv TracebackUnit.bsv SoftPathDetector.bsv SoftTracebackUnit.bsv      
 
 %generated -t BA mkIViterbiTBPath.ba
 %generated -t BA mkTracebackUnit.ba
-%generated -t BA mkHardTracebackUnit.ba
+%generated -t BA mkSoftPathDetector.ba
+%generated -t BA mkSoftTracebackUnit.ba
 %generated -t BA module_getPMUOutViterbi.ba
 
 %generated -t VERILOG mkIViterbiTBPath.v
 %generated -t VERILOG mkTracebackUnit.v
-%generated -t VERILOG mkHardTracebackUnit.v
+%generated -t VERILOG mkSoftPathDetector.v
+%generated -t VERILOG mkSoftTracebackUnit.v
 %generated -t VERILOG module_getPMUOutViterbi.v
 
 %param VITERBI_TB_MAX_PATH 1 "1 to traceback from most likely path (slower critical path), 0 to traceback from 0 state"

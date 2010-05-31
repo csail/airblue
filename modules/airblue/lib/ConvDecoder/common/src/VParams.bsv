@@ -14,7 +14,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 // 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// THE SOFWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 // OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -147,7 +147,7 @@ typedef TExp#(VTBSz)                                          VRadixSz;
 typedef Bit#(VTBSz)                                           VTBType;
 typedef TDiv#(VTotalStates, VRadixSz)                         VNoACS;
 
-`ifdef softOut
+`ifdef SOFT_PHY_HINTS_VITERBI
 typedef Tuple4#(VPathMetric, VTBType, VTBType, VPathMetric)   VACSEntry; // the first is accumulated path metric
                                                                          // the second is the best traceback idx
                                                                          // the third is the second best traceback idx
@@ -164,7 +164,7 @@ typedef Tuple2#(VPathMetric, VTBType)                         VACSEntry; // the 
 typedef Tuple2#(Bool,
                 Vector#(VTotalStates, VACSEntry))             VPathMetricUnitOut;
 typedef TDiv#(TBLength, VTBSz)                                VNoTBStages; // no of tbstages
-typedef Bit#(TLog#(TAdd#(VNoTBStages,1)))                     VTBStageIdx;  
+typedef Bit#(TAdd#(TLog#(TAdd#(VNoTBStages,1)),2))            VTBStageIdx;  
 
 typedef enum{
    NORMAL, // normal operation mode
@@ -225,20 +225,26 @@ endfunction
 // choose the larger of the two
 function VACSEntry chooseMax (VACSEntry in1, 
                               VACSEntry in2);
-   VPathMetric delta = tpl_1(in1) - tpl_1(in2);
- 
-  `ifdef softOut
+   VPathMetric delta        = tpl_1(in1) - tpl_1(in2);
+   Bool        is_pos_delta = delta < path_metric_threshold;
+   VPathMetric abs_delta    = is_pos_delta ? delta : negate(delta);
+   
+   // soft phy only works for radix 2
+  `ifdef SOFT_PHY_HINTS_VITERBI 
 
-   VTBType     old_sb_tb1     = tpl_3(in1);
-   VPathMetric old_delta1     = tpl_4(in1);
-   VTBType     old_sb_tb2     = tpl_3(in2);
-   VPathMetric old_delta2     = tpl_4(in2);
-   VPathMetric neg_delta      = negate(delta);
-   Bool        is_new_delta_1 = delta < old_delta1;      // second best is in1 
-   Bool        is_new_delta_2 = neg_delta < old_delta2;  // second best is in2
-   VACSEntry   out1           = is_new_delta_1 ? tuple4(tpl_1(in1),tpl_2(in1),tpl_2(in2),delta) : in1;
-   VACSEntry   out2           = is_new_delta_2 ? tuple4(tpl_1(in2),tpl_2(in2),tpl_2(in1),neg_delta) : in2;
-
+//    VTBType     old_sb_tb1     = tpl_3(in1);
+//    VPathMetric old_delta1     = tpl_4(in1);
+//    VTBType     old_sb_tb2     = tpl_3(in2);
+//    VPathMetric old_delta2     = tpl_4(in2);
+//    VPathMetric neg_delta      = negate(delta);
+//    Bool        is_new_delta_1 = delta < old_delta1;      // second best is in1 
+//    Bool        is_new_delta_2 = neg_delta < old_delta2;  // second best is in2
+//    VACSEntry   out1           = is_new_delta_1 ? tuple4(tpl_1(in1),tpl_2(in1),tpl_2(in2),delta) : in1;
+//    VACSEntry   out2           = is_new_delta_2 ? tuple4(tpl_1(in2),tpl_2(in2),tpl_2(in1),neg_delta) : in2;
+   
+   VACSEntry   out1           = tuple4(tpl_1(in1),tpl_2(in1),tpl_2(in2),abs_delta);
+   VACSEntry   out2           = tuple4(tpl_1(in2),tpl_2(in2),tpl_2(in1),abs_delta);
+   
    `else   
 
    VACSEntry   out1           = in1;
@@ -246,7 +252,7 @@ function VACSEntry chooseMax (VACSEntry in1,
 
    `endif
 
-   return (delta < path_metric_threshold) ? out1 : out2;
+   return is_pos_delta ? out1 : out2;
 endfunction // Tuple3
 
 (* noinline *)
@@ -260,7 +266,7 @@ function Vector#(VRadixSz, VACSEntry) acs(Vector#(VRadixSz, VPathMetric) path_me
          for (Integer j = 0; j < radix_sz; j = j + 1)
             tmp_vec[j] =  path_metric[j] + signExtend(branch_metric[j][i]);  // update path metric
 
-         `ifdef softOut   
+         `ifdef SOFT_PHY_HINTS_VITERBI
          tmp_vec2 = zip4(tmp_vec,genWith(fromInteger),?,replicate(maxBound)); // add traceback idx
          `else
          tmp_vec2 = zip(tmp_vec,genWith(fromInteger)); // add traceback idx

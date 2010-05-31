@@ -57,9 +57,14 @@ import Vector::*;
 (*synthesize*)
 module mkIViterbiTBPath (IViterbi);
    
-   BranchMetricUnit bmu <- mkBranchMetricUnit;
-   PathMetricUnit   pmu <- mkPathMetricUnit("PMU Viterbi",getPMUOutViterbi,getBranchMetricForward);
-   TracebackUnit    tbu <- mkTracebackUnit;
+   BranchMetricUnit     bmu <- mkBranchMetricUnit;
+   PathMetricUnit       pmu <- mkPathMetricUnit("PMU Viterbi",getPMUOutViterbi,getBranchMetricForward);
+
+   `ifdef SOFT_PHY_HINTS
+   SoftTracebackUnit    tbu <- mkSoftTracebackUnit();
+   `else
+   HardTracebackUnit    tbu <- mkHardTracebackUnit();
+   `endif
 
    Reg#(VTBStageIdx) push_zeros_cnt_down <- mkReg(0); // no. zeros to be pushed
 
@@ -79,7 +84,7 @@ module mkIViterbiTBPath (IViterbi);
       VInType v_data = tuple2(need_rst, replicate(replicate(0)));
       bmu.in.put(v_data);
       push_zeros_cnt_down <= push_zeros_cnt_down - 1;
-      if(`DEBUG_VITERBI == 1)
+      if(`DEBUG_CONV_DECODER == 1)
          $display("pushZeros need_rst %d", need_rst);
    endrule
 
@@ -87,8 +92,16 @@ module mkIViterbiTBPath (IViterbi);
       match { .rst, .data } = in_data;
       bmu.in.put(tuple2(False, data));
       if (rst)
-        begin
-          push_zeros_cnt_down <= fromInteger(no_tb_stages);
+         begin
+            VTBStageIdx new_push_zeros_cnt_down;
+            `ifdef SOFT_PHY_HINTS
+            new_push_zeros_cnt_down = fromInteger(no_tb_stages*2);
+            `else 
+            new_push_zeros_cnt_down = fromInteger(no_tb_stages);
+            `endif
+            push_zeros_cnt_down <= new_push_zeros_cnt_down;
+            if(`DEBUG_CONV_DECODER == 1)
+               $display("IViterbiTBPath set push_zeros_cnt_down = %d",new_push_zeros_cnt_down);
         end
    endmethod
 
@@ -109,7 +122,11 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl))
    // due to depth of pipeline
    Integer   bmu_latency = 3; // 2 fifos + 1 cycle
    Integer   pmu_latency = 1; // 1 cycle
+   `ifdef SOFT_PHY_HINTS
+   Integer   tbu_latency = no_tb_stages*2 + 1; // no. tb stages + 1 fifo cycle
+   `else
    Integer   tbu_latency = no_tb_stages + 1; // no. tb stages + 1 fifo cycle
+   `endif
    Integer   ctrl_q_sz = ((bmu_latency+pmu_latency+tbu_latency)/valueOf(n)) + 1;
 
    // IViterbi viterbi <- mkIViterbiTB;     // murali TB
