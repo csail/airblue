@@ -350,7 +350,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       let txframe = txfrm.first;
 
       
-      PhyPacketLength cidx = zeroExtend('b0);
+      PhyPacketLength cidx = 0;
       
     
       case (txframe.frame) matches
@@ -419,7 +419,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
 	       mf = pack(df);
 	       need_ack = True; // not necessarily
 	    end
-	 tagged Mf .mf : 
+	 tagged Mf .management_frame : 
 	    begin //management
 	    end
 	 tagged Cf .cf : 
@@ -499,7 +499,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
    // process rxdata
    rule mac_rxdata_ind ;
       //$display($time, " mac_rxdata_ind");
-      MacFrame_T mRxFrame = unpack(zeroExtend('b0));
+      MacFrame_T mRxFrame = unpack(0);
       let rxdata = phy_rxdataFIFO.first;
       let mf = mac_rxframe;
       PhyPacketLength cidx = rx_idx + 1;
@@ -590,8 +590,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
                                               $display($time, " TB MAC %2d: received data frame",my_mac_sa);					       
 					      $display($time, " TB MAC %2d: sending back ACK",my_mac_sa);
                                               $display($time, " TB MAC %2d: enqueuing new frame",my_mac_sa);
-                                              CommonCtlFrame1_T c1 = unpack(zeroExtend('h0));
-                                              c1.frame_ctl.type_val = 2'b01; // 'b10 for data, 01 for control
+                                              CommonCtlFrame1_T c1 = unpack(0);
+                                              c1.frame_ctl.type_val = Control; // 'b10 for data, 01 for control
                                               c1.frame_ctl.subtype_val = 4'b1101; // 'b0000 for data, 1101 for ACK
                                               c1.frame_ctl.to_ds = 0;
                                               c1.frame_ctl.from_ds = 0;

@@ -20,35 +20,15 @@ Packagehint=ofdm
 
 [Model]
 DefaultAttributes=airblue
-model=HW/SW Hybrid Project Foundation
+model=HW/SW Hybrid Pipeline Build
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[FIFO Utility]
-File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
-Packagehint=bsv-libraries
-
-[Vector Utilities]
-File=modules/bsv-libraries/bluespec/VectorUtils/vector_utils.awb
-Packagehint=bsv-libraries
-
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=platforms
-
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
-
-[Avalon Bus Intefaces]
-File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
-Packagehint=bsv-libraries
-
-[HW/SW Hybrid Project Foundation]
-File=modules/project/project-hybrid.awb
-Packagehint=platforms
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -64,21 +44,15 @@ Packagehint=ofdm
 
 [Airblue Shared Libraries/Requires]
 stream_capture_fifo=StreamCaptureFIFO
-fifo_utils=FIFO Utility
 spi=SPI
 commit_fifo=CommitFIFO
 reversal_buffer=ReversalBuffer
 client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
-vector_utils=Vector Utilities
-debug_utils=Debug Utilities
-c_bus_utils=CBus Utilities
 airblue_common=Airblue common library
 stat_min=Min collector
-avalon=Avalon Bus Intefaces
 airblue_shift_regs=Airblue Shifted Registers
 stat_averager=Averager collector
-register_mapper=Register Mapping Utilities
 
 [Soft Connections Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
@@ -96,26 +70,14 @@ Packagehint=bsv-libraries
 File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
 Packagehint=bsv-libraries
 
-[HW/SW Hybrid Project Foundation/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
-
 [Airblue Deinterleaver]
 File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
 Packagehint=ofdm
 
-[HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
-
 [WiFi Phy Transceiver/Requires]
 airblue_transmitter=WiFi Transmitter Pipeline
-airblue_receiver=WiFi Receiver Pipeline (no Soft Hints)
+airblue_receiver=WiFi Receiver Pipeline
 airblue_fft=Airblue Folded FFT/IFFT
-
-[Register Mapping Utilities/Requires]
-register_library=RegisterLibrary
 
 [Platform Services]
 File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
@@ -141,11 +103,17 @@ Packagehint=ofdm
 [WiFi MAC Phy Loopback/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_device=Airblue FPGA device specific modules
 airblue_mac_packet_gen=Airblue MAC PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_mac=Airblue MAC (with null SHIM)
+rf_frontend=GCT RF Frontend Control
+airblue_host_control=CBus Vector RRR Host Control
+analog_digital=Huntsman AD
+digital_scaler=Digital Scaler
+gain_control=Airblue 1.0 Gain Control
+rf_driver=Simulation Frontend Driver
+airblue_channel=Airblue Clear Channel
 
 [WiFi MAC Phy Loopback]
 File=modules/airblue/MACPhy_Loopback/WiFi/airblue_wifi_mac_phy_loopback.awb
@@ -186,10 +154,6 @@ Packagehint=ofdm
 File=config/pm/hasim/submodels/common/soft-connections-lib.apm
 Packagehint=hasim
 
-[Register Mapping Utilities]
-File=modules/bsv-libraries/bluespec/RegisterMapper/src/register_mapper.awb
-Packagehint=bsv-libraries
-
 [StreamCaptureFIFO]
 File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
 Packagehint=bsv-libraries
@@ -198,21 +162,9 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
 Packagehint=ofdm
 
-[Airblue FPGA device specific modules]
-File=modules/airblue/device/airblue_device.awb
-Packagehint=ofdm
-
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
 Packagehint=ofdm
-
-[RegisterLibrary]
-File=modules/bsv-libraries/bluespec/Register/src/register_library.awb
-Packagehint=bsv-libraries
-
-[CBus Utilities]
-File=modules/bsv-libraries/bluespec/CBusUtils/c_bus_utils.awb
-Packagehint=bsv-libraries
 
 [Airblue Unserializer]
 File=modules/airblue/lib/Unserializer/src/airblue_unserializer.awb
@@ -233,7 +185,7 @@ Packagehint=bsv-libraries
 [Soft Connections Hybrid Application Environment/Requires]
 platform_services=Platform Services
 soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
+connected_application=Airblue application
 
 [Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
@@ -246,9 +198,6 @@ Packagehint=ofdm
 [Airblue Synchronizer]
 File=modules/airblue/lib/Synchronizer/src/airblue_synchronizer.awb
 Packagehint=ofdm
-
-[HW only hybrid application/Requires]
-hw_only_application=WiFi MAC Phy Loopback
 
 [Airblue Channel Estimator/Requires]
 airblue_inverse_sq_root=Airblue Inverse Square Root
@@ -276,31 +225,6 @@ Packagehint=ofdm
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
 
-[Airblue BCJR (no Soft Hints)/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common (no Soft Hints)
-
-[WiFi Receiver Pipeline (no Soft Hints)]
-File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
-Packagehint=ofdm
-
-[Airblue Convolutional Decoder Common (no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
-
-[Airblue BCJR (no Soft Hints)]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
-Packagehint=ofdm
-
-[WiFi Receiver Pipeline (no Soft Hints)/Requires]
-airblue_depuncturer=Airblue Depuncturer
-airblue_descrambler=Airblue Descrambler
-airblue_channel_estimator=Airblue Channel Estimator
-airblue_synchronizer=Airblue Synchronizer
-airblue_deinterleaver=Airblue Deinterleaver
-airblue_convolutional_decoder=Airblue BCJR (no Soft Hints)
-airblue_demapper=Airblue Demapper
-airblue_unserializer=Airblue Unserializer
-
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
@@ -312,7 +236,96 @@ Packagehint=ofdm
 [Airblue MAC (with null SHIM)/Requires]
 airblue_mac_crc=Airblue MAC CRC
 
-
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
+Packagehint=ofdm
+
+
+[Airblue application]
+File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
+Packagehint=ofdm
+
+
+[Airblue application/Requires]
+airblue_driver_application=RXTX Simulation Driver
+hw_only_application=WiFi MAC Phy Loopback
+
+[WiFi Receiver Pipeline/Requires]
+airblue_depuncturer=Airblue Depuncturer
+airblue_descrambler=Airblue Descrambler
+airblue_channel_estimator=Airblue Channel Estimator
+airblue_synchronizer=Airblue Synchronizer
+airblue_deinterleaver=Airblue Deinterleaver
+airblue_convolutional_decoder=Airblue BCJR
+airblue_demapper=Airblue Demapper
+airblue_unserializer=Airblue Unserializer
+
+[Airblue BCJR/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[HW/SW Hybrid Pipeline Build]
+File=modules/project/project-pipeline.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Pipeline Build/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Connections Hybrid Application Environment
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Airblue BCJR]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Common]
+File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
+Packagehint=ofdm
+
+[WiFi Receiver Pipeline]
+File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
+Packagehint=ofdm
+
+[Huntsman AD]
+File=modules/airblue/device/huntsman/analog_digital.awb
+Packagehint=ofdm
+
+[Digital Scaler]
+File=modules/airblue/device/huntsman/scaler.awb
+Packagehint=ofdm
+
+[Airblue 1.0 Gain Control]
+File=modules/airblue/device/huntsman/gain_control.awb
+Packagehint=ofdm
+
+[Simulation Driver]
+File=modules/airblue/device/simulation/gct-driver.awb
+Packagehint=ofdm
+
+[GCT RF Frontend Control]
+File=modules/airblue/device/huntsman/gct_frontend.awb
+Packagehint=ofdm
+
+[GCT RF Frontend Control/Requires]
+gct_driver=Simulation Driver
+
+[Airblue Clear Channel]
+File=modules/airblue/lib/Channel/airblue_clear_channel.awb
+Packagehint=ofdm
+
+[CBus Vector RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
+Packagehint=ofdm
+
+[Simulation Frontend Driver]
+File=modules/airblue/device/simulation/rf-driver.awb
+Packagehint=ofdm
+
+[RXTX Simulation Driver/Requires]
+airblue_environment=Airblue Environment
+
+[RXTX Simulation Driver]
+File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
 Packagehint=ofdm

@@ -14,18 +14,22 @@
 %requires airblue_phy
 %requires airblue_mac
 %requires airblue_mac_packet_gen
-%requires airblue_device
+%requires analog_digital
+%requires gain_control
+%requires rf_frontend
+%requires rf_driver
+%requires digital_scaler
+%requires airblue_channel
+%requires airblue_host_control
 
 %attributes airblue
 
 %sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAMACPacketGenWiresTest.bsv
 
-%generated -t BA mkBusMacVectorSpec.ba
 %generated -t BA mkTransceiverMACPacketGenFPGA.ba
-%generated -t BA mkWiFiFPGAMACPacketGenWiresTest.ba
 
-%generated -t VERILOG mkBusMacVectorSpec.v
 %generated -t VERILOG mkTransceiverMACPacketGenFPGA.v
-%generated -t VERILOG mkWiFiFPGAMACPacketGenWiresTest.v
+
+%param DEBUG_TRANSCEIVER 0 "Enable debug messages"
 
 %AWB_END

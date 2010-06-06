@@ -30,80 +30,40 @@ import GetPut::*;
 import CBus::*;
 import ModuleCollect::*;
 import LFSR::*;
-//import FIFOF::*;
 import ClientServer::*;
-//import GetPut::*;
 import Clocks::*;
-//import FixedPoint::*;
 
-// import AvalonSlave::*;
-// import AvalonCommon::*;
-// import CBusUtils::*;
-// import SPIMaster::*;
-// //import Register::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// //import Receiver::*;
-// //import Transmitter::*;
-// //import TXController::*;
-// //import RXController::*;
-// import LibraryFunctions::*;
-// //import FFTIFFT::*;
-// import FPComplex::*;
-// import Synchronizer::*;
-// //import Unserializer::*;
-// import FPComplex::*;
-// import PacketGen::*;
-// import PacketGenMAC::*;
-// import WiFiReceiver::*;
-// import WiFiTransmitter::*;
-// import MACPhyParameters::*;
-
-// import GCT::*;
-// import AD::*;
-// import Power::*;
-// import AGC::*;
-// import OutOfBand::*;
-
-// import MAC::*;
-// import MACDataTypes::*;
 
 // local includes
-`include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
-`include "asim/provides/airblue_mac_packet_gen.bsh"
-`include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
-`include "asim/provides/airblue_device.bsh"
+`include "asim/provides/airblue_receiver.bsh"
+`include "asim/provides/c_bus_utils.bsh"
+`include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_phy.bsh"
 `include "asim/provides/airblue_mac.bsh"
+`include "asim/provides/airblue_mac_packet_gen.bsh"
+`include "asim/dict/AIRBLUE_REGISTER_MAP.bsh"
+`include "asim/provides/analog_digital.bsh"
+`include "asim/provides/gain_control.bsh"
+`include "asim/provides/rf_frontend.bsh"
 `include "asim/provides/avalon.bsh"
 `include "asim/provides/spi.bsh"
-`include "asim/provides/c_bus_utils.bsh"
+
 
 interface TransceiverASICWires;
-  interface GCTWires gctWires;      
-  interface ADCWires adcWires;
-  interface DACWires dacWires;
-  interface PowerCtrlWires powerCtrlWires;
-  interface SPIMasterWires#(SPISlaveCount) spiWires;
-  interface OutOfBandWires oobWires;
+  interface GCT_WIRES gctWires;      
+  interface ADC_WIRES adcWires;
+  interface DAC_WIRES dacWires;
 endinterface
 
 interface TransceiverFPGA;
-  interface GCTWires gctWires;      
-  interface ADCWires adcWires;
-  interface DACWires dacWires;
-  interface SPIMasterWires#(SPISlaveCount) spiWires;
-  interface PowerCtrlWires powerCtrlWires;
-  interface AvalonSlaveWires#(AvalonAddressWidth,AvalonDataWidth) avalonWires;
-  interface OutOfBandWires oobWires;
+  interface GCT_WIRES gctWires;      
+  interface ADC_WIRES adcWires;
+  interface DAC_WIRES dacWires;
+  interface CBus#(AvalonAddressWidth,AvalonDataWidth) busWires;
 endinterface
 
 module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacketGenFPGAMonad#(Clock viterbiClock, Reset viterbiReset, Clock rfClock, Reset rfReset) (TransceiverASICWires);
@@ -136,49 +96,70 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
 
    WiFiTransceiver transceiver <- mkTransceiver(viterbiClock, viterbiReset);
    MAC  mac <- mkMAC;
-   GCT  gct <- mkGCT;
-   DAC  dac <- mkDAC(clock, reset, clocked_by rfClock, reset_by rfReset);
-   ADC  adc <- mkADC(clock, reset, clocked_by rfClock, reset_by rfReset);
-   AGC  agc <- mkAGC;
-   PowerCtrlWires powerCtrl <- mkPowerCtrl; 
-   OutOfBand oob <- mkOutOfBand;   
-
+   GCT_DEVICE  gct <- mkGCT;
+   DAC_DEVICE  dac <- mkDAC(clock, reset, clocked_by rfClock, reset_by rfReset);
+   ADC_DEVICE  adc <- mkADC(clock, reset, clocked_by rfClock, reset_by rfReset);
+   AGC_DEVICE  agc <- mkAGC;
 
 
    // hook up TX controlflow
    rule txCompleteNotify;
-     let in <- dac.txComplete;
-     gct.txComplete.put(in);
-     mac.phy_txcomplete.put(in);
+     let in <- dac.dac_driver.txComplete;
+     gct.gct_driver.txComplete.put(in);
+     // Drive external completion signal
+     // Drive it for a little bit longer than we expect to receive, just to ensure
+
    endrule
+
 
 
    // hook the Synchronizer to feedback points  
    rule synchronizerFeedback;
-     airblue_synchronizer::ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
-     gct.synchronizerStateUpdate.put(ctrl);
-     agc.synchronizerStateUpdate.put(ctrl);
+     ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
+     gct.gct_driver.synchronizerStateUpdate.put(ctrl);
+     agc.agc_driver.synchronizerStateUpdate.put(ctrl);
+     // update ctrl counts
      case (ctrl) 
       GainStart:  gainStart <= gainStart + 1;
       GHoldStart: gholdStart <= gholdStart + 1;
       TimeOut:    timeOut <= timeOut + 1;
       LongSync:   longSync <= longSync + 1;
      endcase
+
    endrule
    
+   // connect agc/rx ctrl
+   rule packetFeedback;
+     RXExternalFeedback feedback <- transceiver.receiver.packetFeedback.get;
+     agc.agc_driver.packetFeedback.put(feedback); 
+     gct.gct_driver.packetFeedback.put(feedback);
+
+     case(feedback)
+       Abort: begin 
+                abort <= abort + 1;
+                
+              end
+     endcase
+   endrule
 
    // hook up the DAC/ADC
-   mkConnection(transceiver.receiver.in,adc.dataIn);
-   mkConnectionThroughput("CP->DAC",transceiver.transmitter.out,dac.dataOut);
+   mkConnection(transceiver.receiver.in,adc.adc_driver.dataIn);
+   if(`DEBUG_TRANSCEIVER == 1)
+      begin
+         mkConnectionThroughput("CP->DAC",transceiver.transmitter.out,dac.dac_driver.dataOut);
+      end
+   else
+      begin
+         mkConnection(transceiver.transmitter.out,dac.dac_driver.dataOut);
+      end
    
    rule sendGainToADC;
-     dac.agcGainSet(agc.outputGain);
+     dac.dac_driver.agcGainSet(agc.agc_driver.outputGain);
    endrule
 
    rule sendPowToAGC;
-     agc.inputPower(transceiver.receiver.synchronizerCoarPower);
+     agc.agc_driver.inputPower(transceiver.receiver.synchronizerCoarPower);
    endrule
-   
 
 
    // Hook mac to the transceiver
@@ -197,21 +178,23 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
      phyPacketsRX <= phyPacketsRX + 1;
    endrule    
 
-   rule transferTXVector;
-     TXVector txvector <- mac.phy_txstart.get;
-     $display("Transceiver: got a txStart packet");
-     transceiver.transmitter.txStart(txvector);
-     gct.txStart.put(txvector);
-     dac.txStart.put(txvector);     
+   rule txVecSend;
+     TXVector txVec <- mac.phy_txstart.get;
+      if(`DEBUG_TRANSCEIVER == 1)
+         begin
+            $display("Transceiver: TX start");
+         end
+     transceiver.transmitter.txStart(txVec);
+     gct.gct_driver.txStart.put(txVec);
+     dac.dac_driver.txStart.put(txVec); 
    endrule
-
    
  
    // CS decision
    //false positives may be an issue.
    // BUSY if we are transmitting or if AGC is doing things
    rule driveCS;
-     let status <- gct.rxBusy.get;
+     let status <- gct.gct_driver.rxBusy.get;
      if(status) 
        begin
          csmaBusy <= csmaBusy + 1;
@@ -225,22 +208,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
    endrule
 
 
-   // connect agc/rx ctrl
-   rule packetFeedback;
-     RXExternalFeedback feedback <- transceiver.receiver.packetFeedback.get;
-     agc.packetFeedback.put(feedback); 
-     gct.packetFeedback.put(feedback); 
- 
-     case(feedback)
-       Abort: abort <= abort + 1;
-     endcase 
-   endrule
-
   //A second rule for handling the case that the MAC decides the packet is corrupt
   rule maccrcFeedback;
     RXExternalFeedback feedback <- mac.mac_abort.get;   
     macAbort <= macAbort + 1;
-    $display("MAC abort: %d", macAbort+1);
+    if (`DEBUG_TRANSCEIVER == 1)
+      begin
+        $display("Transceiver: MAC abort: %d", macAbort+1);
+      end
   endrule
 
   // Setup the packet gen
@@ -261,37 +236,33 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
   mkCBusPut(valueof(TargetMACAddrOffset), packetGen.targetMACAddress);
 
   // packet Gen externals
-  mkCBusWideRegRW(valueof(AddrEnablePacketGen),packetGen.enablePacketGen);
+  mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,packetGen.enablePacketGen);
   mkCBusWideRegR(valueof(AddrPacketsTX),packetGen.packetsTX);
   mkCBusWideRegR(valueof(AddrPacketsAcked),packetGen.packetsAcked);
   mkCBusWideRegRW(valueof(AddrMinPacketLength),packetGen.minPacketLength);
   mkCBusWideRegRW(valueof(AddrMaxPacketLength),packetGen.maxPacketLength);
   mkCBusWideRegRW(valueof(AddrPacketLengthMask),packetGen.packetLengthMask);
   mkCBusWideRegRW(valueof(AddrPacketDelay),packetGen.packetDelay);
-  mkCBusWideRegRW(valueof(AddrRate),packetGen.rate);
+  mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_RATE,packetGen.rate);
   mkCBusWideRegR(valueof(AddrCycleCountTX),packetGen.cycleCount);
 
   // packet check externals
-  mkCBusWideRegR(valueof(AddrPacketsRX),packetCheck.packetsRX);
+  mkCBusWideRegR(`AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX,packetCheck.packetsRX);
   mkCBusWideRegR(valueof(AddrPacketsRXCorrect),packetCheck.packetsRXCorrect);
   mkCBusWideRegR(valueof(AddrGetBytesRX),packetCheck.bytesRX);
-//   mkCBusWideRegR(valueof(AddrBER),packetCheck.ber);
 
   // GCT RF
-  mkCBusPut(valueof(GCTOffset), gct.spiCommand);
+  mkCBusPut(valueof(GCTOffset), gct.gct_driver.spiCommand);
 
-  interface dacWires = dac.dacWires;
-  interface adcWires = adc.adcWires;
-  interface gctWires = gct.gctWires;
-  interface spiWires = gct.spiWires;
-  interface powerCtrlWires = powerCtrl;
-  interface oobWires = oob.oobWires;
+  interface gctWires = gct.gct_wires;
+  interface adcWires = adc.adc_wires;
+  interface dacWires = dac.dac_wires;
 
 endmodule
 
 /* This has become excessive.  we must REALLY refactor this crap. That this module is more than 500 lines is pretty ridiculous.  */
 (* synthesize *)
-module [Module]  mkTransceiverMACPacketGenFPGA#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
+module mkTransceiverMACPacketGenFPGA#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
    Clock asicClock <- exposeCurrentClock;
    Reset asicReset <- exposeCurrentReset;
    // do we want to line up the edges?
@@ -306,33 +277,15 @@ module [Module]  mkTransceiverMACPacketGenFPGA#(Clock viterbiClock, Reset viterb
 endmodule
 
 // We need a module to insert reset synchronizers
-module [Module]  mkTransceiverMACPacketGenFPGAReset#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
+module [Module] mkTransceiverMACPacketGenFPGAReset#(Clock viterbiClock, Reset viterbiReset, Clock busClock, Reset busReset, Clock rfClock, Reset rfReset) (TransceiverFPGA);
    Clock asicClock <- exposeCurrentClock;
    Reset asicReset <- exposeCurrentReset;
 
-   AvalonSlave#(AvalonAddressWidth,AvalonDataWidth) busSlave <- mkAvalonSlave(asicClock,asicReset,clocked_by busClock, reset_by busReset);
    // Build up CReg interface   
    let ifc <- exposeCBusIFC(mkTransceiverMACPacketGenFPGAMonad(viterbiClock,viterbiReset,rfClock, rfReset));
-  
-   //Create a mapping...
-   rule handleRequestRead(peekGet(busSlave.busClient.request).command ==  register_mapper::Read);
-     let request <- busSlave.busClient.request.get;
-     let readVal <- ifc.cbus_ifc.read(request.addr);
-     $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
-     busSlave.busClient.response.put(readVal);
-   endrule
- 
-   rule handleRequestWrite(peekGet(busSlave.busClient.request).command ==  register_mapper::Write);
-     let request <- busSlave.busClient.request.get;
-     $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
-     ifc.cbus_ifc.write(request.addr,request.data);
-   endrule
 
   interface gctWires = ifc.device_ifc.gctWires;      
   interface adcWires = ifc.device_ifc.adcWires;
   interface dacWires = ifc.device_ifc.dacWires;
-  interface spiWires = ifc.device_ifc.spiWires;
-  interface powerCtrlWires = ifc.device_ifc.powerCtrlWires;
-  interface avalonWires = busSlave.slaveWires;
-  interface oobWires = ifc.device_ifc.oobWires;
+  interface busWires = ifc.cbus_ifc;
 endmodule
