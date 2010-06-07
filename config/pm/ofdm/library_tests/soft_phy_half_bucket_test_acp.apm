@@ -2,17 +2,17 @@
 [Soft Connections Hybrid Application Environment/Requires]
 platform_services=Platform Services with No Memory Service
 soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
+connected_application=Airblue Test Application (No RF)
 
 [Global]
 SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=HAsim
-File=bcjr_test_acp
+File=soft_phy_half_bucket_test_acp
 Class=Asim::Model
-Name=airblue_wifi_phy_only_loopback_exe
-Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
+Name=BCJR test for arria II
+Description=Synthesizable BCJR testbench for arria II platform
 DefaultRunOpts=
 
 [Hybrid Project Common Utilities]
@@ -25,7 +25,7 @@ Packagehint=hasim
 
 [Model]
 DefaultAttributes=airblue
-model=HW/SW Hybrid Pipeline Build
+model=HW/SW Hybrid Project Foundation
 
 [FPGA Environment]
 File=config/pm/ofdm/submodels/acp-altera.apm
@@ -35,19 +35,16 @@ Packagehint=ofdm
 File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
 Packagehint=platforms
 
-[HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
-
-[HW only hybrid application/Requires]
-hw_only_application=Airblue BCJR Test
-
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
 Packagehint=ofdm
 
 [Airblue Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
+Packagehint=ofdm
+
+[Airblue FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_fft.awb
 Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test template]
@@ -58,7 +55,7 @@ Packagehint=ofdm
 airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
-airblue_fft=Airblue Folded FFT/IFFT
+airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue RRR Channel
@@ -66,7 +63,7 @@ airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
 airblue_host_control=Simple RRR Host Control
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
-airblue_convolutional_decoder_backend=Airblue Convolutional Decoder Test PassCheck Backend
+airblue_convolutional_decoder_backend=SoftPhy Bucket Backend
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -136,18 +133,14 @@ Packagehint=bsv-libraries
 File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
 Packagehint=bsv-libraries
 
-[Airblue types (no SoftHints)]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
-
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
 [Airblue BCJR Test/Requires]
-airblue_types=Airblue types (no SoftHints)
+airblue_types=Airblue types (with SoftHints)
 airblue_shared=Airblue Shared Libraries
-airblue_convolutional_decoder=Airblue BCJR with Alpha Init
+airblue_convolutional_decoder=Airblue BCJR With soft phy calculated on only on the forward path result.
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
 
@@ -167,16 +160,9 @@ Packagehint=ofdm
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
 
-[Airblue BCJR with Alpha Init]
-File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
-Packagehint=ofdm
-
 [Simple RRR Host Control]
 File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
 Packagehint=ofdm
-
-[Airblue BCJR with Alpha Init/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue Environment]
 File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
@@ -193,12 +179,12 @@ Packagehint=hasim
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
 Packagehint=ofdm
 
-[Airblue Convolutional Decoder Test PassCheck Backend]
-File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
-Packagehint=ofdm
-
 [Airblue Convolutional Decoder Test Common Definitions]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+Packagehint=ofdm
+
+[SoftPhy Bucket Backend]
+File=modules/airblue/lib/ConvDecoder/BCJR/test/backend/airblue_soft_phy_bucket_backend.awb
 Packagehint=ofdm
 
 [Airblue RRR Channel/Requires]
@@ -208,18 +194,37 @@ airblue_channel_model_sw=Airblue SW Channel Model
 File=modules/airblue/lib/Channel/model/channel_model_sw.awb
 Packagehint=ofdm
 
-[Airblue Folded FFT/IFFT]
-File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
+[SoftPhy Bucket Test Driver]
+File=modules/airblue/lib/ConvDecoder/BCJR/test/driver/soft_phy_bucket.awb
+Packagehint=ofdm
+
+[Airblue Test Application (No RF)/Requires]
+airblue_driver_application=SoftPhy Bucket Test Driver
+hw_only_application=Airblue BCJR Test
+
+[Airblue Test Application (No RF)]
+File=modules/airblue/lib/Drivers/ConnectedAppNoRF/airblue-driver.awb
+Packagehint=ofdm
+
+[Airblue types (with SoftHints)]
+File=modules/airblue/lib/Types/airblue_types_with_soft_hints.awb
 Packagehint=ofdm
 
 [FPGA Environment/Params]
-MODEL_CLOCK_FREQ=10
+MODEL_CLOCK_FREQ=25
 
-[HW/SW Hybrid Pipeline Build]
-File=modules/project/project-pipeline.awb
+[HW/SW Hybrid Project Foundation]
+File=modules/project/project-hybrid.awb
 Packagehint=platforms
 
-[HW/SW Hybrid Pipeline Build/Requires]
+[HW/SW Hybrid Project Foundation/Requires]
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Connections Hybrid Application Environment
+
+[Airblue BCJR With soft phy calculated on only on the forward path result.]
+File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_half.awb
+Packagehint=ofdm
+
+[Airblue BCJR With soft phy calculated on only on the forward path result./Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common

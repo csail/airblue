@@ -11,8 +11,6 @@
 %attributes airblue
 
 %sources -t BSV -v PUBLIC FParams.bsv FFTIFFT_Library.bsv FFTIFFT.bsv
-%generated -t BA mkIFFTInstance.ba
-%generated -t BA mkFFTInstance.ba
 %generated -t BA mkFFTIFFT.ba
 %generated -t BA mkOneStage.ba
 %generated -t BA mkFFTBflys_RWire.ba
@@ -20,8 +18,7 @@
 %generated -t BA module_fftPermute.ba
 %generated -t BA module_fftPermuteRes.ba
 
-%generated -t VERILOG mkIFFTInstance.v
-%generated -t VERILOG mkFFTInstance.v
+
 %generated -t VERILOG mkFFTIFFT.v
 %generated -t VERILOG mkOneStage.v
 %generated -t VERILOG mkFFTBflys_RWire.v
