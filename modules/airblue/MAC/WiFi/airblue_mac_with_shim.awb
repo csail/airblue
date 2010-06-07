@@ -13,5 +13,7 @@
 %attributes airblue concurrent_tx_shim
 
 %sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv
+
+%param DEBUG_MAC 0 "Enable debug messages"
  
 %AWB_END

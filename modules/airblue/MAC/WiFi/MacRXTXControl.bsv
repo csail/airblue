@@ -148,164 +148,164 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
      stat <= stat + 1;
    endrule
 
-   rule checkTxFIFOE (stat[15:0] == 0);
-     $display($time, " TB MAC: addr %d", my_mac_sa);
-     $display($time, " TB MAC: tx: %d rx: %d", phy_sap_txstatus, phy_sap_rxstatus );
-     $display($time, " TB MAC: ifs_tmr: %d bkf_slots: %d bkf_tmr %d ack_tmr %d", ifs_tmr, bkf_slots, bkf_tmr, ack_tmr);
+   if (`DEBUG_MAC == 1)
+      rule checkTxFIFOE (stat[15:0] == 0);
+        $display($time, " TB MAC: addr %d", my_mac_sa);
+        $display($time, " TB MAC: tx: %d rx: %d", phy_sap_txstatus, phy_sap_rxstatus );
+        $display($time, " TB MAC: ifs_tmr: %d bkf_slots: %d bkf_tmr %d ack_tmr %d", ifs_tmr, bkf_slots, bkf_tmr, ack_tmr);
  
-    if(!phy_txvector.notEmpty)
-       begin
-         $display($time, " TB MAC: phy tx vec empty");
-       end
-     else if(!phy_txvector.notFull)
-       begin
-         $display($time, " TB MAC: phy tx vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: phy tx vec has data");
-       end 
+       if(!phy_txvector.notEmpty)
+          begin
+            $display($time, " TB MAC: phy tx vec empty");
+          end
+        else if(!phy_txvector.notFull)
+          begin
+            $display($time, " TB MAC: phy tx vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: phy tx vec has data");
+          end 
 
-     if(!phy_rxvector.notEmpty)
-       begin
-         $display($time, " TB MAC: phy rx vec empty");
-       end
-     else if(!phy_rxvector.notFull)
-       begin
-         $display($time, " TB MAC: phy rx vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: phy rx vec has data");
-       end
+        if(!phy_rxvector.notEmpty)
+          begin
+            $display($time, " TB MAC: phy rx vec empty");
+          end
+        else if(!phy_rxvector.notFull)
+          begin
+            $display($time, " TB MAC: phy rx vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: phy rx vec has data");
+          end
  
-     if(!mac_txfrm.notEmpty)
-       begin
-         $display($time, " TB MAC: mac tx vec empty");
-       end
-     else if(!mac_txfrm.notFull)
-       begin
-         $display($time, " TB MAC: mac tx vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: mac tx vec has data");
-       end
+        if(!mac_txfrm.notEmpty)
+          begin
+            $display($time, " TB MAC: mac tx vec empty");
+          end
+        else if(!mac_txfrm.notFull)
+          begin
+            $display($time, " TB MAC: mac tx vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: mac tx vec has data");
+          end
 
-     if(!txFIFO.notEmpty)
-       begin
-         $display($time, " TB MAC: accepted tx token empty");
-       end
-     else if(!txFIFO.notFull)
-       begin
-         $display($time, " TB MAC: accepted tx token full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: accepted tx token has data");
-       end 
+        if(!txFIFO.notEmpty)
+          begin
+            $display($time, " TB MAC: accepted tx token empty");
+          end
+        else if(!txFIFO.notFull)
+          begin
+            $display($time, " TB MAC: accepted tx token full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: accepted tx token has data");
+          end 
 
-     if(!txfrm.notEmpty)
-       begin
-         $display($time, " TB MAC: accepted tx vec empty");
-       end
-     else if(!txfrm.notFull)
-       begin
-         $display($time, " TB MAC: accepted tx vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: accepted tx vec has data");
-       end 
+        if(!txfrm.notEmpty)
+          begin
+            $display($time, " TB MAC: accepted tx vec empty");
+          end
+        else if(!txfrm.notFull)
+          begin
+            $display($time, " TB MAC: accepted tx vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: accepted tx vec has data");
+          end 
 
-    if(!ackfrm.notEmpty)
-       begin
-         $display($time, " TB MAC: ack vec empty");
-       end
-     else if(!ackfrm.notFull)
-       begin
-         $display($time, " TB MAC: ack vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: ack vec has data");
-       end 
-
-
-     if(!mac_rxfrm.notEmpty)
-       begin
-         $display($time, " TB MAC: mac rx vec empty");
-       end
-     else if(!mac_rxfrm.notFull)
-       begin
-         $display($time, " TB MAC: mac rx vec full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: mac rx vec has data");
-       end
- 
+       if(!ackfrm.notEmpty)
+          begin
+            $display($time, " TB MAC: ack vec empty");
+          end
+        else if(!ackfrm.notFull)
+          begin
+            $display($time, " TB MAC: ack vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: ack vec has data");
+          end 
 
 
-
-     if(!phy_txdataFIFO.notEmpty)
-       begin
-         $display($time, " TB MAC: phy tx data empty");
-       end
-     else if(!phy_txdataFIFO.notFull)
-       begin
-         $display($time, " TB MAC: phy tx data full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: phy tx data has data");
-       end
- 
-
-     if(!phy_rxdataFIFO.notEmpty)
-       begin
-         $display($time, " TB MAC: phy rx data empty");
-       end
-     else if(!phy_rxdataFIFO.notFull)
-       begin
-         $display($time, " TB MAC: phy rx data full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: phy rx data has data");
-       end
+        if(!mac_rxfrm.notEmpty)
+          begin
+            $display($time, " TB MAC: mac rx vec empty");
+          end
+        else if(!mac_rxfrm.notFull)
+          begin
+            $display($time, " TB MAC: mac rx vec full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: mac rx vec has data");
+          end
  
 
 
-    if(!llc_rxdata.notEmpty)
-       begin
-         $display($time, " TB MAC: llc rx data empty");
-       end
-    else if(!llc_rxdata.notFull)
-       begin
-         $display($time, " TB MAC: llc rx data full");
-       end
-     else
-       begin
-         $display($time, " TB MAC: llc rx data has data");
-       end
+
+        if(!phy_txdataFIFO.notEmpty)
+          begin
+            $display($time, " TB MAC: phy tx data empty");
+          end
+        else if(!phy_txdataFIFO.notFull)
+          begin
+            $display($time, " TB MAC: phy tx data full");
+          end
+        else
+          begin
+            $display($time, " TB MAC: phy tx data has data");
+          end
+ 
+
+        if(!phy_rxdataFIFO.notEmpty)
+          begin
+            $display($time, " TB MAC: phy rx data empty");
+          end
+        else if(!phy_rxdataFIFO.notFull)
+          begin
+            $display($time, " TB MAC: phy rx data full");
+          end
+       else
+          begin
+            $display($time, " TB MAC: phy rx data has data");
+          end
  
 
 
-   if(!llc_txdata.notEmpty)
-       begin
-         $display($time, " TB MAC: llc tx data empty");
-       end
-   else if(!llc_txdata.notFull)
-       begin
-         $display($time, " TB MAC: llc tx data full");
-       end
-     else
-       begin
-         $display($time, " TB MAC:llc tx data has data");
-       end
+       if(!llc_rxdata.notEmpty)
+         begin
+           $display($time, " TB MAC: llc rx data empty");
+         end
+       else if(!llc_rxdata.notFull)
+         begin
+           $display($time, " TB MAC: llc rx data full");
+         end
+       else
+         begin
+           $display($time, " TB MAC: llc rx data has data");
+         end
+
+
+       if(!llc_txdata.notEmpty)
+         begin
+           $display($time, " TB MAC: llc tx data empty");
+         end
+       else if(!llc_txdata.notFull)
+         begin
+           $display($time, " TB MAC: llc tx data full");
+         end
+       else
+         begin
+           $display($time, " TB MAC:llc tx data has data");
+         end
  
-   endrule
+      endrule
 
    
    // this guard isn't quite right since we may need to wait eifsTime.
@@ -317,16 +317,22 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       phy_sap_txstatus <= TxStart;
       txfrm.enq(mac_txfrm.first);
       secondary_ready <= False;
-      $display($time, " MAC %d TB CW at %d: issued a new tx packet", my_mac_sa, stat); 
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MAC %d TB CW at %d: issued a new tx packet", my_mac_sa, stat); 
+        end
    endrule
 
    // ack does not care about backoff. or rx status - we'll be receiving, but we must push out the new data or timeout
    // XXX return ifs_tmr dependence at some point - we still need sifs time, i guess.  Really should retime how ifs_tmr works
    rule mac_setupACK(phy_sap_txstatus==Idle && phy_cca_status==IDLE  && ifs_tmr >= sifsTime && ackfrm.notEmpty && !wait_for_ack);
-     ackfrm.deq;
-     phy_sap_txstatus <= TxStart;
-     txfrm.enq(ackfrm.first);
-     $display($time, " MAC %d TB CW at %d: issued a new ack packet", my_mac_sa, stat); 
+      ackfrm.deq;
+      phy_sap_txstatus <= TxStart;
+      txfrm.enq(ackfrm.first);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MAC %d TB CW at %d: issued a new ack packet", my_mac_sa, stat); 
+        end
    endrule
 
 
@@ -354,48 +360,57 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       
     
       case (txframe.frame) matches
-	 tagged Df .df : 
-	    begin //data
-	       $display($time, " MAC %2d: sending data from %d to %d",
-			my_mac_sa, df.add2, df.add1);
-	       more_frag <= df.frame_ctl.more_frag;
+         tagged Df .df : 
+            begin //data
+               if (`DEBUG_MAC == 1)
+                 begin
+                   $display($time, " MAC %2d: sending data from %d to %d",
+                            my_mac_sa, df.add2, df.add1);
+                 end
+               more_frag <= df.frame_ctl.more_frag;
                v1.length = txframe.dataLength + fromInteger(valueof(DataFrameOctets)); 
-	       v1.src_addr = df.add2[7:0];
-	       v1.dst_addr = df.add1[7:0];
+               v1.src_addr = df.add2[7:0];
+               v1.dst_addr = df.add1[7:0];
                mac_txframe <= zeroExtend(reverseBits(pack(df)));
-	    end
-	 tagged Mf .mf : 
-	    begin //management
-	       $display($time, " MAC %2d: sending mgmt",my_mac_sa);
+            end
+         tagged Mf .mf : 
+            begin //management
+               if (`DEBUG_MAC == 1)
+                 begin
+                   $display($time, " MAC %2d: sending mgmt",my_mac_sa);
+                 end
                v1.length = txframe.dataLength + fromInteger(valueof(ManagementFrameOctets)); 
                mac_txframe <= zeroExtend(reverseBits(pack(mf)));
-	    end
-	 tagged Cf .cf : 
-	    begin//control
-	       $display($time, " MAC %2d: sending ctl",my_mac_sa);               
-	       case (cf) matches
-		  tagged C1 .c1 : 
-		     begin
+            end
+         tagged Cf .cf : 
+            begin//control
+               if (`DEBUG_MAC == 1)
+                 begin
+                   $display($time, " MAC %2d: sending ctl",my_mac_sa);
+                 end
+               case (cf) matches
+                  tagged C1 .c1 : 
+                     begin
                         mac_txframe <= zeroExtend(reverseBits(pack(c1)));
-			cidx = fromInteger(valueOf(FrameC1SzBy));
+                        cidx = fromInteger(valueOf(FrameC1SzBy));
                         v1.length = fromInteger(valueof(CommonCtlFrame1Octets)); 
-		     end
-		  tagged C2 .c2 :
-		     begin
+                     end
+                  tagged C2 .c2 :
+                     begin
                         mac_txframe <= zeroExtend(reverseBits(pack(c2)));
-			v1.length = fromInteger(valueOf(CommonCtlFrame2Octets));
-		     end
-		  tagged Poll .po :
-		     begin
-		     end
-		  tagged Bar .br :
-		     begin
-		     end
-		  tagged Ba .ba :
-		     begin
-		     end
-	       endcase
-	    end
+                        v1.length = fromInteger(valueOf(CommonCtlFrame2Octets));
+                     end
+                  tagged Poll .po :
+                     begin
+                     end
+                  tagged Bar .br :
+                     begin
+                     end
+                  tagged Ba .ba :
+                     begin
+                     end
+               endcase
+            end
       endcase
       
       phy_txvector.enq(v1);
@@ -403,7 +418,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       tx_idx <= v1.length;
       tx_start_en <= True;
 
-      $display($time, " MAC TB %2d: mac_txstartfrm_req, frame length: %d payload length: %d",my_mac_sa, v1.length,txframe.dataLength );
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MAC TB %2d: mac_txstartfrm_req, frame length: %d payload length: %d",
+                   my_mac_sa, v1.length,txframe.dataLength );
+        end
    endrule
 
    
@@ -414,49 +433,59 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       Bool need_ack = False;
       
       case (txframe.frame) matches
-	 tagged Df .df : 
-	    begin //data
-	       mf = pack(df);
-	       need_ack = True; // not necessarily
-	    end
-	 tagged Mf .management_frame : 
-	    begin //management
-	    end
-	 tagged Cf .cf : 
-	    begin//control
-	       case (cf) matches
-		  tagged C1 .c1 : 
-		     begin
-			mf = zeroExtend(pack(c1));
-		     end
-		  tagged C2 .c2 :
-		     begin
-			mf = zeroExtend(pack(c2));
-		     end
-		  tagged Poll .po :
-		     begin
-		     end
-		  tagged Bar .br :
-		     begin
-		     end
-		  tagged Ba .ba :
-		     begin
-		     end
-	       endcase
-	    end
-      endcase				  
+         tagged Df .df : 
+            begin //data
+               mf = pack(df);
+               need_ack = True; // not necessarily
+            end
+         tagged Mf .management_frame : 
+            begin //management
+            end
+         tagged Cf .cf : 
+            begin//control
+               case (cf) matches
+                  tagged C1 .c1 : 
+                     begin
+                        mf = zeroExtend(pack(c1));
+                     end
+                  tagged C2 .c2 :
+                     begin
+                        mf = zeroExtend(pack(c2));
+                     end
+                  tagged Poll .po :
+                     begin
+                     end
+                  tagged Bar .br :
+                     begin
+                     end
+                  tagged Ba .ba :
+                     begin
+                     end
+               endcase
+            end
+      endcase               
     
-      $display($time, " MACVERBOSE: tx data[%d]: %h",tx_idx,mf);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MACVERBOSE: tx data[%d]: %h",tx_idx,mf);
+        end
+
       // send the header first... we should eventually be generating the crc here or in the next moduel.
       if(tx_idx > txfrm.first.dataLength)
-	 begin
-          $display($time, " MACVERBOSE: phy_txdata enq header: %h",reverseBits(mac_txframe[7:0]));
+         begin
+           if (`DEBUG_MAC == 1)
+             begin
+               $display($time, " MACVERBOSE: phy_txdata enq header: %h",reverseBits(mac_txframe[7:0]));
+             end
            mac_txframe <= mac_txframe >> 8;
            phy_txdataFIFO.enq(reverseBits(truncate(mac_txframe))); //Pull off the double reverse here.      
          end 
       else   
         begin
-          $display($time, " MACVERBOSE: phy_txdata enq %h", llc_txdata.first);
+           if (`DEBUG_MAC == 1)
+             begin
+               $display($time, " MACVERBOSE: phy_txdata enq %h", llc_txdata.first);
+             end
           llc_txdata.deq;
           phy_txdataFIFO.enq(llc_txdata.first); 
         end
@@ -464,7 +493,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
    endrule      
    
    rule mac_txframe_complete_CF (tx_start_en && tx_idx == 0 && isControlFrame(txfrm.first));
-      $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
+        end
       tx_start_en <= False;
       txfrm.deq; //XXX really?
       txFIFO.enq(?);
@@ -473,18 +505,24 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
    
    // assume all Dataframe require ack
    rule mac_txframe_complete_DF (tx_start_en && tx_idx == 0 && isDataFrame(txfrm.first));
-      $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
       tx_start_en <= False;
       txfrm.deq; //XXX really?
       txFIFO.enq(?);
       phy_sap_txstatus <= Idle;
-      $display($time, " MAC TB: set wait for ack, timeout %d us",ackTimeout);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
+          $display($time, " MAC TB: set wait for ack, timeout %d us",ackTimeout);
+        end
       ack_tmr <= ackTimeout;
       wait_for_ack <= True;
    endrule
 
    rule mac_txframe_complete_MF (tx_start_en && tx_idx == 0 && isManagementFrame(txfrm.first));
-      $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " TB MAC %2d: ENQ TXFIFO",my_mac_sa);
+        end
       tx_start_en <= False;
       txfrm.deq; //XXX really?
       txFIFO.enq(?);
@@ -506,59 +544,77 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       Bool  recvDone = False;
 
       // probably don't want to do this all the time.
-      // check rx_fctl for a value to determine header length in octets.	  
+      // check rx_fctl for a value to determine header length in octets.          
       // always take 2 
       if(cidx <= 2 || (rx_fctl.type_val == Management && cidx <= fromInteger(valueof(ManagementFrameOctets))) 
                    || (rx_fctl.type_val == Data && cidx <= fromInteger(valueof(DataFrameOctets)))
                    || (rx_fctl.type_val == Control))  
         begin
-          $display($time, " MACVERBOSE TB %d: cidx %d getting frame", my_mac_sa,cidx);
+          if (`DEBUG_MAC == 1)
+            begin
+              $display($time, " MACVERBOSE TB %d: cidx %d getting frame", my_mac_sa,cidx);
+            end
           mf = mf << 8;
           mf = mf | zeroExtend(rxdata);
           mac_rxframe <= mf;
         end
       else 
         begin
-          $display($time, " MACVERBOSE TB %d: post-frame data payload", my_mac_sa);
+          if (`DEBUG_MAC == 1)
+            begin
+              $display($time, " MACVERBOSE TB %d: post-frame data payload", my_mac_sa);
+            end
         end   
 
       if(cidx == 2) // need two bytes
-	 begin
+         begin
             ackfrm.clear; // we're getting a new packet. shoot down the old ack, it's no good to us now. Is this right?
-	    // received FrameCtl
-	    $display($time, " MAC TB %d: received fctl",my_mac_sa);
-	    rx_fctl <= unpack(truncate(pack(mf)));
-	 end
+            // received FrameCtl
+            if (`DEBUG_MAC == 1)
+              begin
+                $display($time, " MAC TB %d: received fctl",my_mac_sa);
+              end
+            rx_fctl <= unpack(truncate(pack(mf)));
+         end
       else if(cidx > 2) // this probably needs to get put in another rule, in which we make a crc decision
-	 begin
-	    $display($time, " MACVERBOSE %d: rx_fctl %b", my_mac_sa,rx_fctl);
-	    case(rx_fctl.type_val)
-	       Management: begin // management
-			  $display($time, " MAC TB %2d: received mgmt frame", my_mac_sa);
-		       end
-	       Control: begin  // control
-                          $display($time, " MACVERBOSE TB: Control Frame");
-			  case (cidx) 
-			     fromInteger(valueOf(FrameC2SzBy)) : if(rx_fctl.subtype_val == 4'b1011)
-								    begin	 // RTS
-								       $display($time, " TB MAC %2d: received RTS", my_mac_sa);
- 								       mRxFrame = tagged Cf tagged C2 unpack(truncate(mf));
-								    end      
-			     fromInteger(valueOf(FrameC1SzBy)) : if(rx_fctl.subtype_val == 4'b1100)
-								    begin	 // CTS
-								       $display($time, " TB MAC %2d: received CTS",my_mac_sa);
-								       mRxFrame = tagged Cf tagged C2 unpack(truncate(mf));
-								    end
-								 else if(rx_fctl.subtype_val == 4'b1101)
-								    begin	 // ACK
+         begin
+            if (`DEBUG_MAC == 1)
+              begin
+                $display($time, " MACVERBOSE %d: rx_fctl %b", my_mac_sa,rx_fctl);
+               end
+            case(rx_fctl.type_val)
+               Management: begin // management
+                          if (`DEBUG_MAC == 1)
+                            begin
+                              $display($time, " MAC TB %2d: received mgmt frame", my_mac_sa);
+                            end
+                       end
+               Control: begin  // control
+                          if (`DEBUG_MAC == 1)
+                            begin
+                              $display($time, " MACVERBOSE TB: Control Frame");
+                            end
+                          case (cidx) 
+                             fromInteger(valueOf(FrameC2SzBy)) : if(rx_fctl.subtype_val == 4'b1011)
+                                                                    begin        // RTS
+                                                                       $display($time, " TB MAC %2d: received RTS", my_mac_sa);
+                                                                       mRxFrame = tagged Cf tagged C2 unpack(truncate(mf));
+                                                                    end      
+                             fromInteger(valueOf(FrameC1SzBy)) : if(rx_fctl.subtype_val == 4'b1100)
+                                                                    begin        // CTS
+                                                                       $display($time, " TB MAC %2d: received CTS",my_mac_sa);
+                                                                       mRxFrame = tagged Cf tagged C2 unpack(truncate(mf));
+                                                                    end
+                                                                 else if(rx_fctl.subtype_val == 4'b1101)
+                                                                    begin        // ACK
 
                                                                        // somewhere we should check the mac address.        
                                                                        // should probably cross check to ensure the ack is for this packet
-								       mRxFrame = tagged Cf tagged C1 unpack(truncate(mf));
+                                                                       mRxFrame = tagged Cf tagged C1 unpack(truncate(mf));
                                                                        if(mRxFrame.Cf.C1.ra == my_mac_sa && wait_for_ack)   
                                                                          begin 
                                                                             $display($time," MAC TB %2d: received ACK, leng: %d",my_mac_sa,mRxFrame.Cf.C1.dur);    
- 								            wait_for_ack <= False;
+                                                                            wait_for_ack <= False;
                                                                             $display($time, " MAC issues success");
                                                                             llc_txstatus.enq(Success);
                                                                             cwActionFIFO.enq(Success);
@@ -569,27 +625,36 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
                                                                          begin
                                                                            $display($time," MAC TB %2d: received ACK, leng: %d but did not accept. Waiting: %b MAC: %d",my_mac_sa,mRxFrame.Cf.C1.dur,wait_for_ack,mRxFrame.Cf.C1.ra);    
                                                                          end
-								    end
+                                                                    end
                                                                   else
                                                                     begin
                                                                        $display($time, " MAC %2d: received Unknown Ctrl type: %b",my_mac_sa,rx_fctl.subtype_val);
                                                                     end      
-			     default : begin
+                             default : begin
                                          $display($time, " TB MACVERBOSE %2d: Unknown Frame type",my_mac_sa);
-				       end
-			  endcase
-		       end
-	       Data: begin // data
-                         $display($time, " MACVERBOSE TB: Data Frame");
-			  case(rx_fctl.subtype_val)
-			     4'b0000: begin
-					 $display($time, " MACVERBOSE cidx: %d rxdata: data",cidx);
+                                       end
+                          endcase
+                       end
+               Data: begin // data
+                          if (`DEBUG_MAC == 1)
+                            begin
+                              $display($time, " MACVERBOSE TB: Data Frame");
+                            end
+                          case(rx_fctl.subtype_val)
+                             4'b0000: begin
+                                         if (`DEBUG_MAC == 1)
+                                           begin
+                                             $display($time, " MACVERBOSE cidx: %d rxdata: data",cidx);
+                                           end
                                          mRxFrame = tagged Df unpack(truncate(mf));
-					 if(cidx == fromInteger(valueof(DataFrameOctets)) && (mRxFrame.Df).add1 == my_mac_sa) 
-					    begin
-                                              $display($time, " TB MAC %2d: received data frame",my_mac_sa);					       
-					      $display($time, " TB MAC %2d: sending back ACK",my_mac_sa);
-                                              $display($time, " TB MAC %2d: enqueuing new frame",my_mac_sa);
+                                         if(cidx == fromInteger(valueof(DataFrameOctets)) && (mRxFrame.Df).add1 == my_mac_sa) 
+                                            begin
+                                              if (`DEBUG_MAC == 1)
+                                                begin
+                                                  $display($time, " TB MAC %2d: received data frame",my_mac_sa);                                           
+                                                  $display($time, " TB MAC %2d: sending back ACK",my_mac_sa);
+                                                  $display($time, " TB MAC %2d: enqueuing new frame",my_mac_sa);
+                                                end
                                               CommonCtlFrame1_T c1 = unpack(0);
                                               c1.frame_ctl.type_val = Control; // 'b10 for data, 01 for control
                                               c1.frame_ctl.subtype_val = 4'b1101; // 'b0000 for data, 1101 for ACK
@@ -602,30 +667,36 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
                                               //we will launch the ack missles.
                                               mac_rxfrm.enq(MacSWFrame{frame:mRxFrame,dataLength:phy_rxvector.first.length});
                                               ackfrm.enq(MacSWFrame{frame: tagged Cf tagged C1 c1, dataLength: 0});
-					   end
+                                           end
                                          else if(cidx >  fromInteger(valueof(DataFrameOctets)) && (mRxFrame.Df).add1 == my_mac_sa)
                                             begin
-                                              $display($time, " TB MACVERBOSE %d: RXDATA ENQ cidx %d rxdata: %h", my_mac_sa, cidx, rxdata);
+                                              if (`DEBUG_MAC == 1)
+                                                begin
+                                                  $display($time, " TB MACVERBOSE %d: RXDATA ENQ cidx %d rxdata: %h", my_mac_sa, cidx, rxdata);
+                                                end
                                               llc_rxdata.enq(rxdata);
                                             end
                                          else if(cidx >=  fromInteger(valueof(DataFrameOctets)) && ((mRxFrame.Df).add1 != my_mac_sa))
- 	                                   begin
-                                             $display($time, "TB MACVERBOSE %2d: frame did not match mac: %d",my_mac_sa,mRxFrame.Df.add1);
+                                           begin
+                                              if (`DEBUG_MAC == 1)
+                                                begin
+                                                  $display($time, "TB MACVERBOSE %2d: frame did not match mac: %d",my_mac_sa,mRxFrame.Df.add1);
+                                                end
                                            end
-				      end
-			     4'b0100: begin 
-					 $display($time, " MAC null data");
-				      end
-			     default: begin
-					 $display($time, " MAC not handled");
-				      end
-			  endcase
-		       end
-	       default : begin // reserved
+                                      end
+                             4'b0100: begin
+                                         $display($time, " MAC null data");
+                                      end
+                             default: begin
+                                         $display($time, " MAC not handled");
+                                      end
+                          endcase
+                       end
+               default : begin // reserved
                           $display($time, " MAC TB unexpected frame type");
-			 end
-	    endcase
-	 end
+                         end
+            endcase
+         end
       
       PhySapStatus_T st = DataInd;
 
@@ -636,7 +707,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
         begin
           phy_rxvector.deq;
           cidx = 0;
-      	  st = Idle;
+          st = Idle;
         end
 
 
@@ -720,11 +791,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
             end
           let adjustedCWIndex = cwIndex - fromInteger(valueof(CWIndexMin));
           UInt#(8) raw_rnd = truncate(unpack(backoffLFSR.value)); // 8 bits here as we use 9 bits below
-	  FixedPoint#(9,6) rnd_num = fromUInt(raw_rnd); // random number from 15-1023
+          FixedPoint#(9,6) rnd_num = fromUInt(raw_rnd); // random number from 15-1023
           FixedPoint#(9,6) compressedFxptRandom = rnd_num*compressVector[adjustedCWIndex];
           Bit#(8) compressedRandom = pack(truncate(fxptGetInt(compressedFxptRandom)));
           Bit#(8) bkf_next = compressedRandom + fromInteger(cwOffsetTable[adjustedCWIndex]);  // do the multiply thing here
-	  bkf_slots <= zeroExtend(bkf_next);
+          bkf_slots <= zeroExtend(bkf_next);
           backoffLFSR.next;
           $display($time, " MAC TB %2d: setting CW: %d mac_backoff: %d",my_mac_sa,cwIndex,bkf_next);
      end
@@ -743,12 +814,18 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
    endrule  
 
    rule update_ifs_tmr (phy_cca_status == IDLE && ifs_tmr < eifsTime && clk_tick);
-      $display($time, " MACVERBOSE TB %2d: update_ifs_tmr ifs_tmr=%d",my_mac_sa,ifs_tmr);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MACVERBOSE TB %2d: update_ifs_tmr ifs_tmr=%d",my_mac_sa,ifs_tmr);
+        end
       ifs_tmr <= ifs_tmr + 1;
    endrule
    
    rule update_ack_tmr (ack_tmr > 0 && clk_tick && !txFIFO.notEmpty && phy_cca_status == IDLE); // have to wait to complete transmit
-      $display($time, " TB MACVERBOSE %2d: update_ack_tmr ack_tmr=%d",my_mac_sa,ack_tmr);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " TB MACVERBOSE %2d: update_ack_tmr ack_tmr=%d",my_mac_sa,ack_tmr);
+        end
       ack_tmr <= ack_tmr - 1;
    endrule
    
@@ -759,7 +836,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
 
    // for now we may pay an extended delay due to eifsTimes...
    rule update_bkf_tmr (bkf_tmr > 0 && clk_tick && ifs_tmr >= eifsTime);
-      $display($time, " MACVERBOSE %2d: update_bkf_tmr bkf_slt=%d,bkf_tmr=%d",my_mac_sa, bkf_slots,bkf_tmr);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " MACVERBOSE %2d: update_bkf_tmr bkf_slt=%d,bkf_tmr=%d",my_mac_sa, bkf_slots,bkf_tmr);
+        end
       bkf_tmr <= bkf_tmr - 1;
    endrule
    
@@ -776,12 +856,12 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
  
    rule tick;
       if(ctr0 + 1 == fromInteger(valueOf(TicksPerMicrosecond))) 
-	 begin
-	    //$display($time, " sta=%d, ctr0=%d, ctr1=%d, time=%d",my_mac_sa,ctr0,ctr1,$time);	 
-	    ctr1 <= ctr1 + 1;
-	    clk_tick.send();
+         begin
+            //$display($time, " sta=%d, ctr0=%d, ctr1=%d, time=%d",my_mac_sa,ctr0,ctr1,$time);   
+            ctr1 <= ctr1 + 1;
+            clk_tick.send();
             ctr0 <= 0;
-	 end
+         end
      else
        begin
          ctr0 <= ctr0 + 1;
@@ -801,11 +881,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
    
    interface Get phy_txstart;
       method ActionValue#(BasicTXVector) get();
-	 //$display($time, " interface get phy_txstart_req");
+         //$display($time, " interface get phy_txstart_req");
          $display($time, " TB MAC %d: interface get txstart", my_mac_sa);
-	 let x = phy_txvector.first;
-	 phy_txvector.deq;
-	 return x;
+         let x = phy_txvector.first;
+         phy_txvector.deq;
+         return x;
       endmethod
    endinterface
 
@@ -813,44 +893,51 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
 
    interface Get phy_txdata;
       method ActionValue#(PhySapData_T) get();
-	 $display($time, " TB MACVERBOSE %d: interface get txdata: %h", my_mac_sa, phy_txdataFIFO.first);
-	 let x = phy_txdataFIFO.first;
+         if (`DEBUG_MAC == 1)
+           begin
+             $display($time, " TB MACVERBOSE %d: interface get txdata: %h", my_mac_sa, phy_txdataFIFO.first);
+           end
 
-	 phy_txdataFIFO.deq;
-   	 
-	 PhySapStatus_T st = phy_sap_txstatus;
-	 
-	 return x;
+         let x = phy_txdataFIFO.first;
+
+         phy_txdataFIFO.deq;
+         
+         PhySapStatus_T st = phy_sap_txstatus;
+         
+         return x;
       endmethod
    endinterface
    
    interface Put phy_rxdata;
       method Action put(PhySapData_T d);
-	 $display($time, " TB MACVERBOSE %d: interface rxdata: %h", my_mac_sa, d);
-	 phy_rxdataFIFO.enq(d);
+         if (`DEBUG_MAC == 1)
+           begin
+             $display($time, " TB MACVERBOSE %d: interface rxdata: %h", my_mac_sa, d);
+           end
+         phy_rxdataFIFO.enq(d);
       endmethod
    endinterface
 
 
    interface Put phy_cca_ind;
       method Action put(PhyCcaStatus_T s);
-	 //$display($time, " interface put phy_cca_ind"); 
-	 if(phy_cca_status == BUSY && s == IDLE) // Change on Busy -> Idle. 
+         //$display($time, " interface put phy_cca_ind"); 
+         if(phy_cca_status == BUSY && s == IDLE) // Change on Busy -> Idle. 
             begin
-	       phy_cca_status <= s;
+               phy_cca_status <= s;
                $display($time, " MAC TB %d: phy_cca_status: %s",my_mac_sa,(s == IDLE)?"IDLE":"BUSY");
                reset_tmr_cca.send; // is this really okay?  Probably... might have some timing issues sometime
             end
-	 if(phy_cca_status == IDLE && s == BUSY) // Change on Idle -> Busy. 
+         if(phy_cca_status == IDLE && s == BUSY) // Change on Idle -> Busy. 
             begin
-	       phy_cca_status <= s;
+               phy_cca_status <= s;
                $display($time, " MAC TB %d: phy_cca_status: %s",my_mac_sa,(s == IDLE)?"IDLE":"BUSY");
             end
-	 if(s == CONC) 
+         if(s == CONC) 
             begin
-	       //cca status forced to idle
-	       phy_cca_status <= IDLE;
-	       startSecondary <= True;
+               //cca status forced to idle
+               phy_cca_status <= IDLE;
+               startSecondary <= True;
                $display($time, " MAC TB %d: CONC SIGNAL phy_cca_status: %s",my_mac_sa,(s == IDLE)?"IDLE":"BUSY");
             end
       endmethod
@@ -862,28 +949,30 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
       method Action put(MacSWFrame d); 
                                        // XXX need a guard here.unfortunately in the case of ack, we use this pipeline.
                                        // it would be bad to kill the tx this way
-	 $display($time, " TB MAC: interface put llc_mac_tx_frame");
-	 mac_txfrm.enq(d);
+         $display($time, " TB MAC: interface put llc_mac_tx_frame");
+         mac_txfrm.enq(d);
       endmethod
    endinterface
 
    interface Get mac_sw_rxframe;
       method ActionValue#(MacSWFrame) get();
-	 $display($time, " TB MAC: interface get llc_mac_rx_frame");
-	 let x = mac_rxfrm.first;
-	 mac_rxfrm.deq;
-	 return x;
+         $display($time, " TB MAC: interface get llc_mac_rx_frame");
+         let x = mac_rxfrm.first;
+         mac_rxfrm.deq;
+         return x;
       endmethod
    endinterface
 
 
    interface Put mac_sa;
       method Action put(Bit#(48) a);
-
-	 my_mac_sa <= a;
+         my_mac_sa <= a;
          Bit#(16) seed = fold(funcXor,unpack(a));
          backoffLFSR.seed((seed==0)?~0:seed);
-         $display($time, " TB MAC Setting my MAC: %d seed: %d",a, (seed==0)?~0:seed);
+         if (`DEBUG_MAC == 1)
+           begin
+             $display($time, " TB MAC Setting my MAC: %d seed: %d",a, (seed==0)?~0:seed);
+           end
       endmethod
    endinterface
 
@@ -892,7 +981,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl(Basic
   // and don't come through rx/tx control.
   interface Put phy_txcomplete; // PHY tells MAC tx is complete
     method Action put(Bit#(0) in);
-      $display($time, " TB MAC %d TXFIFO DEQ", my_mac_sa);
+      if (`DEBUG_MAC == 1)
+        begin
+          $display($time, " TB MAC %d TXFIFO DEQ", my_mac_sa);
+        end
       txFIFO.deq; 
     endmethod
   endinterface

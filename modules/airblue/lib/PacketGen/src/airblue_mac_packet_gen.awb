@@ -17,5 +17,7 @@
 
 %generated -t VERILOG mkMACPacketGen.v
 %generated -t VERILOG mkMACPacketCheck.v
+
+%param DEBUG_PACKETGEN 0 "Enable debug messages with 1"
  
 %AWB_END

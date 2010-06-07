@@ -101,7 +101,10 @@ module mkMACPacketGen (MACPacketGen);
                   length = ((lfsr.value[11:0] & packetLengthMaskReg) == 0)? 1 : lfsr.value[11:0] & packetLengthMaskReg;
                 end              
               DataFrame_T d1 = unpack(0); // make this a ? at some point
-              $display("Generating new packet");
+              if (`DEBUG_PACKETGEN == 1)
+                begin
+                   $display("Generating new packet");
+                end
               d1.frame_ctl.prot_ver = 1;
               d1.frame_ctl.pwr_mgt = 0;
               d1.frame_ctl.type_val = Data;
@@ -114,12 +117,18 @@ module mkMACPacketGen (MACPacketGen);
               size <= length;
               count <= 0;
               checksum <= 0;
-              $display("TB PacketGen: starting packet gen size: %d",length);
+              if (`DEBUG_PACKETGEN == 1)
+                begin
+                  $display("TB PacketGen: starting packet gen size: %d",length);
+                end
               txVectorFIFO.enq(frame);
             endaction
             while(count + 1 < zeroExtend(size))
              action
-               $display("TB PacketGen %d: transmit data %h", localMAC, lfsr.value[7:0]);
+               if (`DEBUG_PACKETGEN == 1)
+                 begin
+                   $display("TB PacketGen %d: transmit data %h", localMAC, lfsr.value[7:0]);
+                 end
                lfsr.next();
                count <= count + 1;
                txDataFIFO.enq(truncate(count));   
@@ -127,22 +136,31 @@ module mkMACPacketGen (MACPacketGen);
              endaction
             // reserve last byte for checksum
              action
-               $display("TB PacketGen %d: transmit data (checksum) %h", localMAC, 0-checksum);
                txDataFIFO.enq(0-checksum);
                packetsTXReg <= packetsTXReg + 1;   
-               $display("TB PacketGen: transmit packets count %d", packetsTXReg + 1);          
+               if (`DEBUG_PACKETGEN == 1)
+                 begin
+                   $display("TB PacketGen %d: transmit data (checksum) %h", localMAC, 0-checksum);
+                   $display("TB PacketGen: transmit packets count %d", packetsTXReg + 1);          
+                 end
              endaction
             // XXX and now we need to check the TX status
              action
                txStatusFIFO.deq;
                if(txStatusFIFO.first == Success)
                  begin
-                   $display("TB PacketGen Acked: %d ",packetsAckedReg);
+                   if (`DEBUG_PACKETGEN == 1)
+                     begin
+                       $display("TB PacketGen Acked: %d ",packetsAckedReg);
+                     end
                    packetsAckedReg <= packetsAckedReg+1;
                  end
                else
                  begin
-                   $display("TB PacketGen Ack failure");
+                   if (`DEBUG_PACKETGEN == 1)
+                     begin
+                       $display("TB PacketGen Ack failure");
+                     end
                  end
              endaction
              delayCount <= packetDelayReg;
@@ -155,7 +173,10 @@ module mkMACPacketGen (MACPacketGen);
   FSM fsm <- mkFSM(s);
 
   rule makePackets(initialized && fsm.done && enable == 1);
-    $display("TB MAC %d starts tx fsm", localMAC);
+    if (`DEBUG_PACKETGEN == 1)
+      begin
+        $display("TB MAC %d starts tx fsm", localMAC);
+      end
     fsm.start;
   endrule
 
@@ -212,23 +233,32 @@ module mkMACPacketCheck (MACPacketCheck);
               localMAC <= rxVectorFIFO.first.frame.Df.add1; 
               count <= 0;
               checksum <= 0;
-              $display("PacketGen Check %d: starting packet check size: %d", localMAC, rxVectorFIFO.first.dataLength);
+              if (`DEBUG_PACKETGEN == 1)
+                begin
+                  $display("PacketGen Check %d: starting packet check size: %d", localMAC, rxVectorFIFO.first.dataLength);
+                end
             endaction
             while(count < size) // we count 0 length packets....
              action
                rxDataFIFO.deq;
-               $display("PacketGen Check%d: receive data[%d]: %h",localMAC,count,rxDataFIFO.first);
                count <= count + 1;
                checksum <= checksum + rxDataFIFO.first;
+               if (`DEBUG_PACKETGEN == 1)
+                 begin
+                   $display("PacketGen Check%d: receive data[%d]: %h",localMAC,count,rxDataFIFO.first);
+                 end
              endaction
             packetsRXReg <= packetsRXReg + 1;
             if(checksum == 0) 
               action
-                $display("PacketGen Check %d: receive packet count %d", localMAC,packetsCorrectReg + 1);
                 packetsCorrectReg <= packetsCorrectReg + 1;
                 bytesRXReg <= bytesRXReg + zeroExtend(size);
-                $display("PacketGen Check %d: total bytes: %d", localMAC, bytesRXReg + zeroExtend(size));
-                $display("PacketGen Check %d: correctly received %d of %d packets",localMAC,packetsCorrectReg,packetsRXReg);
+                if (`DEBUG_PACKETGEN == 1)
+                  begin
+                    $display("PacketGen Check %d: receive packet count %d", localMAC,packetsCorrectReg + 1);
+                    $display("PacketGen Check %d: total bytes: %d", localMAC, bytesRXReg + zeroExtend(size));
+                    $display("PacketGen Check %d: correctly received %d of %d packets",localMAC,packetsCorrectReg,packetsRXReg);
+                  end
               endaction               
             else 
               action

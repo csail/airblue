@@ -16,5 +16,7 @@
 
 %generated -t BA mkSHIM.ba
 %generated -t VERILOG mkSHIM.v
+
+%param DEBUG_MAC 0 "Enable debug messages"
  
 %AWB_END
