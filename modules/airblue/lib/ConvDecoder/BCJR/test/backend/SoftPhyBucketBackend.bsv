@@ -79,11 +79,11 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    Reg#(Bit#(12)) out_data <- mkReg(0);
    Reg#(Bit#(48)) errors <- mkConfigReg(0); // accumulated errors
    Reg#(Bit#(48)) total <- mkConfigReg(0); // total bits received
-   Reg#(Bit#(7)) dumpAddr <- mkReg(0);   
+   Reg#(Bit#(12)) dumpAddr <- mkReg(0);   
 
    // Because the maximum distance appears to be limited in practice, don't bother collecting large results
-   LUTRAM#(Bit#(7),Bit#(48)) errorCounts <- mkLUTRAM(0);
-   LUTRAM#(Bit#(7),Bit#(48)) totalCounts <- mkLUTRAM(0);
+   LUTRAM#(Bit#(12),Bit#(48)) errorCounts <- mkLUTRAM(0);
+   LUTRAM#(Bit#(12),Bit#(48)) totalCounts <- mkLUTRAM(0);
 
    Stmt initStmt = (seq
       client_stub.makeRequest_GetFinishCycles(0);

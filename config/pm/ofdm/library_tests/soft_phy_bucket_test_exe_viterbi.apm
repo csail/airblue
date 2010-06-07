@@ -225,9 +225,6 @@ Packagehint=ofdm
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common_viterbi_soft.awb
 Packagehint=ofdm
 
-[Airblue Convolutional Decoder Common (Viterbi SoftHints)/Params]
-DEBUG_CONV_DECODER=1
-
 
 [Airblue Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
