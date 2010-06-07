@@ -218,5 +218,5 @@ Packagehint=ofdm
 airblue_channel_model_sw=Airblue SW Channel Model
 
 [Airblue SW Channel Model]
-File=modules/airblue/lib/Channel/model-backup/channel_model_sw.awb
+File=modules/airblue/lib/Channel/model/channel_model_sw.awb
 Packagehint=ofdm
