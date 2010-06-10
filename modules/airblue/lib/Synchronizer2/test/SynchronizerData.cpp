@@ -10,10 +10,12 @@ static int counter = 0;
 void init_synchronizer_data()
 {
   std::ifstream in;
-  in.open("packet.data");
+  in.open("hw/model/connected_application/packet.data");
 
   if (!in) {
-    std::cerr << "Error: packet.data could not be opened" << std::endl;
+    std::cerr << "Error (SynchronizerData.cpp): "
+              << "packet.data could not be opened"
+              << std::endl;
   }
 
   for (int i = 0; i < SIZE; i++) {

@@ -37,7 +37,6 @@ import Vector::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_synchronizer_packetgen.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
 

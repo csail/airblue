@@ -101,6 +101,11 @@ SYNCHRONIZERDRIVER_SERVER_CLASS::Poll()
   if (packetCounter >= 1000) {
      printf("misses = %u success=%u false positives=%u\n", misses,
             success, falsePositives);
+
+     if (misses == 0 && falsePositives == 0 && success == packetCounter) {
+         printf("PASS\n");
+     }
+
      exit(0);
   }
 
