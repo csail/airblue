@@ -1,0 +1,19 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name SoftPhy Rate Backend
+%desc 
+
+%provides airblue_convolutional_decoder_backend
+%requires airblue_softhint_avg
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC SoftPhyPacketBackend.bsv
+
+%generated -t BA channel_get_sample.ba
+
+%AWB_END
