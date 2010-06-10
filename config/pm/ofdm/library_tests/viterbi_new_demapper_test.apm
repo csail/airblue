@@ -61,17 +61,17 @@ Packagehint=ofdm
 
 [Airblue Viterbi Test/Requires]
 airblue_types=Airblue types (no SoftHints)
-airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test template
 airblue_shared=Airblue Shared Libraries
-airblue_convolutional_decoder=Airblue Viterbi
+airblue_convolutional_decoder=Airblue Viterbi (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
 
 [Airblue FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_fft.awb
 Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test template]
-File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test.awb
 Packagehint=ofdm
 
 [Airblue Viterbi Test]
@@ -85,10 +85,12 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_demapper=Airblue Soft-Decision Demapper
 airblue_depuncturer=Airblue Depuncturer
-airblue_channel=Airblue Noisy Channel
+airblue_channel=Airblue RRR Channel
 airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
 airblue_host_control=Simple RRR Host Control
+airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
+airblue_convolutional_decoder_backend=Airblue Convolutional Decoder Test PassCheck Backend
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -166,9 +168,6 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
 
 [Airblue Soft-Decision Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper_soft.awb
@@ -178,12 +177,7 @@ Packagehint=ofdm
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
 Packagehint=ofdm
 
-[Airblue Viterbi]
-File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
-Packagehint=ofdm
 
-[Airblue Viterbi/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue Convolutional Decoder Common]
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
@@ -203,3 +197,29 @@ Packagehint=ofdm
 
 [Simple RRR Host Control/Requires]
 airblue_environment=Airblue Environment
+
+[Airblue Convolutional Decoder Test PassCheck Backend]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test Common Definitions]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
+Packagehint=ofdm
+
+[Airblue Viterbi (no SoftHints)/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Airblue RRR Channel]
+File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
+Packagehint=ofdm
+
+[Airblue RRR Channel/Requires]
+airblue_channel_model_sw=Airblue SW Channel Model
+
+[Airblue SW Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_sw.awb
+Packagehint=ofdm
+
+[Airblue Viterbi (no SoftHints)]
+File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
+Packagehint=ofdm
