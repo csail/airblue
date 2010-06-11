@@ -1,0 +1,12 @@
+#/********************************************************************
+#* Python libraries for Synplify synthesis tool
+#********************************************************************/
+
+%name Build All Verliogs with Synplify 
+%desc Builds All your verilogs individually, with synplify. It's the shotgun approach to life.
+%attributes tool
+
+%provides synthesis_tool
+
+%scons %library Synplify_build_all_vs.py
+
