@@ -13,9 +13,11 @@ class channel
     bool enable_cfo;
     bool enable_fading;
     bool enable_multipath;
+    bool enable_threads;
 
     double gain;
     double snr;
+    double sigma; // noise variance
     double freq_offset;
 
     std::deque<Complex> history;

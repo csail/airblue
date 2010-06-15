@@ -11,6 +11,9 @@
 %attributes airblue
 
 %sources -t H   -v PUBLIC util.h channel.h
-%sources -t CPP -v PUBLIC awgn.c jakes.c freq_offset.c util.c channel.cpp
+%sources -t CPP -v PUBLIC awgn.c jakes.c freq_offset.c util.c channel.cpp fast.cpp
+
+* GNU Scientific Library
+%library /usr/lib/libgsl.a
 
 %AWB_END

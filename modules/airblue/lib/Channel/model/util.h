@@ -28,9 +28,11 @@ int rayleigh_channel_bdpi(unsigned int data, int cycle);
 
 
 double rand_double();
-double gaussian();
+Complex gaussian();
+Complex gaussian_fast();
 
 double getenvd(const char*, double d);
+int getenvi(const char*, int d);
 unsigned char isset(const char *str);
 
 double get_snr();

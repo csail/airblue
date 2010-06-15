@@ -1,4 +1,5 @@
 #include <strings.h>
+#include <math.h>
 
 #include "channel.h"
 #include "util.h"
@@ -18,10 +19,12 @@ channel::channel() :
   enable_cfo = isset("CHANNEL_CFO");
   enable_fading = isset("JAKES_DOPPLER");
   enable_multipath = isset("CHANNEL_MULTIPATH");
+  enable_threads = isset("CHANNEL_THREADS");
 
   snr = getenvd("ADDNOISE_SNR", 0.0);
   freq_offset = getenvd("CHANNEL_CFO", 0.0);
   gain = getenvd("CHANNEL_GAIN", 1.0);
+  sigma = compute_sigma(snr) / sqrt(2);
 }
 
 channel::~channel()
@@ -31,6 +34,12 @@ channel::~channel()
 Complex
 channel::apply(Complex signal)
 {
+#ifdef NOISE_ONLY
+  Complex noise = gaussian_fast();
+  signal.rel += noise.rel * sigma;
+  signal.img += noise.img * sigma;
+  return signal;
+#else
   if (enable_cfo) {
     signal = cfo(signal, freq_offset, cycle);
   }
@@ -50,7 +59,13 @@ channel::apply(Complex signal)
   }
 
   if (enable_awgn) {
-    signal = awgn(signal, snr);
+    if (enable_threads) {
+        Complex noise = gaussian_fast();
+        signal.rel += noise.rel * sigma;
+        signal.img += noise.img * sigma;
+    } else {
+        signal = add_complex_noise(signal, sigma);
+    }
   }
 
   signal.rel *= gain;
@@ -59,4 +74,5 @@ channel::apply(Complex signal)
   ++cycle;
 
   return signal;
+#endif
 }

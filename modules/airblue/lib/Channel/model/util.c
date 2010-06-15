@@ -4,34 +4,40 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <errno.h>
 
 double rand_double()
 {
-  return rand() / (((double) RAND_MAX) + 1.0);
+  return drand48(); //rand() / (((double) RAND_MAX) + 1.0);
 }
 
 // From the GNU Scientific Library, src/randist/gauss.c
 
 /* Polar (Box-Mueller) method; See Knuth v2, 3rd ed, p122 */
 
-double gaussian()
+
+Complex gaussian()
 {
-  double x, y, r2;
+  double x1, x2, r2;
 
   do
     {
       /* choose x,y in uniform square (-1,-1) to (+1,+1) */
 
-      x = -1 + 2 * rand_double();
-      y = -1 + 2 * rand_double();
+      x1 = -1 + 2 * rand_double();
+      x2 = -1 + 2 * rand_double();
 
       /* see if it is in the unit circle */
-      r2 = x * x + y * y;
+      r2 = x1 * x1 + x2 * x2;
     }
   while (r2 > 1.0 || r2 == 0);
 
   /* Box-Muller transform */
-  return y * sqrt (-2.0 * log (r2) / r2);
+  double y1 = x1 * sqrt (-2.0 * log (r2) / r2);
+  double y2 = x2 * sqrt (-2.0 * log (r2) / r2);
+
+  Complex ret = { y1, y2 };
+  return ret;
 }
 
 double getenvd(const char *str, double d)
@@ -44,6 +50,21 @@ double getenvd(const char *str, double d)
     value = d;
   return value;
 }
+
+int getenvi(const char *str, int d)
+{
+  int value = 0;
+  char* value_str = getenv(str);
+  errno = 0;
+  if (value_str) {
+    value = strtol(value_str, NULL, 10);
+  }
+  if (!value_str || errno != 0) {
+    value = d;
+  }
+  return value;
+}
+
 
 unsigned char isset(const char *str)
 {
@@ -58,14 +79,10 @@ double get_snr()
 
 Complex gaussian_complex(double sigma)
 {
-  double mag = sigma * gaussian();
-  double rot = rand_double() * PI;
-
-  double rel = mag * cos(rot);
-  double img = mag * sin(rot);
-
-  Complex ret = { rel, img };
-  return ret;
+  Complex c = gaussian();
+  c.rel *= sigma;
+  c.img *= sigma;
+  return c;
 }
 
 Complex add_complex(Complex a, Complex b)
@@ -100,6 +117,7 @@ Complex rotate_complex(Complex signal, double rot)
 Complex cmplx(double real, double imag)
 {
   Complex ret = { real, imag };
+  return ret;
 }
 
 static short int shorten(double x)
