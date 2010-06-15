@@ -34,7 +34,7 @@ channel::~channel()
 Complex
 channel::apply(Complex signal)
 {
-#ifdef NOISE_ONLY
+#if NOISE_ONLY == 1
   Complex noise = gaussian_fast();
   signal.rel += noise.rel * sigma;
   signal.img += noise.img * sigma;
