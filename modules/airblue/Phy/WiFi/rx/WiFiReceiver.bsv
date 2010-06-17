@@ -66,7 +66,7 @@ interface WiFiReceiver;
    interface Get#(RXVector) outRXVector;
    interface Get#(Bit#(8))  outData;
    `ifdef SOFT_PHY_HINTS
-   interface Get#(Bit#(8))  outSoftPhyHints;
+   interface Get#(PhyHints)  outSoftPhyHints;
    `endif
 //   interface Get#(Synchronizer::ControlType) synchronizerStateUpdate;
    interface Get#(ControlType) synchronizerStateUpdate;

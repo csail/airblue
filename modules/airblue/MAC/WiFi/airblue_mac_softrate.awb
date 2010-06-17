@@ -4,15 +4,19 @@
 
 %AWB_START
 
-%name Airblue MAC (with Concurrent TX SHIM)
-%desc MAC with SHIM which add early abortion and concurrent transmission feature to MAC
+%name Airblue MAC (SoftRate)
+%desc MAC which implements SoftRate
 %provides airblue_mac
 
-%requires airblue_mac_crc 
+%requires airblue_mac_crc
+%requires airblue_softhint_avg
 
-%attributes airblue concurrent_tx_shim
+%attributes airblue
 
-%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv
+%sources -t BSV -v PUBLIC MacRXTXControl.bsv SoftMAC.bsv BasicSHIM.bsv Ack.bsv
+
+%generated -t BA mkSHIM.ba
+%generated -t VERILOG mkSHIM.v
 
 %sources -t DICT -v PUBLIC MacRegisterMap.dic
 

@@ -45,6 +45,7 @@ Bool detailedDebugInfo = False;
 //PhyLength variable was not defined previously
 typedef Bit#(12) PhyPacketLength;
 typedef Bit#(8)  PhyData;
+typedef Vector#(8,Bit#(8)) PhyHints;
 
 instance FShow#(Rate);
    function Fmt fshow (Rate rate);

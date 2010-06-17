@@ -3,15 +3,16 @@
 #include "asim/provides/connected_application.h"
 #include "asim/provides/airblue_driver_application.h"
 #include "asim/provides/airblue_environment.h"
-#include "asim/rrr/client_stub_CBUSVECTORCONTROLRRR.h"
+#include "asim/provides/airblue_host_control.h"
 #include "asim/dict/AIRBLUE_REGISTER_MAP.h"
 
 using namespace std;
  
 // constructor
-AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p)
+AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
+    DRIVER_MODULE_CLASS(p)
 {
-  clientStub = new CBUSVECTORCONTROLRRR_CLIENT_STUB_CLASS(p);
+  clientStub = HostControl::Get(p);
 }
 
 // destructor
@@ -51,3 +52,5 @@ AIRBLUE_DRIVER_CLASS::Main()
 
 }
 
+// register driver
+static RegisterDriver<AIRBLUE_DRIVER_CLASS> X;

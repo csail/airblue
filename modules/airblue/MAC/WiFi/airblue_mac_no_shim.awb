@@ -17,6 +17,8 @@
 %generated -t BA mkSHIM.ba
 %generated -t VERILOG mkSHIM.v
 
+%sources -t DICT -v PUBLIC MacRegisterMap.dic
+
 %param DEBUG_MAC 0 "Enable debug messages"
  
 %AWB_END

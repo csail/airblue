@@ -95,7 +95,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
 
 
    WiFiTransceiver transceiver <- mkTransceiver(viterbiClock, viterbiReset);
-   MAC  mac <- mkMAC;
+   let mac <- mkMAC;
    GCT_DEVICE  gct <- mkGCT;
    DAC_DEVICE  dac <- mkDAC(clock, reset, clocked_by rfClock, reset_by rfReset);
    ADC_DEVICE  adc <- mkADC(clock, reset, clocked_by rfClock, reset_by rfReset);
@@ -106,9 +106,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
    rule txCompleteNotify;
      let in <- dac.dac_driver.txComplete;
      gct.gct_driver.txComplete.put(in);
-     // Drive external completion signal
-     // Drive it for a little bit longer than we expect to receive, just to ensure
-
+     mac.phy_txcomplete.put(in);
    endrule
 
 
@@ -163,8 +161,13 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
 
 
    // Hook mac to the transceiver
-   mkConnection( transceiver.transmitter.txData, mac.phy_txdata.get);
-   mkConnection( transceiver.receiver.outData, mac.phy_rxdata);
+   mkConnection(transceiver.transmitter.txData, mac.phy_txdata.get);
+   mkConnection(transceiver.receiver.outData, mac.phy_rxdata);
+
+   //rule eatHints;
+   //     let i <- transceiver.receiver.outSoftPhyHints.get();
+   //endrule
+   mkConnection(transceiver.receiver.outSoftPhyHints, mac.phy_rxhints);
    mkConnection(mac.abortAck,transceiver.receiver.abortAck);
    
    rule connectAbortReq (True);
@@ -231,9 +234,9 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
 
   // Setup the mac i/o
    
-  mkCBusPut(valueof(MACAddrOffset), mac.mac_sa);
-  mkCBusPut(valueof(MACAddrOffset), packetGen.localMACAddress);
-  mkCBusPut(valueof(TargetMACAddrOffset), packetGen.targetMACAddress);
+  mkCBusPut(`AIRBLUE_REGISTER_MAP_MAC_ADDR_0, mac.mac_sa);
+  mkCBusPut(`AIRBLUE_REGISTER_MAP_MAC_ADDR_0, packetGen.localMACAddress);
+  mkCBusPut(`AIRBLUE_REGISTER_MAP_TARGET_MAC_ADDR_0, packetGen.targetMACAddress);
 
   // packet Gen externals
   mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,packetGen.enablePacketGen);
@@ -281,7 +284,8 @@ module [Module] mkTransceiverMACPacketGenFPGAReset#(Clock viterbiClock, Reset vi
    Clock asicClock <- exposeCurrentClock;
    Reset asicReset <- exposeCurrentReset;
 
-   // Build up CReg interface   
+   // Build up CReg interface
+
    let ifc <- exposeCBusIFC(mkTransceiverMACPacketGenFPGAMonad(viterbiClock,viterbiReset,rfClock, rfReset));
 
   interface gctWires = ifc.device_ifc.gctWires;      

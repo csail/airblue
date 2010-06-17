@@ -1,0 +1,2 @@
+def AIRBLUE.REGISTER_MAP.MAC_ADDR[3] "MAC Address";
+def AIRBLUE.REGISTER_MAP.TARGET_MAC_ADDR[3] "Packet Gen Target MAC Address";

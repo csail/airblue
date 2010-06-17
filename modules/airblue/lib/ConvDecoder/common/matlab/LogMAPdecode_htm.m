@@ -52,12 +52,12 @@ trelOutputs = oct2dec(TREL.outputs);
 %%	Compute branch-metrics gamma*(m', m) fev branch fev time using segments of RX. There
 %%	are numOutputSymbols distinct branches. col-i contains all possible
 %%	branch-metrics at time i, i= 1,...,NumBran.
-BranMetric = NaN(TREL.numOutputSymbols, NumBran);
+BranMetric = NaN(NumBran, TREL.numOutputSymbols);
 RX_M = reshape(RX, EncoderN, NumBran)';
 for BranIdx = 1 : TREL.numOutputSymbols
     bitvec = bitget(BranIdx-1, EncoderN : -1 : 1); % All possible binary-vectors of length EncoderN
     symbvec = 1 -2*bitvec; % bit0 ==> 1, bit1 ==> +1
-    BranMetric(BranIdx, :) = ComputeCorr(symbvec, RX_M, Lc);
+    BranMetric(:,BranIdx) = ComputeCorr(symbvec, RX_M, Lc)';
 end
 
 % for time = 1 : NumBran,
@@ -76,8 +76,8 @@ Alpha = NaN(NumBran +1, TREL.numStates);
 Alpha(1, 1) = 0; Alpha(1, 2:end) = -1e9;
 for time = 1 : NumBran,
 %     rx_seg = RX((time-1)*EncoderN +1 : time*EncoderN);
-    a_0 = Alpha(time, prevStates(:,1) + 1) + BranMetric(prevStateOut(:, 1) +1, time)';
-    a_1 = Alpha(time, prevStates(:,2) + 1) + BranMetric(prevStateOut(:, 2) +1, time)';
+    a_0 = Alpha(time, prevStates(:,1) + 1) + BranMetric(time, prevStateOut(:, 1) +1);
+    a_1 = Alpha(time, prevStates(:,2) + 1) + BranMetric(time, prevStateOut(:, 2) +1);
     Alpha(time+1, :) = ln_of_sum_of_exps(a_0, a_1);
 %     a = Alpha(time, prevStates + 1) + BranMetric(oct2dec(prevStateOut) +1, time)'
 %     Alpha(time+1, dest_st+1) = max(a);
@@ -104,8 +104,8 @@ Beta = NaN(NumBran +1, TREL.numStates);
 Beta(NumBran +1, 1) = 0; Beta(NumBran +1, 2:end) = -1e9;
 for time = (NumBran -1) : -1 : 0
 %     rx_seg = RX(time*EncoderN +1 : (time+1)*EncoderN);
-    b_0 = Beta(time+2, TREL.nextStates(:,1)+1) + BranMetric(trelOutputs(:,1)+1, time+1)';
-    b_1 = Beta(time+2, TREL.nextStates(:,2)+1) + BranMetric(trelOutputs(:,2)+1, time+1)';
+    b_0 = Beta(time+2, TREL.nextStates(:,1)+1) + BranMetric(time+1, trelOutputs(:,1)+1);
+    b_1 = Beta(time+2, TREL.nextStates(:,2)+1) + BranMetric(time+1, trelOutputs(:,2)+1);
     Beta(time+1, :) = ln_of_sum_of_exps(b_0, b_1);
 %     for orig_st = 0 : (TREL.numStates -1)
 %         sum2 = -1e9;

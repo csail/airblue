@@ -1,8 +1,7 @@
 
 #include "asim/provides/virtual_platform.h"
-#include "asim/provides/connected_application.h"
-#include "asim/provides/airblue_driver_application.h"
 #include "asim/provides/airblue_environment.h"
+#include "asim/provides/rf_driver.h"
 
 
 using namespace std;

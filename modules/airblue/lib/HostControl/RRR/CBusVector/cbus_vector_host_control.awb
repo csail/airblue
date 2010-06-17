@@ -11,6 +11,7 @@
 %attributes ofdm
 
 %sources -t RRR  -v PUBLIC  CBusVectorHostControl.rrr
-
+%sources -t CPP  -v PRIVATE HostControl.cpp
+%sources -t H    -v PUBLIC  HostControl.h
 
 %AWB_END

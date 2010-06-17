@@ -1,14 +1,12 @@
 import GetPut::*;
 
-// import ProtocolParameters::*;
-// import MACPhyParameters::*;
 
 interface MAC;
    interface Put#(Bit#(48))           mac_sa;  
    interface Get#(TXVector)           phy_txstart;  // MAC to PHY
    interface Get#(PhySapData_T)       phy_txdata;     // MAC TX data to PHY
    interface Put#(Bit#(0))            phy_txcomplete; // PHY tells MAC tx is complete
-   interface Put#(PhySapData_T)       phy_rxdata;     // RX data from PHY to MAC
+   interface Put#(PhyData)            phy_rxdata;     // RX data from PHY to MAC
    interface Put#(PhyCcaStatus_T)     phy_cca_ind;      // carrier sense indication from PHY to MAC
    interface Put#(RXVector)           phy_rxstart;          
 
@@ -25,6 +23,39 @@ interface MAC;
    interface Put#(Bit#(0))  abortAck;
    interface Get#(Bit#(0))  abortReq; 
 endinterface
+
+interface SoftMAC;
+   interface Put#(Bit#(48))           mac_sa;  
+   interface Get#(TXVector)           phy_txstart;  // MAC to PHY
+   interface Get#(PhySapData_T)       phy_txdata;     // MAC TX data to PHY
+   interface Put#(Bit#(0))            phy_txcomplete; // PHY tells MAC tx is complete
+   interface Put#(PhyData)            phy_rxdata;     // RX data from PHY to MAC
+   interface Put#(PhyHints)           phy_rxhints;
+   interface Put#(PhyCcaStatus_T)     phy_cca_ind;      // carrier sense indication from PHY to MAC
+   interface Put#(RXVector)           phy_rxstart;          
+
+   // not really a MAC frame... 
+   interface Put#(MacSWFrame)         mac_sw_txframe; // llc to mac tx
+   interface Get#(MacSWFrame)         mac_sw_rxframe; // mac to llc rx
+   interface Put#(PhySapData_T)       mac_sw_txdata;     // LLC TX data to MAC
+   interface Get#(PhySapData_T)       mac_sw_rxdata;     // RX data from PHY to MAC   
+   interface Get#(MACTxStatus)        mac_sw_txstatus;  // tell upper level of success/failure   
+
+   interface Get#(RXExternalFeedback) mac_abort;
+   
+   //aborting transmissions
+   interface Put#(Bit#(0))  abortAck;
+   interface Get#(Bit#(0))  abortReq; 
+endinterface
+
+//typedef struct 
+//{
+//   PhyData data;
+//   PhyHints hints;
+//} SoftPhyData deriving (Bits);
+//
+//typedef GENERIC_MAC#(PhyData) MAC;
+//typedef GENERIC_MAC#(SoftPhyData) SoftMAC;
 
 interface BasicMAC;
    interface Put#(Bit#(48))           mac_sa;  
@@ -116,6 +147,10 @@ typedef enum {
   Data = 2
 }  MACFrameType deriving (Eq,Bits);
 
+`define FRAME_CTL_SUBTYPE_RTS 'b1011
+`define FRAME_CTL_SUBTYPE_CTS 'b1100
+`define FRAME_CTL_SUBTYPE_ACK 'b1101
+`define FRAME_CTL_SUBTYPE_SR_ACK 'b0101
 
 typedef enum {
    NoError,
@@ -150,6 +185,8 @@ typedef SizeOf#(CommonCtlFrame1_T) FrameC1Sz;
 typedef TDiv#(FrameC1Sz,8)  FrameC1SzBy;
 typedef SizeOf#(CommonCtlFrame2_T) FrameC2Sz;
 typedef TDiv#(FrameC2Sz,8)  FrameC2SzBy;
+typedef SizeOf#(SoftRateAck) FrameSoftRateAckSz;
+typedef TDiv#(FrameSoftRateAckSz,8) FrameSoftRateAckSzBy;
 
 // Clause 17.4.4
 // OFDM PHY Characteristics for 20 MHz channel spacing
@@ -248,10 +285,41 @@ typedef TDiv#(SizeOf#(CommonCtlFrame2_T),8)CommonCtlFrame2Octets;
 typedef struct {
    FrameCtl_T frame_ctl;
    Bit#(16)   dur; // duration
+   Bit#(48)   ra; // rx address
+   Bit#(8)    avg_ber; // average bit error rate
+} SoftRateAck deriving(Eq,Bits);
+
+typedef TDiv#(SizeOf#(SoftRateAck),8) SoftRateAckOctets;
+
+typedef struct {
+   FrameCtl_T frame_ctl;
+   Bit#(16)   dur; // duration
    Bit#(48)   ra;  // rx address
    } CommonCtlFrame1_T deriving(Eq,Bits); // 
 
 typedef TDiv#(SizeOf#(CommonCtlFrame1_T),8)CommonCtlFrame1Octets;
+
+function Integer controlFrameSizeInt(Bit#(4) subtype);
+   return case (subtype) 
+      `FRAME_CTL_SUBTYPE_RTS: valueOf(CommonCtlFrame2Octets);
+      `FRAME_CTL_SUBTYPE_CTS: valueOf(CommonCtlFrame1Octets);
+      `FRAME_CTL_SUBTYPE_ACK: valueOf(CommonCtlFrame1Octets);
+      `FRAME_CTL_SUBTYPE_SR_ACK: valueOf(SoftRateAckOctets);
+      default: 0;
+   endcase;
+endfunction
+
+function Integer frameSizeInt(FrameCtl_T ctrl);
+   return case (ctrl.type_val)
+      Management: valueof(ManagementFrameOctets);
+      Control: controlFrameSizeInt(ctrl.subtype_val);
+      Data: valueOf(DataFrameOctets);
+   endcase;
+endfunction
+
+function PhyPacketLength frameSize(FrameCtl_T ctl);
+   return fromInteger(frameSizeInt(ctl));
+endfunction
 
 typedef union tagged {
    CommonCtlFrame1_T C1;
@@ -259,6 +327,7 @@ typedef union tagged {
    PsPollFrame_T Poll;
    BlkAckReq_T Bar;
    BlkAck_T Ba;
+   SoftRateAck SoftAck;
    } CtlFrame_T deriving(Eq,Bits);
 
 typedef union tagged {
@@ -271,9 +340,22 @@ typedef union tagged {
 // This is the frame we use as a communication to/from the SW MAC.  They will 
 // live above us. 
 typedef struct {
-  MacFrame_T frame;
+  Bit#(FrameSz) frame;
   PhyPacketLength dataLength;
 } MacSWFrame deriving(Bits,Eq);
+
+function FrameCtl_T frameCtl(f x) provisos (Bits#(f,n),Add#(n,s,256));
+   DataFrame_T df = unpack({ pack(x), 0 });
+   return df.frame_ctl;
+endfunction
+
+function Bit#(FrameSz) packFrame(f x) provisos (Bits#(f,n),Add#(n,s,256));
+   return { pack(x), 0 };
+endfunction
+
+function f unpackFrame(Bit#(FrameSz) x) provisos (Bits#(f,n),Add#(n,s,256));
+   return unpack(truncate(x >> fromInteger(valueOf(s))));
+endfunction
 
 typedef CommonCtlFrame2_T RtsFrame_T;
 typedef CommonCtlFrame1_T CtsFrame_T;

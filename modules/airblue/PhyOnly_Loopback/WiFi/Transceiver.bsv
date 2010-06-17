@@ -136,7 +136,13 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
      endcase
 
    endrule
-   
+
+   `ifdef SOFT_PHY_HINTS
+   rule sinkHints;
+      let ignore <- transceiver.receiver.outSoftPhyHints.get();
+   endrule
+   `endif
+
    // connect agc/rx ctrl
    rule packetFeedback;
      RXExternalFeedback feedback <- transceiver.receiver.packetFeedback.get;

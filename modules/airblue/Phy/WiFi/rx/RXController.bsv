@@ -162,7 +162,7 @@ interface PreDescramblerRXController;
    interface Get#(Feedback#(RXVector,RXVectorDecodeError)) outFeedback;
    interface Get#(RXVector)   outRXVector;
    `ifdef SOFT_PHY_HINTS
-   interface Get#(Bit#(8))  outSoftPhyHints;
+   interface Get#(PhyHints)  outSoftPhyHints;
    `endif   
    method    Action abortReq;
 endinterface
@@ -188,7 +188,7 @@ interface RXController;
    interface Get#(RXVector) outRXVector;
    interface Get#(Bit#(8))  outData;
    `ifdef SOFT_PHY_HINTS
-   interface Get#(Bit#(8))  outSoftPhyHints;
+   interface Get#(PhyHints)  outSoftPhyHints;
    `endif
    interface Get#(RXExternalFeedback) packetFeedback;
    method    Put#(Bit#(0)) abortReq;
@@ -396,8 +396,9 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    Reg#(Bool)                abortReg <- mkReg(False);
 
    `ifdef SOFT_PHY_HINTS
-   Reg#(Bit#(8))             minSoftPhyHints <- mkReg(maxBound);
-   FIFO#(Bit#(8))            outSoftPhyHintsQ <- mkLFIFO;
+   StreamFIFO#(24,5,Bit#(8)) softPhyStreamQ <- mkStreamLFIFO;
+   FIFO#(PhyHints) outSoftPhyHintsQ <- mkSizedFIFO(100);
+   //FIFO#(Bit#(8))            outSoftPhyHintsQ <- mkSizedFIFO(128);
    `endif
    
    // constants
@@ -411,6 +412,14 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    rule tickClock(True);
       cycleCount <= cycleCount + 1;
    endrule
+
+   `ifdef SOFT_PHY_HINTS
+   rule sendHints;
+      Get#(PhyHints) ifc = toGet(softPhyStreamQ);
+      let hints <- ifc.get();
+      outSoftPhyHintsQ.enq(hints);
+   endrule
+   `endif
    
    rule decodingHeader(rxState == RX_HEADER && streamQ_usage >= headerSz);
       let header       = pack(streamQ.first);
@@ -500,9 +509,6 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                      inMesgQ.deq();
                      if (mesg.control.firstSymbol) // only process if start of packet
                         begin
-                           `ifdef SOFT_PHY_HINTS
-                           minSoftPhyHints <= maxBound;
-                           `endif
                            rxState <= RX_HEADER;
                            dropData <= zeroExtend(headerSz) - zeroExtend(vOutSz);
 		           streamQ.enq(vOutSz,append(msgData,replicate(0)));
@@ -546,28 +552,16 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                      inMesgQ.deq();
                      streamQ.enq(vOutSz,append(msgData,replicate(0)));
                      `ifdef SOFT_PHY_HINTS
-                     Bit#(8) minHints = fold(min, map(truncate, softHints));
-                     let newMinSoftPhyHints = (minHints < minSoftPhyHints) ? minHints : minSoftPhyHints; 
-                     minSoftPhyHints <= newMinSoftPhyHints;
-                     if (`DEBUG_RXCTRL == 1)
-                        begin
-                           for (Integer i = 0; i < valueOf(ViterbiOutDataSz); i = i + 1)
-                              $display("PreDescramblerRXCtrllr softphy hints: %d",softHints[i]);
-                        end
                      if (checkData > 0)
-                        begin
-                           if (checkData <= zeroExtend(vOutSz)) // last data
-                              begin
-                                 checkData <= 0;
-//                                 outSoftPhyHintsQ.enq(newMinSoftPhyHints);
-                                 if (`DEBUG_RXCTRL == 1)
-                                    $display("PreDescramblerRXCtrllr report min softphy hint of the packet %d",newMinSoftPhyHints);
-                              end
-                           else
-                              begin
-                                 checkData <= checkData - zeroExtend(vOutSz);
-                              end
-                        end
+                       begin
+                         Bit#(8) minHint = fold(min, map(truncate, softHints));
+                         Put#(Vector#(12,Bit#(8))) ifc = toPut(softPhyStreamQ);
+                         ifc.put(map(truncate,softHints));
+                         if (checkData >= zeroExtend(vOutSz)) // last data
+                           begin
+                             checkData <= checkData - zeroExtend(vOutSz);
+                           end
+                       end
                      `endif
                   end
       endcase
@@ -582,7 +576,7 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    interface outRXVector = fifoToGet(outRXVectorQ);   
    interface outFeedback = fifoToGet(outFeedbackQ);
    `ifdef SOFT_PHY_HINTS
-   interface outSoftPhyHints = fifoToGet(outSoftPhyHintsQ);
+   interface outSoftPhyHints = toGet(outSoftPhyHintsQ);
    `endif
       
    method Action abortReq;

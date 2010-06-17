@@ -60,7 +60,7 @@ import GetPut::*;
 // simulation length in terms of no. packet
 `define simPackets 10
 
-typedef 4 NumMACs;
+typedef 2 NumMACs;
 
 function Bool andFunc(Bool a, Bool b);
   return a && b;
@@ -93,12 +93,10 @@ function Bool logicAnd(Bool a, Bool b);
 endfunction
 
 module [CONNECTED_MODULE] mkBusMacVector#(Clock viterbiClock, Reset viterbiReset, Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) (BusMac#(numMAC))
-  provisos(Add#(1,a,numMAC));
+  provisos(Add#(2,a,numMAC));
 
    Clock busClock <- exposeCurrentClock;
    Reset busReset <- exposeCurrentReset;
-
-   let channel <- mkChannel;
 
    ServerStub_CBUSVECTORCONTROLRRR server_stub <- mkServerStub_CBUSVECTORCONTROLRRR();
 
@@ -111,6 +109,61 @@ module [CONNECTED_MODULE] mkBusMacVector#(Clock viterbiClock, Reset viterbiReset
 
    Vector#(numMAC,SyncBitIfc#(Bit#(1))) txPEVec <- replicateM(
       mkSyncBit(basebandClock, basebandReset, rfClock));
+
+   Vector#(2,Channel#(2,14)) channels <- replicateM(
+      mkChannel(clocked_by rfClock, reset_by rfReset));
+
+   function FPComplex#(2,14) dacToComplex(DAC_WIRES dac);
+     let in = FPComplex {
+       rel: FixedPoint {
+         i: ~dac.dacRPart[9],
+         f: dac.dacRPart[8:0]
+       },
+       img: FixedPoint {
+         i: ~dac.dacIPart[9],
+         f: dac.dacIPart[8:0]
+       }
+     };
+ 
+     return fpcmplxSignExtend(in);
+   endfunction
+ 
+   function Bit#(10) fxptToDAC(FixedPoint#(2,14) sample);
+     FixedPoint#(1,9) trunc = fxptTruncate(sample);
+     Bit#(10) out = pack(trunc);
+     return { ~out[9], out[8:0] };
+   endfunction
+
+   for (Integer i = 0; i < 2; i = i+1)
+     begin
+       let txPE = txPEVec[i];
+       let transmitterFPGA = transceivers[i];
+       let receiverFPGA = transceivers[i == 0 ? 1 : 0];
+
+       messageM("txPE reset == transmitterFPGA.gctWires.txPE reset: " + 
+                (resetOf(txPE) == resetOf(transmitterFPGA.gctWires.txPE) ?
+                "True" : "False"));
+
+       // send only if the transmitter is transmitting
+       rule driveTX;
+         txPE.send(transmitterFPGA.gctWires.txPE);
+       endrule
+ 
+       rule connectTX(txPE.read == 1);
+         let sample = dacToComplex(transmitterFPGA.dacWires);
+         channels[i].in.put(sample);
+       endrule
+ 
+       rule connectTXOff(txPE.read == 0);
+         channels[i].in.put(0);
+       endrule
+
+       rule connectRX;
+         let sample <- channels[i].out.get();
+         receiverFPGA.adcWires.adcRPart(fxptToDAC(sample.rel));
+         receiverFPGA.adcWires.adcIPart(fxptToDAC(sample.img));
+       endrule
+     end
 
    function CBus#(AvalonAddressWidth,AvalonDataWidth) transceiverBus(Bit#(32) idx);
       CBus#(AvalonAddressWidth,AvalonDataWidth) cbus_ifc = transceivers[0].busWires;

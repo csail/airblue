@@ -113,7 +113,7 @@ module mkMACPacketGen (MACPacketGen);
               d1.add1 = targetMAC;
               d1.add2 = localMAC;
               d1.seq_ctl.seq_num = truncate(length);
-              MacSWFrame frame = MacSWFrame{frame: tagged Df d1, dataLength: length};
+              MacSWFrame frame = MacSWFrame{frame: packFrame(d1), dataLength: length};
               size <= length;
               count <= 0;
               checksum <= 0;
@@ -230,7 +230,8 @@ module mkMACPacketCheck (MACPacketCheck);
               lfsr.next();
               rxVectorFIFO.deq;
               size <= rxVectorFIFO.first.dataLength - fromInteger(valueof(DataFrameOctets));
-              localMAC <= rxVectorFIFO.first.frame.Df.add1; 
+              DataFrame_T frame = unpackFrame(rxVectorFIFO.first.frame);
+              localMAC <= frame.add1; 
               count <= 0;
               checksum <= 0;
               if (`DEBUG_PACKETGEN == 1)

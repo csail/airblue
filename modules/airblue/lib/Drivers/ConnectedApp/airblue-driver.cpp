@@ -6,10 +6,13 @@
 using namespace std;
  
 // constructor
-CONNECTED_APPLICATION_CLASS::CONNECTED_APPLICATION_CLASS(VIRTUAL_PLATFORM vp): 
-  airblueDriver(new AIRBLUE_DRIVER_CLASS(this)),
-  airblueFrontend(new RF_DRIVER_CLASS(this))
+CONNECTED_APPLICATION_CLASS::CONNECTED_APPLICATION_CLASS(VIRTUAL_PLATFORM vp)
 {
+    vector<DRIVER_CTOR>::iterator it;
+    for (it = DriverCtors().begin(); it != DriverCtors().end(); it++) {
+        DRIVER_CTOR ctor = *it;
+        drivers.push_back(ctor(this));
+    }
 }
 
 // destructor
@@ -21,14 +24,19 @@ CONNECTED_APPLICATION_CLASS::~CONNECTED_APPLICATION_CLASS()
 void
 CONNECTED_APPLICATION_CLASS::Init()
 {
+    PLATFORMS_MODULE_CLASS::Init();
 }
 
 // main
 void
 CONNECTED_APPLICATION_CLASS::Main()
 {
+  vector<DRIVER_MODULE>::iterator it;
+  for (it = drivers.begin(); it != drivers.end(); it++) {
+      DRIVER_MODULE driver = *it;
+      driver->Main();
+  }
   // Eventually we'll call the frontend initialization here. 
-  airblueDriver->Main();
-  airblueFrontend->Main();
+  //airblueDriver->Main();
+  //airblueFrontend->Main();
 }
-

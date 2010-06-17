@@ -26,6 +26,7 @@
 
 // import EHRReg::*;
 import Vector::*;
+import GetPut::*;
 
 // Local includes
 `include "asim/provides/airblue_common.bsh"
@@ -271,3 +272,26 @@ module mkStreamLFIFO(StreamFIFO#(sz, s_sz, data_t))
    endmethod   
 endmodule
 
+// GetPut
+instance ToGet#(StreamFIFO#(sz,s_sz,b),Vector#(n,b)) provisos (Add#(n,xxx,sz));
+   function Get#(Vector#(n,b)) toGet(StreamFIFO#(sz,s_sz,b) fifo);
+      Bit#(s_sz) nv = fromInteger(valueOf(n));
+      return interface Get#(Vector#(n,b));
+         method ActionValue#(Vector#(n,b)) get() if(fifo.notEmpty(nv));
+            fifo.deq(nv);
+            return take(fifo.first);
+         endmethod
+      endinterface;
+   endfunction
+endinstance
+
+instance ToPut#(StreamFIFO#(sz,s_sz,b),Vector#(n,b)) provisos (Add#(n,xxx,sz));
+   function Put#(Vector#(n,b)) toPut(StreamFIFO#(sz,s_sz,b) fifo);
+      Bit#(s_sz) nv = fromInteger(valueOf(n));
+      return interface Put#(Vector#(n,b));
+         method Action put(Vector#(n,b) x) if (fifo.notFull(nv));
+            fifo.enq(nv, append(x, ?));
+         endmethod
+      endinterface;
+   endfunction
+endinstance
