@@ -13,4 +13,9 @@
 %sources -t BDPI_H -v PUBLIC util.h channel.h
 %sources -t BDPI_C -v PUBLIC awgn.c jakes.c freq_offset.c util.c channel.cpp
 
+%param NOISE_ONLY 0 "AWGN only channel"
+
+* GNU Scientific Library
+%library /usr/lib/libgsl.a
+
 %AWB_END

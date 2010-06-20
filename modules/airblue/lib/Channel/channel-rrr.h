@@ -44,6 +44,8 @@ class CHANNEL_RRR_SERVER_CLASS: public RRR_SERVER_CLASS, public PLATFORMS_MODULE
     void Uninit();
     void Cleanup();
 
+    channel* GetChannel() { return &ch; }
+
     //
     // RRR service methods
     //

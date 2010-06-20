@@ -10,22 +10,22 @@
 
 #include "util.h"
 
-#define RECORD_SIZE 0x1000
+#define RECORD_SIZE 0x4000
 #define MAX_SIZE 200
 
 typedef struct {
-  Complex noise[RECORD_SIZE];
+  float noise[RECORD_SIZE];
 } Record;
 
 
-static void init();
+static void spawn_fillers();
 static Record* fetch_record();
 
 Complex gaussian_fast()
 {
     static bool done_init = false;
     if (!done_init) {
-        init();
+        spawn_fillers();
         done_init = true;
     }
 
@@ -36,7 +36,10 @@ Complex gaussian_fast()
         r = fetch_record();
     }
 
-    Complex c = r->noise[i++];
+    Complex c = {
+      rel: r->noise[i++],
+      img: r->noise[i++]
+    };
 
     if (i == RECORD_SIZE) {
         delete r;
@@ -56,7 +59,7 @@ static gsl_rng* rnd()
 {
   static __thread gsl_rng *r = NULL;
   if (r == NULL) {
-    r = gsl_rng_alloc (T);
+    r = gsl_rng_alloc (gsl_rng_default);
   }
   return r;
 }
@@ -77,8 +80,7 @@ static Record* create_record()
 {
     Record* r = new Record;
     for (int i = 0; i < RECORD_SIZE; i++) {
-        r->noise[i].rel = gsl_ran_gaussian_ziggurat(rnd(), 1.0);
-        r->noise[i].img = gsl_ran_gaussian_ziggurat(rnd(), 1.0);
+        r->noise[i] = gsl_ran_gaussian_ziggurat(rnd(), 1.0);
     }
     return r;
 }
@@ -101,8 +103,19 @@ static Record* fetch_record()
     return record;
 }
 
+static void init_rnd(int i)
+{
+    // set the seed to the i'th random number
+    gsl_rng *rng = rnd();
+    while (i-- > 0) gsl_rng_get(rng);
+    gsl_rng_set(rng, gsl_rng_get(rng));
+}
+
 static void* fill_records(void *arg)
 {
+    // use a unique seed for each thread
+    init_rnd((int) (long) arg);
+
     while (1) {
         Record* r = create_record();
         add_record(r);
@@ -115,17 +128,10 @@ static void spawn_fillers()
     if (THREADS > 32) THREADS = 32;
     pthread_t thread[32];
     for (int i = 0; i < THREADS; i++) {
-        int ret = pthread_create ( &thread[i], NULL, &fill_records, (void*) NULL );
+        int ret = pthread_create ( &thread[i], NULL, &fill_records, (void*) i );
         if (ret != 0) {
             printf("error creating thread: %d\n", ret);
             exit(1);
         }
     }
-}
-
-static void init()
-{
-    gsl_rng_env_setup();
-    T = gsl_rng_default;
-    spawn_fillers();
 }

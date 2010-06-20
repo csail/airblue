@@ -1,5 +1,7 @@
-#include <strings.h>
+#include <string.h>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "channel.h"
 #include "util.h"
@@ -7,6 +9,8 @@
 channel::channel() :
     cycle(0)
 {
+  model_init();
+
   for (int i = 0; i < FIR_TAP; i++) {
     history.push_front(cmplx(0,0));
     fir[i] = cmplx(0,0);
@@ -18,6 +22,7 @@ channel::channel() :
   enable_awgn = isset("ADDNOISE_SNR");
   enable_cfo = isset("CHANNEL_CFO");
   enable_fading = isset("JAKES_DOPPLER");
+  enable_rotate = (getenvi("JAKES_ROTATE", 1) == 1);
   enable_multipath = isset("CHANNEL_MULTIPATH");
   enable_threads = isset("CHANNEL_THREADS");
 
@@ -30,6 +35,8 @@ channel::channel() :
 channel::~channel()
 {
 }
+
+Complex get_sample_coeff(double d_time);
 
 Complex
 channel::apply(Complex signal)
@@ -55,7 +62,7 @@ channel::apply(Complex signal)
   }
 
   if (enable_fading) {
-    signal = rayleigh_channel(signal, cycle);
+    signal = rayleigh_channel(signal, cycle, enable_rotate);
   }
 
   if (enable_awgn) {
@@ -75,4 +82,39 @@ channel::apply(Complex signal)
 
   return signal;
 #endif
+}
+
+class State {
+  public:
+    int cycle;
+    void* rnd_state;
+
+    State(int c) : cycle(c) { rnd_state = copy_state(); }
+    ~State() { free_state(rnd_state); }
+};
+
+void *
+channel::copy_state()
+{
+    if (enable_threads) {
+        printf("copy_state not supported with threads\n");
+        exit(1);
+    }
+
+    return new State(cycle);
+}
+
+void
+channel::restore_state(void* x)
+{
+    State* state = (State *) x;
+    cycle = state->cycle;
+    restore_state(state->rnd_state);
+}
+
+void
+channel::free_state(void* x)
+{
+    State* state = (State *) x;
+    delete state;
 }

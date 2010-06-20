@@ -6,9 +6,41 @@
 #include <string.h>
 #include <errno.h>
 
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
+
+void model_init()
+{
+    gsl_rng_env_setup();
+}
+
+static gsl_rng *rnd()
+{
+  static gsl_rng *r = NULL;
+  if (r == NULL) {
+    r = gsl_rng_alloc(gsl_rng_default);
+  }
+  return r;
+}
+
 double rand_double()
 {
-  return drand48(); //rand() / (((double) RAND_MAX) + 1.0);
+  return gsl_rng_uniform(rnd());
+}
+
+void* copy_state()
+{
+    return gsl_rng_clone(rnd());
+}
+
+void restore_state(void *state)
+{
+    gsl_rng_memcpy(rnd(), (gsl_rng *) state);
+}
+
+void free_state(void *state)
+{
+    gsl_rng_free((gsl_rng *) state);
 }
 
 // From the GNU Scientific Library, src/randist/gauss.c

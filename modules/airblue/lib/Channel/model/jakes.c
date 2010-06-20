@@ -2,6 +2,8 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 /* -*- c++ -*- */
 /*
@@ -85,8 +87,9 @@ Complex get_sample_coeff(double d_time)
     coeff_imag += sin(psi[n])*cos(d_doppler*d_time*cos(alpha[n]) + phi);
   }
 
-  coeff_real *= 2/sqrt(JAKES_M);
-  coeff_imag *= 2/sqrt(JAKES_M);
+
+  coeff_real *= sqrt(2.0/JAKES_M);
+  coeff_imag *= sqrt(2.0/JAKES_M);
 
   double norm = sqrt(coeff_real*coeff_real + coeff_imag*coeff_imag);
   norm *= 1;
@@ -100,37 +103,42 @@ Complex get_sample_coeff(double d_time)
   return ret;
 }
 
-Complex rayleigh_channel(Complex signal, int cycle)
+Complex rayleigh_channel(Complex signal, int cycle, int rotate)
 {
   double d_time = cycle * sample_time;
 
   // Rayleigh fading
   Complex coeff = get_sample_coeff(d_time);
-  Complex faded = mult_complex(signal, coeff);
-
-  return faded;
+  if (rotate) {
+    return mult_complex(signal, coeff);
+  } else {
+    double m = sqrt(coeff.rel * coeff.rel + coeff.img * coeff.img);
+    signal.rel *= m;
+    signal.img *= m;
+    return signal;
+  }
 }
 
 int rayleigh_channel_bdpi(unsigned int data, int cycle)
 {
-  return pack(rayleigh_channel(unpack(data), cycle));
+  return pack(rayleigh_channel(unpack(data), cycle, 1));
 }
 
 #ifdef JAKES_TEST
 int main(int argc, char** argv)
 {
+  model_init();
   double d_time = 0.0;
   double sum_square = 0.0;
-  double count = 0.0;
-  while (d_time < 1.0) {
+  int count = 0;
+  while (d_time < 1000) {
     Complex coeff = get_sample_coeff(d_time);
-    double mag = sqrt(coeff.rel * coeff.rel + coeff.img * coeff.img);
-    sum_square += mag*mag;
+    sum_square += ( coeff.rel * coeff.rel + coeff.img * coeff.img );
     count += 1;
-    printf("%lf, %lf\n", d_time, mag);
-    d_time += 0.001;
+    d_time += 10000 * sample_time; //0.001;
   }
-  //printf("rms: %lf\n", sqrt(sum_square/count));
+  sum_square /= count;
+  printf("power: %lf (count=%d)\n", 10.0 * log(sum_square) / log(10.0), count);
 }
 #endif
 

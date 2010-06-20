@@ -12,6 +12,7 @@ class channel
     bool enable_awgn;
     bool enable_cfo;
     bool enable_fading;
+    bool enable_rotate;
     bool enable_multipath;
     bool enable_threads;
 
@@ -30,6 +31,10 @@ class channel
     ~channel();
 
     Complex apply(Complex data);
+
+    void* copy_state();
+    void restore_state(void* state);
+    void free_state(void* state);
 };
 
 #endif

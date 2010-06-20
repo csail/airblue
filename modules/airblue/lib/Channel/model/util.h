@@ -18,9 +18,15 @@ typedef struct {
   double img;
 } Complex;
 
+void model_init();
+
+void* copy_state();
+void restore_state(void *state);
+void free_state(void *state);
+
 Complex awgn(Complex data, double snr);
 Complex cfo(Complex data, double freq_offset, int cycle);
-Complex rayleigh_channel(Complex data, int cycle);
+Complex rayleigh_channel(Complex data, int cycle, int rotate);
 
 int awgn_bdpi(unsigned int data);
 int cfo_bdpi(unsigned int data, int cycle);
