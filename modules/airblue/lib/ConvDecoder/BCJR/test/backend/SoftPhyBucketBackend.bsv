@@ -45,6 +45,7 @@ import StmtFSM::*;
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/provides/starter_service.bsh"
+`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 `include "asim/rrr/client_stub_SOFT_PHY_BUCKET_RRR.bsh"
 
 typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
@@ -147,12 +148,17 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       let mesg = descMesgs.first();
       let expected_data = out_data + 1; 
       let diff = mesg.data ^ expected_data; // try to get the bits that are different
-      if(diff[bitIndex] == 1)
-         begin
-           errorCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), errorCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
-         end
 
-      totalCounts.upd(truncate(outSoftPhyHintsQ.first[bitIndex]), totalCounts.sub(truncate(outSoftPhyHintsQ.first[bitIndex])) + 1);
+      if (out_cnt > 1)
+        begin
+          let hint = outSoftPhyHintsQ.first[bitIndex];
+          if(diff[bitIndex] == 1)
+             begin
+               errorCounts.upd(hint, errorCounts.sub(hint) + 1);
+             end
+
+          totalCounts.upd(hint, totalCounts.sub(hint) + 1);
+         end
 
       if(bitIndex == 0) 
         begin

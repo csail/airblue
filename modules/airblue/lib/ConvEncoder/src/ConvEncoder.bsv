@@ -46,8 +46,7 @@ import Vector::*;
 
 // given the current state and the new shift in bits, give me the new state
 function Bit#(kSz) getNextState(Bit#(kSz) state, Bit#(convInSz) in_bits)
-   provisos (Add#(convInSz,kSz,xxA),
-             Add#(kSz,convInSz,xxA));
+   provisos (Add#(convInSz,kSz,xxA));
   Bit#(xxA) tmp = {in_bits, state};
   return tpl_1(split(tmp)); // drop LSBs
 endfunction
@@ -64,6 +63,7 @@ module mkConvEncoder#(Vector#(polyNo,Bit#(kSz)) gen_polys) // generator polynomi
              Add#(convInSz,kSz,xxC),
              Add#(kSz,convInSz,xxC),
              Mul#(inNo,convInSz,inSz),
+             IsEncoderCtrl#(ctrlT),
 	     Mul#(inNo,convOutSz,outSz),
 	     Bits#(ctrlT,ctrlSz));
    
@@ -74,11 +74,12 @@ module mkConvEncoder#(Vector#(polyNo,Bit#(kSz)) gen_polys) // generator polynomi
    // state elements
    FIFO#(EncoderMesg#(ctrlT,inSz))  in_q     <- mkLFIFO;
    FIFO#(EncoderMesg#(ctrlT,outSz)) out_q    <- mkLFIFO;
-   Reg#(Bit#(kSz))                  hist_val <- mkReg(0);
+   Reg#(Bit#(kSz))                  hist_reg <- mkReg(0);
    
    // rules
    rule compute(True);
       EncoderMesg#(ctrlT,inSz)                 mesg         = in_q.first;
+      let hist_val = isFirstMesg(mesg.control) ? 0 : hist_reg;
       Vector#(inNo,Bit#(convInSz))             in_data      = unpack(mesg.data);
       Vector#(inNo,Bit#(kSz))                  hist_val_vec = sscanl(getNextState,hist_val,in_data); // generate the sequence states that will generate the output
       Vector#(convOutSz,Vector#(inNo,Bit#(1))) out_vec      = newVector;
@@ -89,7 +90,7 @@ module mkConvEncoder#(Vector#(polyNo,Bit#(kSz)) gen_polys) // generator polynomi
          out_data_vec[i] = out_vec[i%conv_out_sz][i/conv_out_sz]; // put the output at the right order
       Bit#(outSz) out_data = pack(out_data_vec);
       in_q.deq;
-      hist_val <= last(hist_val_vec);
+      hist_reg <= last(hist_val_vec);
       out_q.enq(Mesg{control: mesg.control,
                      data: out_data});
    endrule

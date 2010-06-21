@@ -66,7 +66,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    let mapper <- mkMapperInstance;
    let demapper <- mkDemapperInstance;
    let depuncturer <- mkDepuncturerInstance;
-   let firstCtrl =  TXGlobalCtrl{firstSymbol:False, rate:R0};
    let ifft <- mkIFFTInstance;
    let fft  <- mkFFTInstance;
    let scrambler <- mkScramblerInstance;
@@ -88,7 +87,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
 						 rate:R0});
 
    Reg#(Bit#(12)) counter <- mkReg(0);
-   Reg#(Bit#(12)) fst_cnt <- mkReg(0);
    Reg#(Bit#(12)) scr_cnt <- mkReg(0);
    Reg#(Bit#(12)) dec_cnt <- mkReg(0);
    Reg#(Bit#(12)) in_data <- mkReg(0);
@@ -103,7 +101,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       endaction
       action
          let resp <- client_stub.getResponse_GetPacketSize();
-         length <= unpack(truncate(resp));
+
       endaction
       initialized <= True;
    endseq);
@@ -120,10 +118,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Valid magicConstantSeed;
-      let fst_symbol = True;
-      let new_mesg = makeMesg(bypass_mask, seed, fst_symbol, new_ctrl.rate, new_ctrl.length, new_data);
+      let new_mesg = makeMesg(bypass_mask, seed, True, new_ctrl.rate, new_ctrl.length, new_data);
       let new_counter = new_ctrl.length - 1;
-      let new_fst_cnt = getSymCnt(new_ctrl.rate);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          $display("Testbench sets counter to %d", new_ctrl.length-1);
       ctrl <= new_ctrl;
@@ -131,7 +127,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
          $display("ConvEncoder Input: %h", new_data);
       in_data <= new_data;
       counter <= new_counter;
-      fst_cnt <= new_fst_cnt;
       scrambler.in.put(new_mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          $display("Conv Encoder In Mesg: rate:%d, data:%b, counter:%d",new_ctrl.rate,new_data,new_counter);
@@ -142,13 +137,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Invalid; // no new seed for scrambler
-      let fst_symbol = fst_cnt > 0;
-      let new_mesg = makeMesg(bypass_mask, seed, fst_symbol, new_ctrl.rate, new_ctrl.length, new_data);
+      let new_mesg = makeMesg(bypass_mask, seed, False, new_ctrl.rate, new_ctrl.length, new_data);
       let new_counter = counter - 1;
       in_data <= new_data;
       counter <= new_counter;
-      if (fst_symbol)
-         fst_cnt <= fst_cnt - 1;
       scrambler.in.put(new_mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          begin

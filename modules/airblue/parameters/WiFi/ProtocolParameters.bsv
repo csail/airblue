@@ -79,6 +79,11 @@ typedef struct {
     Rate rate;
 } TXGlobalCtrl deriving(Eq, Bits);
 
+instance IsEncoderCtrl#(TXGlobalCtrl);
+   function Bool isFirstMesg(TXGlobalCtrl ctrl);
+      return ctrl.firstSymbol;
+   endfunction
+endinstance
 
 typedef 2  TXFPIPrec; // tx fixedpoint integer precision
 typedef 14 TXFPFPrec; // tx fixedpoint fractional precision
@@ -92,7 +97,7 @@ typedef struct {
    Bool viterbiPushZeros; // viterbi needs to push zeros to clear all data out  
    Rate rate;
 } RXGlobalCtrl deriving(Eq, Bits);
-
+          
 instance FShow#(RXGlobalCtrl);
   function Fmt fshow(RXGlobalCtrl ctrl);
     return $format(" RXGlobalCtrl: firstSymbol: ") + fshow(ctrl.firstSymbol) + $format(" updatePilot: ") + fshow(ctrl.updatePilot) + $format(" viterbiPushZeros ") + fshow(ctrl.viterbiPushZeros) + $format(" Rate: ") + fshow(ctrl.rate);

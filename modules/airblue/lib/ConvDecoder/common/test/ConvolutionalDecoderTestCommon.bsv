@@ -39,37 +39,9 @@ import StmtFSM::*;
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_scrambler.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
-`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
 // testing wifi setting
 `define isDebug True // uncomment this line to display error
-
-// Global Parameters:
-typedef enum {
-   R0,  // BPSK 1/2
-   R1,  // BPSK 3/4
-   R2,  // QPSK 1/2
-   R3,  // QPSK 3/4
-   R4,  // 16-QAM 1/2
-   R5,  // 16-QAM 3/4
-   R6,  // 64-QAM 2/3
-   R7   // 64-QAM 3/4
-} Rate deriving(Eq, Bits);
-
-instance FShow#(Rate);
-   function Fmt fshow (Rate rate);
-     case (rate)
-       R0: return $format("6Mbps");
-       R1: return $format("9Mbps");
-       R2: return $format("12Mbps");
-       R3: return $format("18Mbps");
-       R4: return $format("24Mbps");
-       R5: return $format("36Mbps");
-       R6: return $format("48Mbps");
-       R7: return $format("54Mbps");
-     endcase
-   endfunction
-endinstance
 
 // every packet is of the same size = LCM
 function Bit#(12) getNewLength(Rate rate);
@@ -105,6 +77,12 @@ typedef struct {
    Rate       rate;
    Bit#(12)   length; // in terms of no. 12 bits bundle
 } TXGlobalCtrl deriving(Eq, Bits);
+
+instance IsEncoderCtrl#(TXGlobalCtrl);
+   function Bool isFirstMesg(TXGlobalCtrl ctrl);
+      return ctrl.firstSymbol;
+   endfunction
+endinstance
 
 typedef struct {
    Bool firstSymbol; 

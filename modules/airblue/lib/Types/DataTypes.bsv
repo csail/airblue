@@ -69,6 +69,10 @@ typedef Mesg#(ctrl_t, Bit#(n))
         EncoderMesg#(type ctrl_t, 
 		     numeric type n);
 
+typeclass IsEncoderCtrl#(type c);
+   function Bool isFirstMesg(c ctrl);
+endtypeclass
+
 typedef Mesg#(ctrl_t, Bit#(n)) 
         InterleaverMesg#(type ctrl_t, 
 			 numeric type n);

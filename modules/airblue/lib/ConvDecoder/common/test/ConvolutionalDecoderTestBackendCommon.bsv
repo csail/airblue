@@ -43,6 +43,7 @@ import StmtFSM::*;
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/provides/starter_service.bsh"
+`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
 
 typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
