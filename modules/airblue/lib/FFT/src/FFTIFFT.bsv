@@ -182,16 +182,34 @@ module [Module] mkCtrlFFTIFFT (CtrlFFTIFFT#(ctrl_t,FFTSz,ISz,FSz))
    
    FFTIFFT fftifft <- mkFFTIFFT;
    FIFO#(ctrl_t) ctrlQ <- mkSizedFIFO(1);//was logFFTSz
+ 
+   function FixedPoint#(ISz,FSz) fxptBound(FixedPoint#(FFTISz, FSz) x);
+      FixedPoint#(ISz,FSz) fmax = maxBound;
+      FixedPoint#(ISz,FSz) fmin = minBound;
+      FixedPoint#(ISz,FSz) res = fxptTruncate(x);
+      if (x > fxptSignExtend(fmax))
+         res = fmax;
+      else if (x < fxptSignExtend(fmin))
+         res = fmin;
+      return res;
+   endfunction
+
+   function FPComplex#(ISz,FSz) fpcmplxBound(FFTData x);
+      return FPComplex {
+         rel: fxptBound(x.rel),
+         img: fxptBound(x.img)
+      };
+   endfunction
    
    method Action putInput(FFTControl isIFFT, FFTMesg#(ctrl_t,FFTSz,ISz,FSz) fftifftMesg);   
       fftifft.putInput(isIFFT, map(fpcmplxSignExtend,fftifftMesg.data));
       ctrlQ.enq(fftifftMesg.control);
    endmethod
-   
+  
    method ActionValue#(FFTMesg#(ctrl_t,FFTSz,ISz,FSz)) getOutput;
       let data <- fftifft.getOutput;
       ctrlQ.deq;
-      return Mesg{control:ctrlQ.first,data:(map(fpcmplxTruncate,data))};
+      return Mesg{control:ctrlQ.first,data:(map(fpcmplxBound,data))};
    endmethod
 
 endmodule
