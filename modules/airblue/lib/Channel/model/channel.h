@@ -32,6 +32,8 @@ class channel
 
     Complex apply(Complex data);
 
+    int Cycle() { return cycle; }
+
     void* copy_state();
     void restore_state(void* state);
     void free_state(void* state);

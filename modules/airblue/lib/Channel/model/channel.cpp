@@ -10,6 +10,7 @@ channel::channel() :
     cycle(0)
 {
   model_init();
+  jakes_init();
 
   for (int i = 0; i < FIR_TAP; i++) {
     history.push_front(cmplx(0,0));
@@ -91,6 +92,7 @@ class State {
 
     State(int c) : cycle(c) { rnd_state = copy_state(); }
     ~State() { free_state(rnd_state); }
+    void Restore() { restore_state(rnd_state); }
 };
 
 void *
@@ -109,7 +111,7 @@ channel::restore_state(void* x)
 {
     State* state = (State *) x;
     cycle = state->cycle;
-    restore_state(state->rnd_state);
+    state->Restore();
 }
 
 void

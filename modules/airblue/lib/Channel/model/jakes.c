@@ -52,7 +52,7 @@ static double random_phase()
   return phase;
 }
 
-static void jakes_init()
+void jakes_init()
 {
   theta = random_phase();
   phi = random_phase();
@@ -72,12 +72,6 @@ static void jakes_init()
 
 Complex get_sample_coeff(double d_time)
 {
-  static int init = 0;
-  if (!init) {
-    jakes_init();
-    init = 1;
-  }
-
   double coeff_real = 0.0;
   double coeff_imag = 0.0;
 

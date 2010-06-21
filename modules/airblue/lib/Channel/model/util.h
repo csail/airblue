@@ -19,6 +19,7 @@ typedef struct {
 } Complex;
 
 void model_init();
+void jakes_init();
 
 void* copy_state();
 void restore_state(void *state);
