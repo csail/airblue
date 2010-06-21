@@ -1,9 +1,15 @@
 #!/bin/bash
 
 py=../../../../../scripts/softhints/computer-ber.py
-dir=~/Downloads
+#dir=~/Downloads
 
+#for (( i=0; $i<8; i=$i+1 )); do
+#    $py -l $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_log_r$i.bsv
+#    $py -c $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_r$i.h
+#done
+
+file=../../../../../scripts/softhints/sova
 for (( i=0; $i<8; i=$i+1 )); do
-    $py -l $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_log_r$i.bsv
-    $py -c $dir/soft_phy_ratio_rate_$i\_snr_*/meansoft-vs-ber.raw $i > table_r$i.h
+    $py -l -f $file $i > table_log_r$i.bsv
+    $py -c -f $file $i > table_r$i.h
 done

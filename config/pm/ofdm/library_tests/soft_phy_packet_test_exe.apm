@@ -233,10 +233,10 @@ Packagehint=ofdm
 File=modules/airblue/lib/ConvDecoder/BCJR/test/backend-packet/airblue_soft_phy_packet_backend.awb
 Packagehint=ofdm
 
-
 [Airblue SoftPhy hint average (log based)/Requires]
-airblue_softhint_table=Airblue SoftPhy hint table
+airblue_softhint_table=BCJR SoftPhy hint table
 
-[Airblue SoftPhy hint table]
-File=modules/airblue/lib/SoftRate/tables/airblue_softhint_table.awb
+
+[BCJR SoftPhy hint table]
+File=modules/airblue/lib/SoftRate/tables/bcjr/airblue_softhint_table.awb
 Packagehint=ofdm

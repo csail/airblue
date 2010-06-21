@@ -4,8 +4,8 @@
 
 %AWB_START
 
-%name Airblue SoftPhy hint table
-%desc Airblue SoftPhy hint table 
+%name BCJR SoftPhy hint table
+%desc BCJR SoftPhy hint table
 %provides airblue_softhint_table
 
 %attributes airblue
