@@ -49,23 +49,14 @@ import FixedPoint::*;
 `include "asim/provides/airblue_softhint_avg.bsh"
 `include "asim/provides/starter_service.bsh"
 
-import "BDPI" function Bit#(32) channel_get_sample();
-
 typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
 
-module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder, ClientStub_SIMPLEHOSTCONTROLRRR client_stub) (ConvolutionalDecoderTestBackend);
+module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder) (ConvolutionalDecoderTestBackend);
 
-   // Starter service sink
-   Connection_Send#(Bit#(8)) endSim <- mkConnection_Send("vdev_starter_finish_run");
+   Connection_Send#(Bit#(64)) errorsC <- mkConnection_Send("airblue_packet_errors");
+   Connection_Send#(Bit#(64)) totalC <- mkConnection_Send("airblue_packet_bits");
+   Connection_Send#(Bit#(32)) hintC <- mkConnection_Send("airblue_packet_hint");
 
-   // runtime parameters
-   Reg#(Bit#(48)) finishTime <- mkRegU;
-   Reg#(Bool) done <- mkReg(False);
-   Reg#(Bool) initialized <- mkReg(False);
-
-   Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
-						 rate:R0});
- 
    FIFO#(Vector#(12, Bit#(12)))  outSoftPhyHintsQ <- mkSizedFIFO(256);
    SoftHintAvg softHintAvg <- mkSoftHintAvg;
    FIFOF#(Tuple2#(Bit#(32),Bit#(32))) actualBER <- mkFIFOF;
@@ -86,21 +77,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
 
    Reg#(Bit#(7)) dumpAddr <- mkReg(0);   
 
-   Stmt initStmt = (seq
-      client_stub.makeRequest_GetFinishCycles(0);
-      action
-         let resp <- client_stub.getResponse_GetFinishCycles();
-         finishTime <= truncate(resp);
-      endaction
-      initialized <= True;
-   endseq);
-
-   FSM initFSM <- mkFSM(initStmt);
-
-   rule init (!initialized);
-      initFSM.start();
-   endrule
-   
    rule putDescrambler(True);
       let mesg <- convolutionalDecoder.out.get;
       Maybe#(Bit#(7)) seed = tagged Invalid;
@@ -139,12 +115,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
      descMesgs.enq(mesg); 
    endrule
 
-   rule sinkOutput(total >= finishTime || !initialized);
-     descMesgs.deq();     
-     outSoftPhyHintsQ.deq();
-   endrule
-
-   rule getOutput(total < finishTime && initialized);
+   rule getOutput;
       let mesg = descMesgs.first();
       let expected_data = out_data + 1; 
       let diff = mesg.data ^ expected_data; // try to get the bits that are different
@@ -175,14 +146,18 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
           outSoftPhyHintsQ.deq();
           bitIndex <= 11;
 
-          if (out_cnt > 0 || mesg.control.globalCtrl.firstSymbol)
+          if (out_cnt > 0)
             begin
               out_data <= out_data + 1;
               total <= total + 12;
             end
 
           if (out_cnt == 0 && mesg.control.globalCtrl.firstSymbol)
-             out_cnt <= mesg.control.globalCtrl.length - 1;
+            begin
+              out_data <= 1;
+              out_cnt <= mesg.control.globalCtrl.length - 1;
+              total <= total + 12;
+            end
           else if (out_cnt > 0)
              out_cnt <= out_cnt - 1;
         end
@@ -193,7 +168,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
 
       if (last)
         begin
-          actualBER.enq(tuple2(next_errors,next_total));
+          errorsC.send(extend(next_errors));
+          totalC.send(extend(next_total));
           packet_errors <= 0;
           packet_total <= 0;
         end
@@ -204,22 +180,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
         end
    endrule
       
-   rule handleExternalReqsTop;
+   rule sendPrediction;
      let predicted <- softHintAvg.out.get();
-     let { errors, total } = actualBER.first;
-
-     $write("predicted: ");
-     fxptWrite(2, predicted);
-     $display();
-     $display("errors: %d total: %d", errors, total);
-     $display("sample: %d", channel_get_sample());
-     $finish;
-   endrule
-
-   // this will probably work because we are dumping a lot of data.  
-   rule handleExternalReqs(total >= finishTime && initialized &&
-        !actualBER.notEmpty);
-     endSim.send(0);
+     FixedPoint#(16,16) value = fxptSignExtend(predicted);
+     hintC.send(pack(value));
    endrule
 
    method Action put(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric) mesg);

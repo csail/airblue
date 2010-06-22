@@ -12,8 +12,9 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC SoftPhyPacketBackend.bsv
+%sources -t BSV -v PUBLIC  SoftPhyPacketBackend.bsv
+%sources -t CPP -v PRIVATE rate-driver.cpp
 
-%generated -t BA channel_get_sample.ba
+%param VITERBI 0 "Use viterbi adaptation"
 
 %AWB_END

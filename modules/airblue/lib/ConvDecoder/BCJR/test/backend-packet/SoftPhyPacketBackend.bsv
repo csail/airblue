@@ -48,6 +48,7 @@ import FixedPoint::*;
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/provides/airblue_softhint_avg.bsh"
 `include "asim/provides/starter_service.bsh"
+`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 `include "asim/rrr/client_stub_SOFT_PHY_PACKET_RRR.bsh"
 
 typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
