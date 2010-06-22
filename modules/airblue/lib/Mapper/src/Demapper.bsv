@@ -55,22 +55,22 @@ endfunction
 function ViterbiMetric decodeRange(FixedPoint#(ai,af) in, FixedPoint#(ai,af) start, FixedPoint#(ai,af) incr, Bool startZero)
   provisos (Add#(1,xxA,ai), Literal#(FixedPoint#(ai,af)),
 	    Arith#(FixedPoint#(ai,af)));
-      Bit#(3) result = (in < start + incr) ?
-		       (startZero ? 3 : 4) :
+      Int#(4) result = (in < start + incr) ?
+		       (startZero ? 4 : -4) :
 		       (in < start + demapMult(2,incr)) ?
-		       (startZero ? 2 : 5) :
+		       (startZero ? 3 : -3) :
 		       (in < start + demapMult(3,incr)) ?
-		       (startZero ? 1 : 6) :
+		       (startZero ? 2 : -2) :
 		       (in < start + demapMult(4,incr)) ?
-		       (startZero ? 0 : 7) :
+		       (startZero ? 1 : -1) :
 		       (in < start + demapMult(5,incr)) ?
-		       (startZero ? 7 : 0) :
+		       (startZero ? -1 : 1) :
 		       (in < start + demapMult(6,incr)) ?
-		       (startZero ? 6 : 1) :
+		       (startZero ? -2 : 2) :
 		       (in < start + demapMult(7,incr)) ?
-		       (startZero ? 5 : 2) :
-		       (startZero ? 4 : 3);
-      return signExtend(result);
+		       (startZero ? -3 : 3) :
+		       (startZero ? -4 : 4);
+      return signExtend(pack(result));
 endfunction // ViterbiMetric
 
 function ViterbiMetric decodeBPSK(Bool negateOutput,
