@@ -97,6 +97,10 @@ module mkPuncturer#(function PuncturerCtrl
    FIFO#(EncoderMesg#(ctrl_t, out_sz)) outQ <- mkSizedFIFO(2);
    StreamFIFO#(in_buf_sz,in_s_sz,Bit#(1)) inStreamQ <- mkStreamLFIFO;
    StreamFIFO#(out_buf_sz,out_s_sz,Bit#(1)) outStreamQ <- mkStreamLFIFO;
+
+   RWire#(ctrl_t) newCtrl <- mkRWire;
+   Reg#(Bool) hasReadCtrl <- mkReg(True);
+   PulseWire readCtrl <- mkPulseWire;
       
    let inMsg = inQ.first;
    let inCtrl = inMsg.control;
@@ -115,8 +119,7 @@ module mkPuncturer#(function PuncturerCtrl
    let canDeqOutStreamQ = outStreamQ.notEmpty(outSz); 
    
    rule enqInStreamQ(canEnqInStreamQ && (lastCtrl == inCtrl || (!canDeqInStreamQ && !canDeqOutStreamQ)));
-      if (lastCtrl != inCtrl)
-	 lastCtrl <= inCtrl;
+      newCtrl.wset(inCtrl);
       inQ.deq;
       inStreamQ.enq(inSz,unpack(zeroExtend(inData)));
    endrule
@@ -161,6 +164,19 @@ module mkPuncturer#(function PuncturerCtrl
 			  data: outData};
       outStreamQ.deq(outSz);
       outQ.enq(outMsg);
+      readCtrl.send();
+   endrule
+
+   rule updateCtrl;
+      if ((readCtrl || hasReadCtrl) &&& newCtrl.wget matches tagged Valid .ctrl)
+        begin
+          lastCtrl <= ctrl;
+          hasReadCtrl <= False;
+        end
+      else if (readCtrl)
+        begin
+          hasReadCtrl <= True;
+        end
    endrule
    
    interface Put in = fifoToPut(inQ);
