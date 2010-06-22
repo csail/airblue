@@ -19,10 +19,8 @@
 
 %sources -t BSV -v PUBLIC SynchronizerTest.bsv
 
-%generated -t BA mkSynchronizerTest.ba
 %generated -t BA mkStatefulSynchronizerInstance.ba
 
-%generated -t VERILOG mkSynchronizerTest.v
 %generated -t VERILOG mkStatefulSynchronizerInstance.v
 
 %AWB_END

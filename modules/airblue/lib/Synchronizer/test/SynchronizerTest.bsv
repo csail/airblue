@@ -41,26 +41,26 @@ import Vector::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_synchronizer_packetgen.bsh"
+`include "asim/provides/soft_connections.bsh"
 
 // to deal with the case where synchronizer may output some initialization junk samples, will try to adjust the expected position accordingly 
 `define SyncPosAdjustment 11 
 
 
 (* synthesize *)
-module [Module] mkStatefulSynchronizerInstance(StatefulSynchronizer#(2,14));
+module mkStatefulSynchronizerInstance(StatefulSynchronizer#(2,14));
    let ifc <- exposeCBusIFC(mkStatefulSynchronizer); 
    let statefulSynchronizer = ifc.device_ifc;
    return statefulSynchronizer;
 endmodule
 
    
-module mkHWOnlyApplication (Empty);   
+module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);   
    let test <- mkSynchronizerTest();
 endmodule
 
    
-(* synthesize *)
-module mkSynchronizerTest(Empty);
+module [CONNECTED_MODULE] mkSynchronizerTest(Empty);
    // states
    StatefulSynchronizer#(2,14) statefulSynchronizer <- mkStatefulSynchronizerInstance();
    Synchronizer#(2,14) synchronizer = statefulSynchronizer.synchronizer;
