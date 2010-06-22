@@ -5,6 +5,11 @@
 # ***************
 
 experiments = bcjr bcjr_new_demap viterbi viterbi_new_demap
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_-3.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_-2.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_-1.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_0.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_1.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_2.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_3.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_4.cfg
@@ -24,6 +29,9 @@ config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_17.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_18.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_19.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_0_snr_20.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_-1.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_0.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_1.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_2.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_3.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_4.cfg
@@ -43,6 +51,8 @@ config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_17.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_18.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_19.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_1_snr_20.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_0.cfg
+config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_1.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_2.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_3.cfg
 config/bm/ofdm/ber_check.cfx/benchmarks/ber_check_rate_2_snr_4.cfg
