@@ -101,7 +101,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       endaction
       action
          let resp <- client_stub.getResponse_GetPacketSize();
-
+         length <= truncate(resp);
       endaction
       initialized <= True;
    endseq);
