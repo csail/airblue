@@ -16,7 +16,7 @@ my @snrs = (20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 
 my @rates = (7,6,5,4,3,2,1,0);
 my @bit_lengths = (20000,2000000,2000000000,20000000000);
 my @bit_length_strs = ("short_cpu","long_cpu","short_fpga","long_fpga");
-my @packet_lengths = (5,16,32,128,240);
+my @packet_lengths = (5,6,16,32,128,240);
 
 for(my $i = 0; $i < scalar(@bit_lengths); $i=$i+1) {
     #print("$i $bit_length_strs[$i]\n");

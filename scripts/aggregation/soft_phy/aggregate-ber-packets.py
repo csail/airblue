@@ -21,21 +21,20 @@ def main():
 
     for filename in files:
         contents = open(filename, 'r').readlines()
-	print contents
         for line in contents:
             m = p.match(line)
             if m != None:
                 pred, actual = map(float, m.groups())
 
                 # bin prediction
-                pred = max(-3, round(two2ten(pred), 1))
+                pred = max(-4, round(two2ten(pred), 1))
 
                 # compute actual BER as a deicmal
                 actual = 2.0 ** actual
 
                 bers.append( (pred, actual ) )
 
-    for ber in [-x / 10.0 for x in range(0, 31)]:
+    for ber in [-x / 10.0 for x in range(0, 41)]:
         actual = [actual for (pred, actual) in bers if pred == ber]
 
         if len(actual) == 0:
