@@ -220,3 +220,10 @@ airblue_channel_model_sw=Airblue SW Channel Model
 [Airblue SW Channel Model]
 File=modules/airblue/lib/Channel/model/channel_model_sw.awb
 Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test PassCheck Backend/Requires]
+airblue_check_ber_host_control=Check BER RRR Host Control
+
+[Check BER RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CheckBER/simple_host_control.awb
+Packagehint=ofdm

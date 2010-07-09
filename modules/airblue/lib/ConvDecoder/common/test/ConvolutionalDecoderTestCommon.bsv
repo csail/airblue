@@ -76,6 +76,7 @@ typedef struct {
    Bool       firstSymbol; 
    Rate       rate;
    Bit#(12)   length; // in terms of no. 12 bits bundle
+   Bool       endSimulation;
 } TXGlobalCtrl deriving(Eq, Bits);
 
 instance IsEncoderCtrl#(TXGlobalCtrl);
@@ -89,6 +90,7 @@ typedef struct {
    Rate rate;
    Bit#(12)   length; // in terms of no. 12 bits bundle
    Bool viterbiPushZeros; // viterbi needs to push zeros to clear all data out  
+   Bool       endSimulation;
 } RXGlobalCtrl deriving(Eq, Bits);
 
 instance FShow#(TXGlobalCtrl);
@@ -104,8 +106,8 @@ instance FShow#(RXGlobalCtrl);
 endinstance
 
 
-function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl, Rate new_rate, Bit#(12) new_length);
-   return TXGlobalCtrl{ firstSymbol: False, rate: new_rate, length: new_length};
+function TXGlobalCtrl nextCtrl(TXGlobalCtrl ctrl, Rate new_rate, Bit#(12) new_length, Bool endSimulation);
+   return TXGlobalCtrl{ firstSymbol: False, rate: new_rate, length: new_length, endSimulation: endSimulation};
 endfunction
 
 typedef 12 ScramblerDataSz;    
@@ -212,12 +214,14 @@ function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
 	    Bool firstSymbol,
             Rate rate,
             Bit#(12) length,
+            Bool endSimulation,
 	    Bit#(ScramblerDataSz) data);
    let sCtrl = TXScramblerCtrl{bypass: bypass,
 			       seed: seed};
    let gCtrl = TXGlobalCtrl{firstSymbol: firstSymbol,
                             length: length,
-			    rate: rate};
+			    rate: rate,
+                            endSimulation: endSimulation};
    let ctrl = TXScramblerAndGlobalCtrl{scramblerCtrl: sCtrl,
 				       globalCtrl: gCtrl};
    let mesg = Mesg{control:ctrl, data:data};

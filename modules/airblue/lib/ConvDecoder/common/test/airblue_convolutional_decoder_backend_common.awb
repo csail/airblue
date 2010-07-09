@@ -9,9 +9,12 @@
 
 %provides airblue_convolutional_decoder_backend
 
+%requires airblue_check_ber_host_control
+
 %attributes airblue
 
 %sources -t BSV -v PUBLIC ConvolutionalDecoderTestBackendCommon.bsv
 
+%param SYNTH_BOUNDARY       mkConvolutionalDecoderTestBackend  "name of synthesis boundary"
 
 %AWB_END

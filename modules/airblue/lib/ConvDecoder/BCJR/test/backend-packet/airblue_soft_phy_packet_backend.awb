@@ -18,5 +18,6 @@
 %sources -t H   -v PUBLIC SoftPhyPacket.h
 
 %param AVERAGE_SW 0 "Enable software averaging of hints"
+%param SYNTH_BOUNDARY       mkConvolutionalDecoderTestBackend  "name of synthesis boundary"
 
 %AWB_END

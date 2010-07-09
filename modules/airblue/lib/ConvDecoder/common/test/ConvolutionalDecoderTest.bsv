@@ -52,9 +52,9 @@ import Connectable::*;
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_scrambler.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
+`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
-
-module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder) (Empty);
+module [CONNECTED_MODULE] mkConvolutionalDecoderTest (Empty);
 
 
    // host control
@@ -70,9 +70,11 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    let fft  <- mkFFTInstance;
    let scrambler <- mkScramblerInstance;
 
-   // instantiate backend 
+   // instantiate backend, plumbing 
 
-   let convolutionalDecoderTestBackend <- mkConvolutionalDecoderTestBackend(convolutionalDecoder, client_stub);
+   let convolutionalDecoderTestBackend <- mkConvolutionalDecoderTestBackend();
+   Connection_Send#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) demapperOutput <- mkConnection_Send("conv_decoder_test_output"); 
+
 
    // channel
    FIFO#(TXGlobalCtrl) ctrlFifo <- mkSizedFIFO(256);
@@ -81,11 +83,16 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    // runtime parameters
    Reg#(Rate) rate <- mkRegU;
    Reg#(Bool) initialized <- mkReg(False);
+   Reg#(Bool) ranFSM <- mkReg(False);
    Reg#(Bit#(12)) length <- mkReg(1);
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
-						 rate:R0});
-
+						 rate:R0,
+                                                 length: 1,
+                                                 endSimulation: False});
+  
+   Reg#(Bit#(34)) finish_packets <- mkReg(0);
+   Reg#(Bit#(34)) sent_packets <- mkReg(0);
    Reg#(Bit#(12)) counter <- mkReg(0);
    Reg#(Bit#(12)) scr_cnt <- mkReg(0);
    Reg#(Bit#(12)) dec_cnt <- mkReg(0);
@@ -94,31 +101,41 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
 
    Stmt initStmt = (seq
       client_stub.makeRequest_GetRate(0);
-      client_stub.makeRequest_GetPacketSize(0);
       action
          let resp <- client_stub.getResponse_GetRate();
          rate <= unpack(truncate(resp));
       endaction
+      client_stub.makeRequest_GetPacketSize(0);
       action
          let resp <- client_stub.getResponse_GetPacketSize();
          length <= truncate(resp);
+      endaction
+      client_stub.makeRequest_GetFinishCycles(0);
+      action
+         let resp <- client_stub.getResponse_GetFinishCycles();
+         finish_packets <= truncate(resp);
       endaction
       initialized <= True;
    endseq);
 
    FSM initFSM <- mkFSM(initStmt);
 
-   rule init (!initialized);
+   rule init (!initialized && !ranFSM);
       initFSM.start();
+      ranFSM <= True;
    endrule
    
-   rule putNewRate(counter == 0 && initialized);
-      let new_ctrl = nextCtrl(ctrl, rate, 144*length);
+   let end_simulation = finish_packets == sent_packets + 1;
+
+   rule putNewRate(counter == 0 && initialized && finish_packets > sent_packets);
+      let new_ctrl = nextCtrl(ctrl, rate, 144*length,end_simulation);
       $display("DecoderTests new packet r %d l %d", rate, 144*length);
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Valid magicConstantSeed;
-      let new_mesg = makeMesg(bypass_mask, seed, True, new_ctrl.rate, new_ctrl.length, new_data);
+      let fst_symbol = True;
+      let new_mesg = makeMesg(bypass_mask, seed, fst_symbol, new_ctrl.rate, 
+                              new_ctrl.length, end_simulation, new_data);
       let new_counter = new_ctrl.length - 1;
       if (`DEBUG_CONV_DECODER_TEST == 1)
          $display("Testbench sets counter to %d", new_ctrl.length-1);
@@ -137,10 +154,15 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Invalid; // no new seed for scrambler
-      let new_mesg = makeMesg(bypass_mask, seed, False, new_ctrl.rate, new_ctrl.length, new_data);
+      let new_mesg = makeMesg(bypass_mask, seed, False, new_ctrl.rate, new_ctrl.length, end_simulation, new_data);
       let new_counter = counter - 1;
       in_data <= new_data;
       counter <= new_counter;
+      if(new_counter == 0) 
+        begin
+          sent_packets <= sent_packets + 1;
+        end
+
       scrambler.in.put(new_mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          begin
@@ -211,7 +233,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
       demapper.in.put(Mesg{control:freqDomain.control,
                            data:take(freqDomain.data)});
       if (`DEBUG_CONV_DECODER_TEST == 1)
-         $display("FFT Out Mesg: fst_sym:%d, rate:%d, data:%h",freqDomain.control.firstSymbol, freqDomain.control.rate,freqDomain.data);
+         $display("FFT Out Mesg: fst_sym:%d, rate:%d, end_sim: %d ",freqDomain.control.firstSymbol, freqDomain.control.rate, freqDomain.control.endSimulation);
    endrule
    
    rule putDepuncturer(True);
@@ -222,6 +244,9 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest#(Viterbi#(RXGlobalCtrl, 24,
    endrule
 
 
-   mkConnection(depuncturer.out, convolutionalDecoderTestBackend);
+   rule sendBackend;
+     let data <- depuncturer.out.get();
+     demapperOutput.send(data);
+   endrule
 
 endmodule

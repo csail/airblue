@@ -291,3 +291,6 @@ Packagehint=platforms
 [XST Synthesis Tool]
 File=modules/project/xilinx/xst.awb
 Packagehint=platforms
+
+[Null Clocks Device/Params]
+CRYSTAL_CLOCK_FREQ=200

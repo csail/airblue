@@ -49,7 +49,7 @@ int get_packet_size()
   return packet_size;
 }
 
-#define FTIME_DEFAULT 200000
+#define FTIME_DEFAULT 40
 unsigned int ftime = 
 #ifdef FTIME 
 FTIME; 

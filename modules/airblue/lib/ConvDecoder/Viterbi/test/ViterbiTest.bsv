@@ -46,22 +46,8 @@ import Vector::*;
 `include "asim/provides/airblue_convolutional_decoder_test.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
-
-module mkViterbiInstance(Viterbi#(RXGlobalCtrl,24,12));
-   Viterbi#(RXGlobalCtrl,24,12) viterbi;
-   viterbi <- mkConvDecoder(viterbiMapCtrl);
-   return viterbi;
-endmodule
-
-
-// testing wifi setting
-//`define isDebug True // uncomment this line to display error
-// (* synthesize *)
-// module mkViterbiTest (Empty);
-   
 module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
-   let viterbi <- mkViterbiInstance;
-   let viterbiTest <- mkConvolutionalDecoderTest(viterbi);
+   let viterbiTest <- mkConvolutionalDecoderTest(mkViterbiInstance);
 endmodule
    
    

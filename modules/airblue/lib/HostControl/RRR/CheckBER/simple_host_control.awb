@@ -7,7 +7,7 @@
 %name Check BER RRR Host Control 
 %desc Check BER Host Control 
 %provides airblue_check_ber_host_control
-%requires airblue_environment
+
 
 %attributes ofdm
 

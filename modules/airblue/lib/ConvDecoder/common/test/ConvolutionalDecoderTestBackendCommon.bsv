@@ -40,24 +40,32 @@ import StmtFSM::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
+`include "asim/provides/airblue_convolutional_decoder.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/provides/starter_service.bsh"
-`include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
+`include "asim/rrr/client_stub_CHECKBERHOSTCONTROLRRR.bsh"
 
 
-typedef Put#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) ConvolutionalDecoderTestBackend;
+module mkConvDecoderInstance(Viterbi#(RXGlobalCtrl,24,12));
+   Viterbi#(RXGlobalCtrl,24,12) decoder;
+   decoder <- mkConvDecoder(viterbiMapCtrl);
+   return decoder;
+endmodule
 
-
-module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCtrl, 24, 12) convolutionalDecoder, ClientStub_SIMPLEHOSTCONTROLRRR client_stub) (ConvolutionalDecoderTestBackend);
+module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend (Empty);
 
    // Starter service sink
    Connection_Send#(Bit#(8)) endSim <- mkConnection_Send("vdev_starter_finish_run");
+   Connection_Receive#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) demapperInput <- mkConnection_Receive("conv_decoder_test_output"); 
+
+   // Host stub
+   ClientStub_CHECKBERHOSTCONTROLRRR client_stub <- mkClientStub_CHECKBERHOSTCONTROLRRR;
 
    // runtime parameters
    Reg#(Rate) rate <- mkRegU;
    Reg#(Bit#(48)) finishTime <- mkRegU;
-   Reg#(Bool) initialized <- mkReg(False);
+   Reg#(Bool) simulationComplete <- mkReg(False);
    Reg#(Bool) done <- mkReg(False);
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,
@@ -70,6 +78,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    // Pipeline elements
    let descrambler <- mkDescramblerInstance;
 
+   let convolutionalDecoder <- mkConvDecoderInstance();
+
    Reg#(Bit#(12)) dec_cnt <- mkReg(0);
    Reg#(Bit#(12)) des_cnt <- mkReg(0);
    Reg#(Bit#(12)) out_cnt <- mkReg(0);
@@ -79,25 +89,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    Reg#(Bit#(48)) errors <- mkConfigReg(0); // accumulated errors
    Reg#(Bit#(48)) total <- mkConfigReg(0); // total bits received
 
-   Stmt initStmt = (seq
-      client_stub.makeRequest_GetFinishCycles(0);
-      action
-         let resp <- client_stub.getResponse_GetFinishCycles();
-         finishTime <= truncate(resp);
-      endaction
-      initialized <= True;
-   endseq);
+   FIFO#(ScramblerMesg#(RXDescramblerAndGlobalCtrl,12)) descMesgs <- mkSizedFIFO(512); // Probably need to buffer a whole packet
 
-   FSM initFSM <- mkFSM(initStmt);
-
-   rule init (!initialized);
-      initFSM.start();
-   endrule
-   
-   rule putViterbi(True);
-
-   endrule
-   
    rule putDescrambler(True);
       let mesg <- convolutionalDecoder.out.get;
       Maybe#(Bit#(7)) seed = tagged Invalid;
@@ -130,8 +123,22 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       descrambler.in.put(Mesg{control: rxCtrl, data: msgData});    
    endrule
  
-   rule getOutput(True);
-      let mesg <- descrambler.out.get;      
+   rule transferData;
+     let mesg <- descrambler.out.get;     
+     descMesgs.enq(mesg); 
+   endrule
+
+   rule sinkOutput(descMesgs.first().control.globalCtrl.endSimulation);
+     simulationComplete <= True;
+     descMesgs.deq();     
+     `ifdef SOFT_PHY_HINTS
+        outSoftPhyHintsQ.deq();
+     `endif
+   endrule
+  
+   rule getOutput(!descMesgs.first().control.globalCtrl.endSimulation);
+      let mesg = descMesgs.first;
+      descMesgs.deq;      
       let expected_data = out_data + 1; 
       let diff = mesg.data ^ expected_data; // try to get the bits that are different
       `ifdef SOFT_PHY_HINTS
@@ -194,7 +201,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       cycle <= cycle + 1;
    endrule
 
-   rule finish_makeRequest (total >= finishTime && !done && initialized);
+   rule finish_makeRequest (simulationComplete && !done);
       $display("PacketGen: Packet bit errors:          %d, Packet bit length: %d, BER total:          %d", errors, total, errors);
 
       $display("ConvolutionalDecoder testbench finished at cycle %d",cycle);
@@ -220,7 +227,9 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
          end
    endrule
    
-   method Action put(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric) mesg) if(initialized);
+   rule inputValue;
+      demapperInput.deq();
+      let mesg = demapperInput.receive();
       Bool push_zeros = False; 
       if (`DEBUG_CONV_DECODER_TEST == 1)
         begin
@@ -251,7 +260,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
       let rx_ctrl = RXGlobalCtrl{firstSymbol: mesg.control.firstSymbol,
                                  rate: mesg.control.rate,
                                  length: mesg.control.length,
-                                 viterbiPushZeros: push_zeros};
+                                 viterbiPushZeros: push_zeros,
+                                 endSimulation: mesg.control.endSimulation};
       let new_mesg = Mesg{control: rx_ctrl, data:mesg.data};
       convolutionalDecoder.in.put(new_mesg); 
       if (`DEBUG_CONV_DECODER_TEST == 1)
@@ -261,6 +271,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
             //      $display("Depuncturer Out Mesg: rate:%d, data:%b",mesg.control.rate,mesg.data);
          end
 
-  endmethod
+  endrule
 
 endmodule

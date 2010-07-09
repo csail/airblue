@@ -72,7 +72,7 @@ airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
-airblue_demapper=Airblue Soft-Decision Demapper
+airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue RRR Channel
 airblue_descrambler=Airblue Descrambler
@@ -216,13 +216,16 @@ Packagehint=ofdm
 [Airblue Viterbi (with SoftHints)/Params]
 VITERBI_TB_MAX_PATH=0
 
-[Airblue Soft-Decision Demapper]
-File=modules/airblue/lib/Mapper/src/airblue_demapper_soft.awb
-Packagehint=ofdm
-
 [FPGA Environment/Params]
 MODEL_CLOCK_FREQ=25
 
 [SoftPhy Bucket Backend]
 File=modules/airblue/lib/ConvDecoder/BCJR/test/backend/airblue_soft_phy_bucket_backend.awb
+Packagehint=ofdm
+
+[Airblue SW Channel Model/Params]
+NOISE_ONLY=1
+
+[Airblue Demapper]
+File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
 Packagehint=ofdm

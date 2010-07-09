@@ -44,16 +44,6 @@ import Vector::*;
 //`define isDebug True // uncomment this line to display error
 
 
-module mkBCJRInstance(Viterbi#(RXGlobalCtrl,24,12));
-   Viterbi#(RXGlobalCtrl,24,12) bcjr;
-   bcjr <- mkConvDecoder(viterbiMapCtrl);
-   return bcjr;
-endmodule
-
-// (* synthesize *)
-// module mkBCJRTest (Empty);
-   
 module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
-   let bcjr <- mkBCJRInstance;
-   let bcjrTest <- mkConvolutionalDecoderTest(bcjr);
+   let bcjrTest <- mkConvolutionalDecoderTest();
 endmodule

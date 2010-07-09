@@ -1039,3 +1039,58 @@ Directory config/pm/ofdm/submodels
  huntsman-jtag.apm         Locally Modified          191 
 
 Modifying existing fpgaenvs to have associate build pipelines.
+
+----------
+kfleming    Date: Fri Jul  9 15:55:53 EDT 2010  CSN: CSN-ofdm-256
+                  Fri Jul  9 19:55:53 UTC 2010
+
+
+Directory modules/airblue/lib/HostControl/RRR/CheckBER
+ CheckBERHostControl.cpp   Locally Added               - 
+ SimpleHostControl.cpp     Locally Removed           255 
+ CheckBERHostControl.rrr   Locally Added               - 
+ CheckBERHostControl.h     Locally Added               - 
+ SimpleHostControl.rrr     Locally Removed           255 
+ SimpleHostControl.h       Locally Removed           255 
+ simple_host_control.awb   Locally Modified          255 
+
+Directory modules/airblue/lib/HostControl/Environment
+ check_ber.cpp             Locally Modified          254 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/test/backend
+ airblue_soft_phy_bucket_backend.awb Locally Modified          254 
+ SoftPhyBucketBackend.bsv  Locally Modified          254 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/test
+ BCJRTest.bsv              Locally Modified          254 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/test/backend-packet
+ airblue_soft_phy_packet_backend.awb Locally Modified          254 
+ SoftPhyPacketBackend.bsv  Locally Modified          254 
+
+Directory modules/airblue/lib/ConvDecoder/Viterbi/test
+ ViterbiTest.bsv           Locally Modified          254 
+
+Directory modules/airblue/lib/ConvDecoder/common/test
+ ConvolutionalDecoderTestCommon.bsv Locally Modified          254 
+ ConvolutionalDecoderTest.bsv Locally Modified          254 
+ airblue_convolutional_decoder_backend_common.awb Locally Modified          254 
+ ConvolutionalDecoderTestBackendCommon.bsv Locally Modified          254 
+
+Directory modules/airblue/lib/Channel
+ ChannelRRR.bsv            Locally Modified          254 
+
+Directory modules/airblue/parameters/WiFi
+ ViterbiParameters.bsv     Locally Modified          254 
+
+Directory config/pm/ofdm/library_tests
+ bcjr_test.apm             Locally Modified          254 
+ viterbi_test_softphy_acp.apm Locally Modified          254 
+
+Directory config/pm/ofdm/submodels
+ acp-altera.apm            Locally Modified          254 
+
+Directory config/bm/ofdm
+ soft_phy.cfx              Locally Modified          254 
+
+Refactored the conv decoder tests to permit MCD and synthesis boundaries.

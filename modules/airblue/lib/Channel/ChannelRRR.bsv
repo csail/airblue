@@ -37,11 +37,11 @@ endmodule
 
 
 interface StreamChannel;
-   method Action enq(Bit#(7) size, Vector#(64, FPComplex#(2,14)) data);
-   method Action deq(Bit#(7) size);
+   method Action enq(Bit#(8) size, Vector#(64, FPComplex#(2,14)) data);
+   method Action deq(Bit#(8) size);
    method Vector#(64, FPComplex#(2,14)) first;
-   method Bool notFull(Bit#(7) size);
-   method Bool notEmpty(Bit#(7) size);
+   method Bool notFull(Bit#(8) size);
+   method Bool notEmpty(Bit#(8) size);
 endinterface
 
 
@@ -50,8 +50,8 @@ module [CONNECTED_MODULE] mkStreamChannel(StreamChannel);
    ClientStub_CHANNEL_RRR client_stub <- mkClientStub_CHANNEL_RRR();
    //ServerStub_CHANNEL_RRR server_stub <- mkServerStub_CHANNEL_RRR();
 
-   StreamFIFO#(80, 7, FPComplex#(2,14)) inQ <- mkStreamFIFO;
-   StreamFIFO#(80, 7, FPComplex#(2,14)) outQ <- mkStreamFIFO;
+   StreamFIFO#(140, 8, FPComplex#(2,14)) inQ <- mkStreamFIFO;
+   StreamFIFO#(140, 8, FPComplex#(2,14)) outQ <- mkStreamFIFO;
 
    Reg#(Bit#(32)) cycle <- mkReg(0);
 
@@ -85,17 +85,17 @@ module [CONNECTED_MODULE] mkStreamChannel(StreamChannel);
       data[8] = resp.out8;
       data[9] = resp.out9;
 
-      Vector#(80, FPComplex#(2,14)) samples =
+      Vector#(140, FPComplex#(2,14)) samples =
           append(map(unpack, data), ?);
 
       outQ.enq(truncate(resp.out_size), samples);
    endrule
 
-   method Action enq(Bit#(7) size, Vector#(64, FPComplex#(2,14)) data);
+   method Action enq(Bit#(8) size, Vector#(64, FPComplex#(2,14)) data);
       inQ.enq(extend(size), append(data, ?));
    endmethod
 
-   method Action deq(Bit#(7) size);
+   method Action deq(Bit#(8) size);
        outQ.deq(size);
    endmethod
 
@@ -103,11 +103,11 @@ module [CONNECTED_MODULE] mkStreamChannel(StreamChannel);
       return take(outQ.first);
    endmethod
 
-   method Bool notEmpty(Bit#(7) size);
+   method Bool notEmpty(Bit#(8) size);
       return outQ.notEmpty(size);
    endmethod
 
-   method Bool notFull(Bit#(7) size);
+   method Bool notFull(Bit#(8) size);
       return inQ.notFull(size);
    endmethod
 
