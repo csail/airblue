@@ -1,0 +1,11 @@
+service SIMPLEHOSTCONTROLRRR
+{
+    server sw (cpp, method) <- hw (bsv, connection) 
+    {
+       method GetRate (out UINT32[32] rate, in UINT32[32] value);
+       method GetPacketSize (out UINT32[32] packet_size, in UINT32[32] value);
+       method GetFinishCycles (out UINT64[64] cycles, in UINT64[64] dummy);
+       method CheckBER (out UINT64[64] dummy, in UINT64[64] errors, in UINT64[64] total);
+    };
+
+ };
