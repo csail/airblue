@@ -1094,3 +1094,15 @@ Directory config/bm/ofdm
  soft_phy.cfx              Locally Modified          254 
 
 Refactored the conv decoder tests to permit MCD and synthesis boundaries.
+
+----------
+kfleming    Date: Fri Jul 16 11:12:21 EDT 2010  CSN: CSN-ofdm-257
+                  Fri Jul 16 15:12:21 UTC 2010
+
+
+Directory config/pm/ofdm/submodels
+ acp-altera.apm            Locally Modified          256 
+ huntsman-jtag.apm         Locally Modified          256 
+
+
+Added mcd tool to awb.

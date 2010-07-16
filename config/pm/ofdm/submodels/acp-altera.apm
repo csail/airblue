@@ -203,6 +203,7 @@ Packagehint=platforms
 [FPGA Build Pipeline/Requires]
 post_synthesis_tool=Xilinx Post-synthesis Toolchain
 synthesis_tool=XST Synthesis Tool
+mcd_tool=Simple MCD Tool
 
 [Xilinx Post-synthesis Toolchain]
 File=modules/project/xilinx/xilinx_post_synth.awb
@@ -294,3 +295,7 @@ Packagehint=platforms
 
 [Null Clocks Device/Params]
 CRYSTAL_CLOCK_FREQ=200
+
+[Simple MCD Tool]
+File=modules/project/bluespec/mcd.awb
+Packagehint=platforms
