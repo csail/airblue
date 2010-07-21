@@ -61,7 +61,7 @@ endmodule
 
 module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend (Empty);
 
-   UserClock viterbi <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,4,2);
+   UserClock viterbi <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,2,2);
 
    // Starter service sink
    Connection_Send#(Bit#(8)) endSim <- mkConnection_Send("vdev_starter_finish_run",clocked_by viterbi.clk, reset_by viterbi.rst);

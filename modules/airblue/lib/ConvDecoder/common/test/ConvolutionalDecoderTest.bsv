@@ -35,6 +35,8 @@ import Connectable::*;
 
 // Local includes
 `include "asim/provides/soft_connections.bsh"
+`include "asim/provides/clocks_device.bsh"
+`include "asim/provides/fpga_components.bsh"
 
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
@@ -54,8 +56,19 @@ import Connectable::*;
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
 
+
+
+
 module [CONNECTED_MODULE] mkConvolutionalDecoderTest (Empty);
 
+   UserClock frontend <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,5,8);
+
+   let convolutionalDecoderTestBackend <- mkConvolutionalDecoderTestBackend();
+   let convolutionalDecoderTestFrontend <- mkConvolutionalDecoderTestFrontend(clocked_by frontend.clk, reset_by frontend.rst);
+
+endmodule
+
+module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
 
    // host control
    ClientStub_SIMPLEHOSTCONTROLRRR client_stub <- mkClientStub_SIMPLEHOSTCONTROLRRR;
@@ -72,7 +85,6 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTest (Empty);
 
    // instantiate backend, plumbing 
 
-   let convolutionalDecoderTestBackend <- mkConvolutionalDecoderTestBackend();
    Connection_Send#(DecoderMesg#(TXGlobalCtrl,24,ViterbiMetric)) demapperOutput <- mkConnection_Send("conv_decoder_test_output"); 
 
 
