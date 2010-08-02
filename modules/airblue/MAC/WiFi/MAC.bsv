@@ -6,25 +6,15 @@ import RWire::*;
 import Connectable::*;
 import CBus::*;
 
-// import FPGAParameters::*;
-// import ProtocolParameters::*;
-// import MACDataTypes::*;
-// import TXController::*;
-// import RXController::*;
-// import MACPhyParameters::*;
-
-// import MacRXTXControl::*;
-// import MACCRC::*;
-// //import MacRate::*;
-// import SHIM::*;
-
 // local includes
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_mac_crc.bsh"
       
 module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMAC(MAC);
   
-   let macRXTXControl               <- mkMacRXTXControl;
+   let ackBuilder <- mkAckBuilder;
+
+   let macRXTXControl               <- mkMacRXTXControl(ackBuilder);
    let macCRC                       <- mkMACCRC;
    //let macRate                      <- mkMACRateSoftware; 
    let shim <- mkSHIM;

@@ -13,7 +13,7 @@
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC MacRXTXControl.bsv SoftMAC.bsv BasicSHIM.bsv Ack.bsv
+%sources -t BSV -v PUBLIC MacRXTXControl.bsv SoftMAC.bsv BasicSHIM.bsv AckSoftrate.bsv AckCommon.bsv
 
 %generated -t BA mkSHIM.ba
 %generated -t VERILOG mkSHIM.v

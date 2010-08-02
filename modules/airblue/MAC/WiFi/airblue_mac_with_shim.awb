@@ -12,7 +12,7 @@
 
 %attributes airblue concurrent_tx_shim
 
-%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv
+%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv SHIM.bsv Ack.bsv AckCommon.bsv
 
 %sources -t DICT -v PUBLIC MacRegisterMap.dic
 

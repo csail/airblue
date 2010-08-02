@@ -12,7 +12,7 @@
 
 %attributes airblue null_shim
 
-%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv BasicSHIM.bsv
+%sources -t BSV -v PUBLIC MacRXTXControl.bsv MAC.bsv BasicSHIM.bsv Ack.bsv AckCommon.bsv
 
 %generated -t BA mkSHIM.ba
 %generated -t VERILOG mkSHIM.v

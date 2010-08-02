@@ -95,25 +95,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/Phy/WiFi/airblue_wifi_phy.awb
 Packagehint=ofdm
 
-[WiFi MAC Phy Loopback/Requires]
-airblue_phy=WiFi Phy Transceiver
-airblue_types=Airblue types (with SoftHints)
-airblue_mac_packet_gen=Airblue MAC PacketGen
-airblue_shared=Airblue Shared Libraries
-airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_mac=Airblue MAC (SoftRate)
-rf_frontend=GCT RF Frontend Control
-airblue_host_control=CBus Vector RRR Host Control
-analog_digital=Huntsman AD
-digital_scaler=Digital Scaler
-gain_control=Airblue 1.0 Gain Control
-rf_driver=Simulation Frontend Driver
-airblue_channel=Airblue Clear Channel
-
-[WiFi MAC Phy Loopback]
-File=modules/airblue/MACPhy_Loopback/WiFi/airblue_wifi_mac_phy_loopback.awb
-Packagehint=ofdm
-
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
 
@@ -230,7 +211,7 @@ Packagehint=ofdm
 
 [Airblue application/Requires]
 airblue_driver_application=RXTX MAC Simulation Driver
-hw_only_application=WiFi MAC Phy Loopback
+hw_only_application=WiFi SoftRate MAC Phy Loopback
 
 [WiFi Receiver Pipeline/Requires]
 airblue_depuncturer=Airblue Depuncturer
@@ -305,8 +286,6 @@ Packagehint=ofdm
 File=modules/airblue/device/simulation/rf-driver.awb
 Packagehint=ofdm
 
-
-
 [FPGA Environment/Params]
 MODEL_CLOCK_DIVIDER=2
 
@@ -327,11 +306,7 @@ File=modules/airblue/lib/SoftRate/src/airblue_softrate_log.awb
 Packagehint=ofdm
 
 [Airblue SoftPhy hint average (log based)/Requires]
-airblue_softhint_table=Airblue SoftPhy hint table
-
-[Airblue SoftPhy hint table]
-File=modules/airblue/lib/SoftRate/tables/airblue_softhint_table.awb
-Packagehint=ofdm
+airblue_softhint_table=SOVA SoftPhy hint table
 
 [Airblue types (with SoftHints)]
 File=modules/airblue/lib/Types/airblue_types_with_soft_hints.awb
@@ -343,3 +318,26 @@ Packagehint=ofdm
 
 [RXTX MAC Simulation Driver/Requires]
 airblue_environment=Airblue Environment
+
+[WiFi SoftRate MAC Phy Loopback/Requires]
+rf_frontend=GCT RF Frontend Control
+airblue_host_control=CBus Vector RRR Host Control
+analog_digital=Huntsman AD
+airblue_types=Airblue types (with SoftHints)
+digital_scaler=Digital Scaler
+airblue_mac_packet_gen=Airblue MAC PacketGen
+gain_control=Airblue 1.0 Gain Control
+airblue_phy=WiFi Phy Transceiver
+airblue_mac=Airblue MAC (SoftRate)
+rf_driver=Simulation Frontend Driver
+airblue_shared=Airblue Shared Libraries
+airblue_channel=Airblue Clear Channel
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+
+[WiFi SoftRate MAC Phy Loopback]
+File=modules/airblue/MACPhy_Loopback/SoftRate/airblue_wifi_mac_phy_loopback.awb
+Packagehint=ofdm
+
+[SOVA SoftPhy hint table]
+File=modules/airblue/lib/SoftRate/tables/sova/airblue_softhint_table_sova.awb
+Packagehint=ofdm

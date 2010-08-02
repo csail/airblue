@@ -208,18 +208,9 @@ endmodule
 module [CONNECTED_MODULE] mkWiFiFPGAMACPacketGenWiresTest ();
   Clock busClock <- exposeCurrentClock;
   Reset busReset <- exposeCurrentReset;
+  UserClock viterbi <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
+  UserClock rf <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,20);
 
-  // If the MAC expects a different microsecond count than what we 
-  // are giving it, the mac will simply not function. So we should 
-  // check.
-
-  if(`MODEL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER !=
-     valueof(TicksPerMicrosecond))
-    errorM("Model frequency is not what MAC expects.  Please fix it.");
-
-  UserClock viterbi <- mkUserClock_PLL(`MODEL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
-  UserClock rf <- mkUserClock_PLL(`MODEL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,20);
- 
  let m <- mkWiFiFPGAMACTestClocks(viterbi.clk, viterbi.rst, busClock, busReset,
                                   rf.clk, rf.rst);
 endmodule

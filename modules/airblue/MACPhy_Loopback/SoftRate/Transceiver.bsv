@@ -163,7 +163,11 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
    // Hook mac to the transceiver
    mkConnection(transceiver.transmitter.txData, mac.phy_txdata.get);
    mkConnection(transceiver.receiver.outData, mac.phy_rxdata);
-   
+
+   //rule eatHints;
+   //     let i <- transceiver.receiver.outSoftPhyHints.get();
+   //endrule
+   mkConnection(transceiver.receiver.outSoftPhyHints, mac.phy_rxhints);
    mkConnection(mac.abortAck,transceiver.receiver.abortAck);
    
    rule connectAbortReq (True);
@@ -175,7 +179,6 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverMACPacket
      let vec <- transceiver.receiver.outRXVector.get;
      mac.phy_rxstart.put(vec);
      phyPacketsRX <= phyPacketsRX + 1;
-     $display("RX got a packet");
    endrule    
 
    rule txVecSend;

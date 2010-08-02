@@ -240,11 +240,9 @@ airblue_mac_crc=Airblue MAC CRC
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
-
 
 [Airblue application/Requires]
 airblue_driver_application=RXTX Simulation Driver
@@ -329,3 +327,7 @@ airblue_environment=Airblue Environment
 [RXTX Simulation Driver]
 File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
 Packagehint=ofdm
+
+[FPGA Environment/Params]
+MODEL_CLOCK_FREQ=25
+MODEL_CLOCK_DIVIDER=2
