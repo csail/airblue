@@ -47,7 +47,7 @@ import Vector::*;
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"
 
 module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
-   let viterbiTest <- mkConvolutionalDecoderTest(mkViterbiInstance);
+   let viterbiTest <- mkConvolutionalDecoderTest();
 endmodule
    
    

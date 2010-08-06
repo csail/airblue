@@ -16,6 +16,6 @@
 %param NOISE_ONLY 0 "AWGN only channel"
 
 * GNU Scientific Library
-%library /usr/lib/libgsl.a
+%library libgsl.a
 
 %AWB_END

@@ -67,7 +67,16 @@ function VMetric convertMetric(VMetric in);
 endfunction
 
 function VBranchMetric getAddMetric (Bool op_mode, VMetric met);
-   return signExtend((op_mode ? ~met : met));
+   VBranchMetric result;
+   if(met == minBound)
+     begin
+       result = (op_mode ? maxBound : minBound);
+     end
+   else
+     begin
+       result = signExtend((op_mode ? -met : met));
+     end
+   return result;
 endfunction
 
 
