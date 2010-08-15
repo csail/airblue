@@ -1,9 +1,4 @@
 
-[Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services
-soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
-
 [Global]
 SaveParameters=0
 DefaultBenchmark=
@@ -19,34 +14,19 @@ DefaultRunOpts=
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=hasim
 
-[Soft Connections Library]
-File=config/pm/hasim/submodels/common/soft-connections-lib.apm
-Packagehint=hasim
-
 [Platform Services]
 File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
 Packagehint=hasim
 
 [Model]
 DefaultAttributes=airblue
-model=HW/SW Hybrid Project Foundation
+model=HW/SW Hybrid Pipeline Build
 
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=platforms
 
-[HW/SW Hybrid Project Foundation]
-File=modules/project/project-hybrid.awb
-Packagehint=platforms
 
-[Soft Connections Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
-Packagehint=platforms
-
-[HW/SW Hybrid Project Foundation/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
 
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
@@ -66,7 +46,6 @@ hw_only_application=Airblue Inverse Square Root Test
 [Airblue Inverse Square Root Model]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/InverseSqRootC/airblue_inverse_square_root_model.awb
 Packagehint=ofdm
-
 
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
@@ -91,7 +70,6 @@ Packagehint=ofdm
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
 
-
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
@@ -99,3 +77,25 @@ Packagehint=ofdm
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
+
+[Soft Services Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=platforms
+
+[Soft Services Hybrid Application Environment/Requires]
+platform_services=Platform Services
+connected_application=HW only hybrid application
+soft_services=Soft Services
+
+[Soft Services]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=hasim
+
+[HW/SW Hybrid Pipeline Build]
+File=modules/project/project-pipeline.awb
+Packagehint=platforms
+
+[HW/SW Hybrid Pipeline Build/Requires]
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
+application_env=Soft Services Hybrid Application Environment

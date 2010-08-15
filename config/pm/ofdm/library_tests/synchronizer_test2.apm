@@ -1,9 +1,4 @@
 
-[Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services with No Memory Service
-soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
-
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
 Packagehint=bsv-libraries
@@ -23,10 +18,6 @@ DefaultRunOpts=
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=hasim
 
-[Soft Connections Library]
-File=config/pm/hasim/submodels/common/soft-connections-lib.apm
-Packagehint=hasim
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
@@ -37,10 +28,6 @@ hw_only_application=Airblue WiFi New Synchronizer Test
 [FPGA Environment]
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
-
-[Soft Connections Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
-Packagehint=platforms
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
@@ -141,5 +128,17 @@ Packagehint=hasim
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
+application_env=Soft Services Hybrid Application Environment
 
+[Soft Services Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=platforms
+
+[Soft Services Hybrid Application Environment/Requires]
+platform_services=Platform Services with No Memory Service
+connected_application=HW only hybrid application
+soft_services=Soft Services
+
+[Soft Services]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=hasim

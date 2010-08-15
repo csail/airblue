@@ -1,9 +1,4 @@
 
-[Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services with No Memory Service
-soft_connections_lib=Soft Connections Library
-connected_application=Airblue application
-
 [Global]
 SaveParameters=0
 DefaultBenchmark=
@@ -19,10 +14,6 @@ DefaultRunOpts=
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=hasim
 
-[Soft Connections Library]
-File=config/pm/hasim/submodels/common/soft-connections-lib.apm
-Packagehint=hasim
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
@@ -30,10 +21,6 @@ model=HW/SW Hybrid Pipeline Build
 [FPGA Environment]
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
-
-[Soft Connections Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
-Packagehint=platforms
 
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
@@ -149,10 +136,6 @@ Packagehint=ofdm
 [Airblue BCJR with Alpha Init/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue Environment]
-File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
-Packagehint=ofdm
-
 [Platform Services with No Memory Service]
 File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
 Packagehint=hasim
@@ -164,7 +147,7 @@ Packagehint=platforms
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
+application_env=Soft Services Hybrid Application Environment
 
 [Airblue Convolutional Decoder Test Common Definitions]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
@@ -192,19 +175,11 @@ airblue_softhint_avg=Airblue SoftPhy hint average (log based)
 File=modules/airblue/lib/ConvDecoder/BCJR/test/backend-rate/airblue_soft_phy_rate_backend.awb
 Packagehint=ofdm
 
-[Software Driven RRR Host Control/Requires]
-airblue_environment=Airblue Environment
-
-[Software Driven RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/SoftwareDriven/software_driven_host_control.awb
-Packagehint=ofdm
-
 [Airblue Convolutional Decoder Test (Software Driven) template]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_sw_driven.awb
 Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test (Software Driven) template/Requires]
-airblue_host_control=Software Driven RRR Host Control
 airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_demapper=Airblue Demapper
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
@@ -236,7 +211,19 @@ Packagehint=ofdm
 airblue_driver_application=SoftPhy Bucket Test Driver
 hw_only_application=Airblue BCJR Test
 
-
 [BCJR SoftPhy hint table]
 File=modules/airblue/lib/SoftRate/tables/bcjr/airblue_softhint_table.awb
 Packagehint=ofdm
+
+[Soft Services Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=platforms
+
+[Soft Services Hybrid Application Environment/Requires]
+platform_services=Platform Services with No Memory Service
+connected_application=Airblue application
+soft_services=Soft Services
+
+[Soft Services]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=hasim

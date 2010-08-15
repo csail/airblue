@@ -1,9 +1,4 @@
 
-[Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services with No Memory Service
-soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
-
 [Global]
 SaveParameters=0
 DefaultBenchmark=
@@ -19,20 +14,12 @@ DefaultRunOpts=
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=hasim
 
-[Soft Connections Library]
-File=config/pm/hasim/submodels/common/soft-connections-lib.apm
-Packagehint=hasim
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
 
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-evaluation-arriaII-jtag.apm
-Packagehint=platforms
-
-[Soft Connections Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
 Packagehint=platforms
 
 [HW only hybrid application]
@@ -42,51 +29,14 @@ Packagehint=bsv-libraries
 [HW only hybrid application/Requires]
 hw_only_application=Airblue Viterbi Test
 
-[Airblue Mapper]
-File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
-Packagehint=ofdm
-
-[Airblue Demapper]
-File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
-Packagehint=ofdm
-
 [Airblue Viterbi Test/Requires]
 airblue_types=Airblue types (no SoftHints)
-airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test template
 airblue_shared=Airblue Shared Libraries
-airblue_convolutional_decoder=Airblue Viterbi
+airblue_convolutional_decoder=Airblue Viterbi (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-
-[Airblue FFT/IFFT]
-File=modules/airblue/lib/FFT/src/airblue_fft.awb
-Packagehint=ofdm
-
-[Airblue Convolutional Decoder Test template]
-File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
-Packagehint=ofdm
 
 [Airblue Viterbi Test]
 File=modules/airblue/lib/ConvDecoder/Viterbi/test/airblue_viterbi_test.awb
-Packagehint=ofdm
-
-[Airblue Convolutional Decoder Test template/Requires]
-airblue_convolutional_encoder=Airblue Convolutional Encoder
-airblue_mapper=Airblue Mapper
-airblue_puncturer=Airblue Puncturer
-airblue_fft=Airblue FFT/IFFT
-airblue_demapper=Airblue Demapper
-airblue_depuncturer=Airblue Depuncturer
-airblue_channel=Airblue RRR Channel
-airblue_descrambler=Airblue Descrambler
-airblue_scrambler=Airblue Scrambler
-airblue_host_control=Simple RRR Host Control
-
-[Airblue Convolutional Encoder]
-File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
-Packagehint=ofdm
-
-[Airblue Puncturer]
-File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
 Packagehint=ofdm
 
 [Airblue Shared Libraries]
@@ -96,10 +46,6 @@ Packagehint=ofdm
 [StreamCaptureFIFO]
 File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
 Packagehint=bsv-libraries
-
-[Airblue Depuncturer]
-File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
-Packagehint=ofdm
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -157,23 +103,8 @@ Packagehint=ofdm
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue Descrambler]
-File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
-Packagehint=ofdm
-
-[Airblue Viterbi]
-File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
-Packagehint=ofdm
-
-[Airblue Viterbi/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
-
 [Airblue Convolutional Decoder Common]
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
-
-[Airblue Scrambler]
-File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
 
 [HW/SW Hybrid Pipeline Build]
@@ -187,23 +118,28 @@ Packagehint=hasim
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
-
-[Simple RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
-Packagehint=ofdm
-
-[Airblue Environment]
-File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
-Packagehint=ofdm
-
-[Simple RRR Host Control/Requires]
-airblue_environment=Airblue Environment
+application_env=Soft Services Hybrid Application Environment
 
 [FPGA Environment/Params]
 MODEL_CLOCK_MULTIPLIER=1
 MODEL_CLOCK_DIVIDER=10
 
-[Airblue RRR Channel]
-File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
+[Airblue Viterbi (no SoftHints)/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+
+[Soft Services Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=platforms
+
+[Airblue Viterbi (no SoftHints)]
+File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
 Packagehint=ofdm
+
+[Soft Services Hybrid Application Environment/Requires]
+platform_services=Platform Services with No Memory Service
+connected_application=HW only hybrid application
+soft_services=Soft Services
+
+[Soft Services]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=hasim

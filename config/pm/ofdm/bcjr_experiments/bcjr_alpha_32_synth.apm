@@ -1,9 +1,4 @@
 
-[Soft Connections Hybrid Application Environment/Requires]
-platform_services=Platform Services
-soft_connections_lib=Soft Connections Library
-connected_application=HW only hybrid application
-
 [Global]
 SaveParameters=0
 DefaultBenchmark=
@@ -17,10 +12,6 @@ DefaultRunOpts=
 
 [Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=hasim
-
-[Soft Connections Library]
-File=config/pm/hasim/submodels/common/soft-connections-lib.apm
 Packagehint=hasim
 
 [Platform Services]
@@ -55,10 +46,6 @@ Packagehint=ofdm
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
 Packagehint=ofdm
-
-[Soft Connections Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-connections/application-env-hybrid-soft-conn.awb
-Packagehint=platforms
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -249,27 +236,14 @@ Packagehint=ofdm
 File=modules/airblue/lib/Channel/airblue_clear_channel.awb
 Packagehint=ofdm
 
-[FPGA Build Pipeline/Requires]
-synthesis_tool=Synplify Synthesis Tool
-post_synthesis_tool=Altera Post-synthesis Toolchain
-
-[FPGA Build Pipeline]
-File=modules/project/build-pipeline.awb
-Packagehint=platforms
-
 [HW/SW Hybrid Pipeline Build]
 File=modules/project/project-pipeline.awb
 Packagehint=platforms
 
 [HW/SW Hybrid Pipeline Build/Requires]
-fpga_build_pipeline=FPGA Build Pipeline
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
-application_env=Soft Connections Hybrid Application Environment
-
-[Synplify Synthesis Tool]
-File=modules/project/synopsis/synplify.awb
-Packagehint=platforms
+application_env=Soft Services Hybrid Application Environment
 
 [Airblue BCJR with Alpha Init]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
@@ -278,6 +252,15 @@ Packagehint=ofdm
 [Airblue BCJR with Alpha Init/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Altera Post-synthesis Toolchain]
-File=modules/project/altera/altera_post_synth.awb
+[Soft Services Hybrid Application Environment]
+File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=platforms
+
+[Soft Services Hybrid Application Environment/Requires]
+platform_services=Platform Services
+connected_application=HW only hybrid application
+soft_services=Soft Services
+
+[Soft Services]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=hasim
