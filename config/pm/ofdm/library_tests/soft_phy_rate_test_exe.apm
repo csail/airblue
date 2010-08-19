@@ -191,6 +191,7 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_convolutional_decoder_backend=SoftPhy Rate Backend
 airblue_channel=Airblue RRR Channel
+airblue_host_control=Simple RRR Host Control
 
 [Airblue RRR Channel]
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
@@ -227,3 +228,14 @@ soft_services=Soft Services
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=hasim
+
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment

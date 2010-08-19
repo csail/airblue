@@ -182,6 +182,7 @@ airblue_puncturer=Airblue Puncturer
 airblue_fft=Airblue FFT/IFFT
 airblue_convolutional_decoder_backend=SoftPhy Rate Backend
 airblue_channel=Airblue RRR Channel
+airblue_host_control=Simple RRR Host Control
 
 [Airblue RRR Channel]
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
@@ -201,8 +202,6 @@ Packagehint=ofdm
 [Airblue application/Requires]
 airblue_driver_application=SoftPhy Bucket Test Driver
 hw_only_application=Airblue BCJR Test
-
-
 
 [BCJR SoftPhy hint table]
 File=modules/airblue/lib/SoftRate/tables/bcjr/airblue_softhint_table.awb
@@ -229,3 +228,14 @@ Packagehint=platforms
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
+
+[Simple RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=ofdm
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment

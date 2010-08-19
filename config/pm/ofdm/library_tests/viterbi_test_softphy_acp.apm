@@ -26,8 +26,6 @@ model=HW/SW Hybrid Pipeline Build
 File=config/pm/ofdm/submodels/acp-altera.apm
 Packagehint=ofdm
 
-
-
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
 Packagehint=bsv-libraries
@@ -228,3 +226,8 @@ Packagehint=platforms
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
+
+[FPGA Environment/Params]
+MODEL_CLOCK_DIVIDER=8
+MODEL_CLOCK_MULTIPLIER=1
+MODEL_CLOCK_FREQ=25

@@ -38,6 +38,7 @@ import Clocks::*;
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/clocks_device.bsh"
+`include "asim/provides/soft_clocks.bsh"
 
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
@@ -61,7 +62,7 @@ endmodule
 
 module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend (Empty);
 
-   UserClock viterbi <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,2,2);
+   UserClock viterbi <- mkSoftClock(50);
 
    // Starter service sink
    Connection_Send#(Bit#(8)) endSim <- mkConnection_Send("vdev_starter_finish_run",clocked_by viterbi.clk, reset_by viterbi.rst);

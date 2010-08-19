@@ -26,8 +26,6 @@ model=HW/SW Hybrid Pipeline Build
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
 
-
-
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
 Packagehint=bsv-libraries
@@ -215,3 +213,17 @@ Packagehint=platforms
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
+
+[Airblue Convolutional Decoder Test PassCheck Backend/Requires]
+airblue_check_ber_host_control=Check BER RRR Host Control
+
+[Check BER RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CheckBER/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue RRR Channel/Requires]
+airblue_channel_model_sw=Airblue SW Channel Model
+
+[Airblue SW Channel Model]
+File=modules/airblue/lib/Channel/model/channel_model_sw.awb
+Packagehint=ofdm
