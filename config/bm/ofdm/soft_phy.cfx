@@ -41,11 +41,11 @@ for(my $i = 0; $i < scalar(@bit_lengths); $i=$i+1) {
                        setup => "tools/scripts/soft_phy_buckets/setup-softphy-buckets $bmark --contexts=0",
                        feeder => "none",
                        ccount => 8000000000,
-                       sysflags => "ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate. " AIRBLUE_BITS_CYCLES=". $bit_length,
+                       sysflags => "AIRBLUE_XACTOR_TYPE=0 AIRBLUE_XACTOR_CLK_CTRL=80 ADDNOISE_SNR=" . $snr ." ADDERROR_RATE=" . $rate. " AIRBLUE_BITS_CYCLES=". $bit_length,
                       );
 
             foreach my $packet_length (@packet_lengths) {
-                my $packet_length_actual = 144  * $packet_length; # TB multiplies all lengths by 144
+                my $packet_length_actual = $packet_length; 
                 my $bmark3 = "soft_phy_packet_ber_rate_" . $rate . "_snr_". $snr . "_length_" . $packet_length_actual;
                 $gcfg->add(name => $bmark3,
                            tree => [ $bit_length_str . "_packet_ber" ],
