@@ -58,6 +58,7 @@ airblue_scrambler=Airblue Scrambler
 airblue_host_control=Simple RRR Host Control
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
 airblue_convolutional_decoder_backend=SoftPhy Bucket Backend
+airblue_transactor=Fake Transactor for ConvDecoder Test
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -231,3 +232,7 @@ application_env=Soft Services Hybrid Application Environment
 MODEL_CLOCK_DIVIDER=8
 MODEL_CLOCK_MULTIPLIER=1
 MODEL_CLOCK_FREQ=25
+
+[Fake Transactor for ConvDecoder Test]
+File=modules/airblue/lib/ConvDecoder/common/test/Transactor/airblue_transactor.awb
+Packagehint=ofdm

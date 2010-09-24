@@ -26,14 +26,12 @@ model=HW/SW Hybrid Pipeline Build
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
 
-
-
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
 Packagehint=bsv-libraries
 
 [HW only hybrid application/Requires]
-hw_only_application=Airblue BCJR Test
+hw_only_application=Airblue Viterbi Test
 
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
@@ -60,6 +58,7 @@ airblue_scrambler=Airblue Scrambler
 airblue_host_control=Simple RRR Host Control
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
 airblue_convolutional_decoder_backend=Airblue Convolutional Decoder Test PassCheck Backend
+airblue_transactor=Fake Transactor for ConvDecoder Test
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -133,17 +132,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
 
-[Airblue BCJR Test/Requires]
-airblue_types=Airblue types (with SoftHints)
-airblue_shared=Airblue Shared Libraries
-airblue_convolutional_decoder=Airblue Viterbi (with SoftHints)
-airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
-
-[Airblue BCJR Test]
-File=modules/airblue/lib/ConvDecoder/BCJR/test/airblue_bcjr_test.awb
-Packagehint=ofdm
-
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
 Packagehint=ofdm
@@ -166,10 +154,6 @@ Packagehint=ofdm
 
 [Simple RRR Host Control/Requires]
 airblue_environment=Airblue Environment
-
-[Airblue Convolutional Decoder Test PassCheck Backend]
-File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
-Packagehint=ofdm
 
 [Airblue Convolutional Decoder Test Common Definitions]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
@@ -197,9 +181,6 @@ airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common (Viter
 File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi_soft.awb
 Packagehint=ofdm
 
-[Airblue Viterbi (with SoftHints)/Params]
-VITERBI_TB_MAX_PATH=0
-
 [Airblue Soft-Decision Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper_soft.awb
 Packagehint=ofdm
@@ -225,3 +206,32 @@ Packagehint=platforms
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
+
+[Airblue Convolutional Decoder Test PassCheck Backend]
+File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
+Packagehint=ofdm
+
+[Airblue Convolutional Decoder Test PassCheck Backend/Requires]
+airblue_check_ber_host_control=Check BER RRR Host Control
+
+[Check BER RRR Host Control]
+File=modules/airblue/lib/HostControl/RRR/CheckBER/simple_host_control.awb
+Packagehint=ofdm
+
+[Airblue Viterbi Test]
+File=modules/airblue/lib/ConvDecoder/Viterbi/test/airblue_viterbi_test.awb
+Packagehint=ofdm
+
+[Airblue Viterbi Test/Requires]
+airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
+airblue_types=Airblue types (with SoftHints)
+airblue_shared=Airblue Shared Libraries
+airblue_convolutional_decoder=Airblue Viterbi (with SoftHints)
+airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+
+[Fake Transactor for ConvDecoder Test]
+File=modules/airblue/lib/ConvDecoder/common/test/Transactor/airblue_transactor.awb
+Packagehint=ofdm
+
+[Fake Transactor for ConvDecoder Test/Params]
+DEBUG_TRANSACTOR=1
