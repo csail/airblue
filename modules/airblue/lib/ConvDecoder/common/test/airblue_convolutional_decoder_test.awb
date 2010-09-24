@@ -21,6 +21,7 @@
 %requires airblue_scrambler
 %requires airblue_descrambler
 %requires airblue_host_control
+%requires airblue_transactor
 
 %attributes airblue
 

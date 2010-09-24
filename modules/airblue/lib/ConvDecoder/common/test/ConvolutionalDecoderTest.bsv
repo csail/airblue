@@ -54,14 +54,13 @@ import Connectable::*;
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/airblue_scrambler.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
+`include "asim/provides/airblue_transactor.bsh"
 `include "asim/rrr/client_stub_SIMPLEHOSTCONTROLRRR.bsh"
-
-
 
 
 module [CONNECTED_MODULE] mkConvolutionalDecoderTest (Empty);
 
-   UserClock frontend <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,5,8);
+   UserClock frontend <- mkUserClock_Ratio(`MODEL_CLOCK_FREQ,2,5);
 
    let convolutionalDecoderTestBackend <- mkConvolutionalDecoderTestBackend();
    let convolutionalDecoderTestFrontend <- mkConvolutionalDecoderTestFrontend(clocked_by frontend.clk, reset_by frontend.rst);
@@ -82,6 +81,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
    let ifft <- mkIFFTInstance;
    let fft  <- mkFFTInstance;
    let scrambler <- mkScramblerInstance;
+   Transactor#(Mesg#(TXGlobalCtrl, Vector#(64,FPComplex#(2,14))) , 
+               Mesg#(TXGlobalCtrl, Vector#(64,FPComplex#(2,14)))) transactor <- mkTransactor;
 
    // instantiate backend, plumbing 
 
@@ -140,8 +141,10 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
    let end_simulation = finish_packets == sent_packets + 1;
 
    rule putNewRate(counter == 0 && initialized && finish_packets > sent_packets);
-      let new_ctrl = nextCtrl(ctrl, rate, 144*length,end_simulation);
-      $display("DecoderTests new packet r %d l %d", rate, 144*length);
+//      let new_ctrl = nextCtrl(ctrl, rate, 144*length,end_simulation);
+      let new_ctrl = nextCtrl(ctrl, rate, length,end_simulation);
+//      $display("DecoderTests new packet r %d l %d", rate, 144*length);
+      $display("DecoderTests new packet r %d l %d", rate, length);
       let new_data = in_data + 1;
       let bypass_mask = 0; // no bypass
       let seed = tagged Valid magicConstantSeed;
@@ -183,7 +186,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
          end
    endrule
    
-   rule putConvEncoder(True);
+   rule putConvEncoder(!transactor.tx_stall());
       let mesg <- scrambler.out.get;
       if (mesg.control.firstSymbol) 
          begin
@@ -204,34 +207,39 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
          end
    endrule
    
-   rule putPuncturer(True);
+   rule putPuncturer(!transactor.tx_stall());
       let mesg <- conv_encoder.out.get;
       puncturer.in.put(mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          $display("Conv Encoder Out Mesg: fst_sym:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
    endrule
    
-   rule putMapper(True);
+   rule putMapper(!transactor.tx_stall());
       let mesg <- puncturer.out.get;
       mapper.in.put(mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
          $display("Puncturer Out Mesg: fst_sym:%d, rate:%d, data:%b",mesg.control.firstSymbol, mesg.control.rate,mesg.data);
    endrule
    
-   rule putIFFT;
+   rule putIFFT (!transactor.tx_stall());
      let mesg <- mapper.out.get;
      ifft.in.put(Mesg{control:mesg.control,
                       data:append(mesg.data,replicate(0))});
    endrule
 
-   rule getIFFT (channel.notFull(64));
-      Mesg#(TXGlobalCtrl, Vector#(64,FPComplex#(2,14))) mesg <- ifft.out.get();
+   rule getIFFT (!transactor.tx_stall());
+      let mesg <- ifft.out.get();
+      transactor.tx_xactor_in.put(mesg);
+   endrule
+   
+   rule getTX (channel.notFull(64));
+      Mesg#(TXGlobalCtrl, Vector#(64,FPComplex#(2,14))) mesg <- transactor.tx_xactor_out.get();
       ctrlFifo.enq(mesg.control);
       channel.enq(64, append(mesg.data, ?));
    endrule
 
    rule putFFT (channel.notEmpty(64));
-      fft.in.put(Mesg {
+      transactor.rx_xactor_in.put(Mesg {
          control: ctrlFifo.first,
          data: take(channel.first)
       });
@@ -239,8 +247,13 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
       ctrlFifo.deq();
       channel.deq(64);
    endrule
+   
+   rule getRX (!transactor.rx_stall());
+      let mesg <- transactor.rx_xactor_out.get();
+      fft.in.put(mesg);
+   endrule
 
-   rule putDemapper(True);
+   rule putDemapper(!transactor.rx_stall());
       let freqDomain <- fft.out.get;
       demapper.in.put(Mesg{control:freqDomain.control,
                            data:take(freqDomain.data)});
@@ -248,7 +261,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
          $display("FFT Out Mesg: fst_sym:%d, rate:%d, end_sim: %d ",freqDomain.control.firstSymbol, freqDomain.control.rate, freqDomain.control.endSimulation);
    endrule
    
-   rule putDepuncturer(True);
+   rule putDepuncturer(!transactor.rx_stall());
       let mesg <- demapper.out.get;
       depuncturer.in.put(mesg);
       if (`DEBUG_CONV_DECODER_TEST == 1)
@@ -256,7 +269,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
    endrule
 
 
-   rule sendBackend;
+   rule sendBackend(!transactor.rx_stall());
      let data <- depuncturer.out.get();
      demapperOutput.send(data);
    endrule
