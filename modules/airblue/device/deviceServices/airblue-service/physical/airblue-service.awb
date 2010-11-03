@@ -1,0 +1,11 @@
+%name Airblue Service
+%desc Airblue Service
+
+%provides airblue_service
+
+%attributes hybrid connected
+
+%public airblue-service.bsv
+
+
+

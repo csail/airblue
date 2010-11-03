@@ -1,0 +1,11 @@
+%name Airblue Service (Simulation)
+%desc Airblue Service (Simulation)
+
+%provides airblue_service
+
+%attributes hybrid connected
+
+%public airblue-service-simulation.bsv
+
+
+
