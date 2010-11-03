@@ -1,0 +1,9 @@
+service AIRBLUERFSIM
+{
+ 
+   server hw (bsv, connection) <- sw (cpp, method)
+    {
+        method IQStream (in UINT32[32] sample);
+    };
+
+}

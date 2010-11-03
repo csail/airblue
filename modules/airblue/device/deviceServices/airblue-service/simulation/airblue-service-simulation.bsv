@@ -20,6 +20,7 @@ import FIFOF::*;
 import GetPut::*;
 import Connectable::*;
 import CBus::*;
+import Complex::*;
 
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/physical_platform.bsh"
@@ -27,64 +28,31 @@ import CBus::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/rf_driver.bsh"
-`include "asim/provides/spi.bsh"
-`include "asim/rrr/remote_server_stub_SPIMASTERRRR.bsh"
-`include "asim/rrr/remote_server_stub_CBUSRFRRR.bsh"
+`include "asim/rrr/remote_server_stub_AIRBLUERFSIM.bsh"
 
 
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
-  // Instantiate debugger RRR...
-  ServerStub_SPIMASTERRRR spi_server_stub <- mkServerStub_SPIMASTERRRR();   
-  ServerStub_CBUSRFRRR rf_cbus_server_stub <- mkServerStub_CBUSRFRRR();   
-
-  // Handle RRR CBUS
-
-  rule handleRequestRead;
-    let request <- rf_cbus_server_stub.acceptRequest_RFRead();
-     
-    // Choose among sender and receiver
-    let readVal <- drivers.rfDriver.busWires.read(truncate(pack(request)));
-    if(`DEBUG_RF_DEVICE == 1)
-      begin
-        $display("Transceiver Read Req addr: %x value: %x", request, readVal);
-      end
-    rf_cbus_server_stub.sendResponse_RFRead(unpack(readVal));
-  endrule
- 
-  rule handleRequestWrite;
-    let request <- rf_cbus_server_stub.acceptRequest_RFWrite();
-    if(`DEBUG_RF_DEVICE == 1)
-      begin
-        $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
-      end
-
-    drivers.rfDriver.busWires.write(truncate(pack(request.addr)),pack(request.data));
-  endrule
-
-   // Handle RRR SPI
-
-  rule handleRequestReadReqSPI;
-    let request <- spi_server_stub.acceptRequest_SPIRead();
-    //SPI does not support read, at present.  
-  endrule
- 
-  rule handleRequestWriteSPI;
-    let request <- spi_server_stub.acceptRequest_SPIWrite();
-    drivers.rfDriver.spiCommand.put(SPIMasterRequest{slave:truncate(request.addr),
-                                                     data:truncate(request.data)});
-   endrule
+   ClientStub_AIRBLUERFSIM rx_client_stub <- mkServerStub_AIRBLUERFSIM();
 
    // make soft connections to PHY
    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
 
-   mkConnection(analogTX, drivers.rfDriver.rfIn);
-
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
-   
-   mkConnection(drivers.rfDriver.rfOut,analogRX);  
-   
+
+  // XXX For now we don't care about TX, but we might at some point. 
+ 
+  rule handleRX;
+    let data <-  server_stub.acceptRequest_IQStream();
+    // we might need some AGC here at some point
+    SynchronizerMesg#(RXFPIPrec,RXFPFPrec) sample = 
+      Complex{img: unpack(truncateLSB(data[31:16])),
+              rel: unpack(truncateLSB(data[15:0]))};
+
+    analogRX.send(sample);
+
+  endrule
+
 
 
 endmodule
