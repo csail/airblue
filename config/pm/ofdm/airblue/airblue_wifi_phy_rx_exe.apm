@@ -75,10 +75,6 @@ airblue_transmitter=WiFi Transmitter Pipeline
 airblue_receiver=WiFi Receiver Pipeline
 airblue_fft=Airblue Folded FFT/IFFT
 
-[Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
-Packagehint=leap
-
 [WiFi Transmitter Pipeline/Requires]
 airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
 airblue_convolutional_encoder=Airblue Convolutional Encoder
@@ -241,7 +237,7 @@ MODEL_CLOCK_FREQ=25
 MODEL_CLOCK_DIVIDER=2
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Platform Services
+platform_services=Airblue Services
 connected_application=Airblue application
 soft_services=Soft Services
 
@@ -281,4 +277,47 @@ Packagehint=ofdm
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
+Packagehint=ofdm
+
+[Common Services/Requires]
+stats_service=Stats Service
+assertions_service=Assertions Service
+debug_scan_service=Debug Scan Services
+streams_service=Streams Service
+dynamic_parameters_service=Dynamic Parameter Service
+
+[Streams Service]
+File=modules/hasim/util/platform-services/common-services/streams-service/streams-service.awb
+Packagehint=leap
+
+[Stats Service]
+File=modules/hasim/util/platform-services/common-services/stats-service/stats-service.awb
+Packagehint=leap
+
+[Common Services]
+File=modules/hasim/util/platform-services/common-services/common-services-standard.awb
+Packagehint=leap
+
+[Assertions Service]
+File=modules/hasim/util/platform-services/common-services/assertions-service/assertions-service.awb
+Packagehint=leap
+
+[Airblue Services/Requires]
+common_services=Common Services
+airblue_service=Airblue Service (Simulation)
+
+[Airblue Service (Simulation)]
+File=modules/airblue/device/deviceServices/airblue-service/simulation/airblue-service-simulation.awb
+Packagehint=ofdm
+
+[Debug Scan Services]
+File=modules/hasim/util/platform-services/common-services/debug-scan-service/debug-scan-service.awb
+Packagehint=leap
+
+[Dynamic Parameter Service]
+File=modules/hasim/util/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
+Packagehint=leap
+
+[Airblue Services]
+File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
