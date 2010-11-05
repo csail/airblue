@@ -43,7 +43,7 @@ import CBus::*;
 `include "asim/provides/register_library.bsh"
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/clocks_device.bsh"
-`include "asim/rrr/remote_server_stub_CBUSCONTROLRRR.bsh"
+`include "asim/rrr/remote_server_stub_CBUSVECTORCONTROLRRR.bsh"
 
 //For the wires test we swap for two transceivers here.
 module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset) ();
@@ -53,7 +53,7 @@ module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiRes
 
   // Instantiate host communications
  
-  ServerStub_CBUSCONTROLRRR server_stub <- mkServerStub_CBUSCONTROLRRR();
+  ServerStub_CBUSVECTORCONTROLRRR server_stub <- mkServerStub_CBUSVECTORCONTROLRRR();
 
 
   rule handleRequestRead;

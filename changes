@@ -1106,3 +1106,33 @@ Directory config/pm/ofdm/submodels
 
 
 Added mcd tool to awb.
+
+----------
+kfleming    Date: Fri Nov  5 15:16:39 EDT 2010  CSN: CSN-ofdm-269
+                  Fri Nov  5 19:16:39 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_rx_exe.apm Locally Added               0 
+
+Directory modules/airblue/device/deviceServices/airblue-service/simulation
+ airblue-service-simulation.bsv Locally Modified          268 
+
+Directory modules/airblue/PhyOnly/WiFi
+ WiFiFPGAPacketGenWiresTest.bsv Locally Modified          268 
+
+Directory modules/airblue/lib/Drivers/ConnectedApp
+ airblue-driver.cpp        Locally Modified          268 
+
+Directory modules/airblue/lib/Drivers
+ RXTraceSimulation/        Locally Added               0 
+
+Directory modules/airblue/lib/Drivers/RXTraceSimulation
+ airblue-driver-rx-simulation.cpp Locally Added               0 
+ airblue-driver-rx-simulation.h Locally Added               0 
+ airblue-driver-rx-simulation.awb Locally Added               0 
+ airblue-driver-rx-simulation.bsv Locally Added               0 
+
+
+
+Added RX only test rig.  This feeds from a captured file.  

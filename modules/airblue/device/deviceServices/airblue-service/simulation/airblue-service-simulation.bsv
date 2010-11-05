@@ -24,7 +24,6 @@ import Complex::*;
 
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/physical_platform.bsh"
-`include "asim/provides/airblue_rf_device.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
@@ -33,7 +32,7 @@ import Complex::*;
 
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
-   ClientStub_AIRBLUERFSIM rx_client_stub <- mkServerStub_AIRBLUERFSIM();
+   ServerStub_AIRBLUERFSIM rx_server_stub <- mkServerStub_AIRBLUERFSIM();
 
    // make soft connections to PHY
    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
@@ -43,7 +42,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
   // XXX For now we don't care about TX, but we might at some point. 
  
   rule handleRX;
-    let data <-  server_stub.acceptRequest_IQStream();
+    let data <-  rx_server_stub.acceptRequest_IQStream();
     // we might need some AGC here at some point
     SynchronizerMesg#(RXFPIPrec,RXFPFPrec) sample = 
       Complex{img: unpack(truncateLSB(data[31:16])),

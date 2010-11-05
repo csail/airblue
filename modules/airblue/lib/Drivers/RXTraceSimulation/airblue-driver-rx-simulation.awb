@@ -1,0 +1,12 @@
+
+%name Airblue RX Simulation Driver
+%desc Interfaces with RX pipeline for trace simulations
+
+%provides airblue_driver_application
+%requires airblue_environment
+
+
+%public  airblue-driver-rx-simulation.h
+%private airblue-driver-rx-simulation.cpp
+
+

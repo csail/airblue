@@ -31,11 +31,15 @@ CONNECTED_APPLICATION_CLASS::Init()
 void
 CONNECTED_APPLICATION_CLASS::Main()
 {
+
+  // Should split this to driver init and driver main or something
+  printf("in main\n");
   vector<DRIVER_MODULE>::iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
       DRIVER_MODULE driver = *it;
       driver->Main();
   }
+  printf("exiting main\n");
   // Eventually we'll call the frontend initialization here. 
   //airblueDriver->Main();
   //airblueFrontend->Main();
