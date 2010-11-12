@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.1
 Type=Leap
-File=airblue_wifi_phy_rx_exe
+File=airblue_wifi_phy_rx_xupv5
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -27,8 +27,8 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/ofdm/submodels/acp-altera.apm
-Packagehint=ofdm
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie.apm
+Packagehint=platforms
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb

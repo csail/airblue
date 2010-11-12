@@ -42,6 +42,8 @@ import CBus::*;
 `include "asim/provides/register_mapper.bsh"
 `include "asim/provides/register_library.bsh"
 `include "asim/provides/fpga_components.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_clocks.bsh"
 `include "asim/provides/clocks_device.bsh"
 `include "asim/rrr/remote_server_stub_CBUSVECTORCONTROLRRR.bsh"
 
@@ -93,8 +95,8 @@ module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiRes
 endmodule
 
 module [CONNECTED_MODULE] mkWiFiFPGAPacketGenWiresTest ();
-  UserClock viterbi <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
-
+  UserClock viterbi <- mkSoftClock(60);//mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
+  
   let m <- mkBusTransceiver(viterbi.clk, viterbi.rst);
 endmodule
                                

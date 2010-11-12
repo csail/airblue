@@ -21,19 +21,14 @@
 
 %sources -t BSV -v PUBLIC Decoder.bsv Receiver.bsv WiFiReceiver.bsv RXController.bsv 
 
-%generated -t BA mkChannelEstimatorInstance.ba
 %generated -t BA mkDemapperInstance.ba
 %generated -t BA mkDepuncturerInstance.ba
 %generated -t BA mkDescramblerInstance.ba
-%generated -t BA mkDeinterleaverInstance.ba
-%generated -t BA mkUnserializerInstance.ba
 
-%generated -t VERILOG mkChannelEstimatorInstance.v
 %generated -t VERILOG mkDemapperInstance.v
 %generated -t VERILOG mkDepuncturerInstance.v
 %generated -t VERILOG mkDescramblerInstance.v
-%generated -t VERILOG mkDeinterleaverInstance.v
-%generated -t VERILOG mkUnserializerInstance.v
+
 
 %param DEBUG_RXCTRL 0 "Enable debug messages with 1"
 %param MAGIC_DESCRAMBLE_SEED 1 "Enable magic descrambler seed with 1, useful to obtain BER"

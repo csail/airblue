@@ -3,7 +3,7 @@
 SaveParameters=0
 DefaultBenchmark=
 Version=2.1
-Type=HAsim
+Type=Leap
 File=airblue_wifi_phy_only_loopback_exe
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
@@ -12,11 +12,11 @@ DefaultRunOpts=
 
 [Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=hasim
+Packagehint=leap
 
 [Platform Services]
 File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
-Packagehint=hasim
+Packagehint=leap
 
 [Model]
 DefaultAttributes=airblue
@@ -36,7 +36,7 @@ airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_shared=Airblue Shared Libraries
 airblue_phy=WiFi Phy Transceiver
 airblue_phy_packet_gen=Airblue Phy Only PacketGen
-airblue_channel=Airblue Noisy Channel
+airblue_channel=Airblue Clear Channel
 airblue_host_control=CBus Vector RRR Host Control
 rf_frontend=GCT RF Frontend Control
 analog_digital=Huntsman AD
@@ -224,7 +224,7 @@ Packagehint=ofdm
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/project/project-pipeline.awb
-Packagehint=platforms
+Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Hybrid Project Common Utilities
@@ -295,17 +295,6 @@ Packagehint=ofdm
 File=modules/airblue/device/simulation/gct-driver.awb
 Packagehint=ofdm
 
-[Airblue Noisy Channel]
-File=modules/airblue/lib/Channel/airblue_noisy_channel.awb
-Packagehint=ofdm
-
-[Airblue BDPI Channel Model]
-File=modules/airblue/lib/Channel/model/channel_model_bdpi.awb
-Packagehint=ofdm
-
-[Airblue Noisy Channel/Requires]
-airblue_channel_model_bdpi=Airblue BDPI Channel Model
-
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Platform Services
 connected_application=Airblue application
@@ -317,4 +306,11 @@ Packagehint=platforms
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=hasim
+Packagehint=leap
+
+[Airblue Synchronizer/Params]
+DEBUG_SYNCHRONIZER=1
+
+[Airblue Clear Channel]
+File=modules/airblue/lib/Channel/airblue_clear_channel.awb
+Packagehint=ofdm
