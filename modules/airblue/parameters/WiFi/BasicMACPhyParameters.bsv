@@ -73,15 +73,21 @@ typedef struct{
    Bool       is_trailer;
 } RXVector deriving (Bits, Eq);
 
+instance FShow#(RXVector);
+   function Fmt fshow (RXVector vec);
+      return $format("RX Vector: Length: ") + fshow(vec.header.length) + $format(" Rate: ") + fshow(vec.header.rate);
+   endfunction
+endinstance
+
 typedef union tagged {
    data_t Data;    // correct decode data of data_t
    err_t  Error;  // incorrect decode, error info as err_t 
 } Feedback#(type data_t, type err_t) deriving (Bits, Eq);
 
 typedef enum {
-   ParityError,
-   RateError,
-   ZeroFieldError
+   ParityError = 0,
+   RateError = 1,
+   ZeroFieldError = 2
 } RXVectorDecodeError deriving (Bits,Eq);
 
 typedef enum {

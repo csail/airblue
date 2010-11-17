@@ -100,6 +100,7 @@ module mkBranchMetricUnit (BranchMetricUnit);
             op_vec     = unpack(fromInteger(i)); // This unpack seems like a bad idea...  
             tmp_vec    = zipWith(getAddMetric, op_vec, observed_vec); // Negate  distances in preparation for subtraction
             out_vec[i] = fold(\+ ,tmp_vec); // add them all up
+
             if(`DEBUG_CONV_DECODER == 1)
               begin
                 $display("BMU code alphabet %b branch_metric %d",i,out_vec[i]); 

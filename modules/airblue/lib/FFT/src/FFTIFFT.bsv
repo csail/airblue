@@ -258,6 +258,12 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
       if(`DEBUG_FFT == 1)
          begin
             $display("Dual FFT input");
+            for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
+                  begin
+                     Int#(TAdd#(ISz,FSz)) img = unpack(pack(inQFFT.first.data[i].img));
+                     Int#(TAdd#(ISz,FSz)) rel = unpack(pack(inQFFT.first.data[i].rel));
+                     $display("FFTIn:%d:%d:%d",i,rel,img);
+                  end 
          end
       
 
@@ -449,7 +455,13 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == FFT);
             if(`DEBUG_FFT == 1)
                begin
-                  $display("Dual FFT input");                      
+                  $display("Dual FFT input");
+                  for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
+                  begin
+                     Int#(TAdd#(ISz,FSz)) img = unpack(pack(mesg.data[i].img));
+                     Int#(TAdd#(ISz,FSz)) rel = unpack(pack(mesg.data[i].rel));
+                     $display("FFTIn:%d:%d:%d",i,rel,img);
+                  end                       
                end
             
            fftRespTokens.enq(?);
@@ -606,6 +618,12 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
             if(`DEBUG_FFT == 1)
                begin
                   $display("Dual FFT input");                      
+                  for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
+                  begin
+                     Int#(TAdd#(ISz,FSz)) img = unpack(pack(mesg.data[i].img));
+                     Int#(TAdd#(ISz,FSz)) rel = unpack(pack(mesg.data[i].rel));
+                     $display("FFTIn:%d:%d:%d",i,rel,img);
+                  end 
                end
             
            respTokens.enq(?);

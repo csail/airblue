@@ -35,6 +35,7 @@ import ClientServer::*;
 import GetPut::*;
 import Clocks::*;
 import FixedPoint::*;
+import FShow::*;
 
 // import Controls::*;
 // import DataTypes::*;

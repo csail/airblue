@@ -126,8 +126,16 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
 
    // Build up CReg interface   
    // Receiver Side   
+   rule rxData;
+      let data <- transceiver.receiver.outData.get();
+      if(`DEBUG_TRANSCEIVER == 1)
+         begin
+           $display("Received: %h", data);
+         end
+      packetCheck.rxData.put(data);
+   endrule
+
    mkConnection(packetCheck.rxVector,transceiver.receiver.outRXVector);
-   mkConnection(packetCheck.rxData,transceiver.receiver.outData);
    mkConnection(packetCheck.abortAck,transceiver.receiver.abortAck);
    
    rule connectAbortReq (True);

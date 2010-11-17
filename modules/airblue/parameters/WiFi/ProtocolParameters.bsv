@@ -58,6 +58,7 @@ instance FShow#(Rate);
        R5: return $format("36Mbps");
        R6: return $format("48Mbps");
        R7: return $format("54Mbps");
+       default: return $format("Rate Unknown");
      endcase
    endfunction
 endinstance
@@ -266,7 +267,7 @@ endfunction
 typedef InterleaverDataSz MapperInDataSz;
 //typedef 48                MapperOutDataSz;
 typedef MinNcbps            MapperOutDataSz; // modify for channel allocation
-Bool mapperNegateInput = False;
+Bool mapperNegateInput = True;
 
 //Pilot:
 typedef  MapperOutDataSz  PilotInDataSz;

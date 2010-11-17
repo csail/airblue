@@ -308,9 +308,6 @@ Packagehint=platforms
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
-[Airblue Synchronizer/Params]
-DEBUG_SYNCHRONIZER=1
-
 [Airblue Clear Channel]
 File=modules/airblue/lib/Channel/airblue_clear_channel.awb
 Packagehint=ofdm

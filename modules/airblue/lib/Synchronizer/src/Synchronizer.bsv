@@ -307,7 +307,7 @@ endmodule
 //(* synthesize *)
 module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEstimator);
    // constants
-   Integer lSStart = valueOf(LSStart); // starting position of long preamble
+   Integer lSStart = valueOf(LSStart) - 16; // starting position of long preamble with a little bit removed to assist in getting long syncs, as we depend on finding the first peak
    Integer signalStart = valueOf(SignalStart); // starting position of the first data symbol
    Integer lSyncPos = valueOf(LSyncPos); // synchronization position of long preamble
    Integer freqMeanLen = valueOf(FreqMeanLen); // no. samples collected for freq estimation
@@ -498,6 +498,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
          end
    endrule
 
+   Reg#(Bit#(32)) samples <- mkReg(0);
+
    rule procTimeEstSN(!isProlog && timeStatePipeQ.first == SNormal);
       //variables
       ControlType outControl = Idle;
@@ -507,14 +509,6 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
       FPComplex#(CoarTimeAccumIntPrec, SyncFractPrec) newCoarCorr = fpcmplxTruncate(newCorr);           
       let newCoarCorrPow = fpcmplxModSq(newCoarCorr);
       FixedPoint#(CoarTimeCorrIntPrec,CoarTimeCorrFractPrec) newCoarPowSq = fxptZeroExtend(fxptMult(newCoarPow,newCoarPow));
-      if(`DEBUG_SYNCHRONIZER == 1)
-         begin
-            $write("PLOTSHORTSYNC coarCorrPow: ");
-            fxptWrite(6,newCoarCorrPow);
-            $write(" coarPowSq: ");
-            fxptWrite(6,newCoarPowSq);
-            $display("");
-         end
 
       if (coarDet)
 	begin
@@ -607,6 +601,17 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
          begin
             $display("RULE TimeEst.procTimeEstSN: coarPos:%d",newCoarPos);
          end
+
+      if(`DEBUG_SYNCHRONIZER == 1)
+         begin
+            samples <= samples + 1;
+            $write("%d PLOTSHORTSYNC newCoarPos: %d, coarCorrPow: ", samples, newCoarPos);
+            fxptWrite(6,newCoarCorrPow);
+            $write(" coarPowSq: ");
+            fxptWrite(6,newCoarPowSq);
+            $display("");
+         end
+
    endrule
    
    `ifdef instantiateStreamCaptureFIFO
@@ -639,7 +644,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
       let newFineTimeCorrPow = fpcmplxModSq(fineTimeCorrQ.first);
       if(`DEBUG_SYNCHRONIZER == 1)
          begin
-            $display("PLOTLONGSYNC fineTimeCorrPow: %h",newFineTimeCorrPow);
+            $display("PLOTLONGSYNC fineTimeCorrPow: %h %h",newFineTimeCorrPow, maxFineTimePowSq);
          end
 
       if (status2 == LTrans)
@@ -654,8 +659,8 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 	       end
 	    else
 	       begin
-                  if ((newCoarPos == fromInteger(lSyncPos+32)) &&
-                      (fineMaxCorrPow > maxFineTimePowSq)) // the max so far must be larger than threshold for it to be accepted
+                  if ((newCoarPos == fromInteger(lSyncPos+32)))// &&
+                      //(fineMaxCorrPow > maxFineTimePowSq)) // the max so far must be larger than threshold for it to be accepted
                      begin
                         newFinePos = fromInteger(lSyncPos) + (newCoarPos - fineMaxPos);
 		        fineDet <= True;
@@ -685,7 +690,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                            end
                         if(`DEBUG_SYNCHRONIZER == 1)
                            begin
-		              $display("TimeEst.procTimeEstLN: newFineTimeCorrPow:%h, maxFineTimePosSq:%h newCoarPos:%d lSyncPos:%d",newFineTimeCorrPow, maxFineTimePowSq, newCoarPos, lSyncPos);
+		              $display("TimeEst.procTimeEstLN: fineMaxCorrPow: %h newFineTimeCorrPow:%h, maxFineTimePosSq:%h newCoarPos:%d lSyncPos:%d",fineMaxCorrPow, newFineTimeCorrPow, maxFineTimePowSq, newCoarPos, lSyncPos);
                            end
 		     end
 	       end // else: !if(fineDet)
@@ -995,7 +1000,7 @@ interface GainControlSynchronizer#(numeric type i_prec, numeric type f_prec);
 endinterface
 
 /* this sends sync events back to the AD for gain control purposes 
- * it is possible that this guy should be refactored to the FPGA project*/
+* it is possible that this guy should be refactored to the FPGA project*/
 
 module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGainControlSynchronizer(GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
   Reg#(ControlType) ctrlLast <- mkReg(Idle);

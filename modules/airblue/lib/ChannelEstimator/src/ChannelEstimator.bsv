@@ -294,7 +294,7 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       let adj_data   = mag_adjusted_q.first * angle_adjust_q.first; // adjust according to pilot
       if(`DEBUG_CHANNEL_ESTIMATOR == 1)
          begin
-            $write("ChannelEstIn %d: ",out_write_idx);
+            $write("ChannelEstMod %d: ",out_write_idx);
             fpcmplxWrite(5, o_data[out_write_idx]);
             $write(" -> ");
             fpcmplxWrite(5,adj_data);
@@ -355,9 +355,9 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
                $display("ChannelEst input data:");
                for(Integer i=0; i<valueOf(CEstInN) ; i=i+1)
                   begin
-                     $write("ChannelEstIn %d: ",i);
-                     fpcmplxWrite(5,i_data[i]);
-                     $display("");
+                     Int#(TAdd#(CEstIPrec,CEstFPrec)) img = unpack(pack(i_data[i].img));
+                     Int#(TAdd#(CEstIPrec,CEstFPrec)) rel = unpack(pack(i_data[i].rel));
+                     $display("ChannelEstIn:%d:%d:%d",i,rel,img);
                   end         
             end
       endmethod
@@ -373,9 +373,9 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
             begin
                for(Integer i=0; i<valueOf(CEstOutN) ; i=i+1)
                   begin
-                     $write("ChannelEstOut %d->%d: ",inverseMapping(i),i);
-                     fpcmplxWrite(5,out_reg.data[i]);
-                     $display("");
+                     Int#(TAdd#(CEstIPrec,CEstFPrec)) img = unpack(pack(out_reg.data[i].img));
+                     Int#(TAdd#(CEstIPrec,CEstFPrec)) rel = unpack(pack(out_reg.data[i].rel));
+                     $display("ChannelEstOut:%d:%d:%d:%d",inverseMapping(i),i,rel,img);
                   end 
             end
          

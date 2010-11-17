@@ -34,8 +34,13 @@ AIRBLUE_DRIVER_CLASS::Main()
   printf("Hello\n");
 
   FILE *inputFile;
-  UINT32 sample;
+  union {
+    UINT32 whole;
+    INT16 pieces[2];
+  } sample;
+    
   int count=0;
+  int factor;
 
   printf("Past Init\n");
 
@@ -45,12 +50,19 @@ AIRBLUE_DRIVER_CLASS::Main()
     printf("Did not find trace file\n");
     return;
   }
-  while(fread(&sample, sizeof(UINT32), 1, inputFile)) {
-    if(count%1000 == 0)
-      printf("main: %d\n", count);
-    count++;
-    clientStub->IQStream(sample);
+  
+  for(factor = 0; factor < 1; factor++) {
+    rewind(inputFile);
+    while(fread(&sample, sizeof(UINT32), 1, inputFile)) {
+      //if(count%1000 == 0)
+      //printf("main: %d %d\n",  sample.pieces[0]*3, sample.pieces[1]*3);
+      count++;      
+      sample.pieces[0] = sample.pieces[0]*3; 
+      sample.pieces[1] = sample.pieces[1]*3; 
+      clientStub->IQStream(sample.whole);
+    }
   } 
+   
 }
 
 // register driver

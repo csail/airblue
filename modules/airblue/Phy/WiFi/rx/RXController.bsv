@@ -33,6 +33,7 @@ import FIFOF::*;
 import GetPut::*;
 import ModuleCollect::*;
 import Vector::*;
+import FShow::*;
 
 // import CBusUtils::*;
 
@@ -450,13 +451,13 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                         abortReg <= True; // don't go to RX_DATA mode
                      end
                   if (`DEBUG_RXCTRL == 1)
-                     $display("PreDescramblerRXCtrllr header: %b rate: %b length: %d is_trailer: %d", header, rx_vec.header.rate, rx_vec.header.length, rx_vec.is_trailer);
+                     $display("PreDescramblerRXCtrllr received header: %b rate: %b length: %d is_trailer: %d", header, rx_vec.header.rate, rx_vec.header.length, rx_vec.is_trailer);
 	       end
             else
                begin
                   abortReg <= True; // don't go to RX_DATA mode
                   if (`DEBUG_RXCTRL == 1)
-                     $display("PreDescramblerRXCtrllr header (%b) decode error: %d (0 = ParityError, 1 = RateError, 2 = ZeroFieldError)",header,rx_err);
+                     $display("PreDescramblerRXCtrllr header (%b) decode error: %d (0 = ParityError, 1 = RateError, 2 = ZeroFieldError): ",header,rx_err,fshow(rx_vec));
                end
          end
    endrule

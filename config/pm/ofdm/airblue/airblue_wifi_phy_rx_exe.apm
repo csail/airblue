@@ -27,8 +27,8 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/ofdm/submodels/acp-altera.apm
-Packagehint=ofdm
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=platforms
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -170,10 +170,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
 
-[Airblue types (no SoftHints)]
-File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
-
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
@@ -232,11 +228,6 @@ Packagehint=ofdm
 File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
 Packagehint=ofdm
 
-[FPGA Environment/Params]
-MODEL_CLOCK_FREQ=25
-MODEL_CLOCK_DIVIDER=8
-MODEL_CLOCK_MULTIPLIER=1
-
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Airblue Services
 connected_application=Airblue application
@@ -260,9 +251,6 @@ airblue_environment=Airblue Environment
 [WiFi Receiver Pipeline/Params]
 DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
-
-[Airblue Synchronizer/Params]
-DEBUG_SYNCHRONIZER=1
 
 [WiFi Phy Only/Requires]
 airblue_host_control=CBus Vector RRR Host Control
@@ -322,3 +310,19 @@ Packagehint=leap
 [Airblue Services]
 File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
+
+[Airblue Channel Estimator/Params]
+DEBUG_CHANNEL_ESTIMATOR=1
+
+[Airblue Demapper/Params]
+DEBUG_DEMAPPER=1
+
+[Airblue Phy Only PacketGen/Params]
+DEBUG_PACKETGEN=1
+
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
+[WiFi Phy Only/Params]
+DEBUG_TRANSCEIVER=1
