@@ -108,8 +108,8 @@ function Vector#(4, ViterbiMetric) decodeQAM_16(Bool negateOutput,
       
       function ViterbiMetric decodeQAM_16_Odd(FixedPoint#(ai,af) x);
          let result = (x < 0) ?
-		      decodeRange(x, fromRational(-948683298,1000000000), fromRational(79056942,1000000000),!negateOutput) :
-		      decodeRange(x, fromRational(316227766,1000000000), fromRational(79056942,1000000000),negateOutput);      
+		      decodeRange(x, fromRational(-948683298,1000000000), fromRational(79056942,1000000000),negateOutput) :
+		      decodeRange(x, fromRational(316227766,1000000000), fromRational(79056942,1000000000),!negateOutput);      
 	 return result;
       endfunction // ConfLvl      
 
@@ -218,40 +218,41 @@ module mkDemapper#(function Modulation mapCtrl(ctrl_t inCtrl),
       outQ.enq(Mesg{control: ctrl, data: outData});
       if(`DEBUG_DEMAPPER == 1)
          begin
+            Vector#(o_n, Int#(SizeOf#(ViterbiMetric))) intData = unpack(pack(outData));      
             case (format)
                BPSK: for (Integer i = 0; i < valueOf(o_n); i=i+1)
                         begin
                            $write("Demapper map %d bpsk data",i);
                            fpcmplxWrite(5, bpskVec[counter][i]);
-                           $display(" -> %d",outData[i]);                         
+                           $display(" -> %d",intData[i]);                         
                         end
                QPSK: for (Integer i = 0; i < valueOf(qpsk_n); i=i+1)
                         begin
                            $write("Demapper map %d qpsk data",counter*fromInteger(valueOf(qpsk_n)+i));
                            fpcmplxWrite(5, qpskVec[counter][i]);
-                           $display(" -> %d, %d",outData[2*i],outData[2*i+1]);                         
+                           $display(" -> %d, %d",intData[2*i],intData[2*i+1]);                         
                         end
                QAM_16: for (Integer i = 0; i < valueOf(qam16_n); i=i+1)
                           begin
                              $write("Demapper map %d 16-qam data",counter*fromInteger(valueOf(qam16_n)+i));
                              fpcmplxWrite(5, qam16Vec[counter][i]);
                              $display(" -> %d, %d, %d, %d",
-                                      outData[4*i],
-                                      outData[4*i+1],
-                                      outData[4*i+2],
-                                      outData[4*i+3]);                         
+                                      intData[4*i],
+                                      intData[4*i+1],
+                                      intData[4*i+2],
+                                      intData[4*i+3]);                         
                           end
                QAM_64: for (Integer i = 0; i < valueOf(qam64_n); i=i+1)
                           begin
                              $write("Demapper map %d 64-qam data",counter*fromInteger(valueOf(qam64_n)+i));
                              fpcmplxWrite(5, qam64Vec[counter][i]);
                              $display(" -> %d, %d, %d, %d, %d, %d",
-                                      outData[6*i],
-                                      outData[6*i+1],
-                                      outData[6*i+2],
-                                      outData[6*i+3],
-                                      outData[6*i+4],
-                                      outData[6*i+5]);                         
+                                      intData[6*i],
+                                      intData[6*i+1],
+                                      intData[6*i+2],
+                                      intData[6*i+3],
+                                      intData[6*i+4],
+                                      intData[6*i+5]);                         
                           end
             endcase
          end

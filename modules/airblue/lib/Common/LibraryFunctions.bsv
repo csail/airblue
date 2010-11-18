@@ -132,10 +132,10 @@ endfunction
 function FPComplex#(b,sz) mapQAM_16(Bool negateInput, Bit#(4) data) provisos(Literal#(FixedPoint#(b,sz)), Add#(1,x,b));
     function f(x);
         case (x) matches
-            2'b00: return fromRational(-300000000000,316227766017);
-            2'b01: return fromRational(-100000000000,316227766017);
-            2'b10: return fromRational(300000000000,316227766017);
-            2'b11: return fromRational(100000000000,316227766017);
+            2'b01: return fromRational(-300000000000,316227766017);
+            2'b00: return fromRational(-100000000000,316227766017);
+            2'b11: return fromRational(300000000000,316227766017);
+            2'b10: return fromRational(100000000000,316227766017);
         endcase
     endfunction
     data = negateInput ? ~data : data;
