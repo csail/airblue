@@ -27,7 +27,6 @@
 import Complex::*;
 import ConfigReg::*;
 import Connectable::*;
-import CBus::*;
 import FIFO::*;
 import FIFOF::*;
 import GetPut::*;
@@ -35,114 +34,14 @@ import ModuleCollect::*;
 import Vector::*;
 import FShow::*;
 
-// import CBusUtils::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import FPGAParameters::*;
-// import Interfaces::*;
-// import LibraryFunctions::*;
-// import MACPhyParameters::*;
-// import ProtocolParameters::*;
-// import StreamFIFO::*;
-
-// `include "../WiFiFPGA/Macros.bsv"
-
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/airblue_common.bsh"
-`include "asim/provides/c_bus_utils.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_connections.bsh"
 
-
-//import TXController::*;
-
-// typedef struct{
-//    Rate      rate;
-//    PhyPacketLength length;
-// } RXVector deriving (Bits, Eq);
-
-// typedef struct{
-//    HeaderInfo header;
-//    Bool       is_trailer;
-// } RXVector deriving (Bits, Eq);
-
-// typedef union tagged {
-//    data_t Data;    // correct decode data of data_t
-//    err_t  Error;  // incorrect decode, error info as err_t 
-// } Feedback#(type data_t, type err_t) deriving (Bits, Eq);
-
-// typedef enum {
-//    ParityError,
-//    RateError,
-//    ZeroFieldError
-// } RXVectorDecodeError deriving (Bits,Eq);
-
-// typedef enum {
-//   LongSync,
-//   HeaderDecoded,
-//   DataComplete,
-//   Abort
-// } RXExternalFeedback deriving (Bits,Eq);
-
-// function Bool validFeedback(Feedback#(d,e) feedback);
-//    let res = case (feedback) matches
-//                 tagged Data .x: True;
-//                 default: False;
-//              endcase;
-//    return res;
-// endfunction
-
-// function a getDataFromFeedback(a d_res, Feedback#(a,e) feedback);
-//    let res = case (feedback) matches
-//                 tagged Data .x: x;
-//                 default: d_res;
-//              endcase;
-//    return res;
-// endfunction
-
-// function e getErrorFromFeedback(e d_res, Feedback#(a,e) feedback);
-//    let res = case (feedback) matches
-//                 tagged Error .x: x;
-//                 default: d_res;
-//              endcase;
-//    return res;
-// endfunction
-   
-// function Feedback#(RXVector,RXVectorDecodeError) decodeHeader(Header header);
-   
-//    RXVector vec;
-   
-//    function Maybe#(Rate) getRate(Header header);
-//       return case (header[3:0])
-// 		4'b1011: tagged Valid R0;
-// 		4'b1111: tagged Valid R1;
-// 		4'b1010: tagged Valid R2; 
-// 		4'b1110: tagged Valid R3;
-// 		4'b1001: tagged Valid R4;
-// 		4'b1101: tagged Valid R5;
-// 		4'b1000: tagged Valid R6;
-// 		4'b1100: tagged Valid R7;
-// 		default: tagged Invalid;
-// 	     endcase;
-//    endfunction
-
-//    vec.header.rate        = fromMaybe(?,getRate(header));
-//    vec.header.length      = header[16:5]; 
-//    vec.header.has_trailer = ?;
-//    vec.header.power       = ?;
-//    vec.header.src_addr    = ?;
-//    vec.header.dst_addr    = ?;
-//    vec.header.uid         = ?;
-//    vec.is_trailer         = unpack(header[4:4]);
-//    let parity_err         = header[17:17] != getParity(header[16:0]); // parity check
-//    let rate_err           = !isValid(getRate(header));
-//    let zero_field_err     = header[23:18] != 0;  
-//    let err                = parity_err ? ParityError : (rate_err ? RateError : ZeroFieldError); 
-//    let is_err             = parity_err || rate_err || zero_field_err;
-//    return is_err ? tagged Error err : tagged Data vec;   
-// endfunction
 
 interface PreDemapperRXController;
    interface Put#(DemapperMesg#(Bool,DemapperInDataSz,RXFPIPrec,RXFPFPrec)) 
@@ -205,19 +104,15 @@ typedef enum{
    RX_DTAIL = 5     // sending zeros after data
 } RXCtrlState deriving(Eq,Bits);
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkPreDemapperRXController(PreDemapperRXController);
-
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrRXState = CRAddr{a: fromInteger(valueof(AddrRXState)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrSuppressedLongSyncs = CRAddr{a: fromInteger(valueof(AddrSuppressedLongSyncs)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrAcceptedLongSyncs = CRAddr{a: fromInteger(valueof(AddrAcceptedLongSyncs)) , o: 0};
+module [CONNECTED_MODULE] mkPreDemapperRXController(PreDemapperRXController);
 
    // state elements
    FIFO#(DemapperMesg#(RXGlobalCtrl,DemapperInDataSz,RXFPIPrec,RXFPFPrec)) outQ <- mkLFIFO;
-   Reg#(RXCtrlState) rxState <- mkCBRegR(addrRXState,RX_IDLE); // the current state
+   Reg#(RXCtrlState) rxState <- mkReg(RX_IDLE); // the current state
    FIFO#(RXExternalFeedback) outFeedbackFIFO <- mkFIFO;
    FIFO#(Bit#(0))    abortAckQ <- mkFIFO;
-   Reg#(Bit#(32))    suppressedLongSyncs <- mkCBRegR(addrSuppressedLongSyncs,0);
-   Reg#(Bit#(32))    acceptedLongSyncs <- mkCBRegR(addrAcceptedLongSyncs,0);
+   Reg#(Bit#(32))    suppressedLongSyncs <- mkReg(0);
+   Reg#(Bit#(32))    acceptedLongSyncs <- mkReg(0);
 //   Reg#(Bit#(3))     zeroCount <- mkRegU;       // count no of zeros symbol sent
    Reg#(Rate)        rxRate <- mkRegU;          // the packet rate for receiving
    Reg#(Bit#(17))    rxLength <- mkReg(0);        // the remaining of data to be received (in terms of bits)
@@ -657,8 +552,7 @@ module mkPostDescramblerRXController(PostDescramblerRXController);
       
 endmodule
 
-//(* synthesize *)
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkRXController(RXController);
+module [CONNECTED_MODULE] mkRXController(RXController);
    // state elements
    let preDemapperCtrllr     <- mkPreDemapperRXController;
    let preDescramblerCtrllr  <- mkPreDescramblerRXController;

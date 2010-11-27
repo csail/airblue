@@ -5,13 +5,15 @@
 
 #include "asim/provides/connected_application.h"
 #include "asim/provides/airblue_driver_application.h"
-#include "asim/rrr/client_stub_CBUSVECTORCONTROLRRR.h"
+#include "asim/rrr/client_stub_PACKETGENRRR.h"
+#include "asim/rrr/client_stub_PACKETCHECKRRR.h"
 
 typedef class AIRBLUE_DRIVER_CLASS* AIRBLUE_DRIVER;
 class AIRBLUE_DRIVER_CLASS : public DRIVER_MODULE_CLASS
 {
   private:
-    CBUSVECTORCONTROLRRR_CLIENT_STUB clientStub;
+    PACKETCHECKRRR_CLIENT_STUB packetCheckStub;
+    PACKETGENRRR_CLIENT_STUB   packetGenStub;
 
 
   public:

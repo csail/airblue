@@ -3,8 +3,6 @@
 #include "asim/provides/connected_application.h"
 #include "asim/provides/airblue_driver_application.h"
 #include "asim/provides/airblue_environment.h"
-#include "asim/provides/airblue_host_control.h"
-#include "asim/dict/AIRBLUE_REGISTER_MAP.h"
 
 using namespace std;
  
@@ -12,7 +10,8 @@ using namespace std;
 AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
     DRIVER_MODULE_CLASS(p)
 {
-  clientStub = HostControl::Get(p);
+  packetCheckStub = new PACKETCHECKRRR_CLIENT_STUB_CLASS(p); 
+  packetGenStub = new PACKETGENRRR_CLIENT_STUB_CLASS(p); 
 }
 
 // destructor
@@ -32,13 +31,13 @@ AIRBLUE_DRIVER_CLASS::Main()
 {
   int ber,result;
 
-  clientStub->Write(1,AIRBLUE_REGISTER_MAP_ADDR_RATE,get_rate());
-  clientStub->Write(1,AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,~0);
-  while(clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX) < 50){sleep(5);}
+  packetGenStub->SetRate(get_rate());
+  packetGenStub->SetEnable(~0);
+  while(packetCheckStub->GetPacketsRX(0) < 50){sleep(5);}
   printf("Done waiting for packets\n");
 
   // get number of bit errors
-  ber = clientStub->Read(0,AIRBLUE_REGISTER_MAP_ADDR_BER);
+  ber = packetCheckStub->GetBER(0);
 
   // TODO: get total number of bits
   int total = 0;

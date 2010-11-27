@@ -13,15 +13,11 @@
 %requires airblue_shared
 %requires airblue_phy
 %requires airblue_phy_packet_gen
-%requires airblue_host_control
 
 %attributes airblue
 
 %sources -t BSV -v PUBLIC Transceiver.bsv WiFiFPGAPacketGenWiresTest.bsv
 
-%generated -t BA mkTransceiverPacketGenFPGA.ba
-
-%generated -t VERILOG mkTransceiverPacketGenFPGA.v
 
 %param DEBUG_TRANSCEIVER 0 "Enable debug messages"
 %param SIM_PACKETS 50 "Length of Simulation in Packets"

@@ -33,65 +33,14 @@ import GetPut::*;
 import ModuleCollect::*;
 import Vector::*;
 
-// import CBusUtils::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import FPGAParameters::*;
-// import Interfaces::*;
-// import LibraryFunctions::*;
-// import MACPhyParameters::*;
-// import ProtocolParameters::*;
-// import StreamFIFO::*;
-
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
-`include "asim/provides/c_bus_utils.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_connections.bsh"
 
-
-// typedef 16 PreDataSz;
-
-// typedef 6  PostDataSz;
-
-// typedef 24 HeaderSz;
-
-// typedef Bit#(8) MACAddr; // mac address
-
-// typedef Bit#(8) UID; // unique msg ID (for the same src, dest pair)
-
-// typedef Maybe#(Bit#(PreDataSz))  PreData;
-
-// typedef Maybe#(Bit#(PostDataSz)) PostData;
-
-// typedef Bit#(HeaderSz) Header;
-
-// typedef struct{
-//    PhyPacketLength length;
-//    Rate            rate; 
-//    Bit#(3)         power;
-//    Bool            has_trailer; // add trailer (postample + repeated header)
-//    MACAddr         src_addr;
-//    MACAddr         dst_addr;
-//    UID             uid;
-// } HeaderInfo deriving (Eq, Bits);
-
-// typedef struct{
-//    HeaderInfo header;    // information that should get to header/trailer (non-scrambled and sent at basic rate)
-//    PreData    pre_data;  // information that sent before data (sent at the same rate as data), if invalid don't send anything
-//    PostData   post_data; // information that sent after data (sent at the same rate as data), if invalid, don't send anything
-// } TXVector deriving (Eq, Bits);
-
-
-// typedef struct{
-//    PhyPacketLength length;  // data to send in bytes
-//    Rate            rate;    // data rate
-//    Bit#(16)        service; // service bits, should be all 0s
-//    Bit#(3)         power;   // transmit power level (not affecting baseband)
-   
-// } TXVector deriving (Eq, Bits);
 
 typedef enum{ Idle = 0, SendHeader = 1, AddPreData = 2, SendData = 3, SendPostData = 4, SendPadding = 5, SendTrailer = 6}
         TXState deriving (Eq, Bits);
@@ -104,36 +53,10 @@ interface TXController;
 				 ScramblerDataSz)) out;
 endinterface
       
-// function Header encoderHeader(HeaderInfo header, Bool is_trailer);
-//       Bit#(4) translate_rate = case (header.rate)   //somehow checking rate directly doesn't work
-// 				  R0: 4'b1011;
-// 				  R1: 4'b1111;
-// 				  R2: 4'b1010; 
-// 				  R3: 4'b1110;
-// 				  R4: 4'b1001;
-// 				  R5: 4'b1101;
-// 				  R6: 4'b1000;
-// 				  R7: 4'b1100;
-// 			       endcase; // case(r)    
-//       Bit#(1)  parity = getParity({translate_rate,pack(is_trailer),header.length});
-//       Bit#(24) data = {6'b0,parity,header.length,pack(is_trailer),translate_rate};
-//       return data;   
-// endfunction
-
 // get maximum number of padding (basic unit is bit) required for each rate
 function Bit#(8) maxPadding(Rate rate);
    Bit#(8) scramblerDataSz = fromInteger(valueOf(ScramblerDataSz)); // must be a factor of 12
    return fromInteger(bitsPerSymbol(rate)) - scramblerDataSz; 
-//    case (rate)
-// 	     R0: 24 - scramblerDataSz;
-// 	     R1: 36 - scramblerDataSz;
-// 	     R2: 48 - scramblerDataSz; 
-// 	     R3: 72 - scramblerDataSz;
-// 	     R4: 96 - scramblerDataSz;
-// 	     R5: 144 - scramblerDataSz;
-// 	     R6: 192 - scramblerDataSz;
-// 	     R7: 216 - scramblerDataSz;
-// 	  endcase;
 endfunction      
 
 function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
@@ -153,14 +76,10 @@ function ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)
 endfunction
 
 // (* synthesize *)
-// module mkTXController(TXController);
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTXController(TXController);
-   
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) txStateOffset = fromInteger(valueOf(TxCtrlStateOffset));
+module [CONNECTED_MODULE] mkTXController(TXController);
    
    //state elements
    Reg#(TXState)           txState <- mkReg(Idle);
-//   ConfigReg#(Bit#(AvalonDataWidth)) peepTxState <- mkCBRegR(txStateOffset,0);
    Reg#(Bit#(5))          sfifoRem <- mkRegU;
    Reg#(Bit#(8))             count <- mkRegU;
    Reg#(Bool)              rstSeed <- mkRegU;

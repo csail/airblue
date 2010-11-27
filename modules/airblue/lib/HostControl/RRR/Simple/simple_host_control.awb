@@ -7,7 +7,6 @@
 %name Simple RRR Host Control 
 %desc Simple RRR Host Control 
 %provides airblue_host_control
-%requires airblue_environment
 
 %attributes ofdm
 

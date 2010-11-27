@@ -31,8 +31,6 @@ import Complex::*;
 import FixedPoint::*;
 import GetPut::*;
 import StmtFSM::*;
-import CBus::*;
-
 
 // Local includes
 `include "asim/provides/airblue_common.bsh"
@@ -44,24 +42,27 @@ import CBus::*;
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/clocks_device.bsh"
-`include "asim/rrr/remote_server_stub_CBUSVECTORCONTROLRRR.bsh"
 `include "asim/provides/analog_digital.bsh"
 `include "asim/provides/gain_control.bsh"
 `include "asim/provides/rf_frontend.bsh"
+`include "asim/provides/airblue_phy_packet_gen.bsh"
+
 
 //For the wires test we swap for two transceivers here.
-module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiReset, Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();
-  Clock busClock <- exposeCurrentClock;
-  Reset busReset <- exposeCurrentReset;
+module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
+  Clock basebandClock <- exposeCurrentClock;
+  Reset basebandReset <- exposeCurrentReset;
 
-  // Instantiate host communications
+  // Create Clocks
 
-   ServerStub_CBUSVECTORCONTROLRRR server_stub <- mkServerStub_CBUSVECTORCONTROLRRR();
+  UserClock viterbi <- mkSoftClock(60);
+  UserClock rf <- mkSoftClock(20);
 
-  let receiverFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset,rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset);
-  let transmitterFPGA <-  mkTransceiverPacketGenFPGA(viterbiClock, viterbiReset, busClock, busReset, rfClock, rfReset, clocked_by basebandClock, reset_by basebandReset); 
-  let channel <- mkChannel(clocked_by rfClock, reset_by rfReset);
-  SyncBitIfc#(Bit#(1)) txPE <- mkSyncBit(basebandClock, basebandReset, rfClock);
+  let receiverFPGA <-  mkTransceiverPacketGenFPGA(viterbi.clk, viterbi.rst, rf.clk, rf.rst, clocked_by basebandClock, reset_by basebandReset);
+  let transmitterFPGA <-  mkTransceiverPacketGenFPGA(viterbi.clk, viterbi.rst, rf.clk, rf.rst, clocked_by basebandClock, reset_by basebandReset); 
+
+  let channel <- mkChannel(clocked_by rf.clk, reset_by rf.rst);
+  SyncBitIfc#(Bit#(1)) txPE <- mkSyncBit(basebandClock, basebandReset, rf.clk);
 
 
   function FPComplex#(2,14) dacToComplex(DAC_WIRES dac);
@@ -105,68 +106,15 @@ module [CONNECTED_MODULE] mkBusTransceiver#(Clock viterbiClock, Reset viterbiRes
     receiverFPGA.adcWires.adcIPart(fxptToDAC(sample.img));
   endrule
 
+  // Packet Stimulus modules
 
- 
-   //Index 0 sends to Receiver 
-   //Index 1 sends to Transmitter
-   //This probably belongs in a dictionary
-   rule handleRequestRead;
-      let request <- server_stub.acceptRequest_Read();
-     
-      // Choose among sender and receiver
-      CBus#(AvalonAddressWidth,AvalonDataWidth) cbus_ifc;
-      case (request.index) 
-       0: cbus_ifc = receiverFPGA.busWires; 
-       1: cbus_ifc = transmitterFPGA.busWires; 
-       default: cbus_ifc = receiverFPGA.busWires;  
-      endcase
+  PacketGen packetGen <- mkPacketGen;
+  PacketCheck packetCheck <- mkPacketCheck;
 
-      let readVal <- cbus_ifc.read(truncate(pack(request.addr)));
-      if(`DEBUG_TRANSCEIVER == 1)
-         begin
-            $display("Transceiver Read Req addr: %x value: %x", request.addr, readVal);
-         end
-      server_stub.sendResponse_Read(unpack(readVal));
-   endrule
- 
-   rule handleRequestWrite;
-      let request <- server_stub.acceptRequest_Write();
+  mkConnection(packetCheck.rxVector, receiverFPGA.outRXVector);
+  mkConnection(packetCheck.rxData, receiverFPGA.outRXData);
 
-      // Choose among sender and receiver
-      CBus#(AvalonAddressWidth,AvalonDataWidth) cbus_ifc;
-      case (request.index[0]) 
-       0: cbus_ifc = receiverFPGA.busWires; 
-       1: cbus_ifc = transmitterFPGA.busWires;
-       default: cbus_ifc = receiverFPGA.busWires;  
-      endcase
-
-      if(`DEBUG_TRANSCEIVER == 1)
-        begin
-          $display("Transceiver Side Write Req addr: %x value: %x", request.addr, request.data);
-        end
-
-      cbus_ifc.write(truncate(pack(request.addr)),pack(request.data));
-   endrule
-
+  mkConnection(transmitterFPGA.inTXData, packetGen.txData); 
+  mkConnection(transmitterFPGA.inTXVector, packetGen.txVector); 
 endmodule
 
-module [CONNECTED_MODULE] mkWiFiFPGAPacketGenWiresTest ();
-  Clock busClock <- exposeCurrentClock;
-  Reset busReset <- exposeCurrentReset;
-  UserClock viterbi <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,60);
-  UserClock rf <- mkUserClock_PLL(`CRYSTAL_CLOCK_FREQ*`MODEL_CLOCK_MULTIPLIER/`MODEL_CLOCK_DIVIDER,20);
-
-  let m <- mkBusTransceiver(viterbi.clk, viterbi.rst, busClock, busReset, rf.clk, rf.rst);
-endmodule
-                               
-module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
-   let test <- mkWiFiFPGAPacketGenWiresTest();
-   return test;
-endmodule                         
-
-module [CONNECTED_MODULE] mkWiFiFPGAPacketGenWiresTestClocks#(Clock viterbiClock, Reset viterbiReset,Clock basebandClock, Reset basebandReset, Clock rfClock, Reset rfReset) ();   
-   Clock clock <- exposeCurrentClock;
-   Reset reset <- exposeCurrentReset;
-   // state elements
-   let transceiver <- mkBusTransceiver(viterbiClock, viterbiReset, basebandClock, basebandReset, rfClock, rfReset);
-endmodule

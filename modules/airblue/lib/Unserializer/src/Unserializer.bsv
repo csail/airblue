@@ -41,6 +41,8 @@ import Vector::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
+`include "asim/provides/librl_bsv_base.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 
 //`define debug_mode True // uncomment this line for displaying text
 
@@ -67,7 +69,8 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
 
    // state elements
    FIFOF#(UnserializerMesg#(i_prec,f_prec))  inQ <- mkLFIFOF;          // store incoming stream
-   FIFOF#(UnserializerMesg#(i_prec,f_prec))  inQ2 <- mkSizedFIFOF(512); //store data with CP removed
+   NumTypeParam#(512) p = ?;
+   FIFOF#(UnserializerMesg#(i_prec,f_prec))  inQ2 <- mkSizedBRAMFIFOF(p); //store data with CP removed
    StreamFIFO#(n,n_s_sz,FPComplex#(i_prec,f_prec)) outQ;
    outQ <- mkStreamFIFO();
    Reg#(SyncCtrl) ctrl <- mkReg(SyncCtrl{isNewPacket: False, cpSize: CP0}) ;

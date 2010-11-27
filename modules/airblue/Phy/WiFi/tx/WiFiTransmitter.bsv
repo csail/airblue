@@ -36,23 +36,6 @@ import GetPut::*;
 import Clocks::*;
 import FixedPoint::*;
 
-// import AvalonSlave::*;
-// import CBusUtils::*;
-// import SPIMaster::*;
-// import Register::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import Transmitter::*;
-// import TXController::*;
-// import LibraryFunctions::*;
-// import FFTIFFT::*;
-// import FPComplex::*;
-// import MACPhyParameters::*;
-
 // Local includes
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
@@ -60,8 +43,8 @@ import FixedPoint::*;
 `include "asim/provides/avalon.bsh"
 `include "asim/provides/spi.bsh"
 `include "asim/provides/register_library.bsh"
-`include "asim/provides/c_bus_utils.bsh"
-
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_connections.bsh"
 
 
 interface WiFiTransmitter;
@@ -72,7 +55,7 @@ interface WiFiTransmitter;
 endinterface
 
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiTransmitter#(IFFT#(TXGlobalCtrl,FFTIFFTSz,TXFPIPrec,TXFPFPrec) ifft) (WiFiTransmitter);
+module [CONNECTED_MODULE] mkWiFiTransmitter#(IFFT#(TXGlobalCtrl,FFTIFFTSz,TXFPIPrec,TXFPFPrec) ifft) (WiFiTransmitter);
    // state element
    let tx_controller <- mkTXController;
    let transmitter <- mkTransmitterInstance(ifft);

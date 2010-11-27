@@ -78,7 +78,7 @@ interface WiFiReceiver;
 endinterface
 
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiReceiver#( Clock viterbiClock, Reset viterbiReset, FFT#(Bool,FFTIFFTSz,RXFPIPrec,RXFPFPrec) fft) (WiFiReceiver);
+module [CONNECTED_MODULE] mkWiFiReceiver#( Clock viterbiClock, Reset viterbiReset, FFT#(Bool,FFTIFFTSz,RXFPIPrec,RXFPFPrec) fft) (WiFiReceiver);
    // state elements
    let rx_controller <- mkRXController;
    let synchronizer <- mkSynchronizerInstance;
@@ -114,7 +114,6 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkWiFiReceiver#( Clock
      end 
  
 
-   mkCBusWideRegR(valueof(AddrSynchronizerPower),synchronizer.coarPow);
 
    // methods
    interface Put in;

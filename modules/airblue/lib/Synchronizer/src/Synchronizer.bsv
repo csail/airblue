@@ -24,7 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import CBus::*;
+
 import Complex::*;
 import FIFO::*;
 import FIFOF::*;
@@ -62,7 +62,7 @@ import Vector::*;
 //`define debug_mode True // uncomment this line for displaying text
 `define coarCorrPowThreshold         unpack(16384) // coarse power square threshold to trigger auto-correlation (remove small DC offset)
 `define coarPowSqPlateauThreshold    3             // this threshold indicate the consecutive short symbol power square should not differ more than 1/2^(this_value)*(last_power_sq) 
-`define instantiateStreamCaptureFIFO True          // instantiate stream fifo to collect SNR?
+`define instantiateStreamCaptureFIFO False          // instantiate stream fifo to collect SNR?
 
 typedef struct{
   ctrlT   control;  // estimate postion
@@ -305,7 +305,7 @@ module mkAutoCorrelator(AutoCorrelator);
 endmodule
 
 //(* synthesize *)
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEstimator);
+module  mkTimeEstimator(TimeEstimator);
    // constants
    Integer lSStart = valueOf(LSStart) - 16; // starting position of long preamble with a little bit removed to assist in getting long syncs, as we depend on finding the first peak
    Integer signalStart = valueOf(SignalStart); // starting position of the first data symbol
@@ -320,7 +320,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
    let maxFineTimePowSq = fpcmplxModSq(crossCorrelation(longPreambles,longPreambles)) >> 2; 
       
    // states
-   `ifdef instantiateStreamCaptureFIFO
+   /*`ifdef instantiateStreamCaptureFIFO
 
    Reg#(Bit#(32))   coarCorrPowReg        <- mkRegU;
    Reg#(Bit#(32))   coarPowSqReg          <- mkRegU;
@@ -334,7 +334,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
    mkCBusGet(valueof(AddrCoarCorrPowStreamFifoOffset),fifoToGet(fifofToFifo(coarCorrPowStreamfifo)));
    mkCBusGet(valueof(AddrCoarPowSqStreamFifoOffset),fifoToGet(fifofToFifo(coarPowSqStreamfifo)));
 
-   `endif
+   `endif*/
    
    // autocorrelator
    AutoCorrelator          autoCorr <- mkAutoCorrelator;
@@ -579,10 +579,10 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
                      end
                   
                   // buffer the correlation power and the power square
-                  `ifdef instantiateStreamCaptureFIFO
+                  /*`ifdef instantiateStreamCaptureFIFO
                   coarCorrPowReg <= truncate(pack(newCoarCorrPow));
                   coarPowSqReg   <= truncate(pack(newCoarPowSq));
-                  `endif
+                  `endif*/
                end
             else
                begin
@@ -614,12 +614,12 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 
    endrule
    
-   `ifdef instantiateStreamCaptureFIFO
+   /*`ifdef instantiateStreamCaptureFIFO
    rule enqStreamFIFOs(isValid(coarCorrPowRwire.wget));
       coarCorrPowStreamfifo.enq(fromMaybe(?,coarCorrPowRwire.wget));
       coarPowSqStreamfifo.enq(fromMaybe(?,coarPowSqRwire.wget));
    endrule
-   `endif
+   `endif*/
    
    rule procTimeEstST(!isProlog && timeStatePipeQ.first == STrans);
       timeStatePipeQ.deq();
@@ -666,14 +666,14 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTimeEstimator(TimeEs
 		        fineDet <= True;
                         
                         // long sync detected, output data to calculate SNR
-                        `ifdef instantiateStreamCaptureFIFO
+                        /*`ifdef instantiateStreamCaptureFIFO
                         coarCorrPowRwire.wset(coarCorrPowReg);
                         coarPowSqRwire.wset(coarPowSqReg);
-                        `endif
+                        `endif*/
                         
                         if(`DEBUG_SYNCHRONIZER == 1)
                            begin
-                              $display("LONGSYNCPASS coarCorrPow: %d coarPowSq: %d newFinePos:%d",coarCorrPowReg,coarPowSqReg,newFinePos);
+                              //$display("LONGSYNCPASS coarCorrPow: %d coarPowSq: %d newFinePos:%d",coarCorrPowReg,coarPowSqReg,newFinePos);
                            end
 		     end
 		  else
@@ -1002,7 +1002,7 @@ endinterface
 /* this sends sync events back to the AD for gain control purposes 
 * it is possible that this guy should be refactored to the FPGA project*/
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGainControlSynchronizer(GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
+module mkGainControlSynchronizer(GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
   Reg#(ControlType) ctrlLast <- mkReg(Idle);
   StatefulSynchronizer#(SyncIntPrec,SyncFractPrec) stateSynchronizer <- mkStatefulSynchronizer;
   // We might at some point want to change these to something less wasteful than two fifos.
@@ -1028,7 +1028,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkGainControlSynchroni
   interface ReadOnly coarPow = stateSynchronizer.coarPow;   
 endmodule
 
-module[ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkStatefulSynchronizer(StatefulSynchronizer#(SyncIntPrec,SyncFractPrec));
+module mkStatefulSynchronizer(StatefulSynchronizer#(SyncIntPrec,SyncFractPrec));
    //input and output buffers
    FIFO#(SynchronizerMesg#(SyncIntPrec,SyncFractPrec)) inQ <- mkLFIFO;
    FIFO#(UnserializerMesg#(SyncIntPrec,SyncFractPrec)) outQ <- mkSizedFIFO(2);

@@ -41,6 +41,8 @@ import ModuleCollect::*;
 `include "asim/provides/airblue_fft.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
 `include "asim/provides/airblue_receiver.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_connections.bsh"
 
 interface WiFiTransceiver;
    interface WiFiTransmitter transmitter;
@@ -54,7 +56,7 @@ module mkWiFiFFTIFFT (DualFFTIFFT#(Bool, TXGlobalCtrl, FFTIFFTSz,TXFPIPrec,TXFPF
 endmodule
 
 //(* synthesize *)
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiver#(Clock viterbiClock, Reset viterbiReset) (WiFiTransceiver);
+module [CONNECTED_MODULE] mkTransceiver#(Clock viterbiClock, Reset viterbiReset) (WiFiTransceiver);
    let wifiFFT <- mkWiFiFFTIFFT;
    let wifiTransmitter <- mkWiFiTransmitter(wifiFFT.ifft);
    let wifiReceiver    <- mkWiFiReceiver(viterbiClock, viterbiReset, wifiFFT.fft);

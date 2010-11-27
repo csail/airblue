@@ -4,19 +4,14 @@
 
 %AWB_START
 
-%name Airblue Phy Only PacketGen
+%name Airblue Phy Only RRR PacketGen
 %desc Generate test packets for Phy only design
 %provides airblue_phy_packet_gen
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC PacketGen.bsv
-
-%generated -t BA mkPacketCheck.ba
-%generated -t BA mkPacketGen.ba
-
-%generated -t VERILOG mkPacketCheck.v
-%generated -t VERILOG mkPacketGen.v
+%sources -t BSV -v PUBLIC PacketGenRRR.bsv
+%sources -t RRR -v PUBLIC PacketGenRRR.rrr
 
 %param DEBUG_PACKETGEN 0 "Enable debug messages with 1"
  

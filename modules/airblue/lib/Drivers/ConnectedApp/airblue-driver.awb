@@ -13,3 +13,5 @@
 
 %param SYNTH_BOUNDARY mkConnectedApplication "name of synthesis boundary"
 
+%param AIRBLUE_CLOCK_FREQUENCY 30 "Airblue Pipeline Frequency"
+

@@ -38,91 +38,40 @@ import Clocks::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_clocks.bsh"
+`include "asim/provides/soft_connections.bsh"
 `include "asim/provides/airblue_receiver.bsh"
-`include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_phy_packet_gen.bsh"
 `include "asim/provides/airblue_phy.bsh"
-`include "asim/dict/AIRBLUE_REGISTER_MAP.bsh"
 
-interface TransceiverASICWires;
-  // Put things in here that go to the top level (not CBus)
-  interface Get#(DACMesg#(TXFPIPrec,TXFPFPrec)) basebandOut;
-  interface Put#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) basebandIn;
-endinterface
-
-interface TransceiverFPGA;
-  interface CBus#(AvalonAddressWidth,AvalonDataWidth) cbus_ifc;
-  interface Get#(DACMesg#(TXFPIPrec,TXFPFPrec)) basebandOut;
-  interface Put#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) basebandIn;
-endinterface
-
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGenFPGAMonad#(Clock viterbiClock, Reset viterbiReset) (TransceiverASICWires);
+module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    Clock clock <- exposeCurrentClock;
    Reset reset <- exposeCurrentReset;
 
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrSynchronizerTimeOut = CRAddr{a: fromInteger(valueof(AddrSynchronizerTimeOut)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrSynchronizerGainHoldStart = CRAddr{a: fromInteger(valueof(AddrSynchronizerGainHoldStart)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrSynchronizerGainStart = CRAddr{a: fromInteger(valueof(AddrSynchronizerGainStart)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrSynchronizerLongSync = CRAddr{a: fromInteger(valueof(AddrSynchronizerLongSync)) , o: 0};
-   CRAddr#(AvalonAddressWidth,AvalonDataWidth) addrRXControlAbort = CRAddr{a: fromInteger(valueof(AddrRXControlAbort)) , o: 0};   
+   Connection_Send#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Send("AnalogTransmit");
 
-   // Fix me at some point
-   Reg#(Bit#(32)) gainStart <- mkCBRegR(addrSynchronizerGainStart,0);
-   Reg#(Bit#(32)) gholdStart<- mkCBRegR(addrSynchronizerGainHoldStart,0);
-   Reg#(Bit#(32)) timeOut   <- mkCBRegR(addrSynchronizerTimeOut,0);
-   Reg#(Bit#(32)) longSync <- mkCBRegR(addrSynchronizerLongSync,0);
-   Reg#(Bit#(32)) abort <- mkCBRegR(addrRXControlAbort,0);
+   Connection_Receive#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Receive("AnalogReceive");
 
-   WiFiTransceiver transceiver <- mkTransceiver(viterbiClock,viterbiReset);
+   //UserClock viterbi <- mkSoftClock(60);
+
+   WiFiTransceiver transceiver <- mkTransceiver(clock,reset);
 
    // packet gen crap
    PacketGen packetGen <- mkPacketGen;
    PacketCheck packetCheck <- mkPacketCheck;
 
-
-   // packet Gen externals
-   mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_ENABLE_PACKET_GEN,packetGen.enablePacketGen);
-   mkCBusWideRegR(valueof(AddrPacketsTX),packetGen.packetsTX);
-   mkCBusWideRegRW(valueof(AddrMinPacketLength),packetGen.minPacketLength);
-   mkCBusWideRegRW(valueof(AddrMaxPacketLength),packetGen.maxPacketLength);
-   mkCBusWideRegRW(valueof(AddrPacketLengthMask),packetGen.packetLengthMask);
-   mkCBusWideRegRW(valueof(AddrPacketDelay),packetGen.packetDelay);
-   mkCBusWideRegRW(`AIRBLUE_REGISTER_MAP_ADDR_RATE,packetGen.rate);
-   mkCBusWideRegR(valueof(AddrCycleCountTX),packetGen.cycleCount);
-
-   // packet check externals
-   mkCBusWideRegR(`AIRBLUE_REGISTER_MAP_ADDR_PACKETS_RX,packetCheck.packetsRX);
-   mkCBusWideRegR(valueof(AddrPacketsRXCorrect),packetCheck.packetsRXCorrect);
-   mkCBusWideRegR(valueof(AddrGetBytesRX),packetCheck.bytesRX);
-   mkCBusWideRegR(valueof(AddrGetBytesRXCorrect),packetCheck.bytesRXCorrect);
-   mkCBusWideRegR(`AIRBLUE_REGISTER_MAP_ADDR_BER,packetCheck.ber);
-
-
    // hook the Synchronizer to feedback points  
    rule synchronizerFeedback;
      ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
-     // maybe send this to physical layer
-     // update ctrl counts
-     case (ctrl) 
-      GainStart:  gainStart <= gainStart + 1;
-      GHoldStart: gholdStart <= gholdStart + 1;
-      TimeOut:    timeOut <= timeOut + 1;
-      LongSync:   longSync <= longSync + 1;
-     endcase
-
    endrule
    
    // connect agc/rx ctrl
    rule packetFeedback;
      RXExternalFeedback feedback <- transceiver.receiver.packetFeedback.get;
-     // possibly feed this one as well
-     case(feedback)
-       Abort: begin 
-                abort <= abort + 1;
-              end
-     endcase
    endrule
+
 
    // Build up CReg interface   
    // Receiver Side   
@@ -146,6 +95,15 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
    // Transmitter Side
       
 
+
+   mkConnection(transceiver.transmitter.out,analogTX);
+
+
+   
+   mkConnection(analogRX,transceiver.receiver.in); 
+
+
+
    rule txVecSend;
      // spread the tx vec love
       TXVector txVec <- packetGen.txVector.get;
@@ -158,34 +116,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkTransceiverPacketGen
    
    mkConnection(transceiver.transmitter.txData,packetGen.txData.get);   
 
-   interface basebandIn = transceiver.receiver.in;
-   interface basebandOut = transceiver.transmitter.out;
-
 endmodule
 
-(* synthesize *)
-module  mkTransceiverPacketGenFPGA#(Clock viterbiClock, Reset viterbiReset) (TransceiverFPGA);
-   Clock asicClock <- exposeCurrentClock;
-   Reset asicReset <- exposeCurrentReset;
-   // do we want to line up the edges?
-   // proabably need to set wait request during reset hold...
-   Reset viterbiResetNew <- mkAsyncReset(2,asicReset,viterbiClock);
 
-   let trans <- mkTransceiverPacketGenFPGAReset(viterbiClock, viterbiResetNew);
-   return trans;
-endmodule
-
-// We need a module to insert reset synchronizers
-module [Module]  mkTransceiverPacketGenFPGAReset#(Clock viterbiClock, Reset viterbiReset) (TransceiverFPGA);
-   Clock asicClock <- exposeCurrentClock;
-   Reset asicReset <- exposeCurrentReset;
-
-   // Build up CReg interface   
-   let ifc <- exposeCBusIFC(mkTransceiverPacketGenFPGAMonad(viterbiClock,viterbiReset));
-
-
-  interface cbus_ifc = ifc.cbus_ifc;
-  interface basebandOut = ifc.device_ifc.basebandOut;
-  interface basebandIn = ifc.device_ifc.basebandIn;
-endmodule
 

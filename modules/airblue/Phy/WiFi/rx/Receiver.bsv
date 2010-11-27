@@ -24,26 +24,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import CBus::*;
 import Connectable::*;
 import GetPut::*;
-
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import Synchronizer::*;
-// import Unserializer::*;
-// import FFTIFFT::*;
-// import ChannelEstimator::*;
-// import Demapper::*;
-// import Interleaver::*;
-// import Decoder::*;
-// import Descrambler::*;
-// import LibraryFunctions::*;
-// import AvalonSlave::*;
-// import CBusUtils::*;
 
 // Local includes
 `include "asim/provides/airblue_types.bsh"
@@ -55,13 +37,13 @@ import GetPut::*;
 `include "asim/provides/airblue_unserializer.bsh"
 `include "asim/provides/airblue_channel_estimator.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
-`include "asim/provides/avalon.bsh"
-`include "asim/provides/c_bus_utils.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "asim/provides/soft_connections.bsh"
 
-module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkSynchronizerInstance
+
+module [CONNECTED_MODULE] mkSynchronizerInstance
    (GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
    GainControlSynchronizer#(SyncIntPrec,SyncFractPrec) block <- mkGainControlSynchronizer;
-   mkCBusWideRegR(valueof(AddrSynchronizerState), block.controlState);
    return block;
 endmodule
 
@@ -72,13 +54,6 @@ module mkUnserializerInstance
    return block;
 endmodule
 
-
-//(* synthesize *)
-//module [Module] mkFFTInstance
-//   (FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec));
-//   FFT#(RXGlobalCtrl,FFTIFFTSz,RXFPIPrec,RXFPFPrec) block <- mkFFT;
-//   return block;
-//endmodule
 
 (* synthesize *)
 module mkChannelEstimatorInstance

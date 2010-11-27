@@ -57,9 +57,9 @@ typedef struct{
    Rate            rate; 
    Bit#(3)         power;
    Bool            has_trailer; // add trailer (postample + repeated header)
-   MACAddr         src_addr;
-   MACAddr         dst_addr;
-   UID             uid;
+   //MACAddr         src_addr;
+   //MACAddr         dst_addr;
+   //UID             uid;
 } HeaderInfo deriving (Eq, Bits);
 
 typedef struct{
@@ -161,9 +161,9 @@ function Feedback#(RXVector,RXVectorDecodeError) decodeHeader(Header header);
    vec.header.length      = header[16:5]; 
    vec.header.has_trailer = ?;
    vec.header.power       = ?;
-   vec.header.src_addr    = ?;
-   vec.header.dst_addr    = ?;
-   vec.header.uid         = ?;
+   //vec.header.src_addr    = ?;
+   //vec.header.dst_addr    = ?;
+   //vec.header.uid         = ?;
    vec.is_trailer         = unpack(header[4:4]);
    let parity_err         = header[17:17] != getParity(header[16:0]); // parity check
    let rate_err           = !isValid(getRate(header));

@@ -5,6 +5,7 @@
 
 
 module [CONNECTED_MODULE] mkConnectedApplication (); 
-  let hw <- mkHWOnlyApplication;
+  //UserClock mainClock <- mkSoftClock(`AIRBLUE_CLOCK_FREQUENCY);  
+  let hw <- mkHWOnlyApplication();
   return hw;
 endmodule
