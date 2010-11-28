@@ -35,9 +35,8 @@ airblue_types=Airblue types (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_shared=Airblue Shared Libraries
 airblue_phy=WiFi Phy Transceiver
-airblue_phy_packet_gen=Airblue Phy Only PacketGen
+airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_channel=Airblue Clear Channel
-airblue_host_control=CBus Vector RRR Host Control
 rf_frontend=GCT RF Frontend Control
 analog_digital=Huntsman AD
 digital_scaler=Digital Scaler
@@ -188,10 +187,6 @@ airblue_fft=Airblue Folded FFT/IFFT
 File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
 Packagehint=bsv-libraries
 
-[Airblue Phy Only PacketGen]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen.awb
-Packagehint=ofdm
-
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
@@ -234,10 +229,6 @@ application_env=Soft Services Hybrid Application Environment
 [ReversalBufferBRAM]
 File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer_bram.awb
 Packagehint=bsv-libraries
-
-[CBus Vector RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
-Packagehint=ofdm
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
@@ -311,3 +302,10 @@ Packagehint=leap
 [Airblue Clear Channel]
 File=modules/airblue/lib/Channel/airblue_clear_channel.awb
 Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
+Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketGen/Params]
+DEBUG_PACKETGEN=1

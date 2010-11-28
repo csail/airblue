@@ -27,8 +27,8 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=platforms
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -256,13 +256,9 @@ MAGIC_DESCRAMBLE_SEED=0
 airblue_host_control=CBus Vector RRR Host Control
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy Only PacketGen
+airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-
-[Airblue Phy Only PacketGen]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen.awb
-Packagehint=ofdm
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -317,12 +313,16 @@ DEBUG_CHANNEL_ESTIMATOR=1
 [Airblue Demapper/Params]
 DEBUG_DEMAPPER=1
 
-[Airblue Phy Only PacketGen/Params]
-DEBUG_PACKETGEN=1
-
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
 Packagehint=ofdm
 
 [WiFi Phy Only/Params]
 DEBUG_TRANSCEIVER=1
+
+[Airblue Phy Only RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
+Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketGen/Params]
+DEBUG_PACKETGEN=1
