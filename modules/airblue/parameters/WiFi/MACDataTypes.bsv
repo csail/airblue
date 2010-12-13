@@ -84,7 +84,12 @@ typedef enum {
 
 //25 for 25 Mhz clock
 typedef 25 TicksPerMicrosecond;
+// 'b1000 0010 0110 0000 1000 1110 1101 1011 1 CRCPoly;
+// 'b 0000 0100 1100 0001 0001 1101 1011 0111 CRCPoly;
+
 typedef 'b100000100110000010001110110110111 CRCPoly;
+// 'b1100 0111 0000 0100 1101 1101 0111 1011 CRCPolyResult;
+// 'hc704dd7b 
 typedef 'b11000111000001001101110101111011 CRCPolyResult;
 typedef 1 ByPassDataConf; // DataConf is required as per Clause 12.3.5.3
                           // However if you want to bypass it, 

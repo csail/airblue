@@ -317,8 +317,8 @@ endfunction // FixedPoint
 /////////////////////////////////////////////////////////////////////////////////////////
 // Begin of Modules
 
-module [Module] mkCORDIC#(Module#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
-              (CORDIC#(vfsz,afsz));
+module [m] mkCORDIC#(m#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
+              (CORDIC#(vfsz,afsz)) provisos (IsModule#(m,mMod));
 
    Pipeline#(CORDICData#(vfsz,afsz)) p <- mkP(); 
   
@@ -340,7 +340,7 @@ module [Module] mkCORDIC#(Module#(Pipeline#(CORDICData#(vfsz,afsz))) mkP)
 endmodule
 
 // for making cordic pipeline
-module [Module] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afsz))
+module mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afsz))
   provisos (Add#(2, xxA, afsz));
 
    CORDIC#(vfsz,afsz) cordic <- mkCORDIC(mkPipeline_Sync(numStages, step, executeStage));
@@ -357,7 +357,7 @@ module [Module] mkCORDIC_Pipe#(Integer numStages, Integer step)(CORDIC#(vfsz,afs
 endmodule
 
 // for making CosAndSin pipeline
-module [Module] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(visz, vfsz, aisz, afsz))
+module mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(visz, vfsz, aisz, afsz))
   provisos (Add#(2,xxA,afsz),
             Add#(1,xxB,visz));
 
@@ -375,7 +375,7 @@ module [Module] mkCosAndSin_Pipe#(Integer numStages, Integer step)(CosAndSin#(vi
 endmodule
 
 // for making ArcTan  pipeline
-module [Module] mkArcTan_Pipe#(Integer numStages, Integer step)(ArcTan#(visz,vfsz,aisz,afsz))
+module mkArcTan_Pipe#(Integer numStages, Integer step)(ArcTan#(visz,vfsz,aisz,afsz))
   provisos (Add#(2,xxA,afsz),
             Add#(1,xxB,visz),
             Add#(xxB,vfsz,rf),

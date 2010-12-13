@@ -77,10 +77,6 @@ module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    // Receiver Side   
    rule rxData;
       let data <- transceiver.receiver.outData.get();
-      if(`DEBUG_TRANSCEIVER == 1)
-         begin
-           $display("Received: %h", data);
-         end
       packetCheck.rxData.put(data);
    endrule
 

@@ -81,9 +81,10 @@ endmodule
 
 
 // normal pipeline
-module [Module] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
-				 function Module#(Pipeline2#(a)) mkP)
-  (Pipeline2#(a)) provisos (Bits#(a, asz));
+module [m] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
+				 function m#(Pipeline2#(a)) mkP)
+  (Pipeline2#(a)) provisos (Bits#(a, asz),
+   IsModule#(m, mMod));
 
    // state elements
    Vector#(TExp#(idx_sz), Pipeline2#(a)) stageFUs = newVector;
@@ -102,9 +103,9 @@ module [Module] mkPipeline2_Norm#(Bit#(idx_sz) maxStage,
 endmodule // mkP
 
 // circular pipeline, assume stageFU.out < stageFU.in or no conflict   
-module [Module] mkPipeline2_Circ#(Bit#(idx_sz) maxStage,
-				 function Module#(Pipeline2#(a)) mkP)
-  (Pipeline2#(a)) provisos (Bits#(a, asz));
+module [m] mkPipeline2_Circ#(Bit#(idx_sz) maxStage,
+				 function m#(Pipeline2#(a)) mkP)
+  (Pipeline2#(a)) provisos (Bits#(a, asz),IsModule#(m,mMod));
    
    // instantiate sharable functional unit
    //FIFO#(a) outQ <- mkSizedFIFO(2);
@@ -165,7 +166,7 @@ endmodule // mkP
 
 
 // time multiplex pipline
-module [Module] mkPipeline2_Time#(function Module#(Pipeline2#(Vector#(psz,a))) mkP)
+module [m] mkPipeline2_Time#(function m#(Pipeline2#(Vector#(psz,a))) mkP)
   (Pipeline2#(Vector#(sz,a)))
    provisos (Bits#(a, asz),
 	     Div#(sz,psz,noStages), // div now change to return ceiling 
@@ -173,7 +174,8 @@ module [Module] mkPipeline2_Time#(function Module#(Pipeline2#(Vector#(psz,a))) m
 	     Mul#(noStages,psz,total_sz),
 	     Add#(sz,ext_sz,total_sz),
 	     Bits#(Vector#(total_sz,a),xxA),
-	     Bits#(Vector#(noStages,Vector#(psz,a)),xxA));
+	     Bits#(Vector#(noStages,Vector#(psz,a)),xxA),
+             IsModule#(m,mMod));
 
    // constants
    Integer maxStageInt = valueOf(noStages)-1;
@@ -240,7 +242,7 @@ endmodule // mkP
 // it.
 // This is where the vertical pipeline folding occurs.
 // This pipeline is synchronous, and may drop data.
-module [Module] mkPipeline2_TimeControl#(function Module#(Pipeline2#(Tuple3#(ctrl_t,Bit#(stage_idx),Vector#(psz,a)))) mkP)
+module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(stage_idx),Vector#(psz,a)))) mkP)
   (Pipeline2#(Tuple2#(ctrl_t,Vector#(sz,a))))
    provisos (Bits#(a, asz),
              Bits#(ctrl_t,ctrl_t_sz),
@@ -250,7 +252,8 @@ module [Module] mkPipeline2_TimeControl#(function Module#(Pipeline2#(Tuple3#(ctr
 	     Add#(sz,ext_sz,total_sz),
              Add#(noStagesMinusOne, 1, noStages),
 	     Bits#(Vector#(total_sz,a),xxA),
-	     Bits#(Vector#(noStages,Vector#(psz,a)),xxA));
+	     Bits#(Vector#(noStages,Vector#(psz,a)),xxA),
+             IsModule#(m,mMod));
 
    // constants
    Integer maxStageInt = valueOf(noStages)-1;

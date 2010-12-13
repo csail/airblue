@@ -3,7 +3,7 @@
 SaveParameters=0
 DefaultBenchmark=
 Version=2.1
-Type=HAsim
+Type=Leap
 File=mac_crc_test
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
@@ -12,11 +12,11 @@ DefaultRunOpts=
 
 [Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=hasim
+Packagehint=leap
 
 [Platform Services]
 File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
-Packagehint=hasim
+Packagehint=leap
 
 [Model]
 DefaultAttributes=airblue
@@ -24,9 +24,7 @@ model=HW/SW Hybrid Pipeline Build
 
 [FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=platforms
-
-
+Packagehint=leap
 
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
@@ -80,7 +78,7 @@ Packagehint=ofdm
 
 [Soft Services Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=platforms
+Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Platform Services
@@ -89,13 +87,16 @@ soft_services=Soft Services
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=hasim
+Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/project/project-pipeline.awb
-Packagehint=platforms
+Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Hybrid Project Common Utilities
 fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
+
+[Airblue MAC CRC/Params]
+DEBUG_MACCRC=1

@@ -224,10 +224,6 @@ Packagehint=ofdm
 File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
-[CBus Vector RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/CBusVector/cbus_vector_host_control.awb
-Packagehint=ofdm
-
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Airblue Services
 connected_application=Airblue application
@@ -235,7 +231,7 @@ soft_services=Soft Services
 
 [Soft Services Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=platforms
+Packagehint=leap
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
@@ -253,10 +249,9 @@ DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
 
 [WiFi Phy Only/Requires]
-airblue_host_control=CBus Vector RRR Host Control
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
+airblue_phy_packet_gen=Airblue Phy RX RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
@@ -320,9 +315,9 @@ Packagehint=ofdm
 [WiFi Phy Only/Params]
 DEBUG_TRANSCEIVER=1
 
-[Airblue Phy Only RRR PacketGen]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
+[Airblue Phy RX RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
 Packagehint=ofdm
 
-[Airblue Phy Only RRR PacketGen/Params]
-DEBUG_PACKETGEN=1
+[Airblue Synchronizer/Params]
+DEBUG_SYNCHRONIZER=1
