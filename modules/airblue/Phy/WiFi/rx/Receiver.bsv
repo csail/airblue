@@ -55,7 +55,7 @@ module mkUnserializerInstance
 endmodule
 
 
-(* synthesize *)
+
 module mkChannelEstimatorInstance
    (ChannelEstimator#(Bool,CEstInDataSz,
 		      CEstOutDataSz,RXFPIPrec,RXFPFPrec));

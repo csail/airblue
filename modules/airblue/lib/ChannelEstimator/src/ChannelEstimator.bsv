@@ -114,7 +114,7 @@ endfunction
 /////////////////////////////////////////////////////////////////////////
 // Implementation of PathMetricUnit
 
-module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool) 
+module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool) 
                                                resetPilot(ctrl_t ctrl),
                                             function Tuple2#(Symbol#(CEstPNo,CEstIPrec,CEstFPrec),
                                                              Symbol#(CEstOutN,CEstIPrec,CEstFPrec)) 
