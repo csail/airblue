@@ -1148,3 +1148,23 @@ Directory config/pm/ofdm/airblue
 
 
 Fixed RX pipeline apm
+
+----------
+kfleming    Date: Mon Dec 20 22:49:36 EST 2010  CSN: CSN-ofdm-282
+                  Tue Dec 21 03:49:36 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_rx_exe.apm Locally Modified          279 
+
+Directory modules/airblue/lib/Drivers/RXTraceSimulation
+ airblue-driver-rx-simulation.cpp Locally Modified          278 
+ airblue-driver-rx-simulation.h Locally Modified          278 
+
+Directory modules/airblue/lib/PacketGen/src/PacketOutput
+ PacketGenRX.h             Locally Modified          278 
+ airblue_phy_packet_gen_rx.awb Locally Modified          278 
+ PacketGenRX.cpp           Locally Modified          278 
+
+
+Re-architected packet processing to the main packet thread.

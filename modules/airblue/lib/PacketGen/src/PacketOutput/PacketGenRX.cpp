@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <glib.h>
 
 #include "asim/rrr/service_ids.h"
 #include "asim/provides/airblue_phy_packet_gen.h"
@@ -41,6 +42,11 @@ PACKETCHECKRRR_SERVER_CLASS::Init(
     PLATFORMS_MODULE p)
 {
     parent = p;
+    // Glib needs this or it complains
+    g_thread_init(NULL);
+    // Set up my FIFOs
+    headerQ = g_async_queue_new();
+    dataQ   = g_async_queue_new();
 }
 
 // uninit
@@ -49,6 +55,8 @@ PACKETCHECKRRR_SERVER_CLASS::Uninit()
 {
     Cleanup();
     PLATFORMS_MODULE_CLASS::Uninit();
+    g_async_queue_unref(headerQ);
+    g_async_queue_unref(dataQ);
 }
 
 // cleanup
@@ -59,40 +67,54 @@ PACKETCHECKRRR_SERVER_CLASS::Cleanup()
 }
 
 // poll
+
 bool
 PACKETCHECKRRR_SERVER_CLASS::Poll()
 {
   return false;
 }
 
+// This times out after 5 minutes
+UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLength()
+{
+  GTimeVal time;
+  g_get_current_time(&time);
+  // Second arg is in microseconds
+  g_time_val_add(&time, 5*60*1000000);
+
+  return (UINT32*)g_async_queue_timed_pop(headerQ,&time);
+}
+
+UINT8 *PACKETCHECKRRR_SERVER_CLASS::getNextPacket()
+{
+  return (UINT8*)g_async_queue_pop(dataQ);
+}
+
 // F2HTwoWayMsg
 void
 PACKETCHECKRRR_SERVER_CLASS::SendPacket(UINT8 command, UINT32 payload)
 {
+  UINT32 *lengthPtr;
   switch(command) {
+
     case HEADER:
-      length = UINT16(payload);
+      length = payload;
       dataReceived = 0;
-      assert(length < sizeof(packet));
-      printf("Received header %d\n", (UINT8) payload); 
+      packet = (UINT8*) malloc(8192);
+      assert(length < 8192);
+      printf("Received header %d\n", (UINT8) payload);
+      lengthPtr = (UINT32*) malloc(sizeof(UINT32));
+      *lengthPtr = length;
+      g_async_queue_push(headerQ,lengthPtr);       
       break;
+
     case DATA:
       packet[dataReceived] = (UINT8) payload;
       dataReceived++;
-      printf("Received %x\n", (UINT8) payload); 
-      //End of packet - do some stuff.
-      if(dataReceived == length) {
-        int crc = crc32 (packet ,length-4);
-        int expectedcrc = (((UINT32)packet[length-4]) << 24) + 
-	                  (((UINT32)packet[length-3]) << 16) + 
-	                  (((UINT32)packet[length-2]) << 8) + 
-	                  (((UINT32)packet[length-1]) << 0); 
-        if(crc == expectedcrc) {
-          printf("Received matching CRC %x\n", crc);
-	} else {
-          printf("Received non-matching CRC %x\n", crc);
-	}
-        
+      printf("Received data %d\n", (UINT8) payload);
+      if(length == dataReceived) {
+	g_async_queue_push(dataQ,packet);
+        packet =  NULL;     
       }
       break;
   }

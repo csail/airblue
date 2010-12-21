@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
+#include <glib.h>
 
 #include "asim/provides/low_level_platform_interface.h"
 #include "asim/provides/rrr.h"
@@ -29,10 +30,11 @@ class PACKETCHECKRRR_SERVER_CLASS: public RRR_SERVER_CLASS,
     FILE *outputFile;
     UINT32 length;
     UINT32 dataReceived;
-    UINT8  packet[8192]; // Large buffer for packets
+    UINT8 *packet; // Large buffer for packets
     // server stub
     RRR_SERVER_STUB serverStub;
-    
+    GAsyncQueue *headerQ;
+    GAsyncQueue *dataQ;
 
   public:
     PACKETCHECKRRR_SERVER_CLASS();
@@ -46,6 +48,9 @@ class PACKETCHECKRRR_SERVER_CLASS: public RRR_SERVER_CLASS,
     void Uninit();
     void Cleanup();
     bool Poll();
+
+    UINT32 *getNextLength();
+    UINT8  *getNextPacket();
 
     //
     // RRR service methods

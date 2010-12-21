@@ -321,3 +321,6 @@ Packagehint=ofdm
 
 [Airblue Synchronizer/Params]
 DEBUG_SYNCHRONIZER=1
+
+[HW/SW Hybrid Pipeline Build/Params]
+WAIT_FOR_HARDWARE=0

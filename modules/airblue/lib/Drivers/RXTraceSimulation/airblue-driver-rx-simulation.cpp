@@ -1,12 +1,54 @@
 #include <stdio.h>
+#include <pthread.h>
 
 #include "asim/provides/virtual_platform.h"
 #include "asim/provides/connected_application.h"
 #include "asim/provides/airblue_driver_application.h"
 #include "asim/rrr/client_stub_AIRBLUERFSIM.h"
+#include "asim/provides/airblue_phy_packet_gen.h"
 
 using namespace std;
  
+// This thread will suck in data from the various instrumentation
+// points and process it asynchronously.  DO NOT USE RRR! THIS WILL
+// BRING DEATH!!!
+
+void * ProcessPackets(void *args) {
+  PACKETCHECKRRR_SERVER packetCheck = PACKETCHECKRRR_SERVER_CLASS::GetInstance();
+
+  UINT32 *lengthPtr = NULL;
+  UINT8 *packetPtr = NULL;
+
+  // NULL means we timed out..
+  while( (lengthPtr = packetCheck->getNextLength()) != NULL) {
+    //get packet data
+    packetPtr = packetCheck->getNextPacket();
+    UINT32 length = *lengthPtr;
+    for(int i = 0; i < length; i++) { 
+      printf("Received %x\n", packetPtr[i]); 
+      //End of packet - do some stuff.
+    }
+     
+    UINT32 crc = crc32 (packetPtr ,length-4);
+    UINT32 expectedcrc = (((UINT32)packetPtr[length-4]) << 24) + 
+	             (((UINT32)packetPtr[length-3]) << 16) + 
+	             (((UINT32)packetPtr[length-2]) << 8) + 
+	             (((UINT32)packetPtr[length-1]) << 0); 
+    if(crc == expectedcrc) {
+      printf("Received matching CRC %x\n", crc);
+    } else {
+      printf("Received non-matching CRC %x\n", crc);
+    }
+
+    // Deallocate stuff
+    free(lengthPtr);
+    free(packetPtr);   
+  }
+  printf("Process Packet thread terminating\n");
+  return NULL;
+}
+
+
 // constructor
 AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
    DRIVER_MODULE_CLASS(p)
@@ -44,6 +86,9 @@ AIRBLUE_DRIVER_CLASS::Main()
 
   printf("Past Init\n");
 
+  // spawn packet processing thread
+  pthread_create(&processPacketsThread, NULL, &ProcessPackets, NULL);
+
   // We expect a 16.16 complex trace (little endian)
   inputFile = fopen("input.trace","r");
   if(inputFile == NULL) {
@@ -62,7 +107,10 @@ AIRBLUE_DRIVER_CLASS::Main()
       clientStub->IQStream(sample.whole);
     }
   } 
-   
+
+  // Wait for the packet processing thread to stall out
+  pthread_join(processPacketsThread, NULL);
+  printf("returning control to awb\n");
 }
 
 // register driver

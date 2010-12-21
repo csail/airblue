@@ -17,6 +17,9 @@
 %sources -t H -v PUBLIC  crc.h
 %sources -t CPP -v PUBLIC  crc.cpp
 
+%library libglib-2.0.a
+%library libgthread-2.0.a
+%library librt.a
 
 %param DEBUG_PACKETGEN 0 "Enable debug messages with 1"
  
