@@ -107,7 +107,7 @@ AIRBLUE_DRIVER_CLASS::Main()
       clientStub->IQStream(sample.whole);
     }
   } 
-
+  printf("Finished sending trace file\n");
   // Wait for the packet processing thread to stall out
   pthread_join(processPacketsThread, NULL);
   printf("returning control to awb\n");

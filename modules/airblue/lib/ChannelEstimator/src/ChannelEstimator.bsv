@@ -164,7 +164,7 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    Reg#(DemapperMesg#(ctrl_t,CEstOutN,CEstIPrec,CEstFPrec))                             out_reg <- mkConfigRegU;
                                                
    FIFO#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))                               mag_q <- mkSizedFIFO(2+`cordicIters/`cordicItersPerStage); // 2 to resemble angle_q LFIFO's latency  and extra cordicStages for cos_and_sin latency
-   FIFO#(FixedPoint#(CEstIPrec,CEstFPrec))                                              angle_q <- mkLFIFO;
+   FIFO#(FixedPoint#(CEstIPrec,CEstFPrec))                                              angle_q <- mkSizedFIFO(2);
    FIFO#(FPComplex#(CEstIPrec,CEstFPrec))                                        angle_adjust_q <- mkLFIFO;
    FIFO#(FPComplex#(CEstIPrec,CEstFPrec))                                        mag_adjusted_q <- mkLFIFO;
    
