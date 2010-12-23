@@ -4,6 +4,7 @@
 
 %provides airblue_driver_application
 %requires airblue_environment
+%requires airblue_soft_mac
 
 
 %public  airblue-driver-rx-simulation.h

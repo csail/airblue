@@ -243,6 +243,7 @@ Packagehint=ofdm
 
 [Airblue RX Simulation Driver/Requires]
 airblue_environment=Airblue Environment
+airblue_soft_mac=Airblue Soft MAC
 
 [WiFi Receiver Pipeline/Params]
 MAGIC_DESCRAMBLE_SEED=0
@@ -314,3 +315,7 @@ Packagehint=ofdm
 
 [HW/SW Hybrid Pipeline Build/Params]
 WAIT_FOR_HARDWARE=0
+
+[Airblue Soft MAC]
+File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
+Packagehint=ofdm

@@ -1197,3 +1197,17 @@ Directory modules/airblue/lib/Drivers/RXTraceSimulation
 
 
 Added a 802.11 MAC parser in software, and integrated this into the software side parser.
+
+----------
+kfleming    Date: Thu Dec 23 16:56:01 EST 2010  CSN: CSN-ofdm-285
+                  Thu Dec 23 21:56:01 UTC 2010
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_rx_exe.apm Locally Modified          284 
+
+Directory modules/airblue/lib/Drivers/RXTraceSimulation
+ airblue-driver-rx-simulation.awb Locally Modified          284 
+
+
+Fixed bugs in main line mac printing.
