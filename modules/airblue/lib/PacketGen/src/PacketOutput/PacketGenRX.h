@@ -50,6 +50,7 @@ class PACKETCHECKRRR_SERVER_CLASS: public RRR_SERVER_CLASS,
     bool Poll();
 
     UINT32 *getNextLength();
+    UINT32 *getNextLengthTimed(int seconds);
     UINT8  *getNextPacket();
 
     //

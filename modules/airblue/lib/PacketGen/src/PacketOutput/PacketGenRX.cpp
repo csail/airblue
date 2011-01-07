@@ -75,14 +75,19 @@ PACKETCHECKRRR_SERVER_CLASS::Poll()
 }
 
 // This times out after 5 minutes
-UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLength()
+UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLengthTimed( int seconds )
 {
   GTimeVal time;
   g_get_current_time(&time);
   // Second arg is in microseconds
-  g_time_val_add(&time, 5*60*1000000);
+  g_time_val_add(&time, seconds*1000000);
 
   return (UINT32*)g_async_queue_timed_pop(headerQ,&time);
+}
+
+UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLength()
+{
+  return (UINT32*)g_async_queue_pop(headerQ);
 }
 
 UINT8 *PACKETCHECKRRR_SERVER_CLASS::getNextPacket()

@@ -24,7 +24,7 @@ void * ProcessPackets(void *args) {
   KisBuiltinDissector *dissector = new KisBuiltinDissector();
 
   // NULL means we timed out..
-  while( (lengthPtr = packetCheck->getNextLength()) != NULL) {
+  while( (lengthPtr = packetCheck->getNextLengthTimed(120)) != NULL) {
     //get packet data
     packetPtr = packetCheck->getNextPacket();
     UINT32 length = *lengthPtr;
