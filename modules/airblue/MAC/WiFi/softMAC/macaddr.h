@@ -205,9 +205,9 @@ struct mac_addr {
     }
 
     // MAC less-than for STL sorts...
-    inline bool operator< (const mac_addr& op) const {
-        return ((longmac & longmask) < (op.longmac & longmask));
-    }
+  //    inline bool operator< (const mac_addr& op) const {
+  //      return ((longmac & longmask) < (op.longmac & longmask));
+  //  }
 
     mac_addr& operator= (const mac_addr& op) {
         longmac = op.longmac;
@@ -273,8 +273,8 @@ struct mac_addr {
         return tempstr;
     }
 
+  friend bool operator<(const mac_addr& , const mac_addr&);
 };
-
 
 // A templated container for storing groups of masked mac addresses.  A stl-map 
 // will work for single macs, but we need this for smart mask matching on 

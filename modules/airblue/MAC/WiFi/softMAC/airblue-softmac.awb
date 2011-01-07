@@ -14,5 +14,8 @@
 %public  packetsignatures.h
 %private packetdissectors.cpp
 %private util.cpp
+%private macaddr.cpp
+
+
 
 
