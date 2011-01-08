@@ -1,0 +1,12 @@
+
+%name Airblue Null Driver
+%desc A driver which doesn't do anything.  Useful for cycle accurate sim.
+
+%provides airblue_driver_application
+%requires airblue_environment
+
+
+%public  airblue-driver-rx-cycle-accurate-simulation.h
+%private airblue-driver-rx-cycle-accurate-simulation.cpp
+
+
