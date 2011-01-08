@@ -1,0 +1,21 @@
+%name Airblue Service (Cycle-accurate Sim)
+%desc Airblue Service (Cycle-accurate Sim)
+
+%provides airblue_service
+
+%attributes hybrid connected
+
+%public airblue-service-cycle-accurate-simulation.bsv
+
+
+
+%sources -t BDPI_C -v PRIVATE airblue-service-cycle-accurate-simulation-bdpi.c
+
+%generated -t BA input_sample.ba
+
+
+
+
+
+
+
