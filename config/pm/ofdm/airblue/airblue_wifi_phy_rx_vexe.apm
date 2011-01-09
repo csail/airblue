@@ -243,7 +243,7 @@ MAGIC_DESCRAMBLE_SEED=0
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy RX RRR PacketGen
+airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
@@ -308,6 +308,9 @@ airblue_environment=Airblue Environment
 File=modules/airblue/lib/Drivers/CycleAccurateRXTraceSimulation/airblue-driver-rx-cycle-accurate-simulation.awb
 Packagehint=ofdm
 
-[Airblue Phy RX RRR PacketGen]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+[Airblue Phy Only RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
 Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketGen/Params]
+DEBUG_PACKETGEN=1
