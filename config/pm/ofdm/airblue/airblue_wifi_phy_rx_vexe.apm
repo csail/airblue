@@ -27,8 +27,8 @@ File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
 [FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-vexe-altera.apm
-Packagehint=platforms
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
@@ -231,14 +231,13 @@ soft_services=Soft Services
 
 [Soft Services Hybrid Application Environment]
 File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=platforms
+Packagehint=leap
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
 [WiFi Receiver Pipeline/Params]
-DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
 
 [WiFi Phy Only/Requires]
@@ -290,12 +289,6 @@ Packagehint=leap
 [Airblue Services]
 File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
-
-[Airblue Channel Estimator/Params]
-DEBUG_CHANNEL_ESTIMATOR=1
-
-[Airblue Demapper/Params]
-DEBUG_DEMAPPER=1
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
