@@ -164,10 +164,10 @@ function Feedback#(RXVector,RXVectorDecodeError) decodeHeader(Header header);
    //vec.header.src_addr    = ?;
    //vec.header.dst_addr    = ?;
    //vec.header.uid         = ?;
-   vec.is_trailer         = unpack(header[4:4]);
+   vec.is_trailer         = False;
    let parity_err         = header[17:17] != getParity(header[16:0]); // parity check
    let rate_err           = !isValid(getRate(header));
-   let zero_field_err     = header[23:18] != 0;  
+   let zero_field_err     = header[23:18] != 0 && header[4] != 0;  
    let err                = parity_err ? ParityError : (rate_err ? RateError : ZeroFieldError); 
    let is_err             = parity_err || rate_err || zero_field_err;
    return is_err ? tagged Error err : tagged Data vec;   
