@@ -6,13 +6,15 @@ Packagehint=ofdm
 [Global]
 SaveParameters=0
 DefaultBenchmark=
-Version=2.1
+Version=2.2
 Type=Leap
 File=airblue_wifi_phy_rx_acp
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
 DefaultRunOpts=
+RootName=HW/SW Hybrid Pipeline Build
+RootProvides=model
 
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
@@ -245,6 +247,7 @@ Packagehint=ofdm
 
 [Airblue RX Simulation Driver/Requires]
 airblue_environment=Airblue Environment
+airblue_soft_mac=Airblue Soft MAC
 
 [WiFi Receiver Pipeline/Params]
 DEBUG_RXCTRL=1
@@ -316,4 +319,8 @@ airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue Phy RX RRR PacketGen]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+Packagehint=ofdm
+
+[Airblue Soft MAC]
+File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
 Packagehint=ofdm
