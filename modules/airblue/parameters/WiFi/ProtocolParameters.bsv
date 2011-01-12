@@ -47,6 +47,12 @@ typedef Bit#(12) PhyPacketLength;
 typedef Bit#(8)  PhyData;
 typedef Vector#(8,Bit#(8)) PhyHints;
 
+instance FShow#(PhyPacketLength);
+   function Fmt fshow (PhyPacketLength length);
+      return $format("%d",length);
+   endfunction
+endinstance
+
 instance FShow#(Rate);
    function Fmt fshow (Rate rate);
      case (rate)
