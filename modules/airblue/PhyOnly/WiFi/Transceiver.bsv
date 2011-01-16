@@ -50,56 +50,44 @@ module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    Clock clock <- exposeCurrentClock;
    Reset reset <- exposeCurrentReset;
 
-   Connection_Send#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Send("AnalogTransmit");
-
-   Connection_Receive#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Receive("AnalogReceive");
-
    //UserClock viterbi <- mkSoftClock(60);
 
-   WiFiTransceiver transceiver <- mkTransceiver(clock,reset);
+   let transceiver <- mkTransceiver();
 
    // packet gen crap
    PacketGen packetGen <- mkPacketGen;
    PacketCheck packetCheck <- mkPacketCheck;
 
-   // hook the Synchronizer to feedback points  
-   rule synchronizerFeedback;
-     ControlType ctrl <- transceiver.receiver.synchronizerStateUpdate.get;
-   endrule
-   
-   // connect agc/rx ctrl
-   rule packetFeedback;
-     RXExternalFeedback feedback <- transceiver.receiver.packetFeedback.get;
-   endrule
-
-
-   // Build up CReg interface   
    // Receiver Side   
+   Connection_Receive#(Bit#(1)) abortAck <- mkConnection_Receive("AbortAck");
+   Connection_Send#(Bit#(1)) abortReq <- mkConnection_Send("AbortReq");
+   Connection_Receive#(Bit#(8)) outData <- mkConnection_Receive("RXData");   
+   Connection_Receive#(RXVector) outVector <- mkConnection_Receive("RXVector");   
+
+
    rule rxData;
-      let data <- transceiver.receiver.outData.get();
+      let data = outData.receive();
+      outData.deq();
       packetCheck.rxData.put(data);
    endrule
 
-   mkConnection(packetCheck.rxVector,transceiver.receiver.outRXVector);
-   mkConnection(packetCheck.abortAck,transceiver.receiver.abortAck);
+   mkConnection(packetCheck.rxVector,outVector);
    
-   rule connectAbortReq (True);
-      let dont_care <- packetCheck.abortReq.get;
-      transceiver.receiver.abortReq;
+   rule connectAbortAck (True);
+      packetCheck.abortAck().put(0);
+      abortAck.deq();
    endrule
 
+   rule connectAbortReq (True);
+      let dont_care <- packetCheck.abortReq.get;
+      abortReq.send(0);
+   endrule
    // Transmitter Side
       
-
-
-   mkConnection(transceiver.transmitter.out,analogTX);
-
-
+   Connection_Send#(TXVector) txVector <- mkConnection_Send("TXData");
+   Connection_Send#(Bit#(8))  txData   <- mkConnection_Send("TXVector");
+   Connection_Send#(Bit#(1))  txEnd    <- mkConnection_Send("TXEnd");
    
-   mkConnection(analogRX,transceiver.receiver.in); 
-
-
-
    rule txVecSend;
      // spread the tx vec love
       TXVector txVec <- packetGen.txVector.get;
@@ -107,10 +95,10 @@ module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
          begin
             $display("Transceiver: TX start");
          end
-      transceiver.transmitter.txStart(txVec);
+      txVector.send(txVec);
    endrule
    
-   mkConnection(transceiver.transmitter.txData,packetGen.txData.get);   
+   mkConnection(txData,packetGen.txData.get);   
 
 endmodule
 

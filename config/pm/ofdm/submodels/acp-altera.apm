@@ -3,12 +3,14 @@
 SaveParameters=0
 Description=Hybrid ACP M2 Compute Environment - No Central Cache (Nallatech)
 File=acp-altera
-Version=2.1
+Version=2.2
 Type=HAsim
 Name=Hybrid Altera ACP M2 Compute Environment - No Central Cache (Nallatech)
 Class=Asim::Model
 DefaultBenchmark=
 DefaultRunOpts=
+RootName=FPGA Environment
+RootProvides=fpgaenv
 
 [Model]
 DefaultAttributes=bluespec acp-m2c
@@ -21,8 +23,8 @@ librl_bsv=Altera RL Bluespec Library
 build_pipeline=FPGA Build Pipeline
 
 [Standard Virtual Platform]
-File=modules/bluespec/common/fpgaenv/virtual-platform/std-virtual-platform.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/std-virtual-platform.awb
+Packagehint=leap
 
 [Standard Virtual Platform/Requires]
 virtual_devices=Standard Virtual Devices
@@ -30,27 +32,27 @@ low_level_platform_interface=Low Level Platform Interface Hybrid
 umf=Little-Endian Unified Message Format
 
 [FPGA Environment]
-File=modules/bluespec/common/fpgaenv/fpga-environment.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/fpga-environment.awb
+Packagehint=leap
 
 [Standard Virtual Devices]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/std-virtual-devices.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/virtual-device-sets/std/std-virtual-devices.awb
+Packagehint=leap
 
 [RRR Clients and Servers]
-File=modules/bluespec/common/fpgaenv/virtual-platform/rrr/basic/basic-rrr.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/rrr/basic/basic-rrr.awb
+Packagehint=leap
 
 [Basic Virtual Channel Multiplexer]
-File=modules/bluespec/common/fpgaenv/virtual-platform/channelio/basic/basic-channelio.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/channelio/basic/basic-channelio.awb
+Packagehint=leap
 
 [Basic Virtual Channel Multiplexer/Requires]
 physical_channel=Nallatech Edge Physical Channel
 
 [Low Level Platform Interface Hybrid]
-File=modules/bluespec/common/fpgaenv/low-level-platform-interface/hybrid-llpi.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/low-level-platform-interface/hybrid-llpi.awb
+Packagehint=leap
 
 [Low Level Platform Interface Hybrid/Requires]
 physical_platform=ACP M2 Compute Module (Nallatech)
@@ -72,8 +74,8 @@ Packagehint=platforms
 LOCAL_MEM_ADDR_BITS=16
 
 [Local Memory Interface using BRAM]
-File=modules/bluespec/common/fpgaenv/low-level-platform-interface/local-mem/local-mem-bram.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/low-level-platform-interface/local-mem/local-mem-bram.awb
+Packagehint=leap
 
 [Null Clocks Device]
 File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/clocks/null/null-clocks-device.awb
@@ -84,8 +86,8 @@ File=modules/bluespec/common/fpgaenv/fpga-components/hardware-fpga-components-vi
 Packagehint=platforms
 
 [Null Remote Memory]
-File=modules/bluespec/common/fpgaenv/low-level-platform-interface/remote-memory/null/null-remote-memory.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/low-level-platform-interface/remote-memory/null/null-remote-memory.awb
+Packagehint=leap
 
 [ACP M2 Compute Module (Nallatech)/Requires]
 clocks_device=Null Clocks Device
@@ -95,11 +97,11 @@ led_device=General LED Device
 
 [ACP M2 Compute Module (Nallatech)]
 File=modules/bluespec/common/fpgaenv/physical-platform/acp-m2c-nallatech/acp-m2c.awb
-Packagehint=platform-acp
+Packagehint=platforms-acp
 
 [Nallatech Edge Physical Channel]
 File=modules/bluespec/common/fpgaenv/virtual-platform/channelio/physical-channel/nallatech-edge/nallatech-edge-channel.awb
-Packagehint=platform-acp
+Packagehint=platforms-acp
 
 [Little-Endian Unified Message Format]
 File=modules/bluespec/common/fpgaenv/virtual-platform/umf/little-endian/umf-little-endian.awb
@@ -109,28 +111,28 @@ Packagehint=platforms
 UMF_CHUNK_BYTES=8
 
 [NULL Central Cache]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/central-cache/null-central-cache.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/central-cache/null-central-cache.awb
+Packagehint=leap
 
 [Hybrid Streams Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/streams-device/hybrid-streams.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/streams-device/hybrid-streams.awb
+Packagehint=leap
 
 [Assertions Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/assertions-device/assertions-device.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/assertions-device/assertions-device.awb
+Packagehint=leap
 
 [Starter Virtual Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/starter/starter-device.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/starter/hybrid/starter-device.awb
+Packagehint=leap
 
 [Debug Scan Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/debug-scan-device/debug-scan-device.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/debug-scan-device/debug-scan-device.awb
+Packagehint=leap
 
 [Dynamic Parameters Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/dynamic-parameters-device/dynamic-parameters-device.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/dynamic-parameters-device/dynamic-parameters-device.awb
+Packagehint=leap
 
 [Base Common Devices/Requires]
 stats_device=Stats Device
@@ -140,8 +142,8 @@ assertions_device=Assertions Device
 debug_scan_device=Debug Scan Device
 
 [Null Shared Memory]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/shared-memory/null/null-shared-memory.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/shared-memory/null/null-shared-memory.awb
+Packagehint=leap
 
 [Standard Virtual Devices/Requires]
 starter_device=Starter Virtual Device
@@ -152,38 +154,38 @@ common_utility_devices=Base Common Devices
 front_panel=Hybrid Front Panel
 
 [Stats Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/stats-device/stats-device.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/stats-device/stats-device.awb
+Packagehint=leap
 
 [Base Common Devices]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/common/common-utility-devices.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/common/common-utility-devices.awb
+Packagehint=leap
 
 [Hybrid Front Panel]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/front-panel/hybrid/hybrid-fp.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/front-panel/hybrid/hybrid-fp.awb
+Packagehint=leap
 
 [Hybrid Scratchpad Memory Device]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/memory/hybrid/hybrid-mem-scratch.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/scratchpad-memory/hybrid/hybrid-mem-scratch.awb
+Packagehint=leap
 
 [Hybrid Scratchpad Memory Device/Requires]
 scratchpad_memory_common=Scratchpad Memory Common Definitions
 
 [Scratchpad Memory Common Definitions]
-File=modules/bluespec/common/fpgaenv/virtual-platform/virtual-devices/memory/common/mem-scratch-common.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/virtual-devices/devices/scratchpad-memory/common/mem-scratch-common.awb
+Packagehint=leap
 
 [RRR Common Module]
-File=modules/bluespec/common/fpgaenv/virtual-platform/rrr/rrr_common/rrr_common.awb
-Packagehint=platforms
+File=modules/leap/virtual-platform/rrr/rrr-common/rrr-common.awb
+Packagehint=leap
 
 [RRR Clients and Servers/Requires]
 rrr_common=RRR Common Module
 
 [FPGA Build Pipeline]
 File=config/pm/hasim/submodels/pipelines/build-pipeline-xilinx.apm
-Packagehint=platforms
+Packagehint=leap
 
 [FIFO Utility]
 File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
@@ -198,8 +200,8 @@ File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
 Packagehint=bsv-libraries
 
 [RL Bluespec Storage Library]
-File=modules/bluespec/librl/storage/librl-bsv-storage.awb
-Packagehint=platforms
+File=modules/leap/libraries/librl/storage/librl-bsv-storage.awb
+Packagehint=leap
 
 [Avalon Bus Intefaces]
 File=modules/bsv-libraries/bluespec/Avalon/src/avalon.awb
@@ -209,8 +211,8 @@ Packagehint=bsv-libraries
 register_library=RegisterLibrary
 
 [RL Bluespec Cache Managers]
-File=modules/bluespec/librl/storage/cache/librl-cache.awb
-Packagehint=platforms
+File=modules/leap/libraries/librl/cache/librl-cache.awb
+Packagehint=leap
 
 [Altera RL Bluespec Library]
 File=modules/bsv-libraries/bluespec/librl-mit/librl-mit.awb
@@ -247,15 +249,15 @@ debug_utils=Debug Utilities
 register_mapper=Register Mapping Utilities
 
 [RL Bluespec Base Library]
-File=modules/bluespec/librl/base/librl-bsv-base.awb
-Packagehint=platforms
+File=modules/leap/libraries/librl/base/librl-bsv-base.awb
+Packagehint=leap
 
 [Null Clocks Device/Params]
 CRYSTAL_CLOCK_FREQ=200
 
 [Nallatech Edge Physical Device v2]
 File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/nallatech-edge/nallatech-edge-device.awb
-Packagehint=platform-acp
+Packagehint=platforms-acp
 
 [General LED Device]
 File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/leds/general-led-device.awb

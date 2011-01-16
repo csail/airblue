@@ -27,42 +27,86 @@
 import Connectable::*;
 import FIFO::*;
 import GetPut::*;
-import CBus::*;
-import ModuleCollect::*;
-
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import FFTIFFT::*;
-// import WiFiReceiver::*;
-// import WiFiTransmitter::*;
 
 // Local includes
+`include "asim/provides/airblue_types.bsh"
+`include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_fft.bsh"
+`include "asim/provides/airblue_fft_library.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
 
-interface WiFiTransceiver;
-   interface WiFiTransmitter transmitter;
-   interface WiFiReceiver receiver;
-endinterface      
-
-(* synthesize *)
-module mkWiFiFFTIFFT (DualFFTIFFT#(Bool, TXGlobalCtrl, FFTIFFTSz,TXFPIPrec,TXFPFPrec));
-   let wifiFFT <- mkDualFFTIFFTRR;  
-   return wifiFFT;
-endmodule
 
 //(* synthesize *)
-module [CONNECTED_MODULE] mkTransceiver#(Clock viterbiClock, Reset viterbiReset) (WiFiTransceiver);
+module [CONNECTED_MODULE] mkTransceiver (Empty);
+   // For now just stub the viterbi clock -- it should be generating its own.
+   let clk <- exposeCurrentClock();
+   let rst <- exposeCurrentReset();
+
    let wifiFFT <- mkWiFiFFTIFFT;
    let wifiTransmitter <- mkWiFiTransmitter(wifiFFT.ifft);
-   let wifiReceiver    <- mkWiFiReceiver(viterbiClock, viterbiReset, wifiFFT.fft);
+   let wifiReceiver    <- mkWiFiReceiver(clk, rst, wifiFFT.fft);
 
-   interface transmitter = wifiTransmitter;
-   interface receiver    = wifiReceiver;   
+   // Soft connections to the rest of the world
+   /////
+   // Transmitter Connections
+   /////
+   Connection_Send#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Send("AnalogTransmit");
+   Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXData");
+   Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXVector");
+   Connection_Receive#(Bit#(1))  txEnd    <- mkConnection_Receive("TXEnd");
+
+   mkConnection(wifiTransmitter.out,analogTX);
+
+   mkConnection(txVector, wifiTransmitter.txStart);
+   mkConnection(txData, wifiTransmitter.txData);
+//   mkConnection(txEnd, wifiTransmitter.txEnd);
+
+   rule handleTXEnd;
+     txEnd.deq;
+     wifiTransmitter.txEnd();
+   endrule
+
+   /////
+   // Receiver connections
+   /////
+   Connection_Send#(Bit#(1)) abortAck <- mkConnection_Send("AbortAck");
+   Connection_Receive#(Bit#(1)) abortReq <- mkConnection_Receive("AbortReq");
+   Connection_Send#(Bit#(8)) outData <- mkConnection_Send("RXData");   
+   Connection_Send#(RXVector) outVector <- mkConnection_Send("RXVector");   
+   Connection_Receive#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Receive("AnalogReceive");
+
+   mkConnection(analogRX,wifiReceiver.in); 
+//   mkConnection(abortReq,wifiReceiver.abortReq); 
+//   mkConnection(wifiReceiver.abortAck, abortAck); 
+   mkConnection(wifiReceiver.outData, outData); 
+   mkConnection(wifiReceiver.outRXVector, outVector); 
+
+   rule handleAck;
+     let ack <- wifiReceiver.abortAck.get();
+     abortAck.send(0);
+   endrule
+
+   rule handleAbort;
+     abortReq.deq();
+     wifiReceiver.abortReq();
+   endrule
+
+   // Drop the synchronizer state updates for now - this reduces clutter above us
+
+     // hook the Synchronizer to feedback points  
+     rule synchronizerFeedback;
+       let ctrl <- wifiReceiver.synchronizerStateUpdate.get;
+     endrule
+   
+     // connect agc/rx ctrl
+     rule packetFeedback;
+       let feedback <- wifiReceiver.packetFeedback.get;
+     endrule
+
 endmodule
 
 

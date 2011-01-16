@@ -6,7 +6,7 @@
 
 %name Airblue FFT/IFFT
 %desc Airblue FFT/IFFT
-%provides airblue_fft
+%provides airblue_fft_library
 
 %attributes airblue
 

@@ -6,7 +6,7 @@
 
 %name Airblue Folded FFT/IFFT
 %desc Airblue Folded FFT/IFFT
-%provides airblue_fft
+%provides airblue_fft_library
 
 %attributes airblue
 

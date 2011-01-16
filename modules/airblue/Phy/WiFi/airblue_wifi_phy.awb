@@ -2,8 +2,6 @@
 * Awb module specification
 ********************************************************************
 
-%AWB_START
-
 %name WiFi Phy Transceiver
 %desc WiFi Phy Transceiver
 %provides airblue_phy
@@ -21,4 +19,6 @@
 
 %sources -t DICT -v PUBLIC WiFiRegisterMap.dic
 
-%AWB_END
+%param SYNTH_BOUNDARY mkTransceiver "name of synthesis boundary"
+
+
