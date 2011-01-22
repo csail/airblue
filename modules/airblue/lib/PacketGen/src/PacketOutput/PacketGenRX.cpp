@@ -43,7 +43,9 @@ PACKETCHECKRRR_SERVER_CLASS::Init(
 {
     parent = p;
     // Glib needs this or it complains
-    g_thread_init(NULL);
+    if(!g_thread_supported()) {
+      g_thread_init(NULL);
+    }
     // Set up my FIFOs
     headerQ = g_async_queue_new();
     dataQ   = g_async_queue_new();
