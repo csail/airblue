@@ -109,7 +109,6 @@ PACKETCHECKRRR_SERVER_CLASS::SendPacket(UINT8 command, UINT32 payload)
       dataReceived = 0;
       packet = (UINT8*) malloc(8192);
       assert(length < 8192);
-      printf("Received header %d\n", (UINT8) payload);
       lengthPtr = (UINT32*) malloc(sizeof(UINT32));
       *lengthPtr = length;
       g_async_queue_push(headerQ,lengthPtr);       
@@ -118,7 +117,6 @@ PACKETCHECKRRR_SERVER_CLASS::SendPacket(UINT8 command, UINT32 payload)
     case DATA:
       packet[dataReceived] = (UINT8) payload;
       dataReceived++;
-      printf("Received data %d\n", (UINT8) payload);
       if(length == dataReceived) {
 	g_async_queue_push(dataQ,packet);
         packet =  NULL;     

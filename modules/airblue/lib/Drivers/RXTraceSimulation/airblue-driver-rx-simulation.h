@@ -14,6 +14,7 @@ class AIRBLUE_DRIVER_CLASS : public DRIVER_MODULE_CLASS
   private:
     AIRBLUERFSIM_CLIENT_STUB clientStub;
     pthread_t processPacketsThread;
+    int inputComplete;
 
   public:
     AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p);

@@ -17,6 +17,7 @@
 //
 
 import FIFOF::*;
+import FIFOLevel::*;
 import GetPut::*;
 import Connectable::*;
 import CBus::*;
@@ -24,6 +25,8 @@ import Complex::*;
 
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/physical_platform.bsh"
+`include "asim/provides/librl_bsv_base.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
@@ -33,6 +36,8 @@ import Complex::*;
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
    ServerStub_AIRBLUERFSIM rx_server_stub <- mkServerStub_AIRBLUERFSIM();
+
+   FIFOCountIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec),4096) dataBuffer <- mkSizedBRAMFIFOCount();   
 
    // make soft connections to PHY
    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
@@ -48,10 +53,18 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
       Complex{img: unpack(truncateLSB(data[31:16])),
               rel: unpack(truncateLSB(data[15:0]))};
 
-    analogRX.send(sample);
-
+    dataBuffer.enq(sample);
   endrule
 
+  rule buffer;
+    dataBuffer.deq;
+    analogRX.send(dataBuffer.first);
+  endrule
+
+  rule probeBuffer;
+    let data <- rx_server_stub.acceptRequest_PollFIFO();
+    rx_server_stub.sendResponse_PollFIFO(zeroExtend(pack(dataBuffer.count())));
+  endrule
 
 
 endmodule

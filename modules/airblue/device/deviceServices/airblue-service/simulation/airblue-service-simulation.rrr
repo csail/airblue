@@ -4,6 +4,7 @@ service AIRBLUERFSIM
    server hw (bsv, connection) <- sw (cpp, method)
     {
         method IQStream (in UINT32[32] sample);
+        method PollFIFO (in UINT32[32] dummy, out UINT32[32] space);
     };
 
 }
