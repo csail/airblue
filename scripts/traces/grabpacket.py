@@ -1,8 +1,30 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
-import numpy
-import matplotlib.pyplot as plt
+import os
+import array
+import sys
+import struct
+
+assert array.array('i').itemsize == 4
+
+def intsfromfile(f, start_pos, finish_pos):
+  pos = 0;
+  while True:
+     a = array.array('i')
+     a.fromstring(f.read(4000))
+     if pos > finish_pos:
+       break
+     if not a:
+       break
+     if pos+1000 < start_pos:
+       pos += 1000
+       continue
+     for x in a:
+       if start_pos <= pos and pos <= finish_pos:
+         yield x
+       pos += 1
+
 
 parser = OptionParser()
 parser.add_option("-s", "--start", dest="start", type=int, default=0, help="start sample of subwindow to dump")
@@ -11,31 +33,29 @@ parser.add_option("-f", "--finish", dest="finish", type=int, default=0, help="en
 (options, args) = parser.parse_args()
 
 if len(args) < 2:
+  print "Usage: grabpacket.py [-s start_pos] [-f finish_pos] input.file output.file\n"
   sys.exit(-1)
 
-complexint = numpy.dtype([("real", numpy.int16), ("imag", numpy.int16)])
-readdata = numpy.fromfile(file=open(args[0], "rb"), dtype=complexint)
-
-measurements = readdata.shape[0]
-
+measurements = os.path.getsize(args[0])/4
 
 start = 0
 if(options.start > 0):
   start = options.start
 
-finish = readdata.shape[0]
+finish = measurements
 if(options.finish > 0):
   finish = options.finish
 
+fr = open(args[0], "r")
+fw = open(args[1], "wb")
+
 print "range: " + str(start) + ":" + str(finish)
 
-magnitudes = numpy.empty((finish-start,), dtype=complexint)
+for i in intsfromfile(fr, start, finish):
+  data = struct.pack('i',i)
+  fw.write(data)
 
-j=0
-for i in range(start, finish):
-  magnitudes[j] = readdata[i]
-  j=j+1
-
-magnitudes.tofile(args[1])
+fr.close()
+fw.close()
 
 
