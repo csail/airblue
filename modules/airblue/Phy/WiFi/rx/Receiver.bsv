@@ -43,7 +43,7 @@ import GetPut::*;
 
 module [CONNECTED_MODULE] mkSynchronizerInstance
    (GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
-   GainControlSynchronizer#(SyncIntPrec,SyncFractPrec) block <- mkGainControlSynchronizer;
+   GainControlSynchronizer#(SyncIntPrec,SyncFractPrec) block <- mkSynchronizer;
    return block;
 endmodule
 

@@ -1001,8 +1001,8 @@ endinterface
 
 /* this sends sync events back to the AD for gain control purposes 
 * it is possible that this guy should be refactored to the FPGA project*/
-
-module mkGainControlSynchronizer(GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
+(* synthesize *)
+module mkSynchronizer(GainControlSynchronizer#(SyncIntPrec,SyncFractPrec));
   Reg#(ControlType) ctrlLast <- mkReg(Idle);
   StatefulSynchronizer#(SyncIntPrec,SyncFractPrec) stateSynchronizer <- mkStatefulSynchronizer;
   // We might at some point want to change these to something less wasteful than two fifos.

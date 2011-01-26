@@ -12,6 +12,8 @@
 
 %sources -t BSV -v PUBLIC SParams.bsv Synchronizer.bsv SynchronizerLibrary.bsv
 
+%generated -t BA mkSynchronizer.ba
+
 %generated -t BA mkAutoCorrelator.ba
 %generated -t BA mkAutoCorr_DelayIn.ba
 %generated -t BA mkAutoCorr_CorrSub.ba
@@ -26,6 +28,8 @@
 %generated -t BA mkFreqEstimator.ba
 %generated -t BA mkFreqRotator.ba
 %generated -t BA mkFreqEst_FreqOffAccumSub.ba
+
+%generated -t VERILOG mkSynchronizer.v
 
 %generated -t VERILOG mkAutoCorrelator.v
 %generated -t VERILOG mkAutoCorr_DelayIn.v
