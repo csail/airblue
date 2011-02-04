@@ -75,7 +75,7 @@ module mkInterleaveBlock#(function Modulation mapCtrl(ctrl_t ctrl),
    FIFO#(Mesg#(ctrl_t,Vector#(n,data_t)))   outQ <- mkSizedFIFO(2);
    Reg#(Bit#(cntr_sz))                    inCntr <- mkReg(0);
    Reg#(Bit#(cntr_sz))                   outCntr <- mkReg(0);			     
-   Reg#(ctrl_t)                         lastCtrl <- mkRegU;
+   Reg#(ctrl_t)                         lastCtrl <- mkReg(?);
    Reg#(Vector#(cntr_n,Vector#(n,data_t))) inBuffer;
    inBuffer <- mkReg(newVector);
    FIFO#(Mesg#(ctrl_t,Vector#(cntr_n,Vector#(n,data_t)))) outBufferQ;

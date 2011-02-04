@@ -60,7 +60,7 @@ module mkReedEncoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
 
     FIFO#(EncoderMesg#(ctrl_t, sz))  inQ <- mkLFIFO;
     FIFO#(EncoderMesg#(ctrl_t, sz)) outQ <- mkSizedFIFO(2);
-    Reg#(ctrl_t)                 control <- mkRegU;
+    Reg#(ctrl_t)                 control <- mkReg(?);
 
     Reg#(Bit#(8))  inCounter <- mkReg(0);
     Reg#(Bit#(8)) outCounter <- mkReg(0);

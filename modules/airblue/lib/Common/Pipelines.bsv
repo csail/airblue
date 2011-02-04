@@ -55,7 +55,7 @@ module mkPipeline_Circ#(Integer numStages,
   
   // internal state
   Reg#(Bit#(b))       stage <- mkReg(0);
-  Reg#(alpha)             s <- mkRegU;  
+  Reg#(alpha)             s <- mkReg(?);  
   
   // output queue
   FIFO#(alpha)      outputQ <- mkLFIFO();

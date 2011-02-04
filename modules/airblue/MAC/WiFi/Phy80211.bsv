@@ -16,7 +16,7 @@ endinterface
 
 module mkPhy80211(Phy_IFC);
    
-   Reg#(PhySapTXVector_T) txvector <- mkRegU;
+   Reg#(PhySapTXVector_T) txvector <- mkReg(?);
 
    FIFO#(Bool)            cca_ind <- mkSizedFIFO(1);
     

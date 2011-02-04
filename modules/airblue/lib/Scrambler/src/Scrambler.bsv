@@ -51,7 +51,7 @@ module mkScrambler#(function ScramblerCtrl#(n,shifter_sz)
 	    Bits#(o_ctrl_t,o_ctrl_sz));
    
    // state elements
-   Reg#(Bit#(shifter_sz)) shiftReg <- mkRegU;
+   Reg#(Bit#(shifter_sz)) shiftReg <- mkReg(?);
    FIFO#(ScramblerMesg#(i_ctrl_t,n)) inQ <- mkLFIFO;
    FIFO#(EncoderMesg#(o_ctrl_t,n))  outQ <- mkSizedFIFO(2);
 

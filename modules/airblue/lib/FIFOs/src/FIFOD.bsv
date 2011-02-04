@@ -86,7 +86,7 @@ module mkFIFOD(FIFOD#(sz, i_sz, o_sz, data_t))
 
    FIFODIndex#(idx_sz) initIdx = FIFODIndex{ header: 0,
 					     index: 0};
-   Reg#(Vector#(sz, data_t)) buffer <- mkRegU;
+   Reg#(Vector#(sz, data_t)) buffer <- mkReg(?);
    EHRReg#(2, FIFODIndex#(idx_sz)) head <- mkEHRReg(initIdx);
    EHRReg#(2, FIFODIndex#(idx_sz)) tail <- mkEHRReg(initIdx);
 

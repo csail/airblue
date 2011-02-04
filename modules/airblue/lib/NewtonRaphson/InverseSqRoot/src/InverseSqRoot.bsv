@@ -32,8 +32,8 @@ module mkSimpleInverseSqRoot (InverseSqRoot#(i_prec,f_prec))
   MagnitudeEstimator#(TAdd#(i_prec,f_prec)) magnitudeEstimator <- mkMagnitudeEstimator();
 
   Reg#(Bit#(TLog#(TAdd#(1,ISRIterations)))) iterations <- mkReg(0);
-  Reg#(FixedPoint#(i_prec,f_prec)) root <- mkRegU;
-  Reg#(FixedPoint#(i_prec,f_prec)) u <- mkRegU;
+  Reg#(FixedPoint#(i_prec,f_prec)) root <- mkReg(?);
+  Reg#(FixedPoint#(i_prec,f_prec)) u <- mkReg(?);
   Reg#(Bool) initialized <- mkReg(False);
   FIFO#(FixedPoint#(i_prec,f_prec)) resultFIFO <- mkFIFO;
    

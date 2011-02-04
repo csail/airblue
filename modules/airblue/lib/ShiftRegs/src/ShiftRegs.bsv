@@ -82,7 +82,7 @@ module mkCirShiftRegs (ShiftRegs#(size,data_t))
 
    // states
    Vector#(size, Reg#(data_t)) vRegs <- Vector::replicateM(mkReg(unpack(0)));
-   Reg#(Bit#(index_w))   nextToWrite <- mkRegU;
+   Reg#(Bit#(index_w))   nextToWrite <- mkReg(?);
    
    // constants
    Integer maxIndex = valueOf(size) - 1;
@@ -129,7 +129,7 @@ module mkCirShiftRegsNoGetVec (ShiftRegs#(size,data_t))
 
    // states
    Vector#(size, Reg#(data_t)) vRegs <- Vector::replicateM(mkReg(unpack(0)));
-   Reg#(Bit#(index_w))   nextToWrite <- mkRegU;
+   Reg#(Bit#(index_w))   nextToWrite <- mkReg(?);
    
    // constants
    Integer maxIndex = valueOf(size) - 1;

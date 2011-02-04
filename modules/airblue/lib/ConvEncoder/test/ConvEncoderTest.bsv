@@ -56,7 +56,7 @@ module mkHWOnlyApplication (Empty);
    // state elements
    ConvEncoder#(Bit#(1),12,1,24,2) conv_encoder;
    conv_encoder <- mkConvEncoder(gen_polys);
-   Reg#(Bit#(12)) data  <- mkRegU;
+   Reg#(Bit#(12)) data  <- mkReg(?);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
    rule putInput(True);

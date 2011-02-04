@@ -81,7 +81,7 @@ module mkHWOnlyApplication (Empty);
    Interleaver#(Modulation,24,24,192) interleaver;
    interleaver <- mkInterleaver(idFunc, interleaverGetIndex);
    Reg#(Bit#(4))  ctrl  <- mkReg(1);
-   Reg#(Bit#(24)) data  <- mkRegU;
+   Reg#(Bit#(24)) data  <- mkReg(?);
    Reg#(Bit#(8))  cntr  <- mkReg(0);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    

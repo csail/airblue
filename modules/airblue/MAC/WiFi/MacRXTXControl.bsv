@@ -85,7 +85,7 @@ module [ModWithCBus#(AvalonAddressWidth,AvalonDataWidth)] mkMacRXTXControl#(AckB
 
    Reg#(PhyPacketLength)      tx_idx <- mkReg(0); 
    Reg#(PhyPacketLength)      rx_idx <- mkReg(0);    
-   Reg#(FrameCtl_T)           rx_fctl <- mkRegU;
+   Reg#(FrameCtl_T)           rx_fctl <- mkReg(?);
   
 
    Reg#(Bit#(FrameSz))       mac_rxframe <- mkReg(0);

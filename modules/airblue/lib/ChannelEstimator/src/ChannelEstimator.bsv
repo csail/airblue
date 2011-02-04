@@ -150,17 +150,17 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    Reg#(Bool)                                                                     can_est_pilot <- mkReg(False);
    Reg#(Bool)                                                                can_read_in_symbol <- mkReg(True);
    Reg#(Bool)                                                              can_write_out_symbol <- mkReg(False);
-   Reg#(Bit#(CEstOutSz))                                                        interpolate_idx <- mkRegU;
-   Reg#(Bit#(CEstOutSz))                                                           out_read_idx <- mkRegU;
-   Reg#(Bit#(CEstOutSz))                                                          out_write_idx <- mkRegU;
-   Reg#(Bit#(CEstPBSz))                                                           pilot_put_idx <- mkRegU;
-   Reg#(Bit#(CEstPBSz))                                                           pilot_get_idx <- mkRegU;
-   Reg#(Bit#(CEstPSz))                                                               pilot_lfsr <- mkRegU;
-   Reg#(Symbol#(CEstPNo,CEstIPrec,CEstFPrec))                                        pilot_eval <- mkRegU;
-   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))))   pilot_mag <- mkRegU;
-   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))))    mag_diff <- mkRegU;
-   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(CEstIPrec,CEstFPrec))))                  pilot_angle <- mkRegU;
-   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(CEstIPrec,CEstFPrec))))                   angle_diff <- mkRegU;
+   Reg#(Bit#(CEstOutSz))                                                        interpolate_idx <- mkReg(?);
+   Reg#(Bit#(CEstOutSz))                                                           out_read_idx <- mkReg(?);
+   Reg#(Bit#(CEstOutSz))                                                          out_write_idx <- mkReg(?);
+   Reg#(Bit#(CEstPBSz))                                                           pilot_put_idx <- mkReg(?);
+   Reg#(Bit#(CEstPBSz))                                                           pilot_get_idx <- mkReg(?);
+   Reg#(Bit#(CEstPSz))                                                               pilot_lfsr <- mkReg(?);
+   Reg#(Symbol#(CEstPNo,CEstIPrec,CEstFPrec))                                        pilot_eval <- mkReg(?);
+   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))))   pilot_mag <- mkReg(?);
+   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))))    mag_diff <- mkReg(?);
+   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(CEstIPrec,CEstFPrec))))                  pilot_angle <- mkReg(?);
+   Reg#(Vector#(CEstPNo,Maybe#(FixedPoint#(CEstIPrec,CEstFPrec))))                   angle_diff <- mkReg(?);
    Reg#(DemapperMesg#(ctrl_t,CEstOutN,CEstIPrec,CEstFPrec))                             out_reg <- mkConfigRegU;
                                                
    FIFO#(FixedPoint#(TAdd#(CEstIPrec,CEstFPrec),CEstFPrec))                               mag_q <- mkSizedFIFO(2+`cordicIters/`cordicItersPerStage); // 2 to resemble angle_q LFIFO's latency  and extra cordicStages for cos_and_sin latency
@@ -460,12 +460,12 @@ endmodule
 //    // state elements
 //    Reg#(Bool)                  setupComplete <- mkReg(True);
 //    Reg#(Bool)                  compComplete  <- mkReg(True);
-//    Reg#(Bit#(out_sz))                   outIdx <- mkRegU();
-//    Reg#(Bit#(p_sz))                  pilotIdxSetup <- mkRegU();
-//    Reg#(Bit#(p_sz))                  pilotIdxSetupWrite <- mkRegU();
-//    Reg#(Bit#(p_sz))                  pilotLFSR <- mkRegU();
-//    Reg#(Symbol#(p_no,i_prec,f_prec)) pilotEval <- mkRegU(); 
-//    Reg#(DemapperMesg#(ctrl_t,out_n,i_prec,f_prec))  outReg <- mkRegU(); // probably can get rid of this guy...
+//    Reg#(Bit#(out_sz))                   outIdx <- mkReg(?)();
+//    Reg#(Bit#(p_sz))                  pilotIdxSetup <- mkReg(?)();
+//    Reg#(Bit#(p_sz))                  pilotIdxSetupWrite <- mkReg(?)();
+//    Reg#(Bit#(p_sz))                  pilotLFSR <- mkReg(?)();
+//    Reg#(Symbol#(p_no,i_prec,f_prec)) pilotEval <- mkReg(?)(); 
+//    Reg#(DemapperMesg#(ctrl_t,out_n,i_prec,f_prec))  outReg <- mkReg(?)(); // probably can get rid of this guy...
 //    FIFO#(DemapperMesg#(ctrl_t,out_n,i_prec,f_prec))   outQ <- mkSizedFIFO(2);
 //    Vector#(p_no,Reg#(Maybe#(FixedPoint#(TAdd#(i_prec,f_prec), f_prec)))) adjustValues <- replicateM(mkReg(tagged Invalid)); 
 //    InverseSqRoot#(TAdd#(i_prec,f_prec),f_prec) invSqRoot <- mkSimpleInverseSqRoot;  

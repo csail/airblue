@@ -12,10 +12,10 @@ module mkTbMac80211();
    Reg#(Bool)             add_rx_phy_data <- mkReg(False); // start RX   
    Mac_IFC                wifiMac <- mkMac80211();
    
-   Reg#(PhySapTXVector_T) txvector <- mkRegU;
+   Reg#(PhySapTXVector_T) txvector <- mkReg(?);
    Reg#(Bool)             txstart_conf <- mkReg(False);
    
-   Reg#(PhySapData_T)     txdata <- mkRegU;
+   Reg#(PhySapData_T)     txdata <- mkReg(?);
    Reg#(Bool)             txdata_conf <- mkReg(False);
    Reg#(Bool)             txend_conf <- mkReg(False);
    

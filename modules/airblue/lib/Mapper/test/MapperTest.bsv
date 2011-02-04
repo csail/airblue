@@ -56,7 +56,7 @@ module mkHWOnlyApplication(Empty);
    // state elements
    Mapper#(Modulation,48,48,2,14) mapper <- mkMapperInstance();
    Reg#(Bit#(4))  ctrl  <- mkReg(1);
-   Reg#(Bit#(48)) data  <- mkRegU;
+   Reg#(Bit#(48)) data  <- mkReg(?);
    Reg#(Bit#(4))  cntr  <- mkReg(0);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    

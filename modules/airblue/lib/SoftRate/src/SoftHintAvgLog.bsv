@@ -35,8 +35,8 @@ module mkSoftHintAvg (SoftHintAvg);
    Reg#(Maybe#(BitErrorRate)) nextBer <- mkReg(tagged Invalid);
    Reg#(Int#(6)) maxIdx <- mkReg(minBound);
 
-   Reg#(Int#(6)) curIdx <- mkRegU;
-   Reg#(BitErrorRate) totalBer <- mkRegU;
+   Reg#(Int#(6)) curIdx <- mkReg(?);
+   Reg#(BitErrorRate) totalBer <- mkReg(?);
 
    FIFO#(Tuple2#(BitErrorRate,Bit#(16))) berSumQ <- mkFIFO;
 

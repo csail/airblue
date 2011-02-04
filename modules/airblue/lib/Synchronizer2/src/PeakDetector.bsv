@@ -17,8 +17,8 @@ endinterface
 
 module mkPeakDetector (PeakDetector);
 
-   Reg#(Bit#(10)) counter <- mkRegU;
-   Vector#(2, Reg#(Peak)) peakRegs <- replicateM( mkRegU );
+   Reg#(Bit#(10)) counter <- mkReg(?);
+   Vector#(2, Reg#(Peak)) peakRegs <- replicateM( mkReg(?) );
 
    RWire#(Bit#(10)) data <- mkRWire;
    PulseWire clearSignal <- mkPulseWire;

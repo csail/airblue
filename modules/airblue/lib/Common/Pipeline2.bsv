@@ -270,8 +270,8 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
    Reg#(Bit#(stage_idx)) putStage <- mkReg(0);
    Reg#(Bit#(stage_idx)) getStage <- mkReg(0);
 
-   Vector#(noStages,Reg#(Vector#(psz,a))) outRegs <-replicateM(mkRegU);
-   Reg#(ctrl_t) ctrlReg <- mkRegU; 
+   Vector#(noStages,Reg#(Vector#(psz,a))) outRegs <-replicateM(mkReg(?));
+   Reg#(ctrl_t) ctrlReg <- mkReg(?); 
    Vector#(noStages,FIFO#(Bit#(0))) tokenFIFOs <- replicateM(mkLFIFO);
 
    rule startExec(putStage > 0);

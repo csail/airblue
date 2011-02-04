@@ -13,8 +13,8 @@ module mkTbSta80211();
 
    Reg#(Bool)                add_tx_mac_data <- mkReg(True); // start TX
    Reg#(Bit#(3))             llc_pkts <- mkReg(2);
-   Reg#(DataFrame_T)         sent_data <- mkRegU;
-   Reg#(CommonCtlFrame1_T)   sent_ctl <- mkRegU;
+   Reg#(DataFrame_T)         sent_data <- mkReg(?);
+   Reg#(CommonCtlFrame1_T)   sent_ctl <- mkReg(?);
    FIFOF#(MacFrame_T)        rxfrm <- mkSizedFIFOF(2);
    
    mkConnection(wifiSta.rf_rxdata,wifiAp.rf_txdata);

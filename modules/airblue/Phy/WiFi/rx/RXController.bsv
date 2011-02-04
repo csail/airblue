@@ -113,8 +113,8 @@ module [CONNECTED_MODULE] mkPreDemapperRXController(PreDemapperRXController);
    FIFO#(Bit#(0))    abortAckQ <- mkFIFO;
    Reg#(Bit#(32))    suppressedLongSyncs <- mkReg(0);
    Reg#(Bit#(32))    acceptedLongSyncs <- mkReg(0);
-//   Reg#(Bit#(3))     zeroCount <- mkRegU;       // count no of zeros symbol sent
-   Reg#(Rate)        rxRate <- mkRegU;          // the packet rate for receiving
+//   Reg#(Bit#(3))     zeroCount <- mkReg(?);       // count no of zeros symbol sent
+   Reg#(Rate)        rxRate <- mkReg(?);          // the packet rate for receiving
    Reg#(Bit#(17))    rxLength <- mkReg(0);        // the remaining of data to be received (in terms of bits)
    Reg#(Bool)        abortReg <- mkReg(False);
    
@@ -285,9 +285,9 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
 //   Reg#(Bit#(3))           zeroCount <- mkReg(0);
    Reg#(Bool)                isGetSeed <- mkReg(False);
    Reg#(Maybe#(Bit#(ScramblerShifterSz))) seed <- mkReg(tagged Invalid);
-   Reg#(Bit#(17))            dropData <- mkRegU;
-   Reg#(Bit#(17))            checkData <- mkRegU;
-   Reg#(PhyPacketLength)     rxLength <- mkRegU; 
+   Reg#(Bit#(17))            dropData <- mkReg(?);
+   Reg#(Bit#(17))            checkData <- mkReg(?);
+   Reg#(PhyPacketLength)     rxLength <- mkReg(?); 
    Reg#(Bit#(32))            cycleCount <- mkReg(0);
    Reg#(Bool)                abortReg <- mkReg(False);
 

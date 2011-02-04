@@ -81,7 +81,7 @@ module mkPuncturer#(function Bit#(ctrl_bsz)
    Bit#(out_bsz) outSz = fromInteger(valueOf(out_sz));
 		       
    // state elements
-   Reg#(ctrl_t) lastCtrl <- mkRegU;
+   Reg#(ctrl_t) lastCtrl <- mkReg(?);
    FIFO#(EncoderMesg#(ctrl_t, in_sz)) inQ <- mkLFIFO;
    FIFO#(EncoderMesg#(ctrl_t, out_sz)) outQ <- mkSizedFIFO(2);
    BitStreamFIFO#(in_buf_sz,in_buf_bsz,in_sz,in_bsz,1) inStreamQ;

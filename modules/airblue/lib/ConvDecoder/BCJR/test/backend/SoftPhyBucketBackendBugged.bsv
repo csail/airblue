@@ -54,8 +54,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend#(Viterbi#(RXGlobalCt
    ServerStub_SOFT_PHY_BUCKET_RRR server_stub <- mkServerStub_SOFT_PHY_BUCKET_RRR;
 
    // runtime parameters
-   Reg#(Rate) rate <- mkRegU;
-   Reg#(Bit#(48)) finishTime <- mkRegU;
+   Reg#(Rate) rate <- mkReg(?);
+   Reg#(Bit#(48)) finishTime <- mkReg(?);
    Reg#(Bool) done <- mkReg(False);
 
    Reg#(TXGlobalCtrl) ctrl <- mkReg(TXGlobalCtrl{firstSymbol:False,

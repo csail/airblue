@@ -51,8 +51,8 @@ typedef enum {
 
 module mkMACCRC (MACCRC);
 
-   Reg#(BasicRXVector) rxvector <- mkRegU;  
-   Reg#(BasicTXVector) txvector <- mkRegU;  
+   Reg#(BasicRXVector) rxvector <- mkReg(?);  
+   Reg#(BasicTXVector) txvector <- mkReg(?);  
    Reg#(PhyPacketLength) length <- mkReg(0);
    Reg#(PhyPacketLength) counter <- mkReg(0);
    Reg#(Bool)     rxFull <- mkReg(False); 

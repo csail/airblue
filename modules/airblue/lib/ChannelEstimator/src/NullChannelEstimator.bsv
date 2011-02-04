@@ -56,7 +56,7 @@ module [Module] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    provisos (Bits#(ctrl_t, ctrl_sz));
    
    Reg#(Bool)                                               can_read_in_symbol <- mkReg(True);
-   Reg#(DemapperMesg#(ctrl_t,CEstOutN,CEstIPrec,CEstFPrec)) out_reg            <- mkRegU;
+   Reg#(DemapperMesg#(ctrl_t,CEstOutN,CEstIPrec,CEstFPrec)) out_reg            <- mkReg(?);
 
    interface Put in;
       method Action put(ChannelEstimatorMesg#(ctrl_t,CEstInN,CEstIPrec,CEstFPrec) iMesg)

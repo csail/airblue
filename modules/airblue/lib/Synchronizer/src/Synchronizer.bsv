@@ -322,8 +322,8 @@ module  mkTimeEstimator(TimeEstimator);
    // states
    /*`ifdef instantiateStreamCaptureFIFO
 
-   Reg#(Bit#(32))   coarCorrPowReg        <- mkRegU;
-   Reg#(Bit#(32))   coarPowSqReg          <- mkRegU;
+   Reg#(Bit#(32))   coarCorrPowReg        <- mkReg(?);
+   Reg#(Bit#(32))   coarPowSqReg          <- mkReg(?);
 
    RWire#(Bit#(32)) coarCorrPowRwire      <- mkRWire;
    RWire#(Bit#(32)) coarPowSqRwire        <- mkRWire;

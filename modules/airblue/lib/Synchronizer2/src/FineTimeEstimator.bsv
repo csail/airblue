@@ -169,7 +169,7 @@ module mkFineTimeEstimator (FineTimeEstimator);
    FIFOF#(Sample) sampleQ <- mkSizedFIFOF(3);
 
    Reg#(Bool) enabled <- mkReg(False);
-   Reg#(Bit#(9)) counter <- mkRegU;
+   Reg#(Bit#(9)) counter <- mkReg(?);
 
    rule estimate;
       let autoCorr <- autoCorrelator.out.get();

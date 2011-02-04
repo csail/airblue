@@ -84,8 +84,8 @@ module mkHWOnlyApplication (Empty);
    // state elements
    ReedEncoder#(GlobalCtrl,32,32) reedEncoder;
    reedEncoder <- mkReedEncoder(reedSolomonControl);
-   Reg#(GlobalCtrl)  ctrl <- mkRegU;
-   Reg#(Bit#(32))    data <- mkRegU;
+   Reg#(GlobalCtrl)  ctrl <- mkReg(?);
+   Reg#(Bit#(32))    data <- mkReg(?);
    Reg#(Bit#(32))    cntr <- mkReg(0);
    Reg#(Bit#(32))   cycle <- mkReg(0);
    

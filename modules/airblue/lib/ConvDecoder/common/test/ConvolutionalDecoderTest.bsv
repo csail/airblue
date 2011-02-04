@@ -94,7 +94,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestFrontend (Empty);
    let channel <- mkStreamChannel;
 
    // runtime parameters
-   Reg#(Rate) rate <- mkRegU;
+   Reg#(Rate) rate <- mkReg(?);
    Reg#(Bool) initialized <- mkReg(False);
    Reg#(Bool) ranFSM <- mkReg(False);
    Reg#(Bit#(12)) length <- mkReg(1);

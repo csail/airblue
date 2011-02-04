@@ -80,13 +80,13 @@ module [CONNECTED_MODULE] mkTXController(TXController);
    
    //state elements
    Reg#(TXState)           txState <- mkReg(Idle);
-   Reg#(Bit#(5))          sfifoRem <- mkRegU;
-   Reg#(Bit#(8))             count <- mkRegU;
-   Reg#(Bool)              rstSeed <- mkRegU;
-   Reg#(Bool)        postDataAdded <- mkRegU;
-   Reg#(Bool)            zeroAdded <- mkRegU;
-   Reg#(TXVector)         txVector <- mkRegU;
-   Reg#(PhyPacketLength)  txLength <- mkRegU;
+   Reg#(Bit#(5))          sfifoRem <- mkReg(?);
+   Reg#(Bit#(8))             count <- mkReg(?);
+   Reg#(Bool)              rstSeed <- mkReg(?);
+   Reg#(Bool)        postDataAdded <- mkReg(?);
+   Reg#(Bool)            zeroAdded <- mkReg(?);
+   Reg#(TXVector)         txVector <- mkReg(?);
+   Reg#(PhyPacketLength)  txLength <- mkReg(?);
    StreamFIFO#(HeaderSz,TLog#(HeaderSz),Bit#(1)) sfifo <- mkStreamLFIFO; // size >= 16
    FIFOF#(ScramblerMesg#(TXScramblerAndGlobalCtrl,ScramblerDataSz)) outQ;
    outQ <- mkSizedFIFOF(2);

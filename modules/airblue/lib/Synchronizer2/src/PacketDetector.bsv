@@ -32,9 +32,9 @@ module mkPacketDetector (PacketDetector);
    // auto-correlation reaches threshold for past 32 samples
    Accumulator#(32, Bit#(1), Bit#(6)) autoThresh <- mkAccumulator(zeroExtend);
 
-   Reg#(LongCorrelation) corrAccum <- mkRegU;
-   Reg#(Bit#(4)) corrIdx <- mkRegU;
-   Reg#(Bit#(2)) corrCount <- mkRegU;
+   Reg#(LongCorrelation) corrAccum <- mkReg(?);
+   Reg#(Bit#(4)) corrIdx <- mkReg(?);
+   Reg#(Bit#(2)) corrCount <- mkReg(?);
 
    Reg#(State) state <- mkReg(Detect);
 

@@ -66,9 +66,9 @@ module mkMapper#(function Modulation mapCtrl(ctrl_t ctrl),
 
    // state elements
    Reg#(Bool)   waitDeq <- mkReg(False);
-   Reg#(ctrl_t) lastCtrl <- mkRegU;
+   Reg#(ctrl_t) lastCtrl <- mkReg(?);
    Reg#(Bit#(s_sz)) counter <- mkReg(0);
-   Reg#(Vector#(o_n,FPComplex#(i_prec,f_prec))) buffer <- mkRegU;
+   Reg#(Vector#(o_n,FPComplex#(i_prec,f_prec))) buffer <- mkReg(?);
    
 //    // rules
 //    rule map(True);

@@ -40,10 +40,10 @@ endinterface
 (*synthesize*)
 module mkSHIM (SHIM);
 
-   Reg#(RXVector) rxvector <- mkRegU;  
-   Reg#(TXVector) txvector <- mkRegU;  
-   Reg#(PhyData) rxdata <- mkRegU;  
-   Reg#(PhyData) txdata <- mkRegU; 
+   Reg#(RXVector) rxvector <- mkReg(?);  
+   Reg#(TXVector) txvector <- mkReg(?);  
+   Reg#(PhyData) rxdata <- mkReg(?);  
+   Reg#(PhyData) txdata <- mkReg(?); 
    Reg#(PhyCcaStatus_T)      phy_cca_status <- mkReg(IDLE); 
    
    Reg#(Bool)     rxStartFull <- mkReg(False); 

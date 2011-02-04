@@ -63,8 +63,8 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend (Empty);
    ClientStub_CHECKBERHOSTCONTROLRRR client_stub <- mkClientStub_CHECKBERHOSTCONTROLRRR;
 
    // runtime parameters
-   Reg#(Rate) rate <- mkRegU;
-   Reg#(Bit#(48)) finishTime <- mkRegU;
+   Reg#(Rate) rate <- mkReg(?);
+   Reg#(Bit#(48)) finishTime <- mkReg(?);
    Reg#(Bool) simulationComplete <- mkReg(False);
    Reg#(Bool) done <- mkReg(False);
 

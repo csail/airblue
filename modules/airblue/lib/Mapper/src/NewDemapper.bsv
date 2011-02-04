@@ -191,9 +191,9 @@ module mkDemapper#(function Modulation mapCtrl(ctrl_t inCtrl),
    Bit#(o_s_sz) outSz = fromInteger(valueOf(o_n));
 		      
    // state elements
-   Reg#(ctrl_t)       lastCtrl <- mkRegU;
+   Reg#(ctrl_t)       lastCtrl <- mkReg(?);
    Reg#(Bit#(i_s_sz)) counter  <- mkReg(inSz);
-   Reg#(Modulation)   modulation <- mkRegU;
+   Reg#(Modulation)   modulation <- mkReg(?);
    FIFO#(DemapperMesg#(ctrl_t,i_n,i_prec,f_prec)) inQ <- mkLFIFO;
    StreamFIFO#(o_n,o_s_sz,ViterbiMetric) outQ;
    outQ <- mkStreamFIFO;

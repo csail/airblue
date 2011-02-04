@@ -69,7 +69,7 @@ module [CONNECTED_MODULE] mkConvolutionalDecoderTestBackend (Empty);
    ClientStub_SOFT_PHY_PACKET_RRR backend_stub <- mkClientStub_SOFT_PHY_PACKET_RRR;
 
    // runtime parameters
-   Reg#(Bit#(48)) finishTime <- mkRegU;
+   Reg#(Bit#(48)) finishTime <- mkReg(?);
    Reg#(Bool) done <- mkReg(False);
    Reg#(Bool) simulationComplete <- mkReg(False);
 

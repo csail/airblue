@@ -52,7 +52,7 @@ endmodule
 module mkHWOnlyApplication (Empty);
    // state elements
    let                  fifo     <- mkBitStreamFIFOInstance;
-   Reg#(Bit#(`IOVecSz)) enqData  <- mkRegU;
+   Reg#(Bit#(`IOVecSz)) enqData  <- mkReg(?);
    Reg#(Bit#(`IOBSz))   enqSz    <- mkReg(1);
    Reg#(Bit#(`IOBSz))   deqSz    <- mkReg(`IOSz);
    Reg#(Bit#(32))       clockCnt <- mkReg(0);
