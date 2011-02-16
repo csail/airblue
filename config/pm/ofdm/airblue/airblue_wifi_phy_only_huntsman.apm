@@ -2,17 +2,15 @@
 [Global]
 SaveParameters=0
 DefaultBenchmark=
-Version=2.1
+Version=2.2
 Type=HAsim
 File=airblue_wifi_phy_only_huntsman
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
 DefaultRunOpts=
-
-[Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=hasim
+RootName=HW/SW Hybrid Pipeline Build
+RootProvides=model
 
 [Model]
 DefaultAttributes=airblue
@@ -20,10 +18,6 @@ model=HW/SW Hybrid Pipeline Build
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
-Packagehint=ofdm
-
-[FPGA Environment]
-File=config/pm/ofdm/submodels/huntsman-jtag.apm
 Packagehint=ofdm
 
 [Airblue Special FIFOs]
@@ -164,15 +158,11 @@ Packagehint=ofdm
 [WiFi Phy Transceiver/Requires]
 airblue_transmitter=WiFi Transmitter Pipeline
 airblue_receiver=WiFi Receiver Pipeline
-airblue_fft=Airblue Folded FFT/IFFT
+airblue_fft=WiFi Shared FFT
 
 [ClientServer Utilities]
 File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
 Packagehint=bsv-libraries
-
-[Airblue Phy Only PacketGen]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen.awb
-Packagehint=ofdm
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
@@ -205,16 +195,12 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
 [HW/SW Hybrid Pipeline Build]
-File=modules/project/project-pipeline.awb
-Packagehint=platforms
+File=modules/leap/build-support/project/project-pipeline.awb
+Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
+project_common=Default Hybrid Project Common Utilities
 application_env=Soft Services Hybrid Application Environment
-
-[FPGA Environment/Params]
-MODEL_CLOCK_DIVIDER=4
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
@@ -229,10 +215,9 @@ File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
 Packagehint=ofdm
 
 [WiFi Phy Only/Requires]
-airblue_host_control=CBus RRR Host Control
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy Only PacketGen
+airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
@@ -245,10 +230,6 @@ airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
-Packagehint=ofdm
-
-[CBus RRR Host Control]
-File=modules/airblue/lib/HostControl/RRR/CBus/cbus_host_control.awb
 Packagehint=ofdm
 
 [Basic PHY Driver/Requires]
@@ -266,39 +247,39 @@ streams_service=Streams Service
 dynamic_parameters_service=Dynamic Parameter Service
 
 [Streams Service]
-File=modules/hasim/util/platform-services/common-services/streams-service/streams-service.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/streams-service/streams-service.awb
+Packagehint=leap
 
 [Stats Service]
-File=modules/hasim/util/platform-services/common-services/stats-service/stats-service.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/stats-service/stats-service.awb
+Packagehint=leap
 
 [Common Services]
-File=modules/hasim/util/platform-services/common-services/common-services-standard.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/common-services-standard.awb
+Packagehint=leap
 
 [Assertions Service]
-File=modules/hasim/util/platform-services/common-services/assertions-service/assertions-service.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/assertions-service/assertions-service.awb
+Packagehint=leap
 
 [Airblue Services/Requires]
 common_services=Common Services
 airblue_service=Airblue Service
 
 [Debug Scan Services]
-File=modules/hasim/util/platform-services/common-services/debug-scan-service/debug-scan-service.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/debug-scan-service/debug-scan-service.awb
+Packagehint=leap
 
 [Dynamic Parameter Service]
-File=modules/hasim/util/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
-Packagehint=hasim
+File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
+Packagehint=leap
 
 [Airblue Services]
 File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
 
 [Airblue Service]
-File=modules/airblue/device/deviceServices/airblue-service/airblue-service.awb
+File=modules/airblue/device/deviceServices/airblue-service/physical/airblue-service.awb
 Packagehint=ofdm
 
 [Soft Services Hybrid Application Environment/Requires]
@@ -307,9 +288,24 @@ connected_application=Airblue application
 soft_services=Soft Services
 
 [Soft Services Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=platforms
+File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=leap
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=hasim
+Packagehint=leap
+
+[Airblue Phy Only RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
+Packagehint=ofdm
+
+[WiFi Shared FFT/Requires]
+airblue_fft_library=Airblue Folded FFT/IFFT
+
+[WiFi Shared FFT]
+File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
+Packagehint=ofdm
+
+[Default Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=leap

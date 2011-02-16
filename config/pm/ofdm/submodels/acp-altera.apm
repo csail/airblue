@@ -20,14 +20,14 @@ model=FPGA Environment
 virtual_platform=Standard Virtual Platform
 fpga_components=Hardware FPGA Components for Virtex 5
 librl_bsv=Altera RL Bluespec Library
-build_pipeline=FPGA Build Pipeline
+build_pipeline=FPGA Build Pipeline Xilinx
 
 [Standard Virtual Platform]
 File=modules/leap/virtual-platform/std-virtual-platform.awb
 Packagehint=leap
 
 [Standard Virtual Platform/Requires]
-virtual_devices=Standard Virtual Devices
+virtual_devices=Standard Virtual Devices Submodel
 low_level_platform_interface=Low Level Platform Interface Hybrid
 umf=Little-Endian Unified Message Format
 
@@ -35,9 +35,6 @@ umf=Little-Endian Unified Message Format
 File=modules/leap/virtual-platform/fpga-environment.awb
 Packagehint=leap
 
-[Standard Virtual Devices]
-File=modules/leap/virtual-platform/virtual-devices/virtual-device-sets/std/std-virtual-devices.awb
-Packagehint=leap
 
 [RRR Clients and Servers]
 File=modules/leap/virtual-platform/rrr/basic/basic-rrr.awb
@@ -110,71 +107,20 @@ Packagehint=platforms
 [Little-Endian Unified Message Format/Params]
 UMF_CHUNK_BYTES=8
 
-[NULL Central Cache]
-File=modules/leap/virtual-platform/virtual-devices/devices/central-cache/null-central-cache.awb
-Packagehint=leap
 
-[Hybrid Streams Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/streams-device/hybrid-streams.awb
-Packagehint=leap
 
-[Assertions Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/assertions-device/assertions-device.awb
-Packagehint=leap
 
-[Starter Virtual Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/starter/hybrid/starter-device.awb
-Packagehint=leap
 
-[Debug Scan Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/debug-scan-device/debug-scan-device.awb
-Packagehint=leap
 
-[Dynamic Parameters Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/dynamic-parameters-device/dynamic-parameters-device.awb
-Packagehint=leap
 
-[Base Common Devices/Requires]
-stats_device=Stats Device
-dynamic_parameters_device=Dynamic Parameters Device
-streams_device=Hybrid Streams Device
-assertions_device=Assertions Device
-debug_scan_device=Debug Scan Device
 
-[Null Shared Memory]
-File=modules/leap/virtual-platform/virtual-devices/devices/shared-memory/null/null-shared-memory.awb
-Packagehint=leap
 
-[Standard Virtual Devices/Requires]
-starter_device=Starter Virtual Device
-central_cache=NULL Central Cache
-scratchpad_memory=Hybrid Scratchpad Memory Device
-shared_memory=Null Shared Memory
-common_utility_devices=Base Common Devices
-front_panel=Hybrid Front Panel
 
-[Stats Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/stats-device/stats-device.awb
-Packagehint=leap
 
-[Base Common Devices]
-File=modules/leap/virtual-platform/virtual-devices/devices/common/common-utility-devices.awb
-Packagehint=leap
 
-[Hybrid Front Panel]
-File=modules/leap/virtual-platform/virtual-devices/devices/front-panel/hybrid/hybrid-fp.awb
-Packagehint=leap
 
-[Hybrid Scratchpad Memory Device]
-File=modules/leap/virtual-platform/virtual-devices/devices/scratchpad-memory/hybrid/hybrid-mem-scratch.awb
-Packagehint=leap
 
-[Hybrid Scratchpad Memory Device/Requires]
-scratchpad_memory_common=Scratchpad Memory Common Definitions
 
-[Scratchpad Memory Common Definitions]
-File=modules/leap/virtual-platform/virtual-devices/devices/scratchpad-memory/common/mem-scratch-common.awb
-Packagehint=leap
 
 [RRR Common Module]
 File=modules/leap/virtual-platform/rrr/rrr-common/rrr-common.awb
@@ -182,10 +128,6 @@ Packagehint=leap
 
 [RRR Clients and Servers/Requires]
 rrr_common=RRR Common Module
-
-[FPGA Build Pipeline]
-File=config/pm/hasim/submodels/pipelines/build-pipeline-xilinx.apm
-Packagehint=leap
 
 [FIFO Utility]
 File=modules/bsv-libraries/bluespec/FIFOUtility/fifo_utility.awb
@@ -262,3 +204,11 @@ Packagehint=platforms-acp
 [General LED Device]
 File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/leds/general-led-device.awb
 Packagehint=platforms
+
+[FPGA Build Pipeline Xilinx]
+File=config/pm/hasim/submodels/pipelines/build-pipeline-xilinx.apm
+Packagehint=leap
+
+[Standard Virtual Devices Submodel]
+File=config/pm/hasim/submodels/fpgaenv/std-virtual-devices.apm
+Packagehint=leap

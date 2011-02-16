@@ -6,17 +6,16 @@ Packagehint=bsv-libraries
 [Global]
 SaveParameters=0
 DefaultBenchmark=config/bm/bsv-libraries/pass_check.cfx/benchmarks/pass_check.cfg
-Version=2.1
+Version=2.2
 Type=HAsim
 File=synchronizer_test2
 Class=Asim::Model
 Name=Airblue New Synchronizer Test
 Description=Airblue New Synchronizer Test
 DefaultRunOpts=
+RootName=HW/SW Hybrid Pipeline Build
+RootProvides=model
 
-[Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=hasim
 
 [Model]
 DefaultAttributes=airblue
@@ -25,9 +24,6 @@ model=HW/SW Hybrid Pipeline Build
 [HW only hybrid application/Requires]
 hw_only_application=Airblue WiFi New Synchronizer Test
 
-[FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
@@ -118,27 +114,36 @@ File=modules/airblue/lib/Channel/model/channel_model_sw.awb
 Packagehint=ofdm
 
 [HW/SW Hybrid Pipeline Build]
-File=modules/project/project-pipeline.awb
-Packagehint=platforms
+File=modules/leap/build-support/project/project-pipeline.awb
+Packagehint=leap
 
-[Platform Services with No Memory Service]
-File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
-Packagehint=hasim
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
+project_common=Default Hybrid Project Common Utilities
+fpgaenv=Altera Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Soft Services Hybrid Application Environment]
-File=modules/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=platforms
+File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Platform Services with No Memory Service
+platform_services=Standard Platform Service (No Memory Service)
 connected_application=HW only hybrid application
 soft_services=Soft Services
 
 [Soft Services]
 File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=hasim
+Packagehint=leap
+
+[Altera Hybrid Simulation FPGA Environment]
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
+
+[Standard Platform Service (No Memory Service)]
+File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
+Packagehint=leap
+
+[Default Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=leap

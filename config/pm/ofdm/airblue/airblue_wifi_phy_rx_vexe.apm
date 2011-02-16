@@ -28,10 +28,6 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
-
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=ofdm
@@ -149,10 +145,6 @@ Packagehint=ofdm
 File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
 Packagehint=bsv-libraries
 
-[Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
-Packagehint=leap
-
 [Airblue Channel Estimator]
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
 Packagehint=ofdm
@@ -199,8 +191,8 @@ File=modules/leap/build-support/project/project-pipeline.awb
 Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Hybrid Project Common Utilities
-fpgaenv=FPGA Environment
+project_common=Default Hybrid Project Common Utilities
+fpgaenv=Altera Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Airblue Environment]
@@ -323,3 +315,11 @@ Packagehint=ofdm
 
 [Airblue Phy RX RRR PacketGen/Params]
 DEBUG_PACKETGEN=1
+
+[Altera Hybrid Simulation FPGA Environment]
+File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
+Packagehint=bsv-libraries
+
+[Default Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=leap
