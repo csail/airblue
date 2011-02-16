@@ -1226,3 +1226,17 @@ Directory modules/airblue/lib/Drivers/RXTraceSimulation
 
 
 Added time out function to PacketGen
+
+----------
+jsemer      Date: Wed Feb 16 12:25:49 EST 2011  CSN: CSN-ofdm-309
+                  Wed Feb 16 17:25:49 UTC 2011
+
+
+Directory config/pm/ofdm/airblue
+ airblue_wifi_phy_only_huntsman.apm Locally Modified          308 
+
+Directory config/pm/ofdm/submodels
+ huntsman-jtag.apm         Locally Modified          308 
+
+Manually fixed the problems with the huntsman .apm files. 
+Fixss are just syntactic - not tested.

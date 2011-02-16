@@ -201,6 +201,7 @@ Packagehint=leap
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Default Hybrid Project Common Utilities
 application_env=Soft Services Hybrid Application Environment
+fpgaenv=Huntsman JTAG
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
@@ -309,3 +310,7 @@ Packagehint=ofdm
 [Default Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
+
+[Huntsman JTAG]
+File=config/pm/ofdm/submodels/huntsman-jtag.apm
+Packagehint=ofdm
