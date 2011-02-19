@@ -112,6 +112,12 @@ PACKETCHECKRRR_SERVER_CLASS::SendPacket(UINT8 command, UINT32 payload)
       lengthPtr = (UINT32*) malloc(sizeof(UINT32));
       *lengthPtr = length;
       g_async_queue_push(headerQ,lengthPtr);       
+      // handle the special case where no data is expected to come...
+      if(length == 0) {
+	g_async_queue_push(dataQ,packet);
+        packet =  NULL;     
+      }
+
       break;
 
     case DATA:
