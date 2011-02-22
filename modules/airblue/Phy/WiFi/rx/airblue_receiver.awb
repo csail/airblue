@@ -21,6 +21,7 @@
 
 %sources -t BSV -v PUBLIC Decoder.bsv Receiver.bsv WiFiReceiver.bsv RXController.bsv 
 
+%generated -t BA mkChannelEstimatorInstance.ba
 %generated -t BA mkDemapperInstance.ba
 %generated -t BA mkDepuncturerInstance.ba
 %generated -t BA mkDescramblerInstance.ba
@@ -30,6 +31,7 @@
 %generated -t BA mkViterbiInstance.ba
 
 
+%generated -t VERILOG mkChannelEstimatorInstance.v
 %generated -t VERILOG mkDemapperInstance.v
 %generated -t VERILOG mkDepuncturerInstance.v
 %generated -t VERILOG mkDescramblerInstance.v
