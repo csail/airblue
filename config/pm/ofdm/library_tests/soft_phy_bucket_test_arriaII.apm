@@ -32,7 +32,6 @@ Packagehint=ofdm
 airblue_convolutional_encoder=Airblue Convolutional Encoder
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
-airblue_fft=WiFi Shared FFT
 airblue_demapper=Airblue Demapper
 airblue_depuncturer=Airblue Depuncturer
 airblue_channel=Airblue RRR Channel
@@ -42,6 +41,7 @@ airblue_host_control=Simple RRR Host Control
 airblue_convolutional_decoder_test_common=Airblue Convolutional Decoder Test Common Definitions
 airblue_convolutional_decoder_backend=SoftPhy Bucket Backend
 airblue_transactor=Fake Transactor for ConvDecoder Test
+airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -210,9 +210,6 @@ Packagehint=leap
 MODEL_CLOCK_DIVIDER=6
 MODEL_CLOCK_MULTIPLIER=2
 
-[WiFi Shared FFT]
-File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
-Packagehint=ofdm
 
 [Standard Platform Service (No Memory Service)]
 File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
@@ -226,8 +223,6 @@ Packagehint=leap
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
 
-[WiFi Shared FFT/Requires]
-airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb

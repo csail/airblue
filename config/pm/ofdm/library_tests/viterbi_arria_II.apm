@@ -195,10 +195,10 @@ airblue_descrambler=Airblue Descrambler
 airblue_scrambler=Airblue Scrambler
 airblue_mapper=Airblue Mapper
 airblue_puncturer=Airblue Puncturer
-airblue_fft=WiFi Shared FFT
 airblue_convolutional_decoder_backend=Airblue Convolutional Decoder Test PassCheck Backend
 airblue_channel=Airblue Noisy Channel
 airblue_transactor=Fake Transactor for ConvDecoder Test
+airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
@@ -212,9 +212,6 @@ Packagehint=ofdm
 MODEL_CLOCK_DIVIDER=10
 MODEL_CLOCK_MULTIPLIER=1
 
-[WiFi Shared FFT]
-File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
-Packagehint=ofdm
 
 [Standard Platform Service (No Memory Service)]
 File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
@@ -228,8 +225,6 @@ Packagehint=leap
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
 
-[WiFi Shared FFT/Requires]
-airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
