@@ -22,6 +22,17 @@ interface BackwardPath;
    interface Get#(BackwardPathOut) out;
 endinterface
 
+(* synthesize *)
+module mkRevBufferInitial(ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE));
+  let m <- mkReversalBuffer("BCJR revInitial");
+  return m;
+endmodule
+
+(* synthesize *)
+module mkRevBufferFinal (ReversalBuffer#(VPathMetricUnitOut,BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE));
+  let m <- mkReversalBuffer("BCJR revInitial");
+  return m;
+endmodule 
 
 module mkBackwardPath (
       ReadOnly#(Bit#(32)) clockCycles,
@@ -29,7 +40,7 @@ module mkBackwardPath (
       BackwardPath ifc);
 
    // magic sizing variable 
-   Bit#(TMul#(`REVERSAL_BUFFER_SIZE,4)) bigFIFO = 0;
+   Bit#(TMul#(`REVERSAL_BUFFER_SIZE,2)) bigFIFO = 0;
 
    // Reverse Path Blocks
    ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferInitial <- mkReversalBuffer("BCJR revInitial");

@@ -11,7 +11,7 @@
 %requires airblue_convolutional_decoder_test_common
 %requires airblue_convolutional_decoder_backend
 
-%requires airblue_fft
+%requires airblue_fft_library
 %requires airblue_convolutional_encoder
 %requires airblue_mapper
 %requires airblue_demapper

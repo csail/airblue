@@ -42,7 +42,7 @@ import Connectable::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_special_fifos.bsh"
-`include "asim/provides/airblue_fft.bsh"
+`include "asim/provides/airblue_fft_library.bsh"
 `include "asim/provides/airblue_convolutional_encoder.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"

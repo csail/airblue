@@ -242,7 +242,7 @@ DEBUG_SYNCHRONIZER=1
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
+airblue_phy_packet_gen=Airblue Phy RX RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 
@@ -300,16 +300,10 @@ Packagehint=ofdm
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue Phy Only RRR PacketGen]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
-Packagehint=ofdm
-
-[Airblue Phy Only RRR PacketGen/Params]
-DEBUG_PACKETGEN=1
-
 [Hybrid Altera XUP-v5 PCIE FPGA Environment/Params]
 MODEL_CLOCK_DIVIDER=20
-MODEL_CLOCK_FREQ=15
+MODEL_CLOCK_FREQ=25
+MODEL_CLOCK_MULTIPLIER=5
 
 [Hybrid Altera XUP-v5 PCIE FPGA Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-altera.apm
@@ -332,4 +326,11 @@ Packagehint=ofdm
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
+Packagehint=ofdm
+
+[Airblue Viterbi (no SoftHints)/Params]
+VITERBI_TB_MAX_PATH=0
+
+[Airblue Phy RX RRR PacketGen]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
 Packagehint=ofdm
