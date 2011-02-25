@@ -1,0 +1,11 @@
+%name Airblue Service (USRP)
+%desc Airblue Service (USRP)
+
+%provides airblue_service
+
+%attributes hybrid connected
+
+%public airblue-service-usrp.bsv
+
+
+
