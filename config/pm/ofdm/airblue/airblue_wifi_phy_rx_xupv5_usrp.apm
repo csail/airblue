@@ -28,9 +28,6 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[Airblue Shifted Registers]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
-Packagehint=ofdm
 
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
@@ -49,7 +46,7 @@ client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
 stat_min=Min collector
-airblue_shift_regs=Airblue Shifted Registers
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
@@ -224,8 +221,6 @@ Packagehint=leap
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
-
-
 [WiFi Receiver Pipeline/Params]
 DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
@@ -290,7 +285,6 @@ Packagehint=ofdm
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-
 [Default Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
@@ -331,4 +325,8 @@ airblue_environment=Airblue Environment
 
 [Airblue Null Driver]
 File=modules/airblue/lib/Drivers/CycleAccurateRXTraceSimulation/airblue-driver-rx-cycle-accurate-simulation.awb
+Packagehint=ofdm
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
 Packagehint=ofdm

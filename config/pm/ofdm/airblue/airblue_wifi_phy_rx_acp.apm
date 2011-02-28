@@ -28,10 +28,6 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[Airblue Shifted Registers]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
-Packagehint=ofdm
-
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
 Packagehint=ofdm
@@ -49,7 +45,7 @@ client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
 stat_min=Min collector
-airblue_shift_regs=Airblue Shifted Registers
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
@@ -331,3 +327,7 @@ Packagehint=ofdm
 [Default Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=ofdm
