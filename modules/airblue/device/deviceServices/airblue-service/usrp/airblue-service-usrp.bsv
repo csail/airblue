@@ -22,6 +22,8 @@ import Connectable::*;
 import CBus::*;
 import Clocks::*;
 import FIFO::*;
+import FixedPoint::*;
+import Complex::*;
 
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/physical_platform.bsh"
@@ -35,15 +37,16 @@ import FIFO::*;
 
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
-    XUPV5_SERDES_DRIVER       sataDriver = drivers.sataDriver;
-    Clock rxClk = sataDriver.rxusrclk0;
-    Reset rxRst = sataDriver.rxusrrst0;
+   XUPV5_SERDES_DRIVER       sataDriver = drivers.sataDriver;
+   Clock rxClk = sataDriver.rxusrclk0;
+   Reset rxRst = sataDriver.rxusrrst0;
 
-    NumTypeParam#(16383) fifo_sz = 0;
+   NumTypeParam#(16383) fifo_sz = 0;
+   FIFO#(XUPV5_SERDES_WORD) serdes_word_fifo <- mkSizedBRAMFIFO(fifo_sz, clocked_by rxClk, reset_by rxRst);
+   SyncFIFOIfc#(XUPV5_SERDES_WORD) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
 
-    FIFO#(XUPV5_SERDES_WORD) serdes_word_fifo <- mkSizedBRAMFIFO(fifo_sz, clocked_by rxClk, reset_by rxRst);
-    SyncFIFOIfc#(XUPV5_SERDES_WORD) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
-
+   Reg#(Bool) processI <- mkReg(True); // Expect to start in the processing I state
+   Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0);
    // make soft connections to PHY
    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
@@ -58,10 +61,25 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
       serdes_word_sync_fifo.enq(serdes_word_fifo.first());
     endrule
 
-    rule sendToSW (True);
+
+    rule processIPart (processI);
+       serdes_word_sync_fifo.deq();
+       // We should only use this if it is not control 
+       if(extractData(serdes_word_sync_fifo.first()) matches tagged Valid .data) 
+         begin
+           processI <= False; 
+           iPart <= data;
+         end
+    endrule
+
+    rule sendToSW (!processI);
        serdes_word_sync_fifo.deq();
        // This may be a bug Alfred will know what to do. XXX
-       analogRX.send(unpack(pack(serdes_word_sync_fifo.first())));
+       if(extractData(serdes_word_sync_fifo.first()) matches tagged Valid .data)
+         begin
+           analogRX.send(cmplx(iPart,data));
+           processI <= True;
+         end 
     endrule
 
     rule tieOff; // Should be removed at some point
