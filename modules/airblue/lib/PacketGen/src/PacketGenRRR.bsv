@@ -13,6 +13,7 @@ import StmtFSM::*;
 `include "asim/provides/register_library.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
+`include "asim/provides/clocks_device.bsh"
 `include "asim/rrr/remote_server_stub_PACKETGENRRR.bsh"
 `include "asim/rrr/remote_server_stub_PACKETCHECKRRR.bsh"
 
@@ -69,7 +70,7 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
  Reg#(Bit#(12))  minPacketLengthReg <- mkReg(1);
  Reg#(Bit#(12))  maxPacketLengthReg <- mkReg(~0);
  Reg#(Bit#(12))  packetLengthMaskReg <- mkReg(~0);
- Reg#(Bit#(24))  packetDelayReg <- mkReg(0);
+ Reg#(Bit#(24))  packetDelayReg <- mkReg(0); // Delay each packet by 100us
  Reg#(Bit#(24))  delayCount <- mkReg(0);
  Reg#(Bit#(3))   rateReg <- mkReg(4);
 
@@ -120,7 +121,8 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
       else
          begin
             length = ((lfsr.value[11:0] & packetLengthMaskReg) == 0)? 1 : lfsr.value[11:0] & packetLengthMaskReg;
-         end              
+         end       
+
       size <= length;
       count <= count + 1;
       checksum <= 0;
@@ -130,7 +132,7 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
           $display("PacketGen: starting packet gen size: %d",length);
         end
 
-      txVectorFIFO.enq(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: True}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      txVectorFIFO.enq(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
    endrule
    
    rule transmitData(count > 0 && count < zeroExtend(size) && enable == 1);
@@ -226,7 +228,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    rule checkPacketCheckState(`DEBUG_PACKETGEN == 1);
       if(cycleCountReg[9:0] == 0)
         begin
-          $display("PacketGen: check size %d count %d",size,count);
+          $display("PacketCheck: check size %d count %d",size,count);
         end
    endrule
    
@@ -243,7 +245,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
                   checksum <= 0;
                   if(`DEBUG_PACKETGEN == 1)
                     begin
-                      $display("PacketGen: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+                      $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
                     end
                end
             else
@@ -252,7 +254,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
                   abortReqFIFO.enq(?);
                   if(`DEBUG_PACKETGEN == 1)
                     begin
-                      $display("PacketGen: abort the packet: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+                      $display("PacketCheck: abort the packet: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
                     end
                end
          end
@@ -263,7 +265,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       rxDataFIFO.deq;
       if(`DEBUG_PACKETGEN == 1)
         begin
-          $display("PacketGen: drop data %d while waiting for ack @%d", rxDataFIFO.first, cycleCountReg);
+          $display("PacketCheck: drop data %d while waiting for ack @%d", rxDataFIFO.first, cycleCountReg);
         end
    endrule
    
@@ -272,7 +274,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       waitAck <= False;
       if(`DEBUG_PACKETGEN == 1)
         begin
-          $display("PacketGen: abort completed according to receiver @ %d",cycleCountReg);
+          $display("PacketCheck: abort completed according to receiver @ %d",cycleCountReg);
         end
    endrule
    
@@ -280,7 +282,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       rxDataFIFO.deq;
       if(`DEBUG_PACKETGEN == 1)
         begin
-          $display("PacketGen: rxDataFIFO.first %d",rxDataFIFO.first);
+          $display("PacketCheck: rxDataFIFO.first %d",rxDataFIFO.first);
         end
 
       count <= count + 1;
@@ -290,7 +292,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
             berReg <= berReg + pack(zeroExtend(countOnes((~checksum + 1)^rxDataFIFO.first))); 
             if(`DEBUG_PACKETGEN == 1)
               begin 
-                $display("PacketGen: receive data (checksum): %h @ %d",rxDataFIFO.first,cycleCountReg); 
+                $display("PacketCheck: receive data (checksum): %h @ %d",rxDataFIFO.first,cycleCountReg); 
               end
          end
       else
@@ -299,7 +301,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
             berReg <= berReg + pack(zeroExtend(countOnes(truncate(count-1)^rxDataFIFO.first)));  
             if(`DEBUG_PACKETGEN == 1)
               begin
-                $display("PacketGen: receive data: %h @ %d",rxDataFIFO.first,cycleCountReg);
+                $display("PacketCheck: receive data: %h @ %d",rxDataFIFO.first,cycleCountReg);
               end
          end
       checksum <= checksum + rxDataFIFO.first;
@@ -317,20 +319,20 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
             if(`DEBUG_PACKETGEN == 1)
               begin
-                $display("PacketGen: receive packet count %d", packetsCorrectReg + 1);             
-                $display("PacketGen: total bytes: %d", bytesRXReg + zeroExtend(size));
-                $display("PacketGen: correctly received %d of %d packets @ %d",packetsCorrectReg,packetsRXReg,cycleCountReg);
+                $display("PacketCheck: receive packet count %d", packetsCorrectReg + 1);             
+                $display("PacketCheck: total bytes: %d", bytesRXReg + zeroExtend(size));
+                $display("PacketCheck: correctly received %d of %d packets @ %d",packetsCorrectReg,packetsRXReg,cycleCountReg);
               end
          end               
       else 
          begin
-            $display("PacketGen: ERROR receive data(checksum): %h",checksum);
+            $display("PacketCheck: ERROR receive data(checksum): %h",checksum);
 //            $finish;
          end  
              
       if(`DEBUG_PACKETGEN == 1)
         begin
-          $display("PacketGen: Packet bit errors: %d, Packet bit length: %d, BER total: %d", packetBerReg, size*8, berReg);
+          $display("PacketCheck: Packet bit errors: %d, Packet bit length: %d, BER total: %d", packetBerReg, size*8, berReg);
         end
 
    endrule

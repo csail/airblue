@@ -49,6 +49,8 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    // For now just stub the viterbi clock -- it should be generating its own.
    let clk <- exposeCurrentClock();
    let rst <- exposeCurrentReset();
+    // RX/TX signals are at  20Mhz.
+    UserClock clk20 <- mkSoftClock(20);
 
    let wifiFFTTX <- mkWiFiFFTIFFT;
    let wifiFFTRX <- mkWiFiFFTIFFT;
@@ -62,11 +64,17 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXData");
    Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXVector");
    Connection_Receive#(Bit#(1))  txEnd    <- mkConnection_Receive("TXEnd");
+ 
+   SyncFIFOIfc#(TXVector) lengthFIFO <- mkSyncFIFOFromCC(16,clk20.clk);
+ 
+   rule handleLength;
+     txVector.deq;
+     lengthFIFO.enq(txVector.receive);
+     wifiTransmitter.txStart(txVector.receive);
+   endrule
 
-
-   mkConnection(txVector, wifiTransmitter.txStart);
    mkConnection(txData, wifiTransmitter.txData);
-//   mkConnection(txEnd, wifiTransmitter.txEnd);
+
 
    rule handleTXEnd;
      txEnd.deq;
@@ -106,14 +114,20 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
        let feedback <- wifiReceiver.packetFeedback.get;
      endrule
 
-    // Hook up RX/TX signals. These signals are getting sent at 20Mhz.
-    UserClock clk20 <- mkSoftClock(20);
+
 
     SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) txfifo <- mkSyncFIFOFromCC(32, clk20.clk);  
     SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) rxfifo <- mkSyncFIFOToCC(32, clk20.clk, clk20.rst);  
-    Wire#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) data <- mkDWire(0,clocked_by(clk20.clk), reset_by(clk20.rst));
+    Wire#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) dataTrans <- mkDWire(unpack(15),clocked_by(clk20.clk), reset_by(clk20.rst));
     PulseWire rxSunkData <- mkPulseWire(clocked_by(clk20.clk), reset_by(clk20.rst));
-    Reg#(Bit#(32)) count <- mkReg(0, clocked_by(clk20.clk), reset_by(clk20.rst));
+    PulseWire txProduceData <- mkPulseWire(clocked_by(clk20.clk), reset_by(clk20.rst));
+    Reg#(Bool) last <- mkReg(False);
+    Reg#(Bool) lastLast <- mkReg(False);
+    Reg#(Bit#(32)) count20 <- mkReg(0, clocked_by(clk20.clk), reset_by(clk20.rst));
+    Reg#(Bit#(32)) count <- mkReg(0);
+    Reg#(Bit#(17)) bitCount <- mkReg(0, clocked_by(clk20.clk), reset_by(clk20.rst)); 
+    Reg#(Bit#(7))  chipCount <- mkReg(0, clocked_by(clk20.clk), reset_by(clk20.rst));
+    Reg#(Bit#(16))  preambleCount <- mkReg(0, clocked_by(clk20.clk), reset_by(clk20.rst));
 
     // Need a check to make sure TX is producing stuff at line rate
     // Let's do a glitch check
@@ -122,22 +136,86 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
       txfifo.enq(data);     
     endrule
 
-    rule handleTX;
-      data <= txfifo.first;
+    rule handleTX(!(bitCount == 0 && preambleCount == 0));
+      dataTrans <= txfifo.first;
       txfifo.deq;
+      txProduceData.send;
     endrule
+
+    rule setTX(bitCount == 0 && preambleCount == 0);
+      Bit#(16) preamble_sz = getPreambleCount(lengthFIFO.first.header.has_trailer);
+      Bit#(17) bit_length  = getBitLength(lengthFIFO.first.header.length);
+      preambleCount <= preamble_sz;  // header is 24 bits and always sent as basic rate
+      bitCount <= bit_length; // bit length
+      chipCount <= 0;
+//      $display("Preamble Count: %h,  bit count %h", bit_length, preamble_sz);
+    endrule
+
+    rule testTX(bitCount > 0);
+      if((preambleCount <  getPreambleCount(lengthFIFO.first.header.has_trailer)) &&
+         !txProduceData)
+        begin
+          // Here we die. 
+          $display("TX side failed to produce data fast enough");
+          $finish;
+        end
+      else if(txProduceData) 
+        begin
+  //        $display("Preamble Count: %h,  bit count %h",  preambleCount, bitCount);
+          if(preambleCount > 0)
+            begin
+       	      preambleCount <= preambleCount - 1;
+            end
+          else if(chipCount + 1 == fromInteger(valueof(SymbolLen)))
+       	    begin
+              chipCount <= 0;
+              // we may have pad bits.  the last subtraction may not equal zero
+              if(bitCount <= fromInteger(bitsPerSymbol(lengthFIFO.first.header.rate)))
+                begin
+                  // at this point we should send the deq pulse
+                  bitCount <= 0;
+                  lengthFIFO.deq;
+//   	          if(`DEBUG_RF_DEVICE == 1)
+//                   begin
+                     $display("AD: length done @ $d",count20);
+//                 end
+                end
+              else
+                begin
+//                  if(`DEBUG_RF_DEVICE == 1)
+//                    begin
+                      $display("AD: substraction");
+//                    end
+                 bitCount <= bitCount - fromInteger(bitsPerSymbol(lengthFIFO.first.header.rate));
+               end
+          end
+        else
+          begin
+            chipCount <= chipCount + 1;
+          end
+       end
+    endrule
+
+
+
+
 
     // This rule _must_ fire every cycle
     rule handleRX;
       rxSunkData.send;
-      rxfifo.enq(data);
+//      $display("RX data: %h", dataTrans);
+      rxfifo.enq(dataTrans);
     endrule
 
     rule stepCount;
       count <= count + 1;
     endrule
 
-    rule checkRX(!rxSunkData && count > 1000);
+    rule stepCount20;
+      count20 <= count20 + 1;
+    endrule
+
+    rule checkRX(!rxSunkData && count20 > 1000);
       $display("RX failed to sink data");
       $finish;
     endrule
