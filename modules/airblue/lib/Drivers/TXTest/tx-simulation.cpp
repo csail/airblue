@@ -32,6 +32,10 @@ AIRBLUE_DRIVER_CLASS::Main()
   int ber,result;
 
   packetGenStub->SetRate(get_rate());
+
+  // need to send down a packet 
+  for(i = 0
+
   packetGenStub->SetEnable(~0);
   while(packetCheckStub->GetPacketsRX(0) < 50){sleep(5);}
   printf("Done waiting for packets\n");

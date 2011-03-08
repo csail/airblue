@@ -7,7 +7,7 @@
 #include <glib.h>
 
 #include "asim/rrr/service_ids.h"
-#include "asim/provides/airblue_phy_packet_gen.h"
+#include "asim/provides/airblue_phy_packet_check.h"
 
 using namespace std;
 

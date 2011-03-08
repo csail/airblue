@@ -20,7 +20,7 @@ model=FPGA Environment
 virtual_platform=Standard Virtual Platform
 fpga_components=Hardware FPGA Components for Virtex 5
 librl_bsv=Altera RL Bluespec Library
-build_pipeline=FPGA Build Pipeline Xilinx
+build_pipeline=FPGA Build Pipeline Xilinx (Synplify)
 
 [Standard Virtual Platform]
 File=modules/leap/virtual-platform/std-virtual-platform.awb
@@ -34,7 +34,6 @@ umf=Little-Endian Unified Message Format
 [FPGA Environment]
 File=modules/leap/virtual-platform/fpga-environment.awb
 Packagehint=leap
-
 
 [RRR Clients and Servers]
 File=modules/leap/virtual-platform/rrr/basic/basic-rrr.awb
@@ -106,21 +105,6 @@ Packagehint=platforms
 
 [Little-Endian Unified Message Format/Params]
 UMF_CHUNK_BYTES=8
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 [RRR Common Module]
 File=modules/leap/virtual-platform/rrr/rrr-common/rrr-common.awb
@@ -205,10 +189,11 @@ Packagehint=platforms-acp
 File=modules/bluespec/common/fpgaenv/physical-platform/physical-devices/leds/general-led-device.awb
 Packagehint=platforms
 
-[FPGA Build Pipeline Xilinx]
-File=config/pm/hasim/submodels/pipelines/build-pipeline-xilinx.apm
-Packagehint=leap
 
 [Standard Virtual Devices Submodel]
 File=config/pm/hasim/submodels/fpgaenv/std-virtual-devices.apm
+Packagehint=leap
+
+[FPGA Build Pipeline Xilinx (Synplify)]
+File=config/pm/hasim/submodels/pipelines/build-pipeline-xilinx-synplify.apm
 Packagehint=leap

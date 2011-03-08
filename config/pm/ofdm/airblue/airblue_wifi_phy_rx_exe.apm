@@ -238,9 +238,10 @@ MAGIC_DESCRAMBLE_SEED=0
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy RX RRR PacketGen
+airblue_phy_packet_gen=Airblue Phy NULL PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -296,10 +297,6 @@ Packagehint=ofdm
 [WiFi Phy Only/Params]
 DEBUG_TRANSCEIVER=1
 
-[Airblue Phy RX RRR PacketGen]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
-Packagehint=ofdm
-
 [HW/SW Hybrid Pipeline Build/Params]
 WAIT_FOR_HARDWARE=0
 
@@ -331,3 +328,11 @@ Packagehint=bsv-libraries
 [Default Hybrid Project Common Utilities]
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
+
+[Airblue Phy NULL PacketGen]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+Packagehint=ofdm
+
+[Airblue Phy RX RRR Packet Check]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
+Packagehint=ofdm

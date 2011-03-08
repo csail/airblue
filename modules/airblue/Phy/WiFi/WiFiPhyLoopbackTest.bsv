@@ -55,7 +55,7 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    let wifiFFTTX <- mkWiFiFFTIFFT;
    let wifiFFTRX <- mkWiFiFFTIFFT;
    let wifiTransmitter <- mkWiFiTransmitter(wifiFFTTX.ifft);
-   let wifiReceiver    <- mkWiFiReceiver(clk, rst, wifiFFTRX.fft);
+  let wifiReceiver    <- mkWiFiReceiver(clk, rst, wifiFFTRX.fft);
 
    // Soft connections to the rest of the world
    /////
@@ -175,17 +175,17 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
                   // at this point we should send the deq pulse
                   bitCount <= 0;
                   lengthFIFO.deq;
-//   	          if(`DEBUG_RF_DEVICE == 1)
-//                   begin
+   	        /*  if(`DEBUG_RF_DEVICE == 1)
+                   begin
                      $display("AD: length done @ $d",count20);
-//                 end
+                   end*/
                 end
               else
                 begin
-//                  if(`DEBUG_RF_DEVICE == 1)
-//                    begin
+/*                  if(`DEBUG_RF_DEVICE == 1)
+                    begin
                       $display("AD: substraction");
-//                    end
+                    end*/
                  bitCount <= bitCount - fromInteger(bitsPerSymbol(lengthFIFO.first.header.rate));
                end
           end

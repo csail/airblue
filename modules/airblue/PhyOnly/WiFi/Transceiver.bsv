@@ -44,6 +44,7 @@ import Clocks::*;
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_phy_packet_gen.bsh"
+`include "asim/provides/airblue_phy_packet_check.bsh"
 `include "asim/provides/airblue_phy.bsh"
 
 module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);

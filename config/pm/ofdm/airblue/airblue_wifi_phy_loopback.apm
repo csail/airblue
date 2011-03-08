@@ -28,7 +28,6 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
 Packagehint=ofdm
@@ -218,6 +217,7 @@ airblue_types=Airblue types (no SoftHints)
 airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_phy_packet_check=Airblue Phy Only RRR PacketCheck
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -282,9 +282,10 @@ airblue_fft=WiFi Shared FFT
 [WiFi Receiver Pipeline/Params]
 MAGIC_DESCRAMBLE_SEED=0
 
-[Airblue Phy Only RRR PacketGen/Params]
-DEBUG_PACKETGEN=1
-
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketCheck]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
 Packagehint=ofdm

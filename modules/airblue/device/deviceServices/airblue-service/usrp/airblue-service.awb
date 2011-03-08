@@ -7,5 +7,7 @@
 
 %public airblue-service-usrp.bsv
 
+%param SAMPLE_RATE 20 "Protocol Sampling Rate in Megahertz"
+
 
 

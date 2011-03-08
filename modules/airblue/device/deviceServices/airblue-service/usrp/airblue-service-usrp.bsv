@@ -28,18 +28,43 @@ import Complex::*;
 `include "asim/provides/low_level_platform_interface.bsh"
 `include "asim/provides/physical_platform.bsh"
 `include "asim/provides/sata_device.bsh"
+`include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
+`include "asim/provides/soft_clocks.bsh"
+`include "asim/provides/fpga_components.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 
+typedef union tagged {
+  void EndOfPacket;
+  SynchronizerMesg#(RXFPIPrec,RXFPFPrec) Sample;  
+} USRPPacket deriving (Bits, Eq);
+
+typedef enum {
+  Idle,
+  Command, 
+  Body
+} PacketState deriving (Bits, Eq);
+
+// USRP expects a packetized data stream with a two word heade
+// and tied off by an end of buffer tag.
+// We will send the end of buffer as a control value, but the header
+// are normal samples.
+
+SynchronizerMesg#(RXFPIPrec,RXFPFPrec) usrpMagic0 = unpack('h6);
+SynchronizerMesg#(RXFPIPrec,RXFPFPrec) usrpMagic1 = unpack(0);
+
+
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
    XUPV5_SERDES_DRIVER       sataDriver = drivers.sataDriver;
    Clock rxClk = sataDriver.rxusrclk0;
-   Reset rxRst = sataDriver.rxusrrst0;
+   Clock txClk = sataDriver.txusrclk;
+   Reset rxRst = sataDriver.rxusrrst0; 
+   Reset txRst = sataDriver.txusrrst;
 
    NumTypeParam#(16383) fifo_sz = 0;
    FIFO#(XUPV5_SERDES_WORD) serdes_word_fifo <- mkSizedBRAMFIFO(fifo_sz, clocked_by rxClk, reset_by rxRst);
@@ -48,7 +73,6 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    Reg#(Bool) processI <- mkReg(True); // Expect to start in the processing I state
    Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0);
    // make soft connections to PHY
-   Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
 
     rule getSATAData(True);
@@ -82,8 +106,70 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
          end 
     endrule
 
+
+    // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -
+    // If the ingress into the channel is not XMhz, then the egress is not 20Mhz.  If we assume we have a 
+    // correct baseband then this can be used to detect packet boundaries. 
+    
+
+    UserClock clkSample <- mkSoftClock(`SAMPLE_RATE); // use this to assemble the packets according to the expected sampling rate
+
+    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
+
+    SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) intxfifo <- mkSyncFIFOFromCC(32, clkSample.clk);  
+    SyncFIFOIfc#(USRPPacket) outtxfifo <- mkSyncFIFO(32, clkSample.clk, clkSample.rst, txClk);  // this one goes to serdes
+    Reg#(PacketState) state <- mkReg(Idle, clocked_by(clkSample.clk), reset_by(clkSample.rst));
+  
     rule tieOff; // Should be removed at some point
       analogTX.deq();
+      intxfifo.enq(analogTX.receive());
     endrule
-   
+
+
+    rule handleIdleState(state == Idle && intxfifo.notEmpty);
+      outtxfifo.enq(tagged Sample usrpMagic0);
+      state <= Command;    
+    endrule
+
+    rule handleCommandState(state == Idle);
+      outtxfifo.enq(tagged Sample usrpMagic1);
+      state <= Body;
+    endrule
+
+    rule handleBodyState(state == Body && intxfifo.notEmpty);
+      outtxfifo.enq(tagged Sample intxfifo.first);
+      intxfifo.deq;
+    endrule
+
+    // We're done
+    rule handleCompletion(state == Body && !intxfifo.notEmpty);
+      outtxfifo.enq(tagged EndOfPacket);
+      state <= Idle;
+    endrule
+  
+    // Finally we should demarshall the data for transmission 
+    Reg#(Bool) deqNeeded <- mkReg(False, clocked_by(txClk), reset_by(txRst));
+  
+    function Action handleDeq();
+      action
+        if(deqNeeded)
+          begin
+	    outtxfifo.deq();
+          end
+        deqNeeded <= !deqNeeded;
+      endaction
+    endfunction
+
+    rule sendToSERDESData(outtxfifo.first matches tagged Sample .data);
+      Bit#(16) chunk = deqNeeded?pack(data)[15:0]:pack(data)[31:16]; // send MSB first
+      sataDriver.send0(unpackRxWord(0,0,pack(chunk),?));
+      handleDeq();
+    endrule
+
+    rule sendToSERDESCtrl(outtxfifo.first matches tagged EndOfPacket);
+      // This ~0 signifies control
+      sataDriver.send0(unpackRxWord(0,~0,0,?));
+      handleDeq();
+    endrule
+ 
 endmodule

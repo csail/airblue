@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_rx_vexe
+File=airblue_wifi_phy_loopback_fixed
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -28,10 +28,6 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
 Packagehint=ofdm
 
-[Airblue Shifted Registers]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
-Packagehint=ofdm
-
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
 Packagehint=ofdm
@@ -49,7 +45,7 @@ client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
 stat_min=Min collector
-airblue_shift_regs=Airblue Shifted Registers
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
@@ -68,11 +64,6 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
 Packagehint=ofdm
 
-[WiFi Phy Transceiver/Requires]
-airblue_transmitter=WiFi Transmitter Pipeline
-airblue_receiver=WiFi Receiver Pipeline
-airblue_fft=WiFi Shared FFT
-
 [WiFi Transmitter Pipeline/Requires]
 airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
 airblue_convolutional_encoder=Airblue Convolutional Encoder
@@ -85,10 +76,6 @@ airblue_pilot_insert=Airblue Pilot Insert
 [SPI]
 File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
 Packagehint=bsv-libraries
-
-[WiFi Phy Transceiver]
-File=modules/airblue/Phy/WiFi/airblue_wifi_phy.awb
-Packagehint=ofdm
 
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
@@ -164,6 +151,10 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
 
+[Airblue Folded FFT/IFFT]
+File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
+Packagehint=ofdm
+
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
@@ -173,7 +164,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=Airblue Null Driver
+airblue_driver_application=RXTX Simulation Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -208,7 +199,7 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=ofdm
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Airblue Services
+platform_services=Standard Platform Service (No Memory Service)
 connected_application=Airblue application
 soft_services=Soft Services
 
@@ -220,58 +211,16 @@ Packagehint=leap
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
-[WiFi Receiver Pipeline/Params]
-MAGIC_DESCRAMBLE_SEED=0
-
 [WiFi Phy Only/Requires]
-airblue_phy=WiFi Phy Transceiver
+airblue_phy=WiFi Phy Loopback Test
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy NULL PacketGen
+airblue_phy_packet_gen=Airblue Phy Fixed Packet Gen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
+airblue_phy_packet_check=Airblue Phy Only RRR PacketCheck
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
-Packagehint=ofdm
-
-[Common Services/Requires]
-stats_service=Stats Service
-assertions_service=Assertions Service
-debug_scan_service=Debug Scan Services
-streams_service=Streams Service
-dynamic_parameters_service=Dynamic Parameter Service
-
-[Streams Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/streams-service/streams-service.awb
-Packagehint=leap
-
-[Stats Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/stats-service/stats-service.awb
-Packagehint=leap
-
-[Common Services]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/common-services-standard.awb
-Packagehint=leap
-
-[Assertions Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/assertions-service/assertions-service.awb
-Packagehint=leap
-
-[Airblue Services/Requires]
-common_services=Common Services
-airblue_service=Airblue Service (Cycle-accurate Sim)
-
-[Debug Scan Services]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/debug-scan-service/debug-scan-service.awb
-Packagehint=leap
-
-[Dynamic Parameter Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
-Packagehint=leap
-
-[Airblue Services]
-File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
 
 [Airblue types (no SoftHints)]
@@ -281,26 +230,14 @@ Packagehint=ofdm
 [WiFi Phy Only/Params]
 DEBUG_TRANSCEIVER=1
 
-[Airblue Service (Cycle-accurate Sim)]
-File=modules/airblue/device/deviceServices/airblue-service/simulation/airblue-service-cycle-accurate-simulation.awb
-Packagehint=ofdm
-
-[Airblue Null Driver/Requires]
-airblue_environment=Airblue Environment
-
-[Airblue Null Driver]
-File=modules/airblue/lib/Drivers/CycleAccurateRXTraceSimulation/airblue-driver-rx-cycle-accurate-simulation.awb
-Packagehint=ofdm
+[HW/SW Hybrid Pipeline Build/Params]
+WAIT_FOR_HARDWARE=0
 
 [WiFi Shared FFT/Requires]
 airblue_fft_library=Airblue Folded FFT/IFFT
 
 [WiFi Shared FFT]
 File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
-Packagehint=ofdm
-
-[Airblue Folded FFT/IFFT]
-File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
 
 [Airblue Viterbi (no SoftHints)]
@@ -310,8 +247,6 @@ Packagehint=ofdm
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-
-
 [Altera Hybrid Simulation FPGA Environment]
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
@@ -320,13 +255,37 @@ Packagehint=bsv-libraries
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
 
-[Airblue Phy NULL PacketGen]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+[RXTX Simulation Driver/Requires]
+airblue_environment=Airblue Environment
+
+[RXTX Simulation Driver]
+File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
 Packagehint=ofdm
 
-[Airblue Phy NULL PacketGen/Params]
-DEBUG_PACKETGEN=1
+[Standard Platform Service (No Memory Service)]
+File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
+Packagehint=leap
 
-[Airblue Phy RX RRR Packet Check]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
+[WiFi Phy Loopback Test]
+File=modules/airblue/Phy/WiFi/airblue_wifi_loopback_phy.awb
+Packagehint=ofdm
+
+[WiFi Phy Loopback Test/Requires]
+airblue_transmitter=WiFi Transmitter Pipeline
+airblue_receiver=WiFi Receiver Pipeline
+airblue_fft=WiFi Shared FFT
+
+[WiFi Receiver Pipeline/Params]
+MAGIC_DESCRAMBLE_SEED=0
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketCheck]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
+Packagehint=ofdm
+
+[Airblue Phy Fixed Packet Gen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
 Packagehint=ofdm

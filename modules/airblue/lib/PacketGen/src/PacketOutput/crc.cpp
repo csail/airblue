@@ -29,7 +29,7 @@
  * Routine from Chris Waters
  */
 
-#include "asim/provides/airblue_phy_packet_gen.h"
+#include "asim/provides/airblue_phy_packet_check.h"
 
 
 /*****************************************************************/

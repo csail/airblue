@@ -13,6 +13,7 @@
 %requires airblue_shared
 %requires airblue_phy
 %requires airblue_phy_packet_gen
+%requires airblue_phy_packet_check
 
 %attributes airblue
 

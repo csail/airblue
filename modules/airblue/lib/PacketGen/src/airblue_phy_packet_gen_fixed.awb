@@ -4,18 +4,14 @@
 
 %AWB_START
 
-%name Airblue Phy NULL PacketGen
-%desc Doesn't do anything 
+%name Airblue Phy Fixed Packet Gen
+%desc Sends a user specified packet repeatedly
 %provides airblue_phy_packet_gen
 
 %attributes airblue
 
-%sources -t BSV -v PUBLIC  PacketGenNull.bsv
-%sources -t RRR -v PUBLIC  PacketGenRX.rrr
-
-%library libglib-2.0.a
-%library libgthread-2.0.a
-%library librt.a
+%sources -t BSV -v PUBLIC PacketGenFixed.bsv
+%sources -t RRR -v PUBLIC PacketGenFixed.rrr
 
 %param DEBUG_PACKETGEN 0 "Enable debug messages with 1"
  

@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_rx_vexe
+File=airblue_wifi_phy_usrp
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -164,6 +164,10 @@ Packagehint=bsv-libraries
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
 Packagehint=ofdm
 
+[Airblue types (no SoftHints)]
+File=modules/airblue/lib/Types/airblue_types.awb
+Packagehint=ofdm
+
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
 Packagehint=ofdm
@@ -173,7 +177,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=Airblue Null Driver
+airblue_driver_application=RXTX Simulation Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -192,7 +196,7 @@ Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Default Hybrid Project Common Utilities
-fpgaenv=Altera Hybrid Simulation FPGA Environment
+fpgaenv=Hybrid XUP-v5 PCIE SATA FPGA Test Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Airblue Environment]
@@ -221,7 +225,11 @@ File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
 [WiFi Receiver Pipeline/Params]
+DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
+
+[Airblue Synchronizer/Params]
+DEBUG_SYNCHRONIZER=1
 
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
@@ -260,7 +268,7 @@ Packagehint=leap
 
 [Airblue Services/Requires]
 common_services=Common Services
-airblue_service=Airblue Service (Cycle-accurate Sim)
+airblue_service=Airblue Service (USRP)
 
 [Debug Scan Services]
 File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/debug-scan-service/debug-scan-service.awb
@@ -274,23 +282,16 @@ Packagehint=leap
 File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
 
-[Airblue types (no SoftHints)]
-File=modules/airblue/lib/Types/airblue_types.awb
+[Airblue Viterbi (no SoftHints)]
+File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
 Packagehint=ofdm
 
-[WiFi Phy Only/Params]
-DEBUG_TRANSCEIVER=1
+[Airblue Viterbi (no SoftHints)/Requires]
+airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue Service (Cycle-accurate Sim)]
-File=modules/airblue/device/deviceServices/airblue-service/simulation/airblue-service-cycle-accurate-simulation.awb
-Packagehint=ofdm
-
-[Airblue Null Driver/Requires]
-airblue_environment=Airblue Environment
-
-[Airblue Null Driver]
-File=modules/airblue/lib/Drivers/CycleAccurateRXTraceSimulation/airblue-driver-rx-cycle-accurate-simulation.awb
-Packagehint=ofdm
+[Default Hybrid Project Common Utilities]
+File=config/pm/hasim/submodels/common/project-common-default.apm
+Packagehint=leap
 
 [WiFi Shared FFT/Requires]
 airblue_fft_library=Airblue Folded FFT/IFFT
@@ -303,29 +304,32 @@ Packagehint=ofdm
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=ofdm
 
-[Airblue Viterbi (no SoftHints)]
-File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
+[Airblue Viterbi (no SoftHints)/Params]
+VITERBI_TB_MAX_PATH=0
+
+[Airblue Service (USRP)]
+File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
 Packagehint=ofdm
 
-[Airblue Viterbi (no SoftHints)/Requires]
-airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
+[RXTX Simulation Driver/Requires]
+airblue_environment=Airblue Environment
 
+[RXTX Simulation Driver]
+File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
+Packagehint=ofdm
 
-
-[Altera Hybrid Simulation FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
-
-[Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+[Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
 Packagehint=leap
+
+[Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
+MODEL_CLOCK_DIVIDER=20
+MODEL_CLOCK_MULTIPLIER=5
+MODEL_CLOCK_FREQ=25
 
 [Airblue Phy NULL PacketGen]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
 Packagehint=ofdm
-
-[Airblue Phy NULL PacketGen/Params]
-DEBUG_PACKETGEN=1
 
 [Airblue Phy RX RRR Packet Check]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb

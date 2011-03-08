@@ -4,10 +4,12 @@ service PACKETGENRRR
     {
        method SetRate (in UINT16[16] value);  
        method SetEnable (in UINT16[16] value);  
-       method SetMaxLength (in UINT16[16] value);  
-       method SetMinLength (in UINT16[16] value);  
+       method SetLength (in UINT16[16] value);  
+       method SetDelay (in UINT32[32] value);  
+       method SetPacketByte (in UINT16[16] addr, in UINT8[8] value);  
 
     };
 
 };
+
 

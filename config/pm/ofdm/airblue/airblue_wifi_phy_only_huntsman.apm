@@ -221,6 +221,7 @@ airblue_types=Airblue types (no SoftHints)
 airblue_phy_packet_gen=Airblue Phy Only RRR PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_phy_packet_check=Airblue Phy Only RRR PacketCheck
 
 [Airblue BCJR with Alpha Init]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
@@ -280,7 +281,7 @@ File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=ofdm
 
 [Airblue Service]
-File=modules/airblue/device/deviceServices/airblue-service/physical/airblue-service.awb
+File=modules/airblue/device/deviceServices/airblue-service/huntsman/airblue-service.awb
 Packagehint=ofdm
 
 [Soft Services Hybrid Application Environment/Requires]
@@ -313,4 +314,8 @@ Packagehint=leap
 
 [Huntsman JTAG]
 File=config/pm/ofdm/submodels/huntsman-jtag.apm
+Packagehint=ofdm
+
+[Airblue Phy Only RRR PacketCheck]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
 Packagehint=ofdm

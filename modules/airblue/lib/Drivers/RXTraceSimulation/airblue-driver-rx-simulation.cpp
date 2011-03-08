@@ -5,7 +5,7 @@
 #include "asim/provides/connected_application.h"
 #include "asim/provides/airblue_driver_application.h"
 #include "asim/rrr/client_stub_AIRBLUERFSIM.h"
-#include "asim/provides/airblue_phy_packet_gen.h"
+#include "asim/provides/airblue_phy_packet_check.h"
 #include "asim/provides/airblue_soft_mac.h"
 
 using namespace std;

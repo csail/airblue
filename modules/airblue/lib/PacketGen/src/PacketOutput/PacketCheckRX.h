@@ -7,7 +7,7 @@
 
 #include "asim/provides/low_level_platform_interface.h"
 #include "asim/provides/rrr.h"
-#include "asim/provides/airblue_phy_packet_gen.h"
+#include "asim/provides/airblue_phy_packet_check.h"
 
 // this module provides the RRRTest server functionalities
 

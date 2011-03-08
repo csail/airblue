@@ -4,27 +4,14 @@ import FIFO::*;
 import FIFOLevel::*;
 import StmtFSM::*;
 
-// import Register::*;
-
-// import MACPhyParameters::*;
-// import ProtocolParameters::*;
-
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
-`include "asim/rrr/remote_server_stub_PACKETGENRRR.bsh"
 `include "asim/rrr/remote_server_stub_PACKETCHECKRRR.bsh"
 `include "asim/rrr/remote_client_stub_PACKETCHECKRRR.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
-
-interface PacketGen;
-  // for hooking up to the baseband
-  interface Get#(TXVector) txVector;
-  interface Get#(Bit#(8)) txData;
-endinterface
-
 
 interface PacketCheck;
   // These functions reveal stats about the generator
@@ -42,33 +29,6 @@ typedef enum {
   DATA = 1
 } PacketCheckCommand deriving(Bits,Eq);
 
-
-// maybe parameterize by generation algorithm at some point
-module [CONNECTED_MODULE] mkPacketGen (PacketGen);
-
-  ServerStub_PACKETGENRRR serverStub <- mkServerStub_PACKETGENRRR();
-
-  rule setRate;
-    let rate <- serverStub.acceptRequest_SetRate();
-  endrule
-
-  rule setMax;
-    let maxNew <- serverStub.acceptRequest_SetMaxLength();
-  endrule
-
-  rule setMin;
-    let minNew <- serverStub.acceptRequest_SetMinLength();
-  endrule
-
-  rule setEnable;
-    let enableNew <- serverStub.acceptRequest_SetEnable();
-  endrule
-
-
-  interface txVector = ?; 
-  interface txData = ?; 
-
-endmodule
 
 // this one only checks packets for correctness, not 
 // for sequence errors - might want to do that at some point
@@ -125,7 +85,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    lfsr.seed(1);
  endrule
 
-   rule checkPacketCheckState(`DEBUG_PACKETGEN == 1);
+   rule checkPacketCheckState(`DEBUG_PACKETCHECK == 1);
       if(cycleCountReg[9:0] == 0)
         begin
           $display("PacketGen: check size %d count %d",size,count);
@@ -138,7 +98,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
      clientStub.makeRequest_SendPacket(zeroExtend(pack(HEADER)),zeroExtend(rxVectorFIFO.first.header.length));
      count <= count + 1;
      checksum <= 0;
-     if(`DEBUG_PACKETGEN == 1)
+     if(`DEBUG_PACKETCHECK == 1)
        begin
          $display("PacketGen: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
        end
@@ -146,7 +106,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    
    rule receiveData(count > 0 && count <= zeroExtend(size));
       rxDataFIFO.deq;
-      if(`DEBUG_PACKETGEN == 1)
+      if(`DEBUG_PACKETCHECK == 1)
         begin
           $display("PacketGen: rxDataFIFO.first %d",rxDataFIFO.first);
         end
@@ -158,7 +118,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       packetsRXReg <= packetsRXReg + 1;
       bytesRXReg <= bytesRXReg + zeroExtend(size);
       count <= 0;
-      if(`DEBUG_PACKETGEN == 1)
+      if(`DEBUG_PACKETCHECK == 1)
         begin
           $display("PacketGen: Packet bit errors: %d, Packet bit length: %d, BER total: %d", packetBerReg, size*8, berReg);
         end

@@ -238,9 +238,10 @@ DEBUG_SYNCHRONIZER=1
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy RX RRR PacketGen
+airblue_phy_packet_gen=Airblue Phy NULL PacketGen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
+airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -296,10 +297,6 @@ Packagehint=ofdm
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Airblue Phy RX RRR PacketGen]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
-Packagehint=ofdm
-
 [Airblue Soft MAC]
 File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
 Packagehint=ofdm
@@ -330,4 +327,12 @@ Packagehint=leap
 
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=ofdm
+
+[Airblue Phy NULL PacketGen]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+Packagehint=ofdm
+
+[Airblue Phy RX RRR Packet Check]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
 Packagehint=ofdm
