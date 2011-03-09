@@ -1,0 +1,11 @@
+%name RX USRP Test Driver
+%desc Does packet analysis for RX test
+
+%provides airblue_driver_application
+%requires airblue_environment
+%requires airblue_soft_mac
+
+%public  rx-test-usrp.h
+%private rx-test-usrp.cpp
+
+
