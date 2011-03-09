@@ -164,7 +164,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=RXTX Simulation Driver
+airblue_driver_application=TX Test Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -217,7 +217,7 @@ airblue_types=Airblue types (no SoftHints)
 airblue_phy_packet_gen=Airblue Phy Fixed Packet Gen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_phy_packet_check=Airblue Phy Only RRR PacketCheck
+airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -255,13 +255,6 @@ Packagehint=bsv-libraries
 File=config/pm/hasim/submodels/common/project-common-default.apm
 Packagehint=leap
 
-[RXTX Simulation Driver/Requires]
-airblue_environment=Airblue Environment
-
-[RXTX Simulation Driver]
-File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
-Packagehint=ofdm
-
 [Standard Platform Service (No Memory Service)]
 File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
 Packagehint=leap
@@ -282,10 +275,17 @@ MAGIC_DESCRAMBLE_SEED=0
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
 Packagehint=ofdm
 
-[Airblue Phy Only RRR PacketCheck]
-File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
-Packagehint=ofdm
-
 [Airblue Phy Fixed Packet Gen]
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
+Packagehint=ofdm
+
+[TX Test Driver/Requires]
+airblue_environment=Airblue Environment
+
+[TX Test Driver]
+File=modules/airblue/lib/Drivers/TXTest/tx-simulation.awb
+Packagehint=ofdm
+
+[Airblue Phy RX RRR Packet Check]
+File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
 Packagehint=ofdm
