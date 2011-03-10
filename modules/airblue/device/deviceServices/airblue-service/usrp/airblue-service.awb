@@ -6,6 +6,7 @@
 %attributes hybrid connected
 
 %public airblue-service-usrp.bsv
+%public airblue-service-usrp.rrr
 
 %param SAMPLE_RATE 20 "Protocol Sampling Rate in Megahertz"
 

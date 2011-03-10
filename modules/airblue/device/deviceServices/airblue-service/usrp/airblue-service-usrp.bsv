@@ -37,6 +37,8 @@ import Complex::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
+`include "asim/rrr/remote_server_stub_SATARRR.bsh"
+
 
 typedef union tagged {
   void EndOfPacket;
@@ -66,19 +68,35 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    Reset rxRst = sataDriver.rxusrrst0; 
    Reset txRst = sataDriver.txusrrst;
 
+
+   ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
+
    NumTypeParam#(16383) fifo_sz = 0;
    FIFO#(XUPV5_SERDES_WORD) serdes_word_fifo <- mkSizedBRAMFIFO(fifo_sz, clocked_by rxClk, reset_by rxRst);
    SyncFIFOIfc#(XUPV5_SERDES_WORD) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
+
 
    Reg#(Bool) processI <- mkReg(True); // Expect to start in the processing I state
    Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0);
    // make soft connections to PHY
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
+   Reg#(Bit#(40)) rxCount <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(Bit#(40)) rxCountCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   
+   rule rxCountTransfer;
+     rxCountCC <= rxCount;
+   endrule
 
-    rule getSATAData(True);
-       let data <- sataDriver.receive0();
-       serdes_word_fifo.enq(data);
-    endrule
+   rule getSampleRX;
+     let dummy <- serverStub.acceptRequest_GetRXCount();
+     serverStub.sendResponse_GetRXCount(zeroExtend(rxCountCC));
+   endrule
+
+   rule getSATAData(True);
+      let data <- sataDriver.receive0();
+      serdes_word_fifo.enq(data);
+      rxCount <= rxCount + 1;
+   endrule
 
     rule crossClockSATAData(True);
       serdes_word_fifo.deq();
@@ -119,8 +137,19 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) intxfifo <- mkSyncFIFOFromCC(32, clkSample.clk);  
     SyncFIFOIfc#(USRPPacket) outtxfifo <- mkSyncFIFO(32, clkSample.clk, clkSample.rst, txClk);  // this one goes to serdes
     Reg#(PacketState) state <- mkReg(Idle, clocked_by(clkSample.clk), reset_by(clkSample.rst));
-  
-    rule tieOff; // Should be removed at some point
+    Reg#(Bit#(40)) txCount <- mkReg(0, clocked_by(txClk), reset_by(txRst));  
+    Reg#(Bit#(40)) txCountCC <- mkSyncRegToCC(0,txClk,txRst); 
+
+   rule txCountTransfer;
+     txCountCC <= txCount;
+   endrule
+
+   rule getSampleTX;
+     let dummy <- serverStub.acceptRequest_GetTXCount();
+     serverStub.sendResponse_GetTXCount(zeroExtend(txCountCC));
+   endrule
+
+    rule forwardToLL; 
       analogTX.deq();
       intxfifo.enq(analogTX.receive());
     endrule
