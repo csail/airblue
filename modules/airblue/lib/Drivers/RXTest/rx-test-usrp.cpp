@@ -16,7 +16,7 @@ using namespace std;
 void * ProcessPackets(void *inputComplete) {
   PACKETCHECKRRR_SERVER packetCheck = PACKETCHECKRRR_SERVER_CLASS::GetInstance();
 
-  UINT32 *lengthPtr = NULL;
+  HEADER_80211_PHY *headerPtr = NULL;
   UINT8 *packetPtr = NULL;
 
   // Set up the packet dissector
@@ -24,7 +24,7 @@ void * ProcessPackets(void *inputComplete) {
 
   // NULL means we timed out..
   while(1) { 
-    if((lengthPtr = packetCheck->getNextLengthTimed(30)) == NULL) {
+    if((headerPtr = packetCheck->getNextHeaderTimed(30)) == NULL) {
       if(*((UINT32*)inputComplete)) {
         break;
       } else {
@@ -33,7 +33,7 @@ void * ProcessPackets(void *inputComplete) {
     }
     //get packet data
     packetPtr = packetCheck->getNextPacket();
-    UINT32 length = *lengthPtr;
+    UINT32 length = headerPtr->length;
     for(int i = 0; i < length; i++) { 
       printf("Received %x\n", packetPtr[i]); 
       //End of packet - do some stuff.
@@ -109,7 +109,7 @@ void * ProcessPackets(void *inputComplete) {
     }
 
     // Deallocate stuff
-    free(lengthPtr);
+    free(headerPtr);
     free(packetPtr);   
   }
   printf("Process Packet thread terminating\n");

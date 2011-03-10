@@ -2,7 +2,9 @@ service SATARRR
 {
     server hw (bsv, connection) <- sw (cpp, method)
     {
-       method GetTXCount (in UINT16[16] value, out UINT64[64] samples);  
-       method GetRXCount (in UINT16[16] value, out UINT64[64] samples);  
+       method GetTXCount       (in UINT16[16] value, out UINT64[64] samples);  
+       method GetRXCount       (in UINT16[16] value, out UINT64[64] samples);  
+       method GetSampleSent    (in UINT16[16] value, out UINT64[64] samples);  
+       method GetSampleDropped (in UINT16[16] value, out UINT64[64] samples);  
     };
 };

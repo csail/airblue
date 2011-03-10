@@ -77,19 +77,19 @@ PACKETCHECKRRR_SERVER_CLASS::Poll()
 }
 
 // This times out after 5 minutes
-UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLengthTimed( int seconds )
+HEADER_80211_PHY *PACKETCHECKRRR_SERVER_CLASS::getNextHeaderTimed( int seconds )
 {
   GTimeVal time;
   g_get_current_time(&time);
   // Second arg is in microseconds
   g_time_val_add(&time, seconds*1000000);
 
-  return (UINT32*)g_async_queue_timed_pop(headerQ,&time);
+  return (HEADER_80211_PHY*)g_async_queue_timed_pop(headerQ,&time);
 }
 
-UINT32 *PACKETCHECKRRR_SERVER_CLASS::getNextLength()
+HEADER_80211_PHY *PACKETCHECKRRR_SERVER_CLASS::getNextHeader()
 {
-  return (UINT32*)g_async_queue_pop(headerQ);
+  return (HEADER_80211_PHY*)g_async_queue_pop(headerQ);
 }
 
 UINT8 *PACKETCHECKRRR_SERVER_CLASS::getNextPacket()
@@ -101,17 +101,20 @@ UINT8 *PACKETCHECKRRR_SERVER_CLASS::getNextPacket()
 void
 PACKETCHECKRRR_SERVER_CLASS::SendPacket(UINT8 command, UINT32 payload)
 {
-  UINT32 *lengthPtr;
+  HEADER_80211_PHY *headerPtr;
+  int rate;
   switch(command) {
 
     case HEADER:
-      length = payload;
+      length = payload & 0xfff;
+      rate = payload >> 12;
       dataReceived = 0;
       packet = (UINT8*) malloc(8192);
       assert(length < 8192);
-      lengthPtr = (UINT32*) malloc(sizeof(UINT32));
-      *lengthPtr = length;
-      g_async_queue_push(headerQ,lengthPtr);       
+      headerPtr = (HEADER_80211_PHY*) malloc(sizeof(HEADER_80211_PHY));
+      headerPtr->length = length;
+      headerPtr->rate   = rate;
+      g_async_queue_push(headerQ,headerPtr);       
       // handle the special case where no data is expected to come...
       if(length == 0) {
 	g_async_queue_push(dataQ,packet);

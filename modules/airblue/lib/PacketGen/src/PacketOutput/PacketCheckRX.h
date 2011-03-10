@@ -11,13 +11,10 @@
 
 // this module provides the RRRTest server functionalities
 
-typedef enum {
-  PicWidth = 0,
-  PicHeight = 1,
-  EndOfFrame = 2,
-  EndOfFile = 3
-} FinalOutputControl; 
-
+typedef struct {
+  UINT32 rate;
+  UINT32 length;
+} HEADER_80211_PHY;
 
 
 typedef class PACKETCHECKRRR_SERVER_CLASS* PACKETCHECKRRR_SERVER;
@@ -49,8 +46,8 @@ class PACKETCHECKRRR_SERVER_CLASS: public RRR_SERVER_CLASS,
     void Cleanup();
     bool Poll();
 
-    UINT32 *getNextLength();
-    UINT32 *getNextLengthTimed(int seconds);
+    HEADER_80211_PHY *getNextHeader();
+    HEADER_80211_PHY *getNextHeaderTimed(int seconds);
     UINT8  *getNextPacket();
 
     //

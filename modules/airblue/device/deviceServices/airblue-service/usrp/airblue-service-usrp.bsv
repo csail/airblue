@@ -72,19 +72,31 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
    NumTypeParam#(16383) fifo_sz = 0;
-   FIFO#(XUPV5_SERDES_WORD) serdes_word_fifo <- mkSizedBRAMFIFO(fifo_sz, clocked_by rxClk, reset_by rxRst);
-   SyncFIFOIfc#(XUPV5_SERDES_WORD) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
+   FIFOF#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
+   SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
 
 
-   Reg#(Bool) processI <- mkReg(True); // Expect to start in the processing I state
-   Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0);
+   Reg#(Bool) processI <- mkReg(True, clocked_by(rxClk), reset_by(rxRst)); // Expect to start in the processing I state
+   Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    // make soft connections to PHY
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
    Reg#(Bit#(40)) rxCount <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    Reg#(Bit#(40)) rxCountCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   Reg#(Bit#(40)) sampleDropped <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(Bit#(40)) sampleDroppedCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   Reg#(Bit#(40)) sampleSent <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(Bit#(40)) sampleSentCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    
    rule rxCountTransfer;
      rxCountCC <= rxCount;
+   endrule
+
+   rule sampleDroppedTransfer;
+     sampleDroppedCC <= sampleDropped;
+   endrule
+
+   rule sampleSentTransfer;
+     sampleSentCC <= sampleSent;
    endrule
 
    rule getSampleRX;
@@ -92,38 +104,62 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetRXCount(zeroExtend(rxCountCC));
    endrule
 
-   rule getSATAData(True);
-      let data <- sataDriver.receive0();
-      serdes_word_fifo.enq(data);
-      rxCount <= rxCount + 1;
+   rule getSampleDropped;
+     let dummy <- serverStub.acceptRequest_GetSampleDropped();
+     serverStub.sendResponse_GetSampleDropped(zeroExtend(sampleDroppedCC));
    endrule
 
-    rule crossClockSATAData(True);
-      serdes_word_fifo.deq();
-      serdes_word_sync_fifo.enq(serdes_word_fifo.first());
-    endrule
+   rule getSampleSent;
+     let dummy <- serverStub.acceptRequest_GetSampleSent();
+     serverStub.sendResponse_GetSampleSent(zeroExtend(sampleSentCC));
+   endrule
 
-
-    rule processIPart (processI);
-       serdes_word_sync_fifo.deq();
-       // We should only use this if it is not control 
-       if(extractData(serdes_word_sync_fifo.first()) matches tagged Valid .data) 
+   rule processIPart (processI);
+       XUPV5_SERDES_WORD dataIn <- sataDriver.receive0();
+       rxCount <= rxCount + 1;
+        // We should only use this if it is not control 
+       if(extractData(dataIn) matches tagged Valid .data) 
          begin
            processI <= False; 
            iPart <= data;
          end
     endrule
 
-    rule sendToSW (!processI);
-       serdes_word_sync_fifo.deq();
+    rule sendToSW (!processI && serdes_word_fifo.notFull);
+      XUPV5_SERDES_WORD dataIn <- sataDriver.receive0();
+      rxCount <= rxCount + 1;
        // This may be a bug Alfred will know what to do. XXX
-       if(extractData(serdes_word_sync_fifo.first()) matches tagged Valid .data)
+       if(extractData(dataIn) matches tagged Valid .data)
          begin
-           analogRX.send(cmplx(iPart,data));
+           sampleSent <= sampleSent + 1;
+           serdes_word_fifo.enq(cmplx(iPart,data));
            processI <= True;
          end 
     endrule
 
+    rule dropdata (!processI && !serdes_word_fifo.notFull);
+       XUPV5_SERDES_WORD dataIn <- sataDriver.receive0();
+       rxCount <= rxCount + 1;
+       // This may be a bug Alfred will know what to do. XXX
+       if(extractData(dataIn) matches tagged Valid .data)
+         begin
+           // Here we must drop the data
+           sampleDropped <= sampleDropped + 1;
+           processI <= True;
+           iPart <= data;
+         end
+    endrule
+
+    // send to sync fifo
+    rule toSync;
+       serdes_word_fifo.deq;
+       serdes_word_sync_fifo.enq(serdes_word_fifo.first());       
+    endrule
+
+    rule toAnalog;
+       serdes_word_sync_fifo.deq;
+       analogRX.send(serdes_word_sync_fifo.first());       
+    endrule
 
     // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -
     // If the ingress into the channel is not XMhz, then the egress is not 20Mhz.  If we assume we have a 

@@ -29,6 +29,7 @@ typedef enum {
   DATA = 1
 } PacketCheckCommand deriving(Bits,Eq);
 
+typedef 8192 DataFIFOSize;
 
 // this one only checks packets for correctness, not 
 // for sequence errors - might want to do that at some point
@@ -39,7 +40,8 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  ClientStub_PACKETCHECKRRR clientStub <- mkClientStub_PACKETCHECKRRR();
 
  // 8192 should be big enough for a few packets
- FIFOCountIfc#(Bit#(8),8192) rxDataFIFO <- mkSizedBRAMFIFOCount();
+ FIFOCountIfc#(Bit#(8),DataFIFOSize) rxDataFIFOIn <- mkSizedBRAMFIFOCount();
+ FIFOCountIfc#(Bit#(8),DataFIFOSize) rxDataFIFOOut <- mkSizedBRAMFIFOCount();
  FIFOCountIfc#(RXVector,2048) rxVectorFIFO <- mkSizedBRAMFIFOCount();
 
  LFSR#(Bit#(16)) lfsr <- mkLFSR_16();
@@ -58,6 +60,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  Reg#(Bit#(32)) packetBerReg <- mkReg(0); // packetwise ber  
  Reg#(Bit#(32)) berReg <- mkReg(0);
  Reg#(Bool)     dropPacket <- mkReg(False); // dropped alternate packet
+ Reg#(Bool)     dropThisPacket <- mkReg(False); // dropped alternate packet
  Reg#(Bool)     waitAck <- mkReg(False);
 
 
@@ -74,6 +77,12 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  rule getPacketRXCorrect;
    let dummy <- serverStub.acceptRequest_GetPacketsRXCorrect();
    serverStub.sendResponse_GetPacketsRXCorrect(packetsCorrectReg);
+ endrule
+
+ rule setDropPacket;
+   let dummy <- serverStub.acceptRequest_SetDropPacket();
+   dropPacket <= unpack(truncate(dummy));
+   serverStub.sendResponse_SetDropPacket(?);
  endrule
 
  rule cycleTick;
@@ -95,37 +104,52 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    rule startPacketCheck(count == 0);
      rxVectorFIFO.deq;
      size <= rxVectorFIFO.first.header.length;
-     clientStub.makeRequest_SendPacket(zeroExtend(pack(HEADER)),zeroExtend(rxVectorFIFO.first.header.length));
      count <= count + 1;
      checksum <= 0;
      if(`DEBUG_PACKETCHECK == 1)
        begin
-         $display("PacketGen: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+         $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+       end
+     // Sometimes we won't attempt to send data to the host
+     if(dropPacket && (unpack(zeroExtend(rxVectorFIFO.first.header.length)) < (fromInteger(valueof(DataFIFOSize) - 1) - rxDataFIFOOut.count)))
+       begin
+         $display("Packet Check: Dropping Packet");
+         dropThisPacket <= True;
+       end
+     else 
+       begin
+         clientStub.makeRequest_SendPacket(zeroExtend(pack(HEADER)),zeroExtend({pack(rxVectorFIFO.first.header.rate),rxVectorFIFO.first.header.length}));
+         dropThisPacket <= False;
        end
    endrule
    
    rule receiveData(count > 0 && count <= zeroExtend(size));
-      rxDataFIFO.deq;
+      rxDataFIFOIn.deq;
       if(`DEBUG_PACKETCHECK == 1)
         begin
-          $display("PacketGen: rxDataFIFO.first %d",rxDataFIFO.first);
+          $display("PacketCheck: rxDataFIFO.first %d",rxDataFIFOIn.first);
         end
-      clientStub.makeRequest_SendPacket(zeroExtend(pack(DATA)),zeroExtend(rxDataFIFO.first));
+      if(!dropThisPacket) 
+        begin
+          rxDataFIFOOut.enq(rxDataFIFOIn.first());
+        end
       count <= count + 1;
+   endrule
+
+   rule forwardData;
+     rxDataFIFOOut.deq();
+     clientStub.makeRequest_SendPacket(zeroExtend(pack(DATA)),zeroExtend(rxDataFIFOOut.first));
    endrule
    
    rule checkCheckSum(count > 0 && (count == zeroExtend(size) + 1));
       packetsRXReg <= packetsRXReg + 1;
       bytesRXReg <= bytesRXReg + zeroExtend(size);
       count <= 0;
-      if(`DEBUG_PACKETCHECK == 1)
-        begin
-          $display("PacketGen: Packet bit errors: %d, Packet bit length: %d, BER total: %d", packetBerReg, size*8, berReg);
-        end
+      dropThisPacket <= False;
    endrule
 
   interface rxVector = toPut(rxVectorFIFO);
-  interface rxData = toPut(rxDataFIFO);
+  interface rxData = toPut(rxDataFIFOIn);
   interface abortReq = fifoToGet(abortReqFIFO);
   interface abortAck = fifoToPut(abortAckFIFO);    
 
