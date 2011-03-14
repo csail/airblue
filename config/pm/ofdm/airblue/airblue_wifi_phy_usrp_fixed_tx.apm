@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_usrp_fixed
+File=airblue_wifi_phy_usrp_fixed_tx
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -173,7 +173,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=RX USRP Test Driver
+airblue_driver_application=TX Test Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -324,18 +324,13 @@ Packagehint=ofdm
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
 Packagehint=ofdm
 
-[RX USRP Test Driver/Requires]
-airblue_soft_mac=Airblue Soft MAC
-airblue_environment=Airblue Environment
-
-[RX USRP Test Driver]
-File=modules/airblue/lib/Drivers/RXTest/rx-test-usrp.awb
-Packagehint=ofdm
-
-[Airblue Soft MAC]
-File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
-Packagehint=ofdm
-
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=ofdm
+
+[TX Test Driver/Requires]
+airblue_environment=Airblue Environment
+
+[TX Test Driver]
+File=modules/airblue/lib/Drivers/TXTest/tx-simulation.awb
 Packagehint=ofdm

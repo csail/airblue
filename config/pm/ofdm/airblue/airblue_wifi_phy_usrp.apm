@@ -177,7 +177,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=RXTX Simulation Driver
+airblue_driver_application=RX USRP Test Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -311,13 +311,6 @@ VITERBI_TB_MAX_PATH=0
 File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
 Packagehint=ofdm
 
-[RXTX Simulation Driver/Requires]
-airblue_environment=Airblue Environment
-
-[RXTX Simulation Driver]
-File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
-Packagehint=ofdm
-
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
 File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
 Packagehint=leap
@@ -333,4 +326,16 @@ Packagehint=ofdm
 
 [Airblue Phy RX RRR Packet Check]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
+Packagehint=ofdm
+
+[RX USRP Test Driver/Requires]
+airblue_environment=Airblue Environment
+airblue_soft_mac=Airblue Soft MAC
+
+[RX USRP Test Driver]
+File=modules/airblue/lib/Drivers/RXTest/rx-test-usrp.awb
+Packagehint=ofdm
+
+[Airblue Soft MAC]
+File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
 Packagehint=ofdm
