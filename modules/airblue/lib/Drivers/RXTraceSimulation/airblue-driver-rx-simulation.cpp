@@ -148,6 +148,19 @@ void sendToRX(AIRBLUERFSIM_CLIENT_STUB stub ,UINT32 value) {
   stub->IQStream(value);
 }
 
+UINT16 reverse(UINT16 v) {
+  UINT16 r = v; // r will be reversed bits of v; first get LSB of v
+  int s = sizeof(v) * 8 - 1; // extra shift needed at end
+
+for (v >>= 1; v; v >>= 1)
+  {   
+    r <<= 1;
+    r |= v & 1;
+    s--;
+  }
+r <<= s; // shift when v's highest bits are zero
+ return r;
+}
 // main
 void
 AIRBLUE_DRIVER_CLASS::Main()
@@ -158,7 +171,8 @@ AIRBLUE_DRIVER_CLASS::Main()
   union {
     UINT32 whole;
     INT16 pieces[2];
-  } sample;
+    INT8 bytes[4];
+  } sample, sample2;
     
   int count=0;
   int factor;
@@ -179,9 +193,9 @@ AIRBLUE_DRIVER_CLASS::Main()
     //if(count%1000 == 0)
     //printf("main: %d %d\n",  sample.pieces[0]*3, sample.pieces[1]*3);
     count++;      
-    sample.pieces[0] = sample.pieces[0]*3; 
-    sample.pieces[1] = sample.pieces[1]*3; 
-    sendToRX(clientStub,sample.whole);
+    sample2.pieces[0] = sample.pieces[0]; 
+    sample2.pieces[1] = sample.pieces[1]; 
+    sendToRX(clientStub,sample2.whole);
 
   }
   // stuff in some extra data - in case we end on a half packet

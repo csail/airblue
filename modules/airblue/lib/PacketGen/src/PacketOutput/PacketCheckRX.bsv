@@ -111,7 +111,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
          $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
        end
      // Sometimes we won't attempt to send data to the host
-     if(dropPacket && (unpack(zeroExtend(rxVectorFIFO.first.header.length)) < (fromInteger(valueof(DataFIFOSize) - 1) - rxDataFIFOOut.count)))
+     if(dropPacket && (unpack(zeroExtend(rxVectorFIFO.first.header.length)) > (fromInteger(valueof(DataFIFOSize) - 1) - rxDataFIFOOut.count)))
        begin
          $display("Packet Check: Dropping Packet");
          dropThisPacket <= True;

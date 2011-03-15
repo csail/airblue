@@ -51,15 +51,6 @@ typedef enum {
   Body
 } PacketState deriving (Bits, Eq);
 
-// USRP expects a packetized data stream with a two word heade
-// and tied off by an end of buffer tag.
-// We will send the end of buffer as a control value, but the header
-// are normal samples.
-
-SynchronizerMesg#(RXFPIPrec,RXFPFPrec) usrpMagic0 = unpack('h6);
-SynchronizerMesg#(RXFPIPrec,RXFPFPrec) usrpMagic1 = unpack(0);
-
-
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
    XUPV5_SERDES_DRIVER       sataDriver = drivers.sataDriver;
@@ -70,6 +61,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
 
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
+
 
    NumTypeParam#(16383) fifo_sz = 0;
    FIFOF#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
@@ -172,7 +164,17 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
     SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) intxfifo <- mkSyncFIFOFromCC(32, clkSample.clk);  
     SyncFIFOIfc#(USRPPacket) outtxfifo <- mkSyncFIFO(32, clkSample.clk, clkSample.rst, txClk);  // this one goes to serdes
+     // USRP expects a packetized data stream with a two word heade
+     // and tied off by an end of buffer tag.
+     // We will send the end of buffer as a control value, but the header
+     // are normal samples.
+
+     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic0 <- mkSyncRegFromCC(unpack('h6),clkSample.clk);
+     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic1 <- mkSyncRegFromCC(unpack(0),clkSample.clk);
+
+
     Reg#(PacketState) state <- mkReg(Idle, clocked_by(clkSample.clk), reset_by(clkSample.rst));
+    Reg#(Bit#(40)) txCountIn <- mkReg(0);  
     Reg#(Bit#(40)) txCount <- mkReg(0, clocked_by(txClk), reset_by(txRst));  
     Reg#(Bit#(40)) txCountCC <- mkSyncRegToCC(0,txClk,txRst); 
 
@@ -180,35 +182,51 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      txCountCC <= txCount;
    endrule
 
+   rule setUSRPHeader;
+     let dummy <- serverStub.acceptRequest_SetUSRPHeader();
+     usrpMagic0 <= unpack(pack(dummy.magic0));
+     usrpMagic1 <= unpack(pack(dummy.magic1));
+   endrule
+
    rule getSampleTX;
      let dummy <- serverStub.acceptRequest_GetTXCount();
      serverStub.sendResponse_GetTXCount(zeroExtend(txCountCC));
    endrule
 
+   rule getSampleTXIn;
+     let dummy <- serverStub.acceptRequest_GetTXCountIn();
+     serverStub.sendResponse_GetTXCountIn(zeroExtend(txCountIn));
+   endrule
+
     rule forwardToLL; 
       analogTX.deq();
+      txCountIn <= txCountIn + 1;
       intxfifo.enq(analogTX.receive());
     endrule
 
 
     rule handleIdleState(state == Idle && intxfifo.notEmpty);
       outtxfifo.enq(tagged Sample usrpMagic0);
+  
       state <= Command;    
     endrule
 
     rule handleCommandState(state == Idle);
       outtxfifo.enq(tagged Sample usrpMagic1);
+  
       state <= Body;
     endrule
 
     rule handleBodyState(state == Body && intxfifo.notEmpty);
       outtxfifo.enq(tagged Sample intxfifo.first);
+  
       intxfifo.deq;
     endrule
 
     // We're done
     rule handleCompletion(state == Body && !intxfifo.notEmpty);
       outtxfifo.enq(tagged EndOfPacket);
+  
       state <= Idle;
     endrule
   
@@ -228,6 +246,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     rule sendToSERDESData(outtxfifo.first matches tagged Sample .data);
       Bit#(16) chunk = deqNeeded?pack(data)[15:0]:pack(data)[31:16]; // send MSB first
       sataDriver.send0(unpackRxWord(0,0,pack(chunk),?));
+      txCount <= txCount + 1;
       handleDeq();
     endrule
 
