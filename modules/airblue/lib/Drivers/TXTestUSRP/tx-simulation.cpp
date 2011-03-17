@@ -13,6 +13,7 @@ AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
 {
   packetCheckStub = new PACKETCHECKRRR_CLIENT_STUB_CLASS(p); 
   packetGenStub = new PACKETGENRRR_CLIENT_STUB_CLASS(p); 
+  sataStub = new SATARRR_CLIENT_STUB_CLASS(p); 
 }
 
 // destructor
@@ -53,6 +54,7 @@ AIRBLUE_DRIVER_CLASS::Main()
 
   printf("Enabling packet generation\n");
   while(packetCheckStub->GetPacketsRX(0) < 50){
+    printf("RX: %d TX: %d TXIn: %d TXRst: %d\n", sataStub->GetRXCount(0), sataStub->GetTXCount(0), sataStub->GetTXCountIn(0), sataStub->GetTXRst(0));
     sleep(1);
   }
   printf("Done waiting for packets\n");
