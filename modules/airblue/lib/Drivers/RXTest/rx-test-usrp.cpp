@@ -32,18 +32,25 @@ void * ProcessPackets(void *inputComplete) {
       }
     }
     //get packet data
+    printf("Packet Length: %d Rate: %d\n", headerPtr -> length, headerPtr->rate); 
     packetPtr = packetCheck->getNextPacket();
     UINT32 length = headerPtr->length;
     for(int i = 0; i < length; i++) { 
-      printf("Received %x\n", packetPtr[i]); 
+      //printf("Received %x\n", packetPtr[i]); 
       //End of packet - do some stuff.
     }
+
+    UINT32 crc = 1;
+    UINT32 expectedcrc = 0;
      
-    UINT32 crc = crc32 (packetPtr ,length-4);
-    UINT32 expectedcrc = (((UINT32)packetPtr[length-4]) << 24) + 
+    if(length > 8) {
+      crc = crc32 (packetPtr ,length-4);
+      expectedcrc = (((UINT32)packetPtr[length-4]) << 24) + 
 	             (((UINT32)packetPtr[length-3]) << 16) + 
 	             (((UINT32)packetPtr[length-2]) << 8) + 
 	             (((UINT32)packetPtr[length-1]) << 0); 
+    }
+
     if(crc == expectedcrc) {
       printf("Received matching CRC %x\n", crc);
 
@@ -76,7 +83,7 @@ void * ProcessPackets(void *inputComplete) {
       delete kisPacketPtr;
 
 
-    } else {
+    } else if (length > 8){
       printf("Received non-matching CRC %x\n", crc);
 
       // If it's good, let's try to process the packet using kismet
@@ -121,7 +128,9 @@ void * ProcessPackets(void *inputComplete) {
 AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
    DRIVER_MODULE_CLASS(p)
 {
-   inputComplete = 0; 
+  inputComplete = 0; 
+  sataStub = new SATARRR_CLIENT_STUB_CLASS(p); 
+  checkStub = new PACKETCHECKRRR_CLIENT_STUB_CLASS(p); 
 }
 
 // destructor
@@ -142,8 +151,16 @@ AIRBLUE_DRIVER_CLASS::Main()
 {
   printf("Hello\n");
 
+   checkStub->SetDropPacket(~0); 
+
   // spawn packet processing thread
   pthread_create(&processPacketsThread, NULL, &ProcessPackets, &inputComplete);
+
+  while(1){
+    printf("RX: %d TX: %d Sent: %d Dropped: %d\n", sataStub->GetRXCount(0), sataStub->GetTXCount(0), sataStub->GetSampleSent(0), sataStub->GetSampleDropped(0));
+    sleep(5);
+  }
+
 
   inputComplete = 1;
   printf("Finished sending trace file\n");
