@@ -30,7 +30,10 @@ import Complex::*;
 import FixedPoint::*;
 import GetPut::*;
 import Connectable::*;
+import FIFO::*;
+import FIFOLevel::*;
 
+`include "asim/provides/airblue_shift_regs.bsh"
 
 //Given a Bit#(n) returns it's parity
 function Bit#(1) getParity(Bit#(n) v) provisos(Add#(1, k, n));
@@ -237,29 +240,95 @@ endmodule
 
 module mkConnectionThroughput#(String str, Get#(t) g, Put#(t) p) (Empty)
    provisos (Bits#(t,t_sz));
-   Reg#(Bit#(64)) trueCount <- mkReg(0);
-   Reg#(Bit#(64)) actualCount <- mkReg(0);
-   Reg#(Bit#(64)) burstCount <- mkReg(0);   
-   PulseWire tickBurst <- mkPulseWire;
+ 
+   FIFOCountIfc#(t,1024) buffer <- mkFIFOCount();
 
+   Reg#(Bit#(64)) trueCount <- mkReg(0);
+   Reg#(Bit#(64)) actualCountIn <- mkReg(0);
+   Reg#(Bit#(64)) burstCountIn <- mkReg(0);   
+   Reg#(Bit#(64)) actualCountOut <- mkReg(0);
+   Reg#(Bit#(64)) burstCountOut <- mkReg(0);   
+   PulseWire tickBurstIn <- mkPulseWire;
+   PulseWire tickBurstOut <- mkPulseWire;
+   ShiftRegs#(200,Bit#(1))  historyIn <- mkShiftRegs(); 
+   ShiftRegs#(200,Bit#(1))  historyOut <- mkShiftRegs(); 
+
+   let fifoCount <- mkDWire(0);
+
+  (* fire_when_enabled *)
+   rule setFifoCount;
+     fifoCount <= buffer.count;
+   endrule 
+
+
+   (* fire_when_enabled *)
    rule tickTrue;
      trueCount <= trueCount + 1;
    endrule 
 
-   rule connect(True);
-      tickBurst.send;
-      actualCount <= actualCount + 1;
+
+   (* fire_when_enabled *)
+   rule connectIn;
+      tickBurstIn.send;
+      actualCountIn<= actualCountIn + 1;
       let mesg <- g.get;
-      p.put(mesg);
-      $display("Throughput %s: %h Active: %d of %d, currentBurst: %d",str,mesg,actualCount,trueCount,burstCount);
+      buffer.enq(mesg);
+      Bit#(32) count = fold( \+ ,map(zeroExtend,historyIn.getVector()));
+      $display("ThroughputIn:%s:Count:%d:Time:%d:Histroy:%d:currentBurst:%d:Count:%d",str,actualCountIn,trueCount,count,burstCountIn,fifoCount);
    endrule   
 
-   rule tickBurstCount(tickBurst);
-     burstCount <= burstCount + 1;
+   (* fire_when_enabled *)
+   rule connectOut;
+      tickBurstOut.send;
+      actualCountOut <= actualCountOut + 1;
+      buffer.deq;
+      p.put(buffer.first);
+      Bit#(32) count = fold( \+ ,map(zeroExtend,historyOut.getVector()));
+      $display("ThroughputOut:%s:Count:%d:Time:%d:Histroy:%d:currentBurst:%d:Count:%d",str,actualCountOut,trueCount,count,burstCountOut,fifoCount);
    endrule
 
-   rule resetBurstCount(!tickBurst);
-     burstCount <= 0;
+   (* fire_when_enabled *)
+   rule updateHistoryIn;
+     if(tickBurstIn)
+       begin
+         historyIn.enq(1);
+       end
+     else
+       begin
+         historyIn.enq(0);
+       end
+   endrule
+
+   (* fire_when_enabled *)
+   rule updateHistoryOut;
+     if(tickBurstOut)
+       begin
+         historyOut.enq(1);
+       end
+     else
+       begin
+         historyOut.enq(0);
+       end
+   endrule
+
+   (* fire_when_enabled *)
+   rule tickBurstCountIn(tickBurstIn);
+     burstCountIn <= burstCountIn + 1;
+   endrule
+
+   (* fire_when_enabled *)
+   rule resetBurstCountIn(!tickBurstIn);
+     burstCountIn <= 0;
+   endrule
+
+   (* fire_when_enabled *)
+   rule tickBurstCountOut(tickBurstOut);
+     burstCountOut <= burstCountOut + 1;
+   endrule
+
+   (* fire_when_enabled *)
+   rule resetBurstCountOut(!tickBurstOut);
+     burstCountOut <= 0;
    endrule
 endmodule
 
