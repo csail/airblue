@@ -46,14 +46,15 @@ AIRBLUE_DRIVER_CLASS::Main()
     packetGenStub->SetPacketByte(i,packet[i]);
   }
                           
-  packetGenStub->SetDelay(MODEL_CLOCK_FREQ*1000*10);
+  // packetGenStub->SetDelay(MODEL_CLOCK_FREQ*1000*10);
   packetGenStub->SetEnable(~0);
 
 
 
   printf("Enabling packet generation\n");
   while(packetCheckStub->GetPacketsRX(0) < 50){
-    sleep(1);
+    printf("Check has received %d packets\n", packetCheckStub->GetPacketsRX(0));
+    sleep(3);
   }
   printf("Done waiting for packets\n");
 

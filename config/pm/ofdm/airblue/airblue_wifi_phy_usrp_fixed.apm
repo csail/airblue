@@ -45,7 +45,7 @@ client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
 stat_min=Min collector
-airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
+airblue_shift_regs=Airblue Shifted Registers
 stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
@@ -312,9 +312,8 @@ File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
 Packagehint=leap
 
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
-MODEL_CLOCK_DIVIDER=20
-MODEL_CLOCK_MULTIPLIER=5
-MODEL_CLOCK_FREQ=25
+MODEL_CLOCK_DIVIDER=10
+MODEL_CLOCK_FREQ=30
 
 [Airblue Phy RX RRR Packet Check]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
@@ -336,6 +335,6 @@ Packagehint=ofdm
 File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
 Packagehint=ofdm
 
-[Airblue Shifted Registers FPGA-optimized]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+[Airblue Shifted Registers]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=ofdm
