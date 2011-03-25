@@ -27,7 +27,7 @@
 %generated -t BA mkDescramblerInstance.ba
 %generated -t BA mkPreDescramblerRXController.ba
 %generated -t BA mkPostDescramblerRXController.ba
-%generated -t BA mkDecoderMCDInstance.ba
+%generated -t BA mkDecoderInstance.ba
 %generated -t BA mkViterbiInstance.ba
 
 
@@ -37,7 +37,7 @@
 %generated -t VERILOG mkDescramblerInstance.v
 %generated -t VERILOG mkPreDescramblerRXController.v
 %generated -t VERILOG mkPostDescramblerRXController.v
-%generated -t VERILOG mkDecoderMCDInstance.v
+%generated -t VERILOG mkDecoderInstance.v
 %generated -t VERILOG mkViterbiInstance.v
 
 
