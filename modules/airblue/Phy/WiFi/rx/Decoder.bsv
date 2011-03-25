@@ -41,6 +41,7 @@ import Connectable::*;
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_depuncturer.bsh"
 `include "asim/provides/airblue_convolutional_decoder.bsh"
 `include "asim/provides/fifo_utils.bsh"
@@ -91,8 +92,15 @@ module mkDecoder(Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
    let viterbi <- mkViterbiInstance;   
    
    // connections
-   mkConnection(depuncturer.out,viterbi.in);
-   
+   if(`DEBUG_RXCTRL == 1)
+     begin
+       mkConnectionThroughput("Depuncture",depuncturer.out,viterbi.in);
+     end
+   else
+     begin
+       mkConnection(depuncturer.out,viterbi.in);
+     end
+
    // methods
    interface in = depuncturer.in;
    interface out = viterbi.out;

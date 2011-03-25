@@ -86,12 +86,6 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    lfsr.seed(1);
  endrule
 
-   rule checkPacketCheckState(`DEBUG_PACKETCHECK == 1);
-      if(cycleCountReg[9:0] == 0)
-        begin
-          $display("PacketCheck: check size %d count %d",size,count);
-        end
-   endrule
    
    rule startPacketCheck(count == 0);
       rxVectorFIFO.deq;

@@ -92,14 +92,14 @@ module [CONNECTED_MODULE] mkWiFiReceiver#( Clock viterbiClock, Reset viterbiRese
    // connections
    if(`DEBUG_RXCTRL == 1) 
      begin
-       mkConnectionPrint("Sync -> Unse",synchronizer.synchronizer.out,unserializer.in);
-       mkConnectionPrint("Unse -> FFT",unserializer.out,fft.in);
-       mkConnectionPrint("FFT -> CEst",fft.out,channelEstimator.in);
-       mkConnectionPrint("CEst -> RXCtrl0",channelEstimator.out,rx_controller.inFromPreDemapper);
-       mkConnectionPrint("RXCtrl0 -> PreDes",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
-       mkConnectionPrint("PreDes -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
-       mkConnectionPrint("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
-       mkConnectionPrint("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
+       mkConnectionThroughput("Sync -> Unse",synchronizer.synchronizer.out,unserializer.in);
+       mkConnectionThroughput("Unse -> FFT",unserializer.out,fft.in);
+       mkConnectionThroughput("FFT -> CEst",fft.out,channelEstimator.in);
+       mkConnection(channelEstimator.out,rx_controller.inFromPreDemapper); // For some reason this has a conflict
+       mkConnectionThroughput("RXCtrl0 -> PreDes",rx_controller.outToPreDescrambler,receiver_preDescrambler.in);
+       mkConnectionThroughput("PreDes -> RXCtrl1",receiver_preDescrambler.out,rx_controller.inFromPreDescrambler);
+       mkConnectionThroughput("RXCtrl1 -> Desc",rx_controller.outToDescrambler,descrambler.in);
+       mkConnectionThroughput("Desc -> RXCtrl2",descrambler.out,rx_controller.inFromDescrambler);
      end 
    else
       begin

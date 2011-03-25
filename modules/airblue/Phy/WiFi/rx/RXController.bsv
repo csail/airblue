@@ -487,7 +487,7 @@ endmodule
 module mkPostDescramblerRXController(PostDescramblerRXController);
    // state elements
    FIFO#(EncoderMesg#(RXDescramblerAndGlobalCtrl,DescramblerDataSz)) inMesgQ <- mkLFIFO;
-   FIFO#(Bit#(8)) outDataQ <- mkSizedFIFO(100);
+   FIFO#(Bit#(8)) outDataQ <- mkSizedFIFO(1024);
    StreamFIFO#(24,5,Bit#(1)) streamQ <- mkStreamLFIFO; // descramblerdatasz must be factor of 12
    Reg#(PhyPacketLength)     rxLength <- mkReg(0); // no of bytes remains to be received
    Reg#(Bit#(32))            cycleCount <- mkReg(0); 

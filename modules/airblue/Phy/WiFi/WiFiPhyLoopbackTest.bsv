@@ -133,6 +133,7 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
     // Let's do a glitch check
     rule txConnection;
       let data <- wifiTransmitter.out.get;
+  //    $display("TX Data:%h",{pack(data)[23:16],pack(data)[31:24],pack(data)[7:0],pack(data)[15:8]});
       txfifo.enq(data);     
     endrule
 
@@ -149,6 +150,7 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
       bitCount <= bit_length; // bit length
       chipCount <= 0;
 //      $display("Preamble Count: %h,  bit count %h", bit_length, preamble_sz);
+      $display("Starting Packet");
     endrule
 
     rule testTX(bitCount > 0);
@@ -220,11 +222,14 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
       $finish;
     endrule
 
-
-    rule rxConnection;
-      rxfifo.deq;
-      wifiReceiver.in.put(rxfifo.first);
-    endrule
+    if(`DEBUG_RXCTRL == 1)
+      begin
+        mkConnectionThroughput("Synchronizer",toGet(rxfifo),wifiReceiver.in);
+      end
+    else
+      begin
+        mkConnection(toGet(rxfifo),wifiReceiver.in);
+      end
 
 endmodule
 

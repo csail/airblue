@@ -69,7 +69,7 @@ module mkUnserializer(Unserializer#(n,i_prec,f_prec))
 
    // state elements
    FIFOF#(UnserializerMesg#(i_prec,f_prec))  inQ <- mkLFIFOF;          // store incoming stream
-   NumTypeParam#(512) p = ?;
+   NumTypeParam#(2048) p = ?;
    FIFOF#(UnserializerMesg#(i_prec,f_prec))  inQ2 <- mkSizedBRAMFIFOF(p); //store data with CP removed
    StreamFIFO#(n,n_s_sz,FPComplex#(i_prec,f_prec)) outQ;
    outQ <- mkStreamFIFO();

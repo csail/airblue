@@ -107,7 +107,7 @@ module mkDecoderMCDInstance#(Clock viterbiClock, Reset viterbiReset)
 	     DecoderOutDataSz,ViterbiOutput));
    Decoder#(RXGlobalCtrl,DecoderInDataSz,ViterbiMetric,
 	    DecoderOutDataSz,ViterbiOutput) block;
-   block <- mkDecoderMCD(viterbiClock,viterbiReset);
+   block <- mkDecoder;
    return block;
 endmodule
     
@@ -123,8 +123,8 @@ module mkReceiverPreDescramblerInstance
     // connections
    if (`DEBUG_RXCTRL == 1)
       begin
-         mkConnectionPrint("Dmap -> Dint",demapper.out,deinterleaver.in);
-         mkConnectionPrint("Dint -> Deco",deinterleaver.out,decoder.in);
+         mkConnectionThroughput("Dmap -> Dint",demapper.out,deinterleaver.in);
+         mkConnectionThroughput("Dint -> Deco",deinterleaver.out,decoder.in);
       end
    else
       begin
@@ -143,13 +143,13 @@ module mkReceiverPreDescramblerMCDInstance#(Clock viterbiClock, Reset viterbiRes
     // state elements
     let demapper <- mkDemapperInstance;
     let deinterleaver <- mkDeinterleaverInstance;
-    let decoder <- mkDecoderMCDInstance(viterbiClock, viterbiReset);
+    let decoder <- mkDecoderInstance;
     
     // connections
    if (`DEBUG_RXCTRL == 1)
       begin
-         mkConnectionPrint("Dmap -> Dint",demapper.out,deinterleaver.in);
-         mkConnectionPrint("Dint -> Deco",deinterleaver.out,decoder.in);
+         mkConnectionThroughput("Dmap -> Dint",demapper.out,deinterleaver.in);
+         mkConnectionThroughput("Dint -> Deco",deinterleaver.out,decoder.in);
       end
    else
       begin
