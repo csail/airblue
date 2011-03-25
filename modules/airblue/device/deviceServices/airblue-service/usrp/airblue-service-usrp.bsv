@@ -178,8 +178,9 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      // We will send the end of buffer as a control value, but the header
      // are normal samples.
 
-     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic0 <- mkReg(unpack('h6));
-     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic1 <- mkReg(unpack(0));
+     // Fix endianess for i/q
+     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic0 <- mkReg(unpack('hdead0007));
+     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic1 <- mkReg(unpack('hcafecafe));
 
 
     Reg#(PacketState) state <- mkReg(Idle);
@@ -238,11 +239,13 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     rule handleIdleState(state == Idle && intxfifo.notEmpty);
       outtxfifo.enq(tagged Sample usrpMagic0);
       state <= Command;    
+      creditfifo.deq;
     endrule
 
     rule handleCommandState(state == Command);
       outtxfifo.enq(tagged Sample usrpMagic1);
       state <= Body;
+      creditfifo.deq;
     endrule
 
     rule handleBodyState(state == Body && intxfifo.notEmpty);
@@ -255,11 +258,17 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     rule handleCompletion(state == Body && !intxfifo.notEmpty);
       outtxfifo.enq(tagged EndOfPacket);
       state <= Idle;
+      creditfifo.deq;
     endrule
   
     // Finally we should demarshall the data for transmission 
+    Reg#(Bit#(16)) sendSync <- mkReg(maxBound, clocked_by(txClk), reset_by(txRst));
     Reg#(Bool) deqNeeded <- mkReg(False, clocked_by(txClk), reset_by(txRst));
   
+    rule tickDown(sendSync > 0);
+      sendSync <= sendSync - 1 ;
+    endrule
+
     function Action handleDeq();
       action
         if(deqNeeded)
@@ -271,8 +280,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     endfunction
 
     rule sendToSERDESData(outtxfifo.first matches tagged Sample .data);
-      Bit#(16) chunk = deqNeeded?pack(data.img):pack(data.rel); // send MSB first
-      sataDriver.send0(serdesWord(serdesData(chunk[15:8]),serdesData(chunk[7:0])));
+      Bit#(16) chunk = deqNeeded?pack(data.img):pack(data.rel); // send MSB/rel first
+      sataDriver.send0(serdesWord(serdesData(chunk[15:8]),serdesData(chunk[7:0])));  // Byte endian issue?
       txCount <= txCount + 1;
       handleDeq();
     endrule
@@ -283,4 +292,12 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
       handleDeq();
     endrule
  
+
+    rule sendToSERDESSync(!outtxfifo.notEmpty && sendSync == 0);
+      // This 156 signifies a synchronization event
+      sataDriver.send0(serdesWord(serdesControl(156),serdesControl(156)));
+      sendSync <= maxBound;
+    endrule
+
+
 endmodule
