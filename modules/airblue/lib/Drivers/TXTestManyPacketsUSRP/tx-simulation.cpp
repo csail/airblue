@@ -5,6 +5,8 @@
 #include "asim/provides/airblue_environment.h"
 #include "asim/provides/clocks_device.h"
 
+#include "packets.h"
+
 using namespace std;
  
 // constructor
@@ -34,7 +36,7 @@ AIRBLUE_DRIVER_CLASS::Main()
   int ber,result;
 
   // We probably want more hooks at some point.
-  UINT8 packet[] = {0x8,  0x2,  0x3c};
+  //UINT8 packet[] = {0x8,  0x2,  0x3c};
   UINT32 totalPackets = sizeof(packets)/sizeof(UINT8*);
   UINT32 currentPacket = 0;
 
@@ -52,7 +54,7 @@ AIRBLUE_DRIVER_CLASS::Main()
     packetGenStub->SetLength(packetLengths[currentPacket]);
     // need to send down a packet 
     for(int i = 0; i < packetLengths[currentPacket]; i++) {
-      packetGenStub->SetPacketByte(i,packetLengths[currentPacket][i]);
+      packetGenStub->SetPacketByte(i,packets[currentPacket][i]);
     }
                               
     packetGenStub->SetEnable(~0);    

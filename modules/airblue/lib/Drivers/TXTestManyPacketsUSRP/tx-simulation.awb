@@ -5,5 +5,5 @@
 %requires airblue_environment
 
 %public  tx-simulation.h
-%public  packets.h
+%private  packets.h
 %private tx-simulation.cpp

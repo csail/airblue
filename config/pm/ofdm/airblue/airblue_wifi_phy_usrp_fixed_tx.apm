@@ -173,7 +173,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=TX Test Driver
+airblue_driver_application=TX Test Driver USRP (many packets)
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -328,9 +328,11 @@ Packagehint=ofdm
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
 Packagehint=ofdm
 
-[TX Test Driver/Requires]
+
+
+[TX Test Driver USRP (many packets)/Requires]
 airblue_environment=Airblue Environment
 
-[TX Test Driver]
-File=modules/airblue/lib/Drivers/TXTest/tx-simulation.awb
+[TX Test Driver USRP (many packets)]
+File=modules/airblue/lib/Drivers/TXTestManyPacketsUSRP/tx-simulation.awb
 Packagehint=ofdm
