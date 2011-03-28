@@ -1,0 +1,9 @@
+%name TX Test Driver USRP (many packets)
+%desc Drives Fixed Phy test bench
+
+%provides airblue_driver_application
+%requires airblue_environment
+
+%public  tx-simulation.h
+%public  packets.h
+%private tx-simulation.cpp
