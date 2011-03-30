@@ -45,7 +45,7 @@ client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
 stat_min=Min collector
-airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
+airblue_shift_regs=Airblue Shifted Registers
 stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
@@ -173,7 +173,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=ofdm
 
 [Airblue application/Requires]
-airblue_driver_application=TX Test Driver USRP (many packets)
+airblue_driver_application=TX Test Driver USRP
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -221,11 +221,7 @@ File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
 
 [WiFi Receiver Pipeline/Params]
-DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
-
-[Airblue Synchronizer/Params]
-DEBUG_SYNCHRONIZER=1
 
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
@@ -324,15 +320,13 @@ Packagehint=ofdm
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
 Packagehint=ofdm
 
-[Airblue Shifted Registers FPGA-optimized]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+[TX Test Driver USRP]
+File=modules/airblue/lib/Drivers/TXTestUSRP/tx-simulation.awb
 Packagehint=ofdm
 
-
-
-[TX Test Driver USRP (many packets)/Requires]
+[TX Test Driver USRP/Requires]
 airblue_environment=Airblue Environment
 
-[TX Test Driver USRP (many packets)]
-File=modules/airblue/lib/Drivers/TXTestManyPacketsUSRP/tx-simulation.awb
+[Airblue Shifted Registers]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=ofdm
