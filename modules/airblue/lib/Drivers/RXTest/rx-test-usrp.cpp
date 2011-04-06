@@ -51,7 +51,7 @@ void * ProcessPackets(void *inputComplete) {
 	             (((UINT32)packetPtr[length-1]) << 0); 
     }
 
-    if(crc == expectedcrc) {
+    if(crc == expectedcrc && length >= 14) {
       printf("Received matching CRC %x\n", crc);
 
       // If it's good, let's try to process the packet using kismet
