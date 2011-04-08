@@ -210,22 +210,14 @@ Packagehint=ofdm
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Airblue Services
 connected_application=Airblue application
-soft_services=Soft Services
+soft_services=Soft Services Submodel
 
 [Soft Services Hybrid Application Environment]
 File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=leap
-
 [WiFi Receiver Pipeline/Params]
-DEBUG_RXCTRL=1
 MAGIC_DESCRAMBLE_SEED=0
-
-[Airblue Synchronizer/Params]
-DEBUG_SYNCHRONIZER=1
 
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
@@ -307,14 +299,6 @@ VITERBI_TB_MAX_PATH=0
 File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
 Packagehint=ofdm
 
-[Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
-Packagehint=leap
-
-[Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
-MODEL_CLOCK_DIVIDER=10
-MODEL_CLOCK_FREQ=30
-
 [Airblue Phy RX RRR Packet Check]
 File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
 Packagehint=ofdm
@@ -338,3 +322,16 @@ Packagehint=ofdm
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=ofdm
+
+[Soft Services Submodel]
+File=config/pm/hasim/submodels/common/soft-services.apm
+Packagehint=leap
+
+[Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
+File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
+Packagehint=leap
+
+[Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
+MODEL_CLOCK_DIVIDER=20
+MODEL_CLOCK_MULTIPLIER=5
+MODEL_CLOCK_FREQ=25
