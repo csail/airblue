@@ -52,6 +52,8 @@ typedef enum {
   Body
 } PacketState deriving (Bits, Eq);
 
+XUPV5_SERDES_WORD sampleSyncWord = serdesWord(serdesControl(156),serdesControl(156));
+
 module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) (); 
 
    XUPV5_SERDES_DRIVER       sataDriver = drivers.sataDriver;
@@ -77,6 +79,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    Reg#(Bit#(40)) rxCountCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    Reg#(Bit#(40)) sampleDropped <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    Reg#(Bit#(40)) sampleDroppedCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   Reg#(Bit#(40)) realign <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(Bit#(40)) realignCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    Reg#(Bit#(40)) sampleSent <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    Reg#(Bit#(40)) sampleSentCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    ReadOnly#(Bool) txRstVal <- isResetAsserted(clocked_by(txClk), reset_by(txRst));
@@ -92,6 +96,10 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    rule sampleSentTransfer;
      sampleSentCC <= sampleSent;
+   endrule
+
+   rule realignTransfer;
+     realignCC <= realign;
    endrule
 
    rule getSampleRX;
@@ -114,10 +122,16 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetTXRst(zeroExtend(pack(txRstValCC)));
    endrule
 
+   rule getRealign;
+     let dummy <- serverStub.acceptRequest_GetRealign();
+     serverStub.sendResponse_GetRealign(zeroExtend(pack(realignCC)));
+   endrule
+
    rule processIPart (processI);
        XUPV5_SERDES_WORD dataIn <- sataDriver.receive0();
        rxCount <= rxCount + 1;
-        // We should only use this if it is not control 
+       // We should only use this if it is not control 
+       // although we may see a sync control word here, we 
        if(extractData(dataIn) matches tagged Valid .data) 
          begin
            processI <= False; 
@@ -135,6 +149,12 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
            serdes_word_fifo.enq(cmplx(iPart,data));
            processI <= True;
          end 
+       else if(dataIn == sampleSyncWord) // In this case we should be receiving a real next
+         begin
+           processI <= True;
+           sampleDropped <= sampleDropped + 1;
+           realign <= realign + 1;
+         end
     endrule
 
     rule dropdata (!processI && !serdes_word_fifo.notFull);
@@ -293,9 +313,10 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     endrule
  
 
+    // We use this control word to indicate even parity
     rule sendToSERDESSync(!outtxfifo.notEmpty && sendSync == 0);
       // This 156 signifies a synchronization event
-      sataDriver.send0(serdesWord(serdesControl(156),serdesControl(156)));
+      sataDriver.send0(sampleSyncWord);
       sendSync <= maxBound;
     endrule
 
