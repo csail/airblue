@@ -8,7 +8,7 @@ service SATARRR
        method SetUSRPHeader    (in UINT32[32] magic0, in UINT32[32] magic1);  
        method GetSampleSent    (in UINT16[16] value, out UINT64[64] samples);  
        method GetSampleDropped (in UINT16[16] value, out UINT64[64] samples);  
-       method GetTXRst         (in UINT16[16] value, out UINT64[64] samples);  
+       method GetRXErrors      (in UINT16[16] value, out UINT64[64] samples);  
        method GetRealign       (in UINT16[16] value, out UINT64[64] samples);  
     };
 };

@@ -79,8 +79,9 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    Reg#(Bit#(40)) rxCountCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    Reg#(Bit#(40)) sampleDropped <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    Reg#(Bit#(40)) sampleDroppedCC <- mkSyncRegToCC(0,rxClk,rxRst);    
-   Reg#(Bit#(40)) realign <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
-   Reg#(Bit#(40)) realignCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   Reg#(Bit#(32)) realign <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(Bit#(64)) realignCC <- mkSyncRegToCC(0,rxClk,rxRst);    
+   Reg#(Bit#(32)) rxErrorsCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    Reg#(Bit#(40)) sampleSent <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    Reg#(Bit#(40)) sampleSentCC <- mkSyncRegToCC(0,rxClk,rxRst);    
    ReadOnly#(Bool) txRstVal <- isResetAsserted(clocked_by(txClk), reset_by(txRst));
@@ -99,7 +100,11 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    endrule
 
    rule realignTransfer;
-     realignCC <= realign;
+     realignCC <= {sataDriver.realignment0,realign};
+   endrule
+
+   rule errorTransfer;
+     rxErrorsCC <= sataDriver.errors0;
    endrule
 
    rule getSampleRX;
@@ -117,14 +122,14 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetSampleSent(zeroExtend(sampleSentCC));
    endrule
 
-   rule getTXRST;
-     let dummy <- serverStub.acceptRequest_GetTXRst();
-     serverStub.sendResponse_GetTXRst(zeroExtend(pack(txRstValCC)));
+   rule getRXError;
+     let dummy <- serverStub.acceptRequest_GetRXErrors();
+     serverStub.sendResponse_GetRXErrors(zeroExtend(pack(rxErrorsCC)));
    endrule
 
    rule getRealign;
      let dummy <- serverStub.acceptRequest_GetRealign();
-     serverStub.sendResponse_GetRealign(zeroExtend(pack(realignCC)));
+     serverStub.sendResponse_GetRealign(pack(realignCC));
    endrule
 
    rule processIPart (processI);
@@ -152,7 +157,6 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        else if(dataIn == sampleSyncWord) // In this case we should be receiving a real next
          begin
            processI <= True;
-           sampleDropped <= sampleDropped + 1;
            realign <= realign + 1;
          end
     endrule
