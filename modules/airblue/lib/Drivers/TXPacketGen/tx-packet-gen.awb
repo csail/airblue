@@ -1,0 +1,8 @@
+%name RXTX Simulation Driver
+%desc Drives the simple PHY pipeline test
+
+%provides airblue_driver_application
+%requires airblue_environment
+
+%public  rxtx-simulation.h
+%private rxtx-simulation.cpp
