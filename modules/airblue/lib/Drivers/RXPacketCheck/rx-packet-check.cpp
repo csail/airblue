@@ -33,11 +33,11 @@ AIRBLUE_DRIVER_CLASS::Main()
 
   while(1){
 
-    printf("PacketCheck: Packets Received: %d BER: %d", 
+    printf("PacketCheck: Packets Received: %d BER: %d\n", 
            packetCheckStub->GetPacketsRX(0),
            packetCheckStub->GetBER(0)
           );
-
+    printf("RX: %d TX: %d TXIn: %d Errors: %d\n", sataStub->GetRXCount(0), sataStub->GetTXCount(0), sataStub->GetTXCountIn(0), sataStub->GetRXErrors(0));
     sleep(5);
   }
 }
