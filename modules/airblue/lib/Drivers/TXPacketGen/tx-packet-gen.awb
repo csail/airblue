@@ -1,8 +1,8 @@
-%name RXTX Simulation Driver
+%name TX Packet Gen Driver
 %desc Drives the simple PHY pipeline test
 
 %provides airblue_driver_application
 %requires airblue_environment
 
-%public  rxtx-simulation.h
-%private rxtx-simulation.cpp
+%public  tx-packet-gen.h
+%private tx-packet-gen.cpp
