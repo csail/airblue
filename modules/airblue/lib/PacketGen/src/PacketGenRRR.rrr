@@ -6,6 +6,7 @@ service PACKETGENRRR
        method SetEnable (in UINT16[16] value);  
        method SetMaxLength (in UINT16[16] value);  
        method SetMinLength (in UINT16[16] value);  
+       method SetDelay (in UINT32[32] value);  
 
     };
 

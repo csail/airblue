@@ -73,6 +73,11 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
    //serverStub.sendResponse_GetBER(berReg);
  endrule
 
+ rule setDelay;
+   let delayNew <- serverStub.acceptRequest_SetDelay();
+   packetDelayReg <= truncate(delayNew);
+ endrule
+
  rule init(!initialized);
    initialized <= True;
    lfsr.seed(1);
