@@ -78,6 +78,11 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
    packetDelayReg <= truncate(delayNew);
  endrule
 
+ rule getPacketsTX;
+   let dummy <- serverStub.acceptRequest_GetPacketsTX();
+   serverStub.sendResponse_GetPacketsTX(packetsTXReg);
+ endrule
+
  rule init(!initialized);
    initialized <= True;
    lfsr.seed(1);

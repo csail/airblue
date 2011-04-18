@@ -72,6 +72,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    serverStub.sendResponse_GetPacketsRX(packetsRXReg);
  endrule
 
+ rule getBytesRX;
+   let dummy <- serverStub.acceptRequest_GetBytesRX();
+   serverStub.sendResponse_GetBytesRX(bytesRXReg);
+ endrule
+
  rule getPacketRXCorrect;
    let dummy <- serverStub.acceptRequest_GetPacketsRXCorrect();
    serverStub.sendResponse_GetPacketsRXCorrect(packetsCorrectReg);

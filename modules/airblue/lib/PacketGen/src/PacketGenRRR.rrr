@@ -7,7 +7,7 @@ service PACKETGENRRR
        method SetMaxLength (in UINT16[16] value);  
        method SetMinLength (in UINT16[16] value);  
        method SetDelay (in UINT32[32] value);  
-
+       method GetPacketsTX (in UINT16[16] value, out UINT32[32] packets);  
     };
 
 };
