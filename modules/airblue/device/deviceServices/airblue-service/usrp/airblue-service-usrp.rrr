@@ -10,5 +10,6 @@ service SATARRR
        method GetSampleDropped (in UINT16[16] value, out UINT64[64] samples);  
        method GetRXErrors      (in UINT16[16] value, out UINT64[64] samples);  
        method GetRealign       (in UINT16[16] value, out UINT64[64] samples);  
+       method GetSample        (in UINT16[16] value, out UINT32[32] sample);  
     };
 };

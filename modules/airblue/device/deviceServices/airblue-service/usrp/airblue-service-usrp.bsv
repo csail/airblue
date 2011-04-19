@@ -37,6 +37,7 @@ import Complex::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
+`include "asim/provides/stream_capture_fifo.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 `include "asim/rrr/remote_server_stub_SATARRR.bsh"
 
@@ -65,8 +66,10 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
-
    NumTypeParam#(16383) fifo_sz = 0;
+   FIFOF#(Bit#(32)) sampleStream <- mkStreamCaptureFIFOF(fifo_sz);
+
+
    FIFOF#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
    SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
 
@@ -132,6 +135,12 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetRealign(pack(realignCC));
    endrule
 
+   rule getSample;
+     let dummy <- serverStub.acceptRequest_GetSample();
+     sampleStream.deq();
+     serverStub.sendResponse_GetSample(sampleStream.first);
+   endrule
+
    rule processIPart (processI);
        XUPV5_SERDES_WORD dataIn <- sataDriver.receive0();
        rxCount <= rxCount + 1;
@@ -183,6 +192,10 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     rule toAnalog;
        serdes_word_sync_fifo.deq;
        analogRX.send(serdes_word_sync_fifo.first());       
+    endrule
+
+    rule toStreamCapture;
+       sampleStream.enq(pack(serdes_word_sync_fifo.first()));
     endrule
 
     // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -
