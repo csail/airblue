@@ -12,6 +12,8 @@
 
 %sources -t BSV -v PUBLIC PacketCheckFixed.bsv
 %sources -t RRR -v PUBLIC PacketCheckFixed.rrr
+%sources -t H   -v PUBLIC PacketCheckFixed.h
+%sources -t CPP   -v PRIVATE PacketCheckFixed.cpp
 
 %param DEBUG_PACKETCHECK 0 "Enable debug messages with 1"
  

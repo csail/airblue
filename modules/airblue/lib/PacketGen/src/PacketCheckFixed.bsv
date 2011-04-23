@@ -165,7 +165,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
       if(size != expectedSize)
         begin
-          if(count == zeroExtend(size))
+          if(count != zeroExtend(size))
             begin
               mismatchedLengthCount  <=  mismatchedLengthCount + 1;
             end
