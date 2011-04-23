@@ -4,6 +4,6 @@
 %provides airblue_driver_application
 %requires airblue_environment
 
-%public  rx-simulation.h
-%private rx-simulation.cpp
+%public  rx-fixed.h
+%private rx-fixed.cpp
 
