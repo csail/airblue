@@ -43,6 +43,8 @@ AIRBLUE_DRIVER_CLASS::Main()
 
 
   packetGenStub->SetLength(sizeof(packet)/sizeof(UINT8));
+  packetCheckStub->SetExpectedLength(sizeof(packet)/sizeof(UINT8));
+
   // need to send down a packet 
   for(int i = 0; i < sizeof(packet)/sizeof(UINT8); i++) {
     packetGenStub->SetPacketByte(i,packet[i]);
