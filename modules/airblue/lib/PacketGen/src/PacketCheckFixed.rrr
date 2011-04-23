@@ -3,6 +3,7 @@ service PACKETCHECKRRR
     server hw (bsv, connection) <- sw (cpp, method)
     {
        method SetExpectedByte (in UINT16[16] addr, in UINT8[8] value);  
+       method SetExpectedLength (in UINT32[32] value);  
        method GetBER (in UINT16[16] value, out UINT32[32] ber);  
        method GetPacketsRX (in UINT16[16] value, out UINT32[32] ber);  
        method GetBytesRX (in UINT16[16] value, out UINT32[32] ber);  

@@ -1,6 +1,7 @@
 import GetPut::*;
 import LFSR::*;
 import FIFO::*;
+import FIFOF::*;
 import StmtFSM::*;
 
 // import Register::*;
@@ -61,7 +62,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  FIFO#(Bit#(8))  rxTransferFIFO <- mkFIFO; 
  FIFO#(Bit#(0))  abortReqFIFO <- mkFIFO;
  FIFO#(Bit#(0))  abortAckFIFO <- mkFIFO;  
- FIFO#(ByteBERToken)  byteBERFIFO <- mkFIFO;  
+ FIFOF#(ByteBERToken)  byteBERFIFO <- mkFIFOF;  
 
  Reg#(Bit#(32)) packetsRXReg <- mkReg(0);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
@@ -104,6 +105,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  rule setData;
    let bramCommand <- serverStub.acceptRequest_SetExpectedByte();
    expectedPacket.write(truncate(bramCommand.addr), bramCommand.value);
+ endrule
+
+ rule setExpectedLength;
+   let length <- serverStub.acceptRequest_SetExpectedLength();
+   expectedSize <= truncate(length);
  endrule
 
  rule getByteBER;
@@ -165,10 +171,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
       if(size != expectedSize)
         begin
-          if(count != zeroExtend(size))
-            begin
-              mismatchedLengthCount  <=  mismatchedLengthCount + 1;
-            end
+          mismatchedLengthCount  <=  mismatchedLengthCount + 1;
         end      
       else
         begin                      
@@ -190,7 +193,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    berReg <= berReg + thisBER;
  endrule
    
-   rule checkCheckSum(count > 0 && (count == zeroExtend(size) + 1));
+   rule checkCheckSum(count > 0 && (count == zeroExtend(size) + 1) && !byteBERFIFO.notEmpty);
       packetsRXReg <= packetsRXReg + 1;
       bytesRXReg <= bytesRXReg + zeroExtend(size);
       count <= 0;
