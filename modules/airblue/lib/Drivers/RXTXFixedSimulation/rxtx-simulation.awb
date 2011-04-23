@@ -1,0 +1,8 @@
+%name RXTX Fixed Test Driver
+%desc Sends fixed length packets
+
+%provides airblue_driver_application
+%requires airblue_environment
+
+%public  rxtx-simulation.h
+%private rxtx-simulation.cpp
