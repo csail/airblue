@@ -6,10 +6,13 @@ import matplotlib.pyplot as plt
 import math
 
 parser = OptionParser()
+parser.add_option("-s", "--symbols", dest="symbols", type=int, default=50, help="number of symbols to print (default 50)")
 (options, args) = parser.parse_args()
 
 if len(args) < 1:
   sys.exit(-1)
+
+numberPlotted = 0
 
 datain = open(args[0], "r");
 
@@ -52,9 +55,12 @@ for line in datain.readlines():
       for i in range(0,64):
         phases.append( math.atan2(imags[i],reals[i]))
       print 'Phases: ' + str(phases)
-      plt.plot(phases)
+      plt.plot(phases,linestyle='None', marker='*')
 
       linecount = 0
+      numberPlotted = numberPlotted + 1
+      if(numberPlotted  > options.symbols):
+        break
     else:
       linecount = linecount + 1
 
