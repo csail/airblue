@@ -8,8 +8,8 @@ service PACKETCHECKRRR
        method GetPacketsRX (in UINT16[16] value, out UINT32[32] ber);  
        method GetBytesRX (in UINT16[16] value, out UINT32[32] ber);  
        method GetMismatchedRX (in UINT16[16] value, out UINT32[32] ber);  
-       method GetPacketsRXCorrect (in UINT16[16] value, out UINT32[32] ber);        
-       method GetByteBER (in UINT16[16] addr, out UINT32[32] value);  
+       method GetMatchedRX (in UINT16[16] value, out UINT32[32] ber);  
+       method GetPacketsRXCorrect (in UINT16[16] value, out UINT32[32] ber);        method GetByteBER (in UINT16[16] addr, out UINT32[32] value);  
        method GetTotalBER (in UINT16[16] addr, out UINT32[32] value);  
     };
 

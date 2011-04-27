@@ -50,7 +50,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
  MEMORY_IFC#(Bit#(12),Bit#(8))  expectedPacket <- mkBRAM();
  MEMORY_IFC#(Bit#(12),Bit#(32)) byteBER        <- mkBRAM();
- LUTRAM#(Bit#(7),Bit#(32))  totalBER        <- mkLUTRAMU();
+ LUTRAM#(Bit#(8),Bit#(32))  totalBER           <- mkLUTRAMU();
 
  Reg#(Bit#(12)) size  <- mkReg(0); 
  Reg#(Bit#(12)) expectedSize  <- mkReg(0); 
@@ -68,6 +68,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
  Reg#(Bit#(32)) bytesRXCorrectReg <- mkReg(0);
  Reg#(Bit#(32)) mismatchedLengthCount <- mkReg(0);
+ Reg#(Bit#(32)) matchedLengthCount <- mkReg(0);
  Reg#(Bit#(32)) bytesRXReg <- mkReg(0);
  Reg#(Bit#(32)) cycleCountReg <- mkReg(0);
  Reg#(Bit#(32)) packetBerReg <- mkReg(0); // packetwise ber  
@@ -100,6 +101,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  rule getMismatchRX;
    let dummy <- serverStub.acceptRequest_GetMismatchedRX();
    serverStub.sendResponse_GetMismatchedRX(mismatchedLengthCount);
+ endrule
+
+ rule geMatchRX;
+   let dummy <- serverStub.acceptRequest_GetMatchedRX();
+   serverStub.sendResponse_GetMatchedRX(matchedLengthCount);
  endrule
 
  rule setData;
@@ -147,12 +153,13 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  rule startPacketCheck(count == 0 && initialized);
    rxVectorFIFO.deq;
    size <= rxVectorFIFO.first.header.length;
+   expectedIndex <= 0;
    count <= 1;
    if(`DEBUG_PACKETCHECK == 1)
      begin
        $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
      end
-
+   
  endrule
    
    
@@ -170,8 +177,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       count <= count + 1;
 
       if(size != expectedSize)
-        begin
-          mismatchedLengthCount  <=  mismatchedLengthCount + 1;
+        begin 
+          if(count == zeroExtend(size))
+            begin
+              mismatchedLengthCount  <=  mismatchedLengthCount + 1;
+            end
         end      
       else
         begin                      
@@ -189,22 +199,31 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    rxTransferFIFO.deq;
    Bit#(32) thisBER = zeroExtend(pack(countOnes(expected^rxTransferFIFO.first())));
    byteBER.write(expectedIndex,byteBERPrev + thisBER);    
+   expectedIndex <= expectedIndex + 1;
    packetBerReg <= packetBerReg + thisBER;
    berReg <= berReg + thisBER;
  endrule
    
    rule checkCheckSum(count > 0 && (count == zeroExtend(size) + 1) && !byteBERFIFO.notEmpty);
       packetsRXReg <= packetsRXReg + 1;
-      bytesRXReg <= bytesRXReg + zeroExtend(size);
+      bytesRXReg <= bytesRXReg + zeroExtend(size);   
       count <= 0;
       packetBerReg <= 0; // reset packetwise ber
-      if(packetBerReg  < 64)
+
+      if(size == expectedSize)
         begin
-          totalBER.upd(truncate(packetBerReg),totalBER.sub(truncate(packetBerReg)) + 1);           
-        end
-      
-      if(packetBerReg == 0) 
-         begin
+          matchedLengthCount  <=  matchedLengthCount + 1;
+          if(packetBerReg  < 128)
+            begin
+              totalBER.upd(truncate(packetBerReg),totalBER.sub(truncate(packetBerReg)) + 1);           
+            end
+          else
+            begin
+              totalBER.upd(63,totalBER.sub(truncate(packetBerReg)) + 1);   
+            end
+  
+         if(packetBerReg == 0) 
+           begin
             packetsCorrectReg <= packetsCorrectReg + 1;
             bytesRXCorrectReg <= bytesRXCorrectReg + zeroExtend(size);
 
@@ -214,19 +233,22 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
                 $display("PacketCheck: total bytes: %d", bytesRXReg + zeroExtend(size));
                 $display("PacketCheck: correctly received %d of %d packets @ %d",packetsCorrectReg,packetsRXReg,cycleCountReg);
               end
-         end               
-      else 
-         begin
-            $display("PacketCheck: ERROR bad packet");
+           end               
+        else 
+           begin
+              $display("PacketCheck: ERROR bad packet");
 //            $finish;
-         end  
-             
+           end  
+      end
+	   
       if(`DEBUG_PACKETCHECK == 1)
         begin
           $display("PacketCheck: Packet bit errors: %d, Packet bit length: %d, BER total: %d", packetBerReg, size*8, berReg);
         end
 
    endrule
+
+  
 
   interface rxVector = fifoToPut(rxVectorFIFO);
   interface rxData = fifoToPut(rxDataFIFO);
