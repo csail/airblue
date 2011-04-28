@@ -22,4 +22,5 @@ for i in numpy.arange(measurements):
   magnitudes[i] = numpy.sqrt(readdata[i * options.decimation]["real"]**2 + readdata[i * options.decimation]["imag"]**2)
 del(readdata)
 plt.plot(magnitudes)
+plt.title(args[0])
 plt.show()
