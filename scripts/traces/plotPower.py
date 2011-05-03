@@ -44,10 +44,14 @@ for line in datain.readlines():
     time = time + 200
 
 fig = plt.figure()
+
 ax1 = fig.add_subplot(111)
 ax1.plot(timemag, magnitudes,'b-')
+ax1.set_xlabel('Time (nS)') 
+ax1.set_ylabel('Signal Power')
 
 ax2 = ax1.twinx()
-ax2.plot( timestamp, reals, 'r.')
+ax2.plot( timestamp, reals, 'r-')
+ax2.set_ylabel('Total Circuit Power(mW)')
 
 plt.show()

@@ -67,6 +67,8 @@ for line in datain.readlines():
         plt.figure()
         plt.subplot(221)
         plt.plot(reals,imags, linestyle='None', marker='*')
+        plt.subplot(222)
+        plt.plot(reals_good,imags_good, linestyle='None', marker='*')
         plt.subplot(223)
         plt.title('fft mag')
         mags = []
@@ -80,12 +82,13 @@ for line in datain.readlines():
         phases = []
         # abs here makes bpsk easier to look at
         for i in range(0,64):
-          phases.append( abs(math.atan2(imags[i],reals[i])))
+          phases.append( math.atan2(imags[i],reals[i]))
         print 'Phases: ' + str(phases)
         plt.plot(phases,"r")
         plt.plot(phases_good,"b")
 
       linecount = 0
+      plt.savefig('combined' + str(numberPlotted) + '.png')
       numberPlotted = numberPlotted + 1
       # we want to display correct values here
       if(numberPlotted  > options.symbols):

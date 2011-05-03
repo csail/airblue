@@ -58,6 +58,7 @@ for line in datain.readlines():
       plt.plot(phases,linestyle='None', marker='*')
 
       linecount = 0
+      plt.savefig('channelEst' + str(numberPlotted) + '.png')
       numberPlotted = numberPlotted + 1
       if(numberPlotted  > options.symbols):
         break
