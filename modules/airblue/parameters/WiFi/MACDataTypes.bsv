@@ -82,15 +82,18 @@ typedef enum {
   Failure
 } MACTxStatus deriving (Bits,Eq);
 
-//25 for 25 Mhz clock
-typedef 25 TicksPerMicrosecond;
+
+// CRC-32 (IEEE802.3), polynomial 0 1 2 4 5 7 8 10 11 12 16 22 23 26 32.
+
+//   3  2            1           0        
+//   2109 8765 4321 0987 6543 2109 8765 4321 0
 // 'b1000 0010 0110 0000 1000 1110 1101 1011 1 CRCPoly;
-// 'b 0000 0100 1100 0001 0001 1101 1011 0111 CRCPoly;
 
 typedef 'b100000100110000010001110110110111 CRCPoly;
 // 'b1100 0111 0000 0100 1101 1101 0111 1011 CRCPolyResult;
 // 'hc704dd7b 
 typedef 'b11000111000001001101110101111011 CRCPolyResult;
+
 typedef 1 ByPassDataConf; // DataConf is required as per Clause 12.3.5.3
                           // However if you want to bypass it, 
                           // set this field to 1 
