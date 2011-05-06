@@ -10,6 +10,7 @@ import StmtFSM::*;
 // import ProtocolParameters::*;
 
 // Local includes
+`include "asim/provides/airblue_crc_checker.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/register_library.bsh"
 `include "asim/provides/soft_services.bsh"
@@ -64,10 +65,13 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  FIFO#(Bit#(0))  abortAckFIFO <- mkFIFO;  
  FIFOF#(ByteBERToken)  byteBERFIFO <- mkFIFOF;  
 
+ CRC_CHECKER crcChecker <- mkCRCChecker;
+
  Reg#(Bit#(32)) packetsRXReg <- mkReg(0);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
  Reg#(Bit#(32)) bytesRXCorrectReg <- mkReg(0);
  Reg#(Bit#(32)) mismatchedLengthCount <- mkReg(0);
+ Reg#(Bit#(32)) passedCRC <- mkReg(0);
  Reg#(Bit#(32)) matchedLengthCount <- mkReg(0);
  Reg#(Bit#(32)) bytesRXReg <- mkReg(0);
  Reg#(Bit#(32)) cycleCountReg <- mkReg(0);
@@ -91,6 +95,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  rule getBytesRX;
    let dummy <- serverStub.acceptRequest_GetBytesRX();
    serverStub.sendResponse_GetBytesRX(bytesRXReg);
+ endrule
+
+ rule getPassedCRC;
+   let dummy <- serverStub.acceptRequest_GetPassedCRC();
+   serverStub.sendResponse_GetPassedCRC(passedCRC);
  endrule
 
  rule getPacketRXCorrect;
@@ -152,6 +161,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
  rule startPacketCheck(count == 0 && initialized);
    rxVectorFIFO.deq;
+   crcChecker.phy_rxstart.put(rxVectorFIFO.first);
    size <= rxVectorFIFO.first.header.length;
    expectedIndex <= 0;
    count <= 1;
@@ -173,7 +183,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
         begin
           $display("PacketCheck: rxDataFIFO.first %d",rxDataFIFO.first);
         end
-
+      crcChecker.phy_rxdata.put(rxDataFIFO.first);
       count <= count + 1;
 
       if(size != expectedSize)
@@ -210,6 +220,15 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       count <= 0;
       packetBerReg <= 0; // reset packetwise ber
 
+      let crcResult <- crcChecker.crc_passed.get();
+
+      if(crcResult == True) 
+        begin 
+          $display("Got a passed CRC");
+          passedCRC <= passedCRC + 1;
+          bytesRXCorrectReg <= bytesRXCorrectReg + zeroExtend(size);
+        end
+
       if(size == expectedSize)
         begin
           matchedLengthCount  <=  matchedLengthCount + 1;
@@ -224,8 +243,8 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
   
          if(packetBerReg == 0) 
            begin
-            packetsCorrectReg <= packetsCorrectReg + 1;
-            bytesRXCorrectReg <= bytesRXCorrectReg + zeroExtend(size);
+
+             packetsCorrectReg <= packetsCorrectReg + 1;
 
             if(`DEBUG_PACKETCHECK == 1)
               begin

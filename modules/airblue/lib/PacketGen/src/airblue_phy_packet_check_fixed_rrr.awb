@@ -8,6 +8,8 @@
 %desc Generate test packets for Phy only design
 %provides airblue_phy_packet_check
 
+%requires airblue_crc_checker
+
 %attributes airblue
 
 %sources -t BSV -v PUBLIC PacketCheckFixed.bsv
