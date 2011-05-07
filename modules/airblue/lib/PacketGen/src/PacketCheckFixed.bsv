@@ -97,6 +97,11 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    serverStub.sendResponse_GetBytesRX(bytesRXReg);
  endrule
 
+ rule getBytesRXCorrect;
+   let dummy <- serverStub.acceptRequest_GetBytesRXCorrect();
+   serverStub.sendResponse_GetBytesRXCorrect(bytesRXCorrectReg);
+ endrule
+
  rule getPassedCRC;
    let dummy <- serverStub.acceptRequest_GetPassedCRC();
    serverStub.sendResponse_GetPassedCRC(passedCRC);

@@ -5,8 +5,9 @@ service PACKETCHECKRRR
        method SetExpectedByte (in UINT16[16] addr, in UINT8[8] value);  
        method SetExpectedLength (in UINT32[32] value);  
        method GetBER (in UINT16[16] value, out UINT32[32] ber);  
-       method GetPacketsRX (in UINT16[16] value, out UINT32[32] ber);  
+       method GetPacketsRX (in UINT16[16] value, out UINT32[32] ber); 
        method GetBytesRX (in UINT16[16] value, out UINT32[32] ber);  
+       method GetBytesRXCorrect (in UINT16[16] value, out UINT32[32] ber);  
        method GetPassedCRC (in UINT16[16] value, out UINT32[32] crc);  
        method GetMismatchedRX (in UINT16[16] value, out UINT32[32] ber);  
        method GetMatchedRX (in UINT16[16] value, out UINT32[32] ber);  
