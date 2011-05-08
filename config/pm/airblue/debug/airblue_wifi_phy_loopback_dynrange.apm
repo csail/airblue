@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_loopback_fixed
+File=airblue_wifi_phy_loopback_dynrange
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -164,7 +164,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=airblue
 
 [Airblue application/Requires]
-airblue_driver_application=TX Test Driver
+airblue_driver_application=RXTX Dynamic range test
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -213,7 +213,7 @@ airblue_types=Airblue types (no SoftHints)
 airblue_phy_packet_gen=Airblue Phy Fixed Packet Gen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
+airblue_phy_packet_check=Airblue Phy Only PacketCheck Fixed
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -268,17 +268,6 @@ MAGIC_DESCRAMBLE_SEED=0
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
 Packagehint=airblue
 
-[TX Test Driver/Requires]
-airblue_environment=Airblue Environment
-
-[TX Test Driver]
-File=modules/airblue/lib/Drivers/TXTest/tx-simulation.awb
-Packagehint=airblue
-
-[Airblue Phy RX RRR Packet Check]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
-Packagehint=airblue
-
 [Altera Hybrid Simulation FPGA Environment/Params]
 MODEL_CLOCK_DIVIDER=2
 MODEL_CLOCK_FREQ=25
@@ -290,3 +279,28 @@ Packagehint=airblue
 [Soft Services Submodel]
 File=config/pm/hasim/submodels/common/soft-services.apm
 Packagehint=leap
+
+[RXTX Dynamic range test/Requires]
+airblue_environment=Airblue Environment
+
+[RXTX Dynamic range test]
+File=modules/airblue/lib/Drivers/RXTXDynamicRange/dynrange.awb
+Packagehint=airblue
+
+[Airblue CRC Checker]
+File=modules/airblue/lib/MACCRC/src/airblue_crc_checker.awb
+Packagehint=airblue
+
+[CRC Library]
+File=modules/bsv-libraries/bluespec/CRC/src/crc.awb
+Packagehint=bsv-libraries
+
+[Airblue Phy Only PacketCheck Fixed/Requires]
+airblue_crc_checker=Airblue CRC Checker
+
+[Airblue Phy Only PacketCheck Fixed]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_fixed_rrr.awb
+Packagehint=airblue
+
+[Airblue CRC Checker/Requires]
+crc=CRC Library
