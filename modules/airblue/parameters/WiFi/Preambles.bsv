@@ -37,8 +37,8 @@ import FixedPoint::*;
 `include "asim/provides/airblue_types.bsh"
 
 // function to generate short training sequence
-function Vector#(128, FPComplex#(2,14)) getShortPreambles();
-	Vector#(128, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(128, FPComplex#(iPrec,fPrec)) getShortPreambles();
+	Vector#(128, FPComplex#(iPrec,fPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(460000,10000000), fromRational(460000,10000000)),
 		List::cons(cmplx(fromRational(-1324400,10000000), fromRational(23400,10000000)),
 		List::cons(cmplx(fromRational(-134700,10000000), fromRational(-785200,10000000)),
@@ -172,8 +172,8 @@ function Vector#(128, FPComplex#(2,14)) getShortPreambles();
 endfunction
 
 // function to generate long training sequence
-function Vector#(128, FPComplex#(2,14)) getLongPreambles();
-	Vector#(128, FPComplex#(2,14)) tempV = Vector::toVector(
+function Vector#(128, FPComplex#(iPrec,fPrec)) getLongPreambles();
+	Vector#(128, FPComplex#(iPrec,fPrec)) tempV = Vector::toVector(
 		List::cons(cmplx(fromRational(1562500,10000000), fromRational(0,10000000)),
 		List::cons(cmplx(fromRational(-51200,10000000), fromRational(-1203300,10000000)),
 		List::cons(cmplx(fromRational(397500,10000000), fromRational(-1111600,10000000)),
