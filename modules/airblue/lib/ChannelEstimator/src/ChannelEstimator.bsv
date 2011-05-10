@@ -283,6 +283,27 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       // mag
       FPComplex#(TAdd#(1,TAdd#(TAdd#(CEstIPrec,CEstFPrec),CEstIPrec)),TAdd#(CEstFPrec,CEstFPrec)) mag_adjusted = fpcmplxScale(mag_q.first, out_reg.data[out_read_idx]);
       FPComplex#(CEstIPrec,CEstFPrec) mag_adjusted_trunc = fpcmplxTruncate(mag_adjusted);
+
+      // Check for overflow. On overflow, ditch
+      // We should probably do something better than this at some point. 
+      //if(fpcmplxZeroExtend( mag_adjusted_trunc ) != mag_adjusted)
+      //   begin
+      //     mag_adjusted_trunc =  out_reg.data[out_read_idx];
+      //   end
+
+      if(`DEBUG_CHANNEL_ESTIMATOR == 1)
+         begin
+            $write("ChannelEstMag %d: ",out_read_idx);
+            fpcmplxWrite(5, out_reg.data[out_read_idx]);
+            $write(" -> ");
+            fpcmplxWrite(5, mag_adjusted_trunc);
+            $write(" magnitude adjusted ");
+            fpcmplxWrite(5, mag_adjusted);
+            $write(" scale correction cmplx:");
+            fxptWrite(5, mag_q.first);
+            $display("");
+         end
+
       out_read_idx <= out_read_idx - 1;
       mag_q.deq;
       mag_adjusted_q.enq(mag_adjusted_trunc);

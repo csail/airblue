@@ -1,0 +1,10 @@
+service LOOPBACKRRR
+{
+    server hw (bsv, connection) <- sw (cpp, method)
+    {
+       method SetScale (in UINT32[32] scale);  
+    };
+
+};
+
+

@@ -28,6 +28,8 @@ import Connectable::*;
 import FIFO::*;
 import GetPut::*;
 import Clocks::*;
+import FixedPoint::*;
+import Complex::*;
 
 // Local includes
 `include "asim/provides/airblue_types.bsh"
@@ -39,7 +41,7 @@ import Clocks::*;
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
-
+`include "asim/rrr/remote_server_stub_LOOPBACKRRR.bsh"
 
 // The purpose of this test rig is to wire a tx pipeline to an rx pipepline 
 // to ensure that we meet the line rate
@@ -52,10 +54,19 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
     // RX/TX signals are at  20Mhz.
     UserClock clk20 <- mkSoftClock(20);
 
+   ServerStub_LOOPBACKRRR serverStub <- mkServerStub_LOOPBACKRRR();
+   Reg#(FixedPoint#(16,16)) scale <- mkReg(1);
+   
+   rule setScale;
+     let newScale <- serverStub.acceptRequest_SetScale();
+     scale <= unpack(newScale);
+   endrule
+
+
    let wifiFFTTX <- mkWiFiFFTIFFT;
    let wifiFFTRX <- mkWiFiFFTIFFT;
    let wifiTransmitter <- mkWiFiTransmitter(wifiFFTTX.ifft);
-  let wifiReceiver    <- mkWiFiReceiver(clk, rst, wifiFFTRX.fft);
+   let wifiReceiver    <- mkWiFiReceiver(clk, rst, wifiFFTRX.fft);
 
    // Soft connections to the rest of the world
    /////
@@ -133,8 +144,8 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
     // Let's do a glitch check
     rule txConnection;
       let data <- wifiTransmitter.out.get;
-  //    $display("TX Data:%h",{pack(data)[23:16],pack(data)[31:24],pack(data)[7:0],pack(data)[15:8]});
-      txfifo.enq(data);     
+      let scaledData = fpcmplxScale(scale,data);
+      txfifo.enq(fpcmplxTruncate(scaledData));     
     endrule
 
     rule handleTX(!(bitCount == 0 && preambleCount == 0));
