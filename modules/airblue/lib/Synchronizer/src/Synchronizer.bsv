@@ -316,7 +316,7 @@ module  mkTimeEstimator(TimeEstimator);
    Integer coarTimeAccumDelaySz = valueOf(CoarTimeAccumDelaySz);
    
    let fullLongPreambles = insertCP0(getLongPreambles);
-   Vector#(FineTimeCorrSz, FineTimeType) longPreambles = map(fpcmplxTruncate,take(fullLongPreambles));
+   Vector#(FineTimeCorrSz, FineTimeType) longPreambles = take(fullLongPreambles);
    let maxFineTimePowSq = fpcmplxModSq(crossCorrelation(longPreambles,longPreambles)) >> 2; 
       
    // states
