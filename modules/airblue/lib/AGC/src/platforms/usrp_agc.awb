@@ -1,0 +1,16 @@
+********************************************************************
+* Awb module specification
+********************************************************************
+
+%AWB_START
+
+%name AGC Parameters USRP
+%desc AGC Parameters USRP
+%provides agc_parameters
+
+%attributes airblue
+
+%sources -t BSV -v PUBLIC usrp-agc.bsv
+%sources -t BSV -v PUBLIC gainFactors.bsv
+
+%AWB_END

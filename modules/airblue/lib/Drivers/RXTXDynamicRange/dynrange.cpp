@@ -68,7 +68,7 @@ AIRBLUE_DRIVER_CLASS::Main()
       loopbackStub->SetScale(fixedPtScale);     
       packetGenStub->SetEnable(~0);
  
-      while(packetCheckStub->GetPacketsRX(0) < basePackets + 100){
+      while(packetCheckStub->GetPacketsRX(0) < basePackets + 50){
 
         printf("Check has received %d packets\n", packetCheckStub->GetPacketsRX(0));
         sleep(10);
