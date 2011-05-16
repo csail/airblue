@@ -19,24 +19,25 @@ complexint = numpy.dtype([("real", numpy.int16), ("imag", numpy.int16)])
 linecount = 0
 ratelast = 9
 
-for line in datain.readlines():
-  linecount = linecount + 1
+values = [[]]
+scale = [[]]
 
 datain = open(args[0], "r");
 for line in datain.readlines():
   components = line.split(':')
   if(len(components) == 8 and components[0] == 'Rate'):
-    if(components[0] != ratelast):
-      ratelast = components[0]
-      linecount = 0
-    values[ratelast][linecount] = float(components[5])
-    scale[ratelast][linecount] = float(components[3])/(1<<16)
+    if(ratelast != int(components[1])):
+      values.append([])
+      scale.append([])
+    ratelast = int(components[1])
+    values[ratelast].append(float(components[5]))
+    scale[ratelast].append(float(components[3])/(1<<16))
 
 ratelast = ratelast + 1
 
-for index in range(0:ratelast)
-      plt.figure()
-      plt.plot(values[index],scale[index])
+for index in range(0,ratelast):
+#      plt.figure()
+      plt.plot(scale[index],values[index])
 
 
 plt.show()
