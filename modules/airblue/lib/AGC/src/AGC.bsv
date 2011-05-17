@@ -35,7 +35,7 @@ Integer powerDelta = 4; // Need to be 4x Stronger/Weaker
 
 Real defaultAGC = 35;  // figure this out at somepoint
 
-Real magEstIdeal = log2(4000); // Get this empirically from our pipeline. 
+Real magEstIdeal = 5.8; // Get this empirically from our pipeline. 
 
 interface AGC;
   method Action inputSample(SynchronizerMesg#(SampleIPrec,SampleFPrec) sample);

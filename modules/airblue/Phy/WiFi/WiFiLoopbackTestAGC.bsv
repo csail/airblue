@@ -57,7 +57,7 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
     UserClock clk20 <- mkSoftClock(20);
 
    ServerStub_LOOPBACKRRR serverStub <- mkServerStub_LOOPBACKRRR();
-   Reg#(FixedPoint#(16,RXFPFPrec)) scale <- mkReg(1);
+   Reg#(FixedPoint#(16,16)) scale <- mkReg(1);
    
    rule setScale;
      let newScale <- serverStub.acceptRequest_SetScale();
