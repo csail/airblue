@@ -63,11 +63,12 @@ module mkSoftTracebackUnit (SoftTracebackUnit);
    TracebackUnit                              tb         <- mkTracebackUnit();
    SoftPathDetector                           spd        <- mkSoftPathDetector();
    FIFO#(VPathMetricUnitOut)                  pm_q       <- mkSizedFIFO(2);
-   FIFOCountIfc#(VPathMetricUnitOut,TAdd#(VNoTBStages,1)) pm_delay_q <- mkSizedBRAMFIFOCount();
+   FIFOCountIfc#(VPathMetricUnitOut,TAdd#(VNoTBStages,3)) pm_delay_q <- mkSizedBRAMFIFOCount();
+   // This is 64, but should it be more than that?
    ShiftRegs#(TSub#(VStateSz,1),VState)       shift_reg  <- mkShiftRegs();  // crap output by the tb for the first tb_no_stages cycles                     
    
    // a rule that connect the output of the traback unit to the path detector
-   rule connect_tb_2_spd(!process_rst); // this guard is sufficient, but not necessary
+   rule connect_tb_2_spd(!process_rst); // this gurd is sufficient, but not necessary
       let tb_state <- tb.out.get();
       shift_reg.enq(tpl_2(tb_state));
       pm_delay_q.deq();
