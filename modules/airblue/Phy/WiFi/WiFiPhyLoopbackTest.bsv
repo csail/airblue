@@ -41,6 +41,7 @@ import Complex::*;
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
+`include "asim/provides/fpga_components.bsh"
 `include "asim/rrr/remote_server_stub_LOOPBACKRRR.bsh"
 
 // The purpose of this test rig is to wire a tx pipeline to an rx pipepline 
@@ -128,7 +129,7 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
 
 
     SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) txfifo <- mkSyncFIFOFromCC(32, clk20.clk);  
-    SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) rxfifo <- mkSyncFIFOToCC(32, clk20.clk, clk20.rst);  
+    SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) rxfifo <- mkSyncFIFOToCC(4096, clk20.clk, clk20.rst);  
     Wire#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) dataTrans <- mkDWire(unpack(15),clocked_by(clk20.clk), reset_by(clk20.rst));
     PulseWire rxSunkData <- mkPulseWire(clocked_by(clk20.clk), reset_by(clk20.rst));
     PulseWire txProduceData <- mkPulseWire(clocked_by(clk20.clk), reset_by(clk20.rst));

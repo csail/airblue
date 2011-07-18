@@ -41,14 +41,13 @@ import FShow::*;
 // `include "../../../WiFiFPGA/Macros.bsv"
 
 // Local includes
-`include "asim/provides/airblue_parameters.bsh"
 
 /////////////////////////////////////////////////////////////////////////
 // Definition of TracebackUnit Interface and usefule types
 
 interface TracebackUnit;
    method Put#(VPathMetricUnitOut)  in;
-   method Get#(VState) out;
+   method Get#(Tuple2#(Bool,VState)) out;
    method Vector#(VRadixSz,VTBMemoryEntry) getTBPaths(VState state); // useful to SOVA 
 endinterface
 
@@ -93,8 +92,9 @@ module mkTracebackUnit (TracebackUnit);
    // states
    Reg#(VTBStageIdx)                          tb_count   <- mkReg(fromInteger(no_tb_stages)); // output the first value after counting to 0 (skip first NoTBStages)
    Reg#(Vector#(VTotalStates,VTBMemoryEntry)) tb_memory  <- mkReg(replicate(0));
-   FIFO#(VState)                              out_data_q <- mkSizedFIFO(2);
-   
+   FIFO#(Tuple2#(Bool,VState))                out_data_q <- mkSizedFIFO(2);
+   Reg#(Bit#(15))                             bitsOut    <- mkReg(0);  
+
    Vector#(VRadixSz,Vector#(VTotalStates,VTBMemoryEntry)) expanded_memory  = replicate(tb_memory);
    Vector#(VTotalStates,Vector#(VRadixSz,VTBMemoryEntry)) repack_memory    = unpack(pack(expanded_memory));
    
@@ -107,7 +107,7 @@ module mkTracebackUnit (TracebackUnit);
 
          Vector#(VTotalStates,VPathMetric)                      path_metric_vec  = newVector;       
          Vector#(VTotalStates,VTBType)                          tb_bits          = newVector;
-
+   
 
          for(Integer i = 0; i < valueOf(VTotalStates); i = i + 1)
             begin
@@ -134,11 +134,20 @@ module mkTracebackUnit (TracebackUnit);
          else
             begin
                if (need_rst)
+                 begin
                   tb_count <= fromInteger(no_tb_stages);
-               out_data_q.enq(res);
+                  bitsOut <= 0;
+                 end
+               else
+                 begin
+                   bitsOut <= bitsOut + 1;
+                 end
+
+               out_data_q.enq(tuple2(need_rst,res));
+
                if(`DEBUG_CONV_DECODER == 1)
                   begin
-                     $display("%m Traceback Unit Max : %d Bit out: %h", min_idx, res);       
+                     $display("%m Soft Traceback Unit Max : %d Bit out: %h, bit_count %d", min_idx, res, bitsOut+1);       
                      $display("%m TBU min_idx %d out_q.enq %d need_rst %d",min_idx,res, need_rst);
                   end
             end
@@ -146,7 +155,7 @@ module mkTracebackUnit (TracebackUnit);
    endinterface                
    
    interface Get out;
-      method ActionValue#(VState) get();
+      method ActionValue#(Tuple2#(Bool,VState)) get();
          out_data_q.deq;
          // viterbi doesn't support soft phy hints, just output junk
          return out_data_q.first;

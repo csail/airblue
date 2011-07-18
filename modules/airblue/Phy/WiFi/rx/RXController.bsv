@@ -313,7 +313,7 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    rule sendHints;
       Get#(PhyHints) ifc = toGet(softPhyStreamQ);
       let hints <- ifc.get();
-      outSoftPhyHintsQ.enq(hints);
+      //outSoftPhyHintsQ.enq(hints);
    endrule
    `endif
    
@@ -346,7 +346,7 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
                         abortReg <= True; // don't go to RX_DATA mode
                      end
 //                  if (`DEBUG_RXCTRL == 1)
-                     $display("PreDescramblerRXCtrllr header (%b) is_trailer=%d ", header, rx_vec.is_trailer, fshow(rx_vec));
+                     $display("Soft PreDescramblerRXCtrllr header (%b) is_trailer=%d length %d ", header, rx_vec.is_trailer, rx_vec.header.length, fshow(rx_vec));
 	       end
             else
                begin
@@ -472,7 +472,7 @@ module mkPreDescramblerRXController(PreDescramblerRXController);
    interface outRXVector = fifoToGet(outRXVectorQ);   
    interface outFeedback = fifoToGet(outFeedbackQ);
    `ifdef SOFT_PHY_HINTS
-   interface outSoftPhyHints = toGet(outSoftPhyHintsQ);
+   interface outSoftPhyHints = ?;//toGet(outSoftPhyHintsQ);
    `endif
       
    method Action abortReq;

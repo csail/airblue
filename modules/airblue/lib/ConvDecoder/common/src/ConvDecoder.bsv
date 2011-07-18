@@ -26,10 +26,13 @@
 
 import GetPut::*;
 
-`include "asim/provides/airblue_parameters.bsh"
+`include "awb/provides/airblue_parameters.bsh"
+`include "awb/provides/fpga_components.bsh"
+`include "awb/provides/librl_bsv_base.bsh"
+`include "awb/provides/librl_bsv_storage.bsh"
 
 module mkConvDecoderInstance#(function Bool decodeBoundary(ctrl_t ctrl),
-                              Integer ctrl_q_sz)
+                              NumTypeParam#(ctrl_q_sz_prm) ctrl_q_sz)
    (IViterbi viterbi, Viterbi#(ctrl_t,n2,n) ifc)
    provisos(Log#(n2,ln2),
             Log#(n,ln),
@@ -46,7 +49,7 @@ module mkConvDecoderInstance#(function Bool decodeBoundary(ctrl_t ctrl),
    Reg#(Vector#(n,ViterbiOutput)) out_data <- mkReg(newVector);
    Reg#(Bit#(ln)) out_data_count <- mkReg(0);
    FIFO#(DecoderMesg#(ctrl_t,n,ViterbiOutput)) out_q <- mkSizedFIFO(2);
-   FIFO#(ctrl_t) ctrl_q <- mkSizedFIFO(ctrl_q_sz);
+   FIFO#(ctrl_t) ctrl_q <- mkSizedBRAMFIFO(ctrl_q_sz);
 
 
    rule pushData;

@@ -52,7 +52,7 @@ AIRBLUE_DRIVER_CLASS::Main()
 
 
   printf("Enabling packet generation\n");
-  while(packetCheckStub->GetPacketsRX(0) < 50){
+  while(packetCheckStub->GetPacketsRX(0) < 20){
     printf("Check has received %d packets\n", packetCheckStub->GetPacketsRX(0));
     sleep(3);
   }
@@ -70,6 +70,8 @@ AIRBLUE_DRIVER_CLASS::Main()
   } else {
     printf("Test FAILED, ber was %d",ber);
   }
+
+  //  STARTER_DEVICE_CLASS::GetInstance()->WaitForHardware();
 
 }
 

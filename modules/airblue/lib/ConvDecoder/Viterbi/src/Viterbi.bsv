@@ -112,6 +112,17 @@ module mkIViterbiTBPath (IViterbi);
    
 endmodule
 
+typedef  NumTypeParam#(3) BMU_LATENCY;
+typedef  NumTypeParam#(1) PMU_LATENCY;
+
+`ifdef SOFT_PHY_HINTS
+   typedef NumTypeParam#(TAdd#(TMul#(2,VNoTBStages),1)) TBU_LATENCY;  
+`else 
+   typedef NumTypeParam#(TAdd#(VNoTBStages,1)) TBU_LATENCY;  
+`endif
+
+typedef NumTypeParam#(TAdd#(TAdd#(SizeOf#(TBU_LATENCY),SizeOf#(BMU_LATENCY)),SizeOf#(TBU_LATENCY))) TOTAL_LATENCY;
+
 module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl))
    (Viterbi#(ctrl_t,n2,n))
    provisos(Log#(n2,ln2),
@@ -120,16 +131,16 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl))
 
    // These may lead to death.... figure them out. Probably have to be bigger 
    // due to depth of pipeline
-   Integer   bmu_latency = 3; // 2 fifos + 1 cycle
-   Integer   pmu_latency = 1; // 1 cycle
-   `ifdef SOFT_PHY_HINTS
-   Integer   tbu_latency = no_tb_stages*2 + 1; // no. tb stages + 1 fifo cycle
-   `else
-   Integer   tbu_latency = no_tb_stages + 1; // no. tb stages + 1 fifo cycle
-   `endif
-   Integer   ctrl_q_sz = ((bmu_latency+pmu_latency+tbu_latency)/valueOf(n)) + 1;
+   // Need these to be in type system
 
-   // IViterbi viterbi <- mkIViterbiTB;     // murali TB
+
+   NumTypeParam#(TAdd#(TDiv#(SizeOf#(TOTAL_LATENCY),n),1)) ctrl_q_sz = ?;
+   
+
+   rule eachCycle;
+    $display("prints for %t",$time());
+   endrule
+
    let viterbi <- mkIViterbiTBPath;         // alfred TB
    let decoder <- mkConvDecoderInstance(decodeBoundary, ctrl_q_sz, viterbi);
    return decoder;
