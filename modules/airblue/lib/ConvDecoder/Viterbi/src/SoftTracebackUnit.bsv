@@ -40,6 +40,7 @@ import FShow::*;
 `include "asim/provides/airblue_shift_regs.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
+`include "asim/provides/fpga_components.bsh"
 
 /////////////////////////////////////////////////////////////////////////
 // Definition of TracebackUnit Interface and usefule types
@@ -65,12 +66,14 @@ module mkSoftTracebackUnit (SoftTracebackUnit);
    FIFO#(VPathMetricUnitOut)                  pm_q       <- mkSizedFIFO(2);
    FIFOCountIfc#(VPathMetricUnitOut,TAdd#(VNoTBStages,3)) pm_delay_q <- mkSizedBRAMFIFOCount();
    // This is 64, but should it be more than that?
-   ShiftRegs#(TSub#(VStateSz,1),VState)       shift_reg  <- mkShiftRegs();  // crap output by the tb for the first tb_no_stages cycles                     
+   NumTypeParam#(TSub#(VStateSz,1)) shift_reg_sz = ?;
+   SHIFT_REG#(VState) shift_reg <- mkUnguardedShiftReg(shift_reg_sz);
+   //ShiftRegs#(TSub#(VStateSz,1),VState)       shift_reg  <- mkCirShiftRegsNoGetVec();  // crap output by the tb for the first tb_no_stages cycles                     
    
    // a rule that connect the output of the traback unit to the path detector
    rule connect_tb_2_spd(!process_rst); // this gurd is sufficient, but not necessary
       let tb_state <- tb.out.get();
-      shift_reg.enq(tpl_2(tb_state));
+      shift_reg.write(tpl_2(tb_state));
       pm_delay_q.deq();
 
       if(tpl_1(tb_state))
@@ -78,7 +81,7 @@ module mkSoftTracebackUnit (SoftTracebackUnit);
           process_rst <= True;
         end
       // Use this one in the clear case
-      spd.in.put(tuple2(shift_reg.first(),tuple2(tpl_1(tb_state),tpl_2(pm_delay_q.first()))));
+      spd.in.put(tuple2(shift_reg.read(),tuple2(tpl_1(tb_state),tpl_2(pm_delay_q.first()))));
       if(`DEBUG_CONV_DECODER == 1)
          $display("%t SoftTracebackUnit: xfer data from traceback unit to path detector count: %d ", $time(), pm_delay_q.count());
    endrule

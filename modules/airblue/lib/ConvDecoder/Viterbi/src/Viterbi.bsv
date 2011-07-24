@@ -47,6 +47,8 @@ import Vector::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/librl_bsv_base.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 
 //`define isDebug True // uncomment this line to display error
       

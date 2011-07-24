@@ -33,6 +33,7 @@ import FIFOLevel::*;
 
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
+`include "asim/provides/fpga_components.bsh"
 
 interface ShiftRegs#(numeric type size, type data_t);
   method Action enq(data_t x);              // put the element at the last position of the queue 
@@ -136,31 +137,24 @@ module mkCirShiftRegsNoGetVec (ShiftRegs#(size,data_t))
 	    Log#(size, index_w));   
 
    // states
-   FIFOCountIfc#(data_t,TMul#(2,size)) fifo <- mkSizedBRAMFIFOCount();
-   Reg#(data_t) lastRead <- mkReg(unpack(0));
-   Reg#(Bit#(32)) dataCount <- mkReg(0);   
-
-   (* fire_when_enabled *)
-   rule sendData(fifo.count == fromInteger(valueof(size)));
-     fifo.deq();
-     lastRead <= fifo.first;
-   endrule
-
-   rule sanityCheck(fifo.count > fromInteger(valueof(size)));
-     $display("Warning shift reg got full");
-   endrule
+   NumTypeParam#(size) sr_size = ?;
+   SHIFT_REG#(data_t) shiftreg <- mkUnguardedShiftReg(sr_size);
+   Reg#(Bit#(TAdd#(1,TLog#(size)))) resetCount <- mkReg(fromInteger(valueof(size)));
 
    method Action enq (data_t data);
-     fifo.enq(data);
-     dataCount <= dataCount + 1;
-//     $display("Enqueing %h count %h", data, dataCount);
+     if(resetCount > 0)
+       begin
+         resetCount <= resetCount - 1;
+       end
+     shiftreg.write(data);
    endmethod
 
-   method first = lastRead;
-   
+   method data_t first();
+     return (resetCount > 0)?unpack(0):shiftreg.read();
+   endmethod
+
    method Action clear();
-     lastRead <= unpack(0);
-     fifo.clear;
+     resetCount <= fromInteger(valueof(size));
    endmethod
 
    method Vector#(size, data_t) getVector();
@@ -168,6 +162,54 @@ module mkCirShiftRegsNoGetVec (ShiftRegs#(size,data_t))
    endmethod
       
 endmodule // mkDelay
+
+// circular pointer approach, note that getVector doesn't work correctly in this design
+module mkCirShiftRegsBRAM (ShiftRegs#(size,data_t))
+  provisos (Bits#(data_t,data_w),
+            Log#(size, index_w));
+
+   // states
+   Vector#(size, Reg#(data_t)) vRegs <- Vector::replicateM(mkReg(unpack(0)));
+   Reg#(Bit#(index_w))   nextToWrite <- mkReg(?);
+
+   // constants
+   Integer maxIndex = valueOf(size) - 1;
+   Bit#(index_w) maxIdx = fromInteger(maxIndex);
+   Bit#(index_w) nextToRead = nextToWrite;
+
+   // functions
+   function Bit#(index_w) incr (Bit#(index_w) n);
+      let result = (n == maxIdx) ? 0 : n + 1;
+      return result;
+   endfunction // Bit
+
+   method Action enq(x);
+      (vRegs[nextToWrite])._write(x);
+      nextToWrite <= incr(nextToWrite);
+   endmethod
+
+   method data_t first();
+      return (vRegs[nextToRead])._read;
+   endmethod
+
+   method Action clear();
+      for (Integer i = 0; i <= maxIndex; i = i + 1)
+        (vRegs[fromInteger(i)])._write(unpack(0));
+   endmethod
+
+   method Vector#(size, data_t) getVector();
+      Vector#(size, data_t) outVec = newVector;
+      Bit#(index_w) idx = nextToWrite;
+      for (Integer i = 0; i <= maxIndex; i = i + 1)
+        begin
+           outVec[i] = (vRegs[idx])._read;
+           idx = incr(idx);
+        end
+      return outVec;
+   endmethod
+
+endmodule // mkDelay
+
 
 // circular pointer approach, note that getVector doesn't work correctly in this design
 /*module mkCirShiftRegsNoGetVec (ShiftRegs#(size,data_t))
