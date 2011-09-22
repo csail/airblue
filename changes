@@ -1252,3 +1252,47 @@ Directory admin/packages
 
 Some more cleanup to rename the package to be airblue
 rather than ofdm.
+
+----------
+emer        Date: Thu Sep 22 16:38:13 EDT 2011  CSN: CSN-airblue-1
+                  Thu Sep 22 20:38:13 UTC 2011
+
+
+Directory .
+ configure                 Locally Added               0 
+
+Directory debian
+ control                   Locally Added               0 
+ compat                    Locally Added               0 
+ changelog                 Locally Added               0 
+ copyright                 Locally Added               0 
+ rules                     Locally Added               0 
+ README.Debian             Locally Added               0 
+
+Directory .
+ debian/                   Locally Added               0 
+
+Directory aux-scripts
+ missing                   Locally Added               0 
+ install-sh                Locally Added               0 
+
+Directory .
+ aux-scripts/              Locally Added               0 
+ Makefile.in               Locally Added               0 
+
+Directory include
+ config.h.in               Locally Added               0 
+
+Directory .
+ include/                  Locally Added               0 
+ configure.in              Locally Added               0 
+
+Directory modules/airblue/device/huntsman
+ #airblue_device.awb#      Locally Removed           390 
+
+Directory .
+ Makefile.am               Locally Added               0 
+ aclocal.m4                Locally Added               0 
+ ./                        Locally Modified          390 
+
+Added support for building an airblue debian package.

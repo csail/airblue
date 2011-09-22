@@ -1,0 +1,13 @@
+Source: airblue
+Section: devel
+Priority: optional
+Maintainer: Joel Emer <emer@csail.mit.edu>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.7.2
+
+Package: airblue
+Architecture: all
+Depends: leap
+Description: Airblue OFDM Pipeline
+ Airblue OFDM pipeline implemented on LEAP FPGA platform
+Section: devel
