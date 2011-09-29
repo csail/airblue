@@ -136,12 +136,15 @@ module mkConvDecoder#(function Bool decodeBoundary(ctrl_t ctrl))
    // Need these to be in type system
 
 
-   NumTypeParam#(TAdd#(TDiv#(SizeOf#(TOTAL_LATENCY),n),1)) ctrl_q_sz = ?;
+   Integer ctrl_q_sz = valueof(TAdd#(TDiv#(SizeOf#(TOTAL_LATENCY),n),1));
    
 
-   rule eachCycle;
-    $display("prints for %t",$time());
-   endrule
+   if(`DEBUG_CONV_DECODER > 0) 
+     begin
+       rule eachCycle;
+         $display("prints for %t",$time());
+       endrule
+     end
 
    let viterbi <- mkIViterbiTBPath;         // alfred TB
    let decoder <- mkConvDecoderInstance(decodeBoundary, ctrl_q_sz, viterbi);

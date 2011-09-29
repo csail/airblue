@@ -1296,3 +1296,62 @@ Directory .
  ./                        Locally Modified          390 
 
 Added support for building an airblue debian package.
+
+----------
+kfleming    Date: Thu Sep 29 17:00:46 EDT 2011  CSN: CSN-airblue-392
+                  Thu Sep 29 21:00:46 UTC 2011
+
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_usrp_fixed.apm Locally Modified          391 
+ airblue_wifi_phy_usrp.apm Locally Modified          391 
+ airblue_wifi_phy_loopback.apm Locally Modified          391 
+ airblue_wifi_phy_rx_exe.apm Locally Modified          391 
+ airblue_wifi_phy_rx_xupv5.apm Locally Modified          391 
+
+Directory modules/airblue/device/deviceServices/airblue-service/usrp
+ airblue-service-usrp.bsv  Locally Modified          391 
+
+Directory modules/airblue/Phy/WiFi/rx
+ WiFiReceiver.bsv          Locally Modified          391 
+ Decoder.bsv               Locally Modified          391 
+
+Directory modules/airblue/Phy/WiFi/tx
+ WiFiTransmitter.bsv       Locally Modified          391 
+
+Directory modules/airblue/PhyOnly/WiFi
+ WiFiFPGAPacketGenWiresTest.bsv Locally Modified          391 
+
+Directory modules/airblue/lib/Common
+ Pipeline2.bsv             Locally Modified          391 
+ airblue_common.awb        Locally Modified          391 
+
+Directory modules/airblue/lib/ConvDecoder/Viterbi/src
+ Viterbi.bsv               Locally Modified          391 
+
+Directory modules/airblue/lib/ConvDecoder/common/src
+ ConvDecoder.bsv           Locally Modified          391 
+
+Directory modules/airblue/lib/Synchronizer/src
+ Synchronizer.bsv          Locally Modified          391 
+
+Directory modules/airblue/lib/PacketGen/src
+ PacketGenRRR.bsv          Locally Modified          391 
+ PacketCheckRRR.bsv        Locally Modified          391 
+ PacketGenFixed.bsv        Locally Modified          391 
+ PacketCheckFixed.bsv      Locally Modified          391 
+
+Directory modules/airblue/lib/Unserializer/src
+ Unserializer.bsv          Locally Modified          391 
+
+Directory modules/airblue/lib/Drivers/ConnectedApp
+ airblue-driver.cpp        Locally Modified          391 
+
+Directory modules/airblue/lib/FFT/src
+ FFTIFFT_Library.bsv       Locally Modified          391 
+
+Directory modules/airblue/lib
+ airblue_shared.awb        Locally Modified          391 
+
+
+removed dependency on bsv-libraries, finally

@@ -37,28 +37,10 @@ import Clocks::*;
 import FixedPoint::*;
 import FShow::*;
 
-// import Controls::*;
-// import DataTypes::*;
-// import Interfaces::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import Receiver::*;
-// import RXController::*;
-// import LibraryFunctions::*;
-// import FPComplex::*;
-// import Synchronizer::*;
-// import FPComplex::*;
-// import MACPhyParameters::*;
-
-// import CBusUtils::*;
-
-//`include "../WiFiFPGA/Macros.bsv"
-
 // Local includes
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/airblue_synchronizer.bsh"
 
 

@@ -4,15 +4,9 @@ import FIFO::*;
 import FIFOF::*;
 import StmtFSM::*;
 
-// import Register::*;
-
-// import MACPhyParameters::*;
-// import ProtocolParameters::*;
-
 // Local includes
 `include "asim/provides/airblue_crc_checker.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/register_library.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
 `include "asim/provides/clocks_device.bsh"
@@ -22,14 +16,6 @@ import StmtFSM::*;
 `include "asim/provides/fpga_components.bsh"
 
 interface PacketCheck;
-  // These functions reveal stats about the generator
-  //interface ReadOnly#(Bit#(32)) packetsRX;
-  //interface ReadOnly#(Bit#(32)) packetsRXCorrect;
-  //interface ReadOnly#(Bit#(32)) bytesRX;
-  //interface ReadOnly#(Bit#(32)) bytesRXCorrect;
-  //interface ReadOnly#(Bit#(32)) cycleCount;
-  //interface ReadOnly#(Bit#(32)) ber;
-
   // for hooking up to the baseband
   interface Put#(RXVector) rxVector;
   interface Put#(Bit#(8))  rxData;

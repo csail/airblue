@@ -45,9 +45,6 @@ import Vector::*;
 // Local includes
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/debug_utils.bsh"
-
-Bool fftlibDebug = False;
 
 function Action fpcmplxVecWrite(Integer fwidth, Vector#(length,FPComplex#(i_sz,f_sz)) dataVec)
 provisos(Add#(1,xxA,i_sz),
@@ -204,16 +201,25 @@ endfunction
 function ActionValue#(FFTBflyMesg) fftBflys(FFTBflyMesg inMesg); 
     actionvalue
       let outData <- mapM(fftRadix2BflyCheckClipped, inMesg);
-      debug(fftlibDebug,$write("fftO_omegas = ["));
-      debug(fftlibDebug,fpcmplxVecWrite(4, map(tpl_1,inMesg)));
-      debug(fftlibDebug,$display("];"));
-      debug(fftlibDebug,$write("fftO_data = ["));
-      debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,map(tpl_2,inMesg)))));
-      debug(fftlibDebug,$display("];"));
-      Vector#(NoBfly,FFTData) dummyOmegas = newVector;
-      debug(fftlibDebug,$write("fftO_output = ["));
-      debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,outData))));
-      debug(fftlibDebug,$display("];"));
+      if(`DEBUG_FFT > 0) 
+        begin
+          $write("fftO_omegas = [");
+    	  fpcmplxVecWrite(4, map(tpl_1,inMesg));
+          $display("];");
+          $write("fftO_data = [");
+          fpcmplxVecWrite(4, concat(map(tuple2Vec,map(tpl_2,inMesg))));
+          $display("];");
+        end
+
+     Vector#(NoBfly,FFTData) dummyOmegas = newVector;
+
+      if(`DEBUG_FFT > 0) 
+        begin
+          $write("fftO_output = [");
+          fpcmplxVecWrite(4, concat(map(tuple2Vec,outData)));
+          $display("];");
+        end
+
       return zip(dummyOmegas, outData);
     endactionvalue
 endfunction      
@@ -223,17 +229,27 @@ function ActionValue#(FFTBflyMesgNoOmega) fftBflysNoOmega(ROM#(FFTStep,Vector#(N
     actionvalue
       match {.stage,.step,.data} = inMesg; 
       let omegas = omegaROM.read({stage,step});
-      debug(fftlibDebug,$display("stage: %d, step: %d, index: %d", stage, step, {stage,step}));
-      debug(fftlibDebug,$write("fftNO_omegas[%d] = [",{stage,step}));
-      debug(fftlibDebug,fpcmplxVecWrite(4, omegas));
-      debug(fftlibDebug,$display("];"));
-      debug(fftlibDebug,$write("fftNO_data = ["));
-      debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,data))));
-      debug(fftlibDebug,$display("];"));
+
+      if(`DEBUG_FFT > 0) 
+        begin
+          $display("stage: %d, step: %d, index: %d", stage, step, {stage,step});
+          $write("fftNO_omegas[%d] = [",{stage,step});
+          fpcmplxVecWrite(4, omegas);
+          $display("];");
+          $write("fftNO_data = [");
+          fpcmplxVecWrite(4, concat(map(tuple2Vec,data)));
+          $display("];");
+        end
+
       let outData = map(fftRadix2Bfly, zip(omegas,data));
-      debug(fftlibDebug,$write("fftNO_output = ["));
-      debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,outData))));
-      debug(fftlibDebug,$display("];"));
+
+      if(`DEBUG_FFT > 0) 
+        begin
+          $write("fftNO_output = [");
+          fpcmplxVecWrite(4, concat(map(tuple2Vec,outData)));
+          $display("];");
+        end
+
       return tuple3(stage,step,outData);
     endactionvalue
 endfunction      
@@ -294,9 +310,13 @@ module [Module] mkOneStage(Pipeline2#(FFTTuples));
 	 let omgs = genOmegaVecs[inStage];  
 	 let inVec = zip(omgs,dataVec);
 	 stageFU.in.put(inVec);
-         debug(fftlibDebug,$write("fftO_stage_%d = [",inStage));
-         debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec))));
-         debug(fftlibDebug,$display("];"));
+         if(`DEBUG_FFT > 0) 
+           begin
+             $write("fftO_stage_%d = [",inStage);
+             fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec)));
+             $display("];");
+           end
+
 	 stageQ.enq(inStage + 1);
       end
       endmethod
@@ -327,9 +347,14 @@ module [Module] mkOneStageNoOmega(Pipeline2#(FFTTuples));
 	 //let omgs = genOmegaVecs[inStage];  // divide this one up, I suppose.
 	 let inVec = tuple2(inStage,dataVec); // must determine how many folds occur
 	 stageFU.in.put(inVec);
-         debug(fftlibDebug,$write("fftNO_stage_%d = [",inStage));
-         debug(fftlibDebug,fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec))));
-         debug(fftlibDebug,$display("];"));
+
+         if(`DEBUG_FFT > 0) 
+           begin
+             $write("fftNO_stage_%d = [",inStage);
+             fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec)));
+             $display("];");
+           end
+
 	 stageQ.enq(inStage + 1);
       end
       endmethod

@@ -33,31 +33,13 @@ import GetPut::*;
 import RWire::*;
 import Vector::*;
 
-// import Controls::*;
-// import CORDIC::*;
-// import DataTypes::*;
-// import FixedPointLibrary::*;
-// import Interfaces::*;
-// import Preambles::*;
-// import ShiftRegs::*;
-// import SParams::*;
-// import SynchronizerLibrary::*;
-// import FPComplex::*;
-// import ProtocolParameters::*;
-// import FPGAParameters::*;
-// import StreamCaptureFIFO::*;
-// import CBusUtils::*;
-// import Register::*;
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_shift_regs.bsh"
 `include "asim/provides/airblue_types.bsh"
-`include "asim/provides/register_library.bsh"
-`include "asim/provides/c_bus_utils.bsh"
-`include "asim/provides/stream_capture_fifo.bsh"
-
+`include "asim/provides/librl_bsv_base.bsh"
 
 //`define debug_mode True // uncomment this line for displaying text
 `define coarCorrPowThreshold         unpack(16384) // coarse power square threshold to trigger auto-correlation (remove small DC offset)

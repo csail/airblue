@@ -12,4 +12,6 @@
 
 %sources -t BSV -v PUBLIC ComplexLibrary.bsv CORDIC.bsv EHRReg.bsv FixedPointLibrary.bsv FPComplex.bsv LibraryFunctions.bsv RandomGen.bsv VectorLibrary.bsv Pipelines.bsv Pipeline2.bsv
 
+%param DEBUG_PIPELINE 0 "Enable debug messages"
+
 %AWB_END

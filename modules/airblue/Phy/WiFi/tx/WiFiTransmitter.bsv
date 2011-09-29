@@ -40,9 +40,6 @@ import FixedPoint::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/avalon.bsh"
-`include "asim/provides/spi.bsh"
-`include "asim/provides/register_library.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
 

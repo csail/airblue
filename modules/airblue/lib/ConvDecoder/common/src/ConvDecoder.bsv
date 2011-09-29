@@ -32,7 +32,7 @@ import GetPut::*;
 `include "awb/provides/librl_bsv_storage.bsh"
 
 module mkConvDecoderInstance#(function Bool decodeBoundary(ctrl_t ctrl),
-                              NumTypeParam#(ctrl_q_sz_prm) ctrl_q_sz)
+                              Integer ctrl_q_sz)
    (IViterbi viterbi, Viterbi#(ctrl_t,n2,n) ifc)
    provisos(Log#(n2,ln2),
             Log#(n,ln),

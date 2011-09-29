@@ -33,10 +33,6 @@ import Vector::*;
 //import EHRReg::*;
 //import Debug::*;
 
-// bsv_libraries includes
-`include "asim/provides/debug_utils.bsh"
-
-Bool pipelineDebug = False;
 
 interface Pipeline2#(type a);
   interface Put#(a) in;
@@ -198,7 +194,10 @@ module [m] mkPipeline2_Time#(function m#(Pipeline2#(Vector#(psz,a))) mkP)
       inBuffers[putStage].deq;
       stageFU.in.put(mesg);
       putStage <= (putStage == maxStage) ? 0 : putStage + 1;
-      debug(pipelineDebug,$display("time.startExec: putStage: %d",putStage));
+      if(`DEBUG_PIPELINE > 0)
+        begin
+          $display("time.startExec: putStage: %d",putStage);
+        end
    end
    endrule
 
@@ -207,7 +206,10 @@ module [m] mkPipeline2_Time#(function m#(Pipeline2#(Vector#(psz,a))) mkP)
       let mesg <- stageFU.out.get;
       outBuffers[getStage].enq(mesg);
       getStage <= (getStage == maxStage) ? 0 : getStage + 1;
-      debug(pipelineDebug,$display("time.finishExec: getStage: %d",getStage));
+      if(`DEBUG_PIPELINE > 0)
+        begin
+          $display("time.finishExec: getStage: %d",getStage);
+        end
    end
    endrule
 
@@ -281,10 +283,18 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
       putStage <= (putStage == maxStage) ? 0 : putStage + 1;
       if(putStage == maxStage) 
         begin
-          debug(pipelineDebug,$display("Calling in buffer deq"));
+          if(`DEBUG_PIPELINE > 0)
+            begin
+              $display("Calling in buffer deq");
+            end
+
           inBuffer.deq;
         end
-      debug(pipelineDebug,$display("time.startExec: putStage: %d",putStage));
+
+      if(`DEBUG_PIPELINE > 0)
+        begin
+          $display("time.startExec: putStage: %d",putStage);
+        end
    end
    endrule
 
@@ -299,8 +309,10 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
       outRegs[getStage] <= dataOut; 
       getStage <= (getStage == maxStage) ? 0 : getStage + 1;
       
-
-      debug(pipelineDebug,$display("time.finishExec: getStage: %d ctrl: %d num: %d",getStage, ctrl, num));
+      if(`DEBUG_PIPELINE > 0)
+        begin
+          $display("time.finishExec: getStage: %d ctrl: %d num: %d",getStage, ctrl, num);
+        end
    end
    endrule
 

@@ -44,7 +44,6 @@ import Connectable::*;
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_depuncturer.bsh"
 `include "asim/provides/airblue_convolutional_decoder.bsh"
-`include "asim/provides/fifo_utils.bsh"
 
 // make a decoder with mkViterbi or mkBCJR?
 //`define mkViterbi mkBCJR(viterbiMapCtrl)
@@ -117,11 +116,11 @@ module mkDecoderMCD#(Clock fastClock, Reset fastReset)
    let viterbi <- mkViterbiInstance(clocked_by fastClock, reset_by fastReset);   
    
    // connections
-   mkConnection(syncFifoToGet(interfifo),viterbi.in);
-   mkConnection(depuncturer.out,syncFifoToPut(interfifo));
-   mkConnection(viterbi.out,syncFifoToPut(outfifo));   
+   mkConnection(toGet(interfifo),viterbi.in);
+   mkConnection(depuncturer.out,toPut(interfifo));
+   mkConnection(viterbi.out,toPut(outfifo));   
 
    // methods
    interface in = depuncturer.in;
-   interface out = syncFifoToGet(outfifo);
+   interface out = toGet(outfifo);
 endmodule

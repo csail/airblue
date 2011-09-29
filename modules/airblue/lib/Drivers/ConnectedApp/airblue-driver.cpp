@@ -40,6 +40,8 @@ CONNECTED_APPLICATION_CLASS::Main()
       driver->Main();
   }
   printf("exiting main\n");
+
+
   // Eventually we'll call the frontend initialization here. 
   //airblueDriver->Main();
   //airblueFrontend->Main();

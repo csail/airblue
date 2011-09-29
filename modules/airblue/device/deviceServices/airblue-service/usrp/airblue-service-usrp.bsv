@@ -37,7 +37,6 @@ import Complex::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
-`include "asim/provides/stream_capture_fifo.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 `include "asim/rrr/remote_server_stub_SATARRR.bsh"
 
@@ -66,7 +65,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
-   NumTypeParam#(16383) fifo_sz = 0;
+   Integer fifo_sz = 16383;
    FIFOF#(Bit#(32)) sampleStream <- mkStreamCaptureFIFOF(fifo_sz);
 
 

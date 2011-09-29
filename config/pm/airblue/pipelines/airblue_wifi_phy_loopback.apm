@@ -1,7 +1,7 @@
 
 [WiFi Transmitter Pipeline]
 File=modules/airblue/Phy/WiFi/tx/airblue_transmitter.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Global]
 SaveParameters=0
@@ -18,7 +18,7 @@ RootProvides=model
 
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Model]
 DefaultAttributes=airblue
@@ -26,43 +26,28 @@ model=HW/SW Hybrid Pipeline Build
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Shared Libraries/Requires]
-stream_capture_fifo=StreamCaptureFIFO
-spi=SPI
-commit_fifo=CommitFIFO
-reversal_buffer=ReversalBuffer
-client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
-stat_min=Min collector
 airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
-stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
-Packagehint=ofdm
-
-[ClientServer Utilities]
-File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
-Packagehint=bsv-libraries
-
-[Min collector]
-File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue Deinterleaver]
 File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [WiFi Transmitter Pipeline/Requires]
 airblue_cyclic_prefix_insert=Airblue cyclic prefix insertion
@@ -73,95 +58,75 @@ airblue_scrambler=Airblue Scrambler
 airblue_puncturer=Airblue Puncturer
 airblue_pilot_insert=Airblue Pilot Insert
 
-[SPI]
-File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
-Packagehint=bsv-libraries
-
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
 
 [Airblue Inverse Square Root]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Interleaver]
 File=modules/airblue/lib/Interleaver/src/airblue_interleaver.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Pilot Insert]
 File=modules/airblue/lib/PilotInsert/src/airblue_pilot_insert.awb
-Packagehint=ofdm
-
-[ReversalBuffer]
-File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Shared Libraries]
 File=modules/airblue/lib/airblue_shared.awb
-Packagehint=ofdm
-
-[StreamCaptureFIFO]
-File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Unserializer]
 File=modules/airblue/lib/Unserializer/src/airblue_unserializer.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Puncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
-Packagehint=ofdm
-
-[CommitFIFO]
-File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue Channel Estimator]
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Synchronizer]
 File=modules/airblue/lib/Synchronizer/src/airblue_synchronizer.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Channel Estimator/Requires]
 airblue_inverse_sq_root=Airblue Inverse Square Root
 
-[Averager collector]
-File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
-Packagehint=bsv-libraries
-
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue application]
 File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue application/Requires]
 airblue_driver_application=RXTX Simulation Driver
@@ -188,27 +153,23 @@ application_env=Soft Services Hybrid Application Environment
 
 [Airblue Environment]
 File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Common]
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [WiFi Receiver Pipeline]
 File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Standard Platform Service (No Memory Service)
 connected_application=Airblue application
-soft_services=Soft Services
+soft_services=Soft Services Submodel
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=leap
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [WiFi Phy Only/Requires]
@@ -221,11 +182,11 @@ airblue_phy_packet_check=Airblue Phy Only RRR PacketCheck
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [WiFi Phy Only/Params]
 DEBUG_TRANSCEIVER=1
@@ -238,11 +199,11 @@ airblue_fft_library=Airblue Folded FFT/IFFT
 
 [WiFi Shared FFT]
 File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Viterbi (no SoftHints)]
 File=modules/airblue/lib/ConvDecoder/Viterbi/src/airblue_viterbi.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
@@ -252,7 +213,7 @@ File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
 
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
 
 [RXTX Simulation Driver/Requires]
@@ -260,19 +221,19 @@ airblue_environment=Airblue Environment
 
 [Airblue Phy Only RRR PacketGen]
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_rrr.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [RXTX Simulation Driver]
 File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Standard Platform Service (No Memory Service)]
-File=config/pm/hasim/submodels/platform-services/standard-platform-null-mem.apm
+File=config/pm/leap/submodels/platform-services/standard-platform-null-mem.apm
 Packagehint=leap
 
 [WiFi Phy Loopback Test]
 File=modules/airblue/Phy/WiFi/airblue_wifi_loopback_phy.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [WiFi Phy Loopback Test/Requires]
 airblue_transmitter=WiFi Transmitter Pipeline
@@ -284,8 +245,12 @@ MAGIC_DESCRAMBLE_SEED=0
 
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Phy Only RRR PacketCheck]
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
-Packagehint=ofdm
+Packagehint=airblue
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap

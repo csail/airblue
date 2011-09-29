@@ -41,28 +41,13 @@ File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
 Packagehint=airblue
 
 [Airblue Shared Libraries/Requires]
-stream_capture_fifo=StreamCaptureFIFO
-spi=SPI
-commit_fifo=CommitFIFO
-reversal_buffer=ReversalBuffer
-client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
-stat_min=Min collector
 airblue_shift_regs=Airblue Shifted Registers
-stat_averager=Averager collector
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
 Packagehint=airblue
-
-[ClientServer Utilities]
-File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
-Packagehint=bsv-libraries
-
-[Min collector]
-File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
-Packagehint=bsv-libraries
 
 [Airblue Deinterleaver]
 File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
@@ -81,10 +66,6 @@ airblue_interleaver=Airblue Interleaver
 airblue_scrambler=Airblue Scrambler
 airblue_puncturer=Airblue Puncturer
 airblue_pilot_insert=Airblue Pilot Insert
-
-[SPI]
-File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
-Packagehint=bsv-libraries
 
 [WiFi Phy Transceiver]
 File=modules/airblue/Phy/WiFi/airblue_wifi_phy.awb
@@ -105,10 +86,6 @@ Packagehint=airblue
 File=modules/airblue/lib/PilotInsert/src/airblue_pilot_insert.awb
 Packagehint=airblue
 
-[ReversalBuffer]
-File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
-Packagehint=bsv-libraries
-
 [Airblue Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
 Packagehint=airblue
@@ -116,10 +93,6 @@ Packagehint=airblue
 [Airblue Shared Libraries]
 File=modules/airblue/lib/airblue_shared.awb
 Packagehint=airblue
-
-[StreamCaptureFIFO]
-File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
 
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
@@ -141,10 +114,6 @@ Packagehint=airblue
 File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
 Packagehint=airblue
 
-[CommitFIFO]
-File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
-Packagehint=bsv-libraries
-
 [Airblue Channel Estimator]
 File=modules/airblue/lib/ChannelEstimator/src/airblue_channel_estimator.awb
 Packagehint=airblue
@@ -155,10 +124,6 @@ Packagehint=airblue
 
 [Airblue Channel Estimator/Requires]
 airblue_inverse_sq_root=Airblue Inverse Square Root
-
-[Averager collector]
-File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
-Packagehint=bsv-libraries
 
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
@@ -214,14 +179,10 @@ Packagehint=airblue
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Airblue Services
 connected_application=Airblue application
-soft_services=Soft Services
+soft_services=Soft Services Submodel
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
-Packagehint=leap
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [Airblue RX Simulation Driver]
@@ -255,19 +216,19 @@ streams_service=Streams Service
 dynamic_parameters_service=Dynamic Parameter Service
 
 [Streams Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/streams-service/streams-service.awb
+File=modules/leap/libraries/platform-services/common-services/streams-service/streams-service.awb
 Packagehint=leap
 
 [Stats Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/stats-service/stats-service.awb
+File=modules/leap/libraries/platform-services/common-services/stats-service/stats-service.awb
 Packagehint=leap
 
 [Common Services]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/common-services-standard.awb
+File=modules/leap/libraries/platform-services/common-services/common-services-standard.awb
 Packagehint=leap
 
 [Assertions Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/assertions-service/assertions-service.awb
+File=modules/leap/libraries/platform-services/common-services/assertions-service/assertions-service.awb
 Packagehint=leap
 
 [Airblue Services/Requires]
@@ -279,11 +240,11 @@ File=modules/airblue/device/deviceServices/airblue-service/simulation/airblue-se
 Packagehint=airblue
 
 [Debug Scan Services]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/debug-scan-service/debug-scan-service.awb
+File=modules/leap/libraries/platform-services/common-services/debug-scan-service/debug-scan-service.awb
 Packagehint=leap
 
 [Dynamic Parameter Service]
-File=modules/leap/virtual-platform/virtual-devices/backwards-compat/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
+File=modules/leap/libraries/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
 Packagehint=leap
 
 [Airblue Services]
@@ -326,7 +287,7 @@ File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
 
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
 
 [Airblue Phy NULL PacketGen]
@@ -339,3 +300,7 @@ Packagehint=airblue
 
 [Airblue Channel Estimator/Params]
 DEBUG_CHANNEL_ESTIMATOR=1
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap

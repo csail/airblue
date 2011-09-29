@@ -5,7 +5,6 @@ import StmtFSM::*;
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/register_library.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
 `include "asim/provides/clocks_device.bsh"
