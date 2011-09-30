@@ -1355,3 +1355,13 @@ Directory modules/airblue/lib
 
 
 removed dependency on bsv-libraries, finally
+
+----------
+emer        Date: Thu Sep 29 20:55:05 EDT 2011  CSN: CSN-airblue-393
+                  Fri Sep 30 00:55:05 UTC 2011
+
+
+Directory debian
+ changelog                 Locally Modified          392 
+
+Update debian changelog.
