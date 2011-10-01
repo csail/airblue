@@ -12,12 +12,9 @@ DefaultRunOpts=
 RootName=HW/SW Hybrid Pipeline Build
 RootProvides=model
 
-
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
-
 
 [HW only hybrid application]
 File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
@@ -36,26 +33,26 @@ hw_only_application=Airblue Inverse Square Root Test
 
 [Airblue Inverse Square Root Model]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/InverseSqRootC/airblue_inverse_square_root_model.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Inverse Square Root/Requires]
 airblue_magnitude_estimator=Airblue Magnitude Estimator
 
 [Airblue Inverse Square Root]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/src/airblue_inverse_sq_root.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Magnitude Estimator]
 File=modules/airblue/lib/MagnitudeEstimator/src/airblue_magnitude_estimator.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Inverse Square Root Test]
 File=modules/airblue/lib/NewtonRaphson/InverseSqRoot/test/airblue_inverse_sq_root_test.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Debug Utilities]
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
@@ -63,24 +60,20 @@ Packagehint=bsv-libraries
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Standard Platform Services
 connected_application=HW only hybrid application
-soft_services=Soft Services
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=leap
+soft_services=Soft Services Submodel
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
@@ -92,13 +85,17 @@ fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Standard Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
 Packagehint=leap
 
 [Hybrid Simulation FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap
 
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
+Packagehint=leap
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
 Packagehint=leap

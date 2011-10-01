@@ -25,15 +25,15 @@ hw_only_application=Airblue BCJR Test
 
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Demapper]
 File=modules/airblue/lib/Mapper/src/airblue_demapper.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Test template]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Test template/Requires]
 airblue_convolutional_encoder=Airblue Convolutional Encoder
@@ -52,79 +52,44 @@ airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Puncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_puncturer.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Shared Libraries]
 File=modules/airblue/lib/airblue_shared.awb
-Packagehint=ofdm
-
-[StreamCaptureFIFO]
-File=modules/bsv-libraries/bluespec/StreamCaptureFIFO/src/stream_capture_fifo.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue Depuncturer]
 File=modules/airblue/lib/Puncturer/src/airblue_depuncturer.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Shifted Registers]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Shared Libraries/Requires]
-stream_capture_fifo=StreamCaptureFIFO
-spi=SPI
-commit_fifo=CommitFIFO
-reversal_buffer=ReversalBuffer
-client_server_utils=ClientServer Utilities
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
-stat_min=Min collector
 airblue_shift_regs=Airblue Shifted Registers
-stat_averager=Averager collector
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
-Packagehint=ofdm
-
-[ClientServer Utilities]
-File=modules/bsv-libraries/bluespec/ClientServerUtils/client_server_utils.awb
-Packagehint=bsv-libraries
-
-[Min collector]
-File=modules/bsv-libraries/bluespec/Stats/Min/src/stat_min.awb
-Packagehint=bsv-libraries
-
-[CommitFIFO]
-File=modules/bsv-libraries/bluespec/CommitFIFO/src/commit_fifo.awb
-Packagehint=bsv-libraries
-
-[SPI]
-File=modules/bsv-libraries/bluespec/SPI/src/spi.awb
-Packagehint=bsv-libraries
-
-[ReversalBuffer]
-File=modules/bsv-libraries/bluespec/ReversalBuffer/src/reversal_buffer.awb
-Packagehint=bsv-libraries
-
-[Averager collector]
-File=modules/bsv-libraries/bluespec/Stats/Averager/src/stat_averager.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue BCJR Test/Requires]
 airblue_types=Airblue types (no SoftHints)
@@ -135,69 +100,65 @@ airblue_convolutional_decoder_test=Airblue Convolutional Decoder Test template
 
 [Airblue BCJR Test]
 File=modules/airblue/lib/ConvDecoder/BCJR/test/airblue_bcjr_test.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Common]
 File=modules/airblue/lib/ConvDecoder/common/src/airblue_convolutional_decoder_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Scrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_scrambler.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue BCJR with Alpha Init]
 File=modules/airblue/lib/ConvDecoder/BCJR/src/airblue_bcjr_alpha_init.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Simple RRR Host Control]
 File=modules/airblue/lib/HostControl/RRR/Simple/simple_host_control.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue BCJR with Alpha Init/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
 [Airblue Convolutional Decoder Test PassCheck Backend]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_backend_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Test Common Definitions]
 File=modules/airblue/lib/ConvDecoder/common/test/airblue_convolutional_decoder_test_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue RRR Channel]
 File=modules/airblue/lib/Channel/airblue_rrr_channel.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue RRR Channel/Requires]
 airblue_channel_model_sw=Airblue SW Channel Model
 
 [Airblue SW Channel Model]
 File=modules/airblue/lib/Channel/model/channel_model_sw.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue Convolutional Decoder Test PassCheck Backend/Requires]
 airblue_check_ber_host_control=Check BER RRR Host Control
 
 [Check BER RRR Host Control]
 File=modules/airblue/lib/HostControl/RRR/CheckBER/simple_host_control.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Standard Platform Services
 connected_application=HW only hybrid application
-soft_services=Soft Services
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=leap
+soft_services=Soft Services Submodel
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
@@ -209,23 +170,32 @@ fpgaenv=Altera Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Standard Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
 Packagehint=leap
 
 [Altera Hybrid Simulation FPGA Environment]
 File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
 Packagehint=bsv-libraries
 
-
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
-
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Fake Transactor for ConvDecoder Test]
 File=modules/airblue/lib/ConvDecoder/common/test/Transactor/airblue_transactor.awb
-Packagehint=ofdm
+Packagehint=airblue
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
+
+[Airblue Environment]
+File=modules/airblue/lib/HostControl/Environment/airblue_environment.awb
+Packagehint=airblue
+
+[Simple RRR Host Control/Requires]
+airblue_environment=Airblue Environment

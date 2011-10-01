@@ -10,8 +10,7 @@ import Probe::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
-`include "asim/provides/reversal_buffer.bsh"
-`include "asim/provides/librl_bsv.bsh"
+`include "asim/provides/librl_bsv_base.bsh"
 
 /////////////////////////////////////////////////////////
 // Begin of BCJR Module 
@@ -20,7 +19,7 @@ import Probe::*;
 module mkIBCJR (IViterbi);
    
    // magic sizing variable 
-   Bit#(TMul#(`REVERSAL_BUFFER_SIZE,4)) bigFIFO = 0;
+   Integer bigFIFO = 4 * `REVERSAL_BUFFER_SIZE;
 
    Reg#(Bit#(32)) clockCycles <- mkReg(0);
 

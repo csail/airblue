@@ -9,7 +9,7 @@ import FShow::*;
 // import VParams::*;
 
 // Local includes
-`include "asim/provides/reversal_buffer.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"

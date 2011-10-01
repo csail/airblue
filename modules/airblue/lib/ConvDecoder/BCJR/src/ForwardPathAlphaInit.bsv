@@ -10,7 +10,7 @@ import Probe::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
-`include "asim/provides/reversal_buffer.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 
 
 typedef Vector#(VTotalStates,VPathMetric) PathMetricVector;

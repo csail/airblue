@@ -10,7 +10,7 @@ import Probe::*;
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
-`include "asim/provides/reversal_buffer.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 
 
 typedef Tuple2#(BCJRBackwardCtrl,Tuple2#(BCJRBitId,VBranchMetricUnitOut)) BackwardPathIn;
@@ -40,7 +40,7 @@ module mkBackwardPath (
       BackwardPath ifc);
 
    // magic sizing variable 
-   Bit#(TMul#(`REVERSAL_BUFFER_SIZE,2)) bigFIFO = 0;
+   Integer bigFIFO = 2 * `REVERSAL_BUFFER_SIZE;
 
    // Reverse Path Blocks
    ReversalBuffer#(Tuple2#(BCJRBitId,VBranchMetricUnitOut),BCJRBackwardCtrl,`REVERSAL_BUFFER_SIZE) revBufferInitial <- mkReversalBuffer("BCJR revInitial");

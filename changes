@@ -1365,3 +1365,65 @@ Directory debian
  changelog                 Locally Modified          392 
 
 Update debian changelog.
+
+----------
+kfleming    Date: Fri Sep 30 20:56:07 EDT 2011  CSN: CSN-airblue-394
+                  Sat Oct  1 00:56:07 UTC 2011
+
+
+Directory config/pm/airblue
+ debug/                    Locally Removed           393 
+
+Directory config/pm/airblue/debug
+ airblue_wifi_phy_loopback_dynrange.apm Locally Removed           393 
+
+Directory config/pm/airblue/library_tests
+ viterbi_test.apm          Locally Modified          393 
+ soft_phy_rate_test_exe.apm Locally Removed           393 
+ soft_phy_packet_test_viterbi_exe.apm Locally Removed           393 
+ soft_phy_bucket_test_exe_viterbi.apm Locally Removed           393 
+ bcjr_test_arriaII.apm     Locally Removed           393 
+ interleaver_test.apm      Locally Modified          393 
+ soft_phy_packet_test_exe.apm Locally Removed           393 
+ bcjr_test_softphy_half.apm Locally Removed           393 
+ puncturer_test.apm        Locally Modified          393 
+ soft_phy_rate_test_acp.apm Locally Removed           393 
+ soft_phy_bucket_test_exe.apm Locally Removed           393 
+ deinterleaver_test.apm    Locally Modified          393 
+ bcjr_test_softphy.apm     Locally Removed           393 
+ inv_sq_root_test.apm      Locally Modified          393 
+ soft_phy_half_bucket_test_acp.apm Locally Removed           393 
+ soft_phy_bucket_test_acp.apm Locally Removed           393 
+ fft_test.apm              Locally Modified          393 
+ bcjr_test.apm             Locally Modified          393 
+ mac_crc_test.apm          Locally Modified          393 
+ soft_phy_bucket_test_arriaII.apm Locally Removed           393 
+ soft_phy_rate_test_viterbi_exe.apm Locally Removed           393 
+ channel_estimator_test.apm Locally Modified          393 
+ bcjr_test_acp.apm         Locally Removed           393 
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_loopback_agc.apm Locally Removed           393 
+ airblue_wifi_phy_loopback_softphy.apm Locally Removed           393 
+ airblue_wifi_phy_usrp_fixed.apm Locally Removed           393 
+ airblue_wifi_phy_rx_xupv5_usrp.apm Locally Removed           393 
+ airblue_wifi_phy_loopback_fixed.apm Locally Removed           393 
+ airblue_wifi_phy_usrp_packetgen.apm Locally Removed           393 
+ airblue_wifi_phy_rx_acp.apm Locally Removed           393 
+ airblue_wifi_phy_usrp_packetcheck.apm Locally Removed           393 
+ airblue_wifi_phy_rx_vexe.apm Locally Removed           393 
+ airblue_wifi_phy_usrp_fixed_tx.apm Locally Removed           393 
+
+Directory modules/airblue/lib/ConvDecoder/BCJR/src
+ BackwardPath.bsv          Locally Modified          393 
+ ForwardPathAlphaInit.bsv  Locally Modified          393 
+ BCJR.bsv                  Locally Modified          393 
+ BCJRParams.bsv            Locally Modified          393 
+
+Directory modules/airblue/lib/HostControl/RRR/Simple
+ simple_host_control.awb   Locally Modified          393 
+
+
+Updated Airblue to compile against head of leap, with the ported
+bsv-libraries.  Also, removed unsupported apm from release repository.
+

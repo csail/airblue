@@ -18,7 +18,7 @@ model=HW/SW Hybrid Pipeline Build
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Debug Utilities]
 File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
@@ -40,28 +40,24 @@ airblue_fft=WiFi Shared FFT
 
 [Airblue FFT/IFFT Test]
 File=modules/airblue/lib/FFT/test/airblue_fft_test.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue types (no SoftHints)]
 File=modules/airblue/lib/Types/airblue_types.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue WiFi parameters (with standard null SHIM)]
 File=modules/airblue/parameters/WiFi/airblue_wifi_parameters_no_shim.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Standard Platform Services
 connected_application=HW only hybrid application
-soft_services=Soft Services
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=leap
+soft_services=Soft Services Submodel
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
@@ -73,19 +69,19 @@ fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Standard Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
 Packagehint=leap
 
 [WiFi Shared FFT]
 File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Hybrid Simulation FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap
 
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
 
 [WiFi Shared FFT/Requires]
@@ -93,4 +89,8 @@ airblue_fft_library=Airblue Folded FFT/IFFT
 
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
-Packagehint=ofdm
+Packagehint=airblue
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
