@@ -1529,3 +1529,15 @@ Directory modules/airblue/lib/FFT/test
 
 Fixed missing bas in the airblue test bench.  Now it works. 
 
+
+----------
+kfleming    Date: Sun Oct  2 10:05:16 EDT 2011  CSN: CSN-airblue-398
+                  Sun Oct  2 14:05:16 UTC 2011
+
+
+Directory debian
+ changelog                 Locally Modified          397 
+ rules                     Locally Modified          397 
+
+
+Updated to the 11.12 release. 

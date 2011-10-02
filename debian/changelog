@@ -1,8 +1,11 @@
-airblue (11.09~svn20110929r393+lucid) lucid; urgency=low
+airblue (11.12~svn20111002r398+lucid) lucid; urgency=low
 
   [ Joel Emer ]
 
   * r391
       Start of work on v11.09 release
 
- -- Joel Emer <emer@csail.mit.edu>  Thu, 29 Sep 2011 17:34:48 -0400
+  [ Kermin E Fleming ]
+  * r398 
+      Start of work on v11.12 release
+ -- Kermin E Fleming <kfleming@csail.mit.edu>  Sun, 02 Oct 2011 09:52:34 -0400
