@@ -10,7 +10,7 @@
 
 %requires airblue_special_fifos
 %requires airblue_common
-%requires debug_utils
+%requires airblue_shift_regs
 
 
 %attributes airblue

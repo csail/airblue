@@ -12,7 +12,7 @@
 %requires airblue_types
 %requires airblue_puncturer
 %requires airblue_special_fifos
-%requires debug_utils
+%requires airblue_shift_regs
 
 %attributes airblue
 

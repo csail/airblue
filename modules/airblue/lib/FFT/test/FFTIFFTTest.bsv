@@ -46,6 +46,9 @@ import Vector::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_fft.bsh"
+`include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_fft_library.bsh"
+
 
 import "BDPI" function Action generateFFTValues(int fftSize, int realBitSize, int imagBitSize);
 import "BDPI" function ActionValue#(FixedPoint#(16,16)) getRealInput(int index);

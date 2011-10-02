@@ -1,0 +1,15 @@
+********************************************************************
+* CRC
+********************************************************************
+
+%AWB_START
+
+%name CRC Library
+%desc CRC Library
+%provides crc
+
+%sources -t BSV -v PUBLIC CRC.bsv
+
+%param DEBUG_CRC 0 "Enable CRC Debug"
+
+%AWB_END

@@ -13,7 +13,7 @@
 %requires airblue_inverse_sq_root_model
 %requires airblue_common
 %requires airblue_types
-%requires debug_utils
+%requires airblue_shift_regs
 
 
 %attributes airblue

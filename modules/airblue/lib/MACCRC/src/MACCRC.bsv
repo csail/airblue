@@ -5,17 +5,11 @@ import StmtFSM::*;
 import Vector::*;
 import FShow::*;
 
-// import CRC::*;
-// import CommitFIFO::*;
-// import MACDataTypes::*;
-// import ProtocolParameters::*;
-// import MACPhyParameters::*;
-
 // Local include
-`include "asim/provides/crc.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/commit_fifo.bsh"
+`include "awb/provides/crc.bsh"
+`include "awb/provides/airblue_types.bsh"
+`include "awb/provides/airblue_parameters.bsh"
+`include "awb/provides/librl_bsv_storage.bsh"
 
 interface MACCRC;
    // CRC <-> Phy
@@ -60,13 +54,11 @@ module mkMACCRC (MACCRC);
    Reg#(CRCState) state <- mkReg(Idle);
    CommitFIFO#(PhyData,4096) rxBuffer <- mkCommitFIFO;
    FIFOF#(PhyData) txBuffer <- mkFIFOF; // much smaller - could get rid of...
-   CRC#(Bit#(32),PhyData) crc <- mkParallelCRC(fromInteger(valueof(CRCPoly)),~0);
+   CRC#(Bit#(32),PhyData) crc <- mkParallelCRC(fromInteger(valueof(CRCPoly)),~0, LITTLE_ENDIAN_CRC);
    Reg#(Bit#(TLog#(TDiv#(SizeOf#(Bit#(32)),SizeOf#(PhyData)))))  crcCount <- mkReg(0);
    FIFOF#(RXExternalFeedback) abortFIFO <- mkFIFOF;
  
    Reg#(Bit#(16)) debugCounter <- mkReg(0);
-
-   
 
    rule checkDebug;
      debugCounter <= debugCounter + 1;

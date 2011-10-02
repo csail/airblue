@@ -20,13 +20,9 @@ model=HW/SW Hybrid Pipeline Build
 File=modules/airblue/lib/Common/airblue_common.awb
 Packagehint=airblue
 
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
-Packagehint=bsv-libraries
-
 [HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
+File=modules/leap/build-support/project/application-env/soft-services/hw-only/hw-only-testbench.awb
+Packagehint=leap
 
 [HW only hybrid application/Requires]
 hw_only_application=Airblue FFT/IFFT Test
@@ -34,9 +30,9 @@ hw_only_application=Airblue FFT/IFFT Test
 [Airblue FFT/IFFT Test/Requires]
 airblue_types=Airblue types (no SoftHints)
 airblue_common=Airblue common library
-debug_utils=Debug Utilities
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_fft=WiFi Shared FFT
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 
 [Airblue FFT/IFFT Test]
 File=modules/airblue/lib/FFT/test/airblue_fft_test.awb
@@ -94,3 +90,7 @@ Packagehint=airblue
 [Soft Services Submodel]
 File=config/pm/leap/submodels/common/soft-services.apm
 Packagehint=leap
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=airblue

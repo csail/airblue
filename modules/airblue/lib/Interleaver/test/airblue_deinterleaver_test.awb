@@ -14,8 +14,7 @@
 %requires airblue_deinterleaver
 %requires airblue_mapper
 %requires airblue_demapper
-%requires debug_utils
-
+%requires airblue_shift_regs
 
 %attributes airblue
 

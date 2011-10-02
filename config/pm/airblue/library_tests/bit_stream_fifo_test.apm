@@ -12,53 +12,42 @@ DefaultRunOpts=
 RootName=HW/SW Hybrid Pipeline Build
 RootProvides=model
 
-
-
 [Model]
 DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
 
-
 [HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
+File=modules/leap/build-support/project/application-env/soft-services/hw-only/hw-only-testbench.awb
+Packagehint=leap
 
 [HW only hybrid application/Requires]
 hw_only_application=Airblue BitStreamFIFO test
 
 [Airblue Special FIFOs]
 File=modules/airblue/lib/FIFOs/src/airblue_special_fifos.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue BitStreamFIFO test/Requires]
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
-debug_utils=Debug Utilities
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 
 [Airblue BitStreamFIFO test]
 File=modules/airblue/lib/FIFOs/test/airblue_bit_stream_fifo_test.awb
-Packagehint=ofdm
+Packagehint=airblue
 
 [Airblue common library]
 File=modules/airblue/lib/Common/airblue_common.awb
-Packagehint=ofdm
-
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
-Packagehint=bsv-libraries
+Packagehint=airblue
 
 [Soft Services Hybrid Application Environment]
-File=modules/leap/build-support/project/application-env/hybrid/soft-services/application-env-hybrid-soft-service.awb
+File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
 Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 platform_services=Standard Platform Services
 connected_application=HW only hybrid application
-soft_services=Soft Services
-
-[Soft Services]
-File=config/pm/hasim/submodels/common/soft-services.apm
-Packagehint=leap
+soft_services=Soft Services Submodel
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
@@ -70,13 +59,21 @@ fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Standard Platform Services]
-File=config/pm/hasim/submodels/platform-services/standard-platform-services.apm
+File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
 Packagehint=leap
 
 [Hybrid Simulation FPGA Environment]
-File=config/pm/hasim/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap
 
 [Default Hybrid Project Common Utilities]
-File=config/pm/hasim/submodels/common/project-common-default.apm
+File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
+
+[Soft Services Submodel]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=airblue

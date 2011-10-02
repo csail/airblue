@@ -17,8 +17,8 @@ DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
 
 [HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
+File=modules/leap/build-support/project/application-env/soft-services/hw-only/hw-only-testbench.awb
+Packagehint=leap
 
 [HW only hybrid application/Requires]
 hw_only_application=Airblue Deinterleaver Test
@@ -41,16 +41,12 @@ airblue_common=Airblue common library
 airblue_interleaver=Airblue Interleaver
 airblue_deinterleaver=Airblue Deinterleaver
 airblue_mapper=Airblue Mapper
-debug_utils=Debug Utilities
 airblue_demapper=Airblue Demapper
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 
 [Airblue Deinterleaver]
 File=modules/airblue/lib/Interleaver/src/airblue_deinterleaver.awb
 Packagehint=airblue
-
-[Debug Utilities]
-File=modules/bsv-libraries/bluespec/Debug/debug_utils.awb
-Packagehint=bsv-libraries
 
 [Airblue Mapper]
 File=modules/airblue/lib/Mapper/src/airblue_mapper.awb
@@ -97,3 +93,7 @@ Packagehint=leap
 [Soft Services Submodel]
 File=config/pm/leap/submodels/common/soft-services.apm
 Packagehint=leap
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=airblue

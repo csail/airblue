@@ -148,7 +148,7 @@ Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Default Hybrid Project Common Utilities
-fpgaenv=Altera Hybrid Simulation FPGA Environment
+fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Airblue Environment]
@@ -208,10 +208,6 @@ Packagehint=airblue
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Altera Hybrid Simulation FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
-
 [Default Hybrid Project Common Utilities]
 File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
@@ -253,4 +249,8 @@ Packagehint=airblue
 
 [Soft Services Submodel]
 File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
+
+[Hybrid Simulation FPGA Environment]
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap

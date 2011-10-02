@@ -1,0 +1,16 @@
+********************************************************************
+* CRC
+********************************************************************
+
+%AWB_START
+
+%name CRCTest
+%desc Testbench for CRC
+%provides hw_only_application
+
+%requires crc
+%requires debug_utils
+
+%sources -t BSV -v PUBLIC CRCTest.bsv
+
+%AWB_END

@@ -1427,3 +1427,93 @@ Directory modules/airblue/lib/HostControl/RRR/Simple
 Updated Airblue to compile against head of leap, with the ported
 bsv-libraries.  Also, removed unsupported apm from release repository.
 
+
+----------
+kfleming    Date: Sat Oct  1 23:35:05 EDT 2011  CSN: CSN-airblue-396
+                  Sun Oct  2 03:35:05 UTC 2011
+
+
+Directory config/pm/airblue/library_tests
+ bit_stream_fifo_test.apm  Locally Modified          394 
+ synchronizer_test.apm     Locally Modified          394 
+ fft_test.apm              Locally Modified          394 
+ channel_estimator_test.apm Locally Modified          394 
+ bcjr_test.apm             Locally Modified          394 
+ interleaver_test.apm      Locally Modified          394 
+ inv_sq_root_test.apm      Locally Modified          394 
+ viterbi_test.apm          Locally Modified          394 
+ mac_crc_test.apm          Locally Modified          394 
+ puncturer_test.apm        Locally Modified          394 
+ deinterleaver_test.apm    Locally Modified          394 
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_loopback.apm Locally Modified          394 
+ airblue_wifi_phy_rx_exe.apm Locally Modified          394 
+ airblue_wifi_phy_only_loopback_exe.apm Locally Removed           394 
+
+Directory config/pm/airblue/submodels
+ acp-altera.apm            Locally Removed           394 
+ huntsman-jtag.apm         Locally Removed           394 
+
+Directory config/pm/airblue
+ submodels/                Locally Removed           394 
+
+Directory modules/airblue/Phy/WiFi/fft
+ WiFiFFT.bsv               Locally Modified          394 
+
+Directory modules/airblue/lib/Puncturer/test
+ airblue_puncturer_test.awb Locally Modified          394 
+
+Directory modules/airblue/lib/Common
+ LibraryFunctions.bsv      Locally Modified          394 
+
+Directory modules/airblue/lib/FIFOs/test
+ airblue_bit_stream_fifo_test.awb Locally Modified          394 
+
+Directory modules/airblue/lib
+ CRC/                      Locally Added               0 
+
+Directory modules/airblue/lib/CRC
+ build/                    Locally Added               0 
+
+Directory modules/airblue/lib/CRC/build
+ Makefile                  Locally Added               0 
+
+Directory modules/airblue/lib/CRC
+ test/                     Locally Added               0 
+
+Directory modules/airblue/lib/CRC/test
+ CRCTest.bsv               Locally Added               0 
+ crc_test.awb              Locally Added               0 
+
+Directory modules/airblue/lib/CRC
+ src/                      Locally Added               0 
+
+Directory modules/airblue/lib/CRC/src
+ crc.awb                   Locally Added               0 
+ CRC.bsv                   Locally Added               0 
+
+Directory modules/airblue/lib/FFT/test
+ FFTIFFTTest.bsv           Locally Modified          394 
+ airblue_fft_test.awb      Locally Modified          394 
+
+Directory modules/airblue/lib/Interleaver/test
+ airblue_deinterleaver_test.awb Locally Modified          394 
+ airblue_interleaver_test.awb Locally Modified          394 
+
+Directory modules/airblue/lib/MACCRC/test
+ airblue_mac_crc_test.awb  Locally Modified          394 
+
+Directory modules/airblue/lib/MACCRC/src
+ MACCRC.bsv                Locally Modified          394 
+
+Directory modules/airblue/lib/ChannelEstimator/test
+ airblue_channel_estimator_test.awb Locally Modified          394 
+
+Directory modules/airblue/lib/NewtonRaphson/InverseSqRoot/test
+ airblue_inverse_sq_root_test.awb Locally Modified          394 
+
+
+Unbroke all apms, and can build/run all except fft, which has some
+problem building the import BDPI.  I thought I fixed this issue, but
+maybe I did not.

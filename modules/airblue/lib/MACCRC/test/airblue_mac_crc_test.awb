@@ -12,9 +12,7 @@
 %requires airblue_types
 %requires airblue_common
 %requires airblue_parameters
-%requires commit_fifo
-%requires debug_utils
-
+%requires airblue_shift_regs
 
 %attributes airblue
 

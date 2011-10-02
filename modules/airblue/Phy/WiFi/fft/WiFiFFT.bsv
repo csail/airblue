@@ -7,8 +7,8 @@ import GetPut::*;
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_fft_library.bsh"
-`include "asim/provides/airblue_transmitter.bsh"
-`include "asim/provides/airblue_receiver.bsh"
+//`include "asim/provides/airblue_transmitter.bsh"
+//`include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_connections.bsh"
 

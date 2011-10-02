@@ -17,8 +17,8 @@ DefaultAttributes=airblue
 model=HW/SW Hybrid Pipeline Build
 
 [HW only hybrid application]
-File=modules/bsv-libraries/bluespec/Common/hw-only-testbench.awb
-Packagehint=bsv-libraries
+File=modules/leap/build-support/project/application-env/soft-services/hw-only/hw-only-testbench.awb
+Packagehint=leap
 
 [HW only hybrid application/Requires]
 hw_only_application=Airblue BCJR Test
@@ -166,16 +166,12 @@ Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
 project_common=Default Hybrid Project Common Utilities
-fpgaenv=Altera Hybrid Simulation FPGA Environment
+fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Standard Platform Services]
 File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
 Packagehint=leap
-
-[Altera Hybrid Simulation FPGA Environment]
-File=config/pm/bsv-libraries/altera/fpgaenv-hybrid-altera.apm
-Packagehint=bsv-libraries
 
 [Default Hybrid Project Common Utilities]
 File=config/pm/leap/submodels/common/project-common-default.apm
@@ -199,3 +195,7 @@ Packagehint=airblue
 
 [Simple RRR Host Control/Requires]
 airblue_environment=Airblue Environment
+
+[Hybrid Simulation FPGA Environment]
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=leap

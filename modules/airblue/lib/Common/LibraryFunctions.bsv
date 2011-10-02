@@ -33,7 +33,7 @@ import Connectable::*;
 import FIFO::*;
 import FIFOLevel::*;
 
-`include "asim/provides/airblue_shift_regs.bsh"
+`include "awb/provides/airblue_shift_regs.bsh"
 
 //Given a Bit#(n) returns it's parity
 function Bit#(1) getParity(Bit#(n) v) provisos(Add#(1, k, n));
