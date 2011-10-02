@@ -22,9 +22,11 @@
 %generated -t BA generateFFTValues.ba
 %generated -t BA getRealInput.ba
 %generated -t BA getImagInput.ba
-%generated -t BA getRealResult.ba
-%generated -t BA getImagResult.ba
-
-
+%generated -t BA checkRealResult.ba
+%generated -t BA checkImagResult.ba
+%generated -t BA freeLast.ba
+%generated -t BA mkTestIFFTFull.ba
+%generated -t BA mkTestFFTFull.ba
+%generated -t BA mkTestDual.ba
 
 %AWB_END

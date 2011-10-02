@@ -1517,3 +1517,15 @@ Directory modules/airblue/lib/NewtonRaphson/InverseSqRoot/test
 Unbroke all apms, and can build/run all except fft, which has some
 problem building the import BDPI.  I thought I fixed this issue, but
 maybe I did not.
+
+----------
+kfleming    Date: Sun Oct  2 09:33:14 EDT 2011  CSN: CSN-airblue-397
+                  Sun Oct  2 13:33:14 UTC 2011
+
+
+Directory modules/airblue/lib/FFT/test
+ airblue_fft_test.awb      Locally Modified          396 
+
+
+Fixed missing bas in the airblue test bench.  Now it works. 
+
