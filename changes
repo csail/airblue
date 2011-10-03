@@ -1541,3 +1541,15 @@ Directory debian
 
 
 Updated to the 11.12 release. 
+
+----------
+kfleming    Date: Mon Oct  3 10:49:08 EDT 2011  CSN: CSN-airblue-399
+                  Mon Oct  3 14:49:08 UTC 2011
+
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_loopback.apm Locally Removed           398 
+ airblue_wifi_phy_loopback_exe.apm Locally Added               - 
+
+
+Changed names to fit with general naming scheme. 
