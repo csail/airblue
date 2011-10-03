@@ -1553,3 +1553,35 @@ Directory config/pm/airblue/pipelines
 
 
 Changed names to fit with general naming scheme. 
+
+----------
+kfleming    Date: Mon Oct  3 10:53:56 EDT 2011  CSN: CSN-airblue-400
+                  Mon Oct  3 14:53:56 UTC 2011
+
+
+Directory config/pm/airblue/library_tests
+ viterbi_test.apm          Locally Removed           399 
+ viterbi_test_exe.apm      Locally Added               - 
+ fft_test.apm              Locally Removed           399 
+ fft_test_exe.apm          Locally Added               - 
+ interleaver_test.apm      Locally Removed           399 
+ bcjr_test.apm             Locally Removed           399 
+ bcjr_test_exe.apm         Locally Added               - 
+ interleaver_test_exe.apm  Locally Added               - 
+ puncturer_test.apm        Locally Removed           399 
+ mac_crc_test.apm          Locally Removed           399 
+ puncturer_test_exe.apm    Locally Added               - 
+ mac_crc_test_exe.apm      Locally Added               - 
+ deinterleaver_test.apm    Locally Removed           399 
+ deinterleaver_test_exe.apm Locally Added               - 
+ bit_stream_fifo_test.apm  Locally Removed           399 
+ synchronizer_test.apm     Locally Removed           399 
+ bit_stream_fifo_test_exe.apm Locally Added               - 
+ synchronizer_test_exe.apm Locally Added               - 
+ channel_estimator_test.apm Locally Removed           399 
+ channel_estimator_test_exe.apm Locally Added               - 
+ inv_sq_root_test.apm      Locally Removed           399 
+ inv_sq_root_test_exe.apm  Locally Added               - 
+
+
+Changed names of library test benches.
