@@ -78,9 +78,30 @@ function FPComplex#(ri,rf) fpcmplxSignExtend(FPComplex#(ai,af) a)
       return cmplx(fxptSignExtend(a.rel), fxptSignExtend(a.img));
 endfunction // Complex
 
+function FPComplex#(ai,rf) fpcmplxSignExtendF(FPComplex#(ai,af) a)
+  provisos (Add#(fdiff,af,rf), Add#(xxC,TAdd#(ai,af),TAdd#(ai,rf)));
+      return cmplx(fxptSignExtend(a.rel), fxptSignExtend(a.img));
+endfunction // Complex
+
+function FPComplex#(ri,af) fpcmplxSignExtendI(FPComplex#(ai,af) a)
+  provisos (Add#(xxA,ai,ri), Add#(xxC,TAdd#(ai,af),TAdd#(ri,af)));
+      return cmplx(fxptSignExtend(a.rel), fxptSignExtend(a.img));
+endfunction // Complex
+
+
 //for fixedpoint complex signextend
 function FPComplex#(ri,rf) fpcmplxZeroExtend(FPComplex#(ai,af) a)
   provisos (Add#(xxA,ai,ri), Add#(fdiff,af,rf), Add#(xxC,TAdd#(ai,af),TAdd#(ri,rf)));
+      return cmplx(fxptZeroExtend(a.rel), fxptZeroExtend(a.img));
+endfunction // Complex
+
+function FPComplex#(ai,rf) fpcmplxZeroExtendF(FPComplex#(ai,af) a)
+  provisos (Add#(fdiff,af,rf), Add#(xxC,TAdd#(ai,af),TAdd#(ai,rf)));
+      return cmplx(fxptZeroExtend(a.rel), fxptZeroExtend(a.img));
+endfunction // Complex
+
+function FPComplex#(ri,af) fpcmplxZeroExtendI(FPComplex#(ai,af) a)
+  provisos (Add#(xxA,ai,ri), Add#(xxC,TAdd#(ai,af),TAdd#(ri,af)));
       return cmplx(fxptZeroExtend(a.rel), fxptZeroExtend(a.img));
 endfunction // Complex
 
@@ -88,6 +109,24 @@ endfunction // Complex
 function FPComplex#(ri,rf) fpcmplxTruncate(FPComplex#(ai,af) a)
   provisos (Add#(xxA,ri,ai), Add#(xxB,rf,af), Add#(xxC,TAdd#(ri,rf),TAdd#(ai,af)));
       return cmplx(fxptTruncate(a.rel), fxptTruncate(a.img));
+endfunction // Complex
+
+function FPComplex#(ai,rf) fpcmplxTruncateF(FPComplex#(ai,af) a)
+  provisos (Add#(xxB,rf,af), Add#(xxC,TAdd#(ai,rf),TAdd#(ai,af)));
+      return cmplx(fxptTruncate(a.rel), fxptTruncate(a.img));
+endfunction // Complex
+
+function FPComplex#(ri,af) fpcmplxTruncateI(FPComplex#(ai,af) a)
+  provisos (Add#(xxB,ri,ai), Add#(xxC,TAdd#(ri,af),TAdd#(ai,af)));
+      return cmplx(fxptTruncate(a.rel), fxptTruncate(a.img));
+endfunction // Complex
+
+function FPComplex#(ri,rf) fpcmplxSignedAdjust(FPComplex#(ai,af) a);
+      return cmplx(fxptSignedAdjust(a.rel), fxptSignedAdjust(a.img));
+endfunction // Complex
+
+function FPComplex#(ri,rf) fpcmplxZeroAdjust(FPComplex#(ai,af) a);
+      return cmplx(fxptZeroAdjust(a.rel), fxptZeroAdjust(a.img));
 endfunction // Complex
 
 // for fixedpoint complex modulus = rel^2 + img^2, ri = 2ai + 1, rf = 2af

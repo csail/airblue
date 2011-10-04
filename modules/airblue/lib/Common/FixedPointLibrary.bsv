@@ -31,6 +31,18 @@
 // Data: 9-29-2006
 /////////////////////////////////////////////////////////
 
+// Library imports.
+
+import FIFO::*;
+import SpecialFIFOs::*;
+
+// Project foundation imports.
+
+`include "awb/provides/librl_bsv_base.bsh"
+`include "awb/provides/librl_bsv_storage.bsh"
+`include "awb/provides/fpga_components.bsh"
+
+
 import FixedPoint::*;
 
 // take the most significant n bits from the fixedpoint value, result represented in bits
@@ -40,8 +52,51 @@ function Bit#(n) fxptGetMSBs(FixedPoint#(ai,af) x)
       return tpl_1(split(pack(x)));
 endfunction // Bit
 
+function Bit#(rf) adjustFraction(Bit#(af) a);
+  Bit#(rf) fPart = ?;
+  if(valueof(rf) > valueof(af))
+    begin
+      fPart = zeroExtendNP(a) << (valueof(rf) - valueof(af));
+    end
+  else
+    begin
+      fPart = truncateNP(a >> (valueof(af) - valueof(rf)));
+    end
+  return fPart;
+endfunction
 
 
+function FixedPoint#(ri,rf) fxptSignedAdjust(FixedPoint#(ai,af) a);
+  Bit#(ri) iPart = ?;
+  Bit#(rf) fPart = adjustFraction(a.f);
+
+  if(valueof(ri) > valueof(ai))
+    begin
+      iPart = signExtendNP(a.i);
+    end
+  else
+    begin
+      iPart = truncateNP(a.i);
+    end
+
+  return FixedPoint{i:iPart,f:fPart}; 
+endfunction
+
+function FixedPoint#(ri,rf) fxptZeroAdjust(FixedPoint#(ai,af) a);
+  Bit#(ri) iPart = ?;
+  Bit#(rf) fPart = adjustFraction(a.f);
+
+  if(valueof(ri) > valueof(ai))
+    begin
+      iPart = zeroExtendNP(a.i);
+    end
+  else
+    begin
+      iPart = truncateNP(a.i);
+    end
+
+  return FixedPoint{i:iPart,f:fPart};
+endfunction
 
 
 
