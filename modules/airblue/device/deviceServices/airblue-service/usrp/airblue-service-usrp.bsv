@@ -43,7 +43,7 @@ import Complex::*;
 
 typedef union tagged {
   void EndOfPacket;
-  SynchronizerMesg#(RXFPIPrec,RXFPFPrec) Sample;  
+  SynchronizerMesg#(2,14) Sample;  // Have to deal with raw bits here
 } USRPPacket deriving (Bits, Eq);
 
 typedef enum {
@@ -65,16 +65,16 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
-   Integer fifo_sz = 16383;
+   Integer fifo_sz =4096;
    FIFOF#(Bit#(32)) sampleStream <- mkStreamCaptureFIFOF(fifo_sz);
 
 
-   FIFOF#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
-   SyncFIFOIfc#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
+   FIFOF#(SynchronizerMesg#(2,14)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
+   SyncFIFOIfc#(SynchronizerMesg#(2,14)) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
 
 
    Reg#(Bool) processI <- mkReg(True, clocked_by(rxClk), reset_by(rxRst)); // Expect to start in the processing I state
-   Reg#(FixedPoint#(RXFPIPrec,RXFPFPrec)) iPart <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
+   Reg#(FixedPoint#(2,14)) iPart <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
    // make soft connections to PHY
    Connection_Send#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Send("AnalogReceive");
    Reg#(Bit#(40)) rxCount <- mkReg(0, clocked_by(rxClk), reset_by(rxRst));
@@ -136,8 +136,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    rule getSample;
      let dummy <- serverStub.acceptRequest_GetSample();
-     sampleStream.deq();
-     serverStub.sendResponse_GetSample(sampleStream.first);
+     //sampleStream.deq();
+     serverStub.sendResponse_GetSample(?);//sampleStream.first);
    endrule
 
    rule processIPart (processI);
@@ -147,8 +147,9 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        // although we may see a sync control word here, we 
        if(extractData(dataIn) matches tagged Valid .data) 
          begin
-           processI <= False; 
-           iPart <= data;
+           processI <= False;
+           FixedPoint#(2,14) dataT = data;
+           iPart <= dataT;
          end
     endrule
 
@@ -159,7 +160,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        if(extractData(dataIn) matches tagged Valid .data)
          begin
            sampleSent <= sampleSent + 1;
-           serdes_word_fifo.enq(cmplx(iPart,data));
+           FixedPoint#(2,14) dataT = data;
+           serdes_word_fifo.enq(cmplx(iPart,dataT));
            processI <= True;
          end 
        else if(dataIn == sampleSyncWord) // In this case we should be receiving a real next
@@ -178,6 +180,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
            // Here we must drop the data
            sampleDropped <= sampleDropped + 1;
            processI <= True;
+           FixedPoint#(2,14) dataT = data;
            iPart <= data;
          end
     endrule
@@ -188,13 +191,17 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        serdes_word_sync_fifo.enq(serdes_word_fifo.first());       
     endrule
 
+    RWire#(Bit#(32)) toAnalogDeq <- mkRWire;
+
     rule toAnalog;
        serdes_word_sync_fifo.deq;
-       analogRX.send(serdes_word_sync_fifo.first());       
+       toAnalogDeq.wset(pack(serdes_word_sync_fifo.first()));  
+       //let temp = fpcmplxSignExtend(serdes_word_sync_fifo.first());     
+       analogRX.send(fpcmplxSignExtendI(fpcmplxTruncateF(serdes_word_sync_fifo.first())));       
     endrule
 
-    rule toStreamCapture;
-       sampleStream.enq(pack(serdes_word_sync_fifo.first()));
+    rule toStreamCapture(toAnalogDeq.wget() matches (tagged Valid .sample));
+       //sampleStream.enq(sample);
     endrule
 
     // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -
@@ -202,11 +209,11 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     // correct baseband then this can be used to detect packet boundaries. 
     
 
-    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
+    Connection_Receive#(DACMesg#(FFTFPIPrec,FFTFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
 
     Reg#(Bit#(TAdd#(1,TLog#(`MODEL_CLOCK_FREQ)))) counter <- mkReg(0); 
 
-    FIFOF#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) intxfifo <- mkSizedFIFOF(32);  
+    FIFOF#(SynchronizerMesg#(2,14)) intxfifo <- mkSizedFIFOF(32);  
     FIFO#(Bit#(1)) creditfifo <- mkSizedFIFO(`SAMPLE_RATE);  // A basic credit scheme to avoid the need for complex flow control
     SyncFIFOIfc#(USRPPacket) outtxfifo <- mkSyncFIFOFromCC(32, txClk);  // this one goes to serdes
      // USRP expects a packetized data stream with a two word heade
@@ -215,8 +222,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      // are normal samples.
 
      // Fix endianess for i/q
-     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic0 <- mkReg(unpack('hdead0007));
-     Reg#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) usrpMagic1 <- mkReg(unpack('hcafecafe));
+     Reg#(Bit#(32)) usrpMagic0 <- mkReg(unpack('hdead0007));
+     Reg#(Bit#(32)) usrpMagic1 <- mkReg(unpack('hcafecafe));
 
 
     Reg#(PacketState) state <- mkReg(Idle);
@@ -268,18 +275,19 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     rule forwardToLL; 
       analogTX.deq();
       txCountIn <= txCountIn + 1;
-      intxfifo.enq(analogTX.receive());
+      //let temp = fpcmplxSignExtend(analogTX.receive);     
+      intxfifo.enq(fpcmplxSignExtendF(fpcmplxTruncateI(analogTX.receive)));
     endrule
 
 
     rule handleIdleState(state == Idle && intxfifo.notEmpty);
-      outtxfifo.enq(tagged Sample usrpMagic0);
+      outtxfifo.enq(tagged Sample unpack(usrpMagic0));
       state <= Command;    
       creditfifo.deq;
     endrule
 
     rule handleCommandState(state == Command);
-      outtxfifo.enq(tagged Sample usrpMagic1);
+      outtxfifo.enq(tagged Sample unpack(usrpMagic1));
       state <= Body;
       creditfifo.deq;
     endrule
@@ -316,7 +324,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     endfunction
 
     rule sendToSERDESData(outtxfifo.first matches tagged Sample .data);
-      Bit#(16) chunk = deqNeeded?pack(data.img):pack(data.rel); // send MSB/rel first
+      Bit#(16) chunk = deqNeeded?truncate(pack(data.img)):truncate(pack(data.rel)); // send MSB/rel first
       sataDriver.send0(serdesWord(serdesData(chunk[15:8]),serdesData(chunk[7:0])));  // Byte endian issue?
       txCount <= txCount + 1;
       handleDeq();
