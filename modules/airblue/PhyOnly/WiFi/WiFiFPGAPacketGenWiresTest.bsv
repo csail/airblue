@@ -24,24 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
-import ClientServer::*;
-import Vector::*;
-import Clocks::*;
-import Complex::*;
-import FixedPoint::*;
-import GetPut::*;
-import StmtFSM::*;
-import CBus::*;
+// Can we get rid of this?
 
-
-// Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/fpga_components.bsh"
-`include "asim/provides/librl_bsv_base.bsh"
-`include "asim/provides/soft_services.bsh"
-`include "asim/provides/soft_clocks.bsh"
-`include "asim/provides/clocks_device.bsh"
 
 
