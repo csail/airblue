@@ -215,7 +215,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
       if(crcResult == True) 
         begin 
-          $display("Got a passed CRC");
+          $display("Got a passed CRC, size %d, expectedSize %d, packetBerReg %d", size, expectedSize, packetBerReg);
           passedCRC <= passedCRC + 1;
           bytesRXCorrectReg <= bytesRXCorrectReg + zeroExtend(size);
         end
@@ -232,9 +232,9 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
               totalBER.upd(63,totalBER.sub(truncate(packetBerReg)) + 1);   
             end
   
-         if(packetBerReg == 0) 
+         if(packetBerReg == 0 || crcResult) 
            begin
-
+             $display("incr packets Correct");
              packetsCorrectReg <= packetsCorrectReg + 1;
 
             if(`DEBUG_PACKETCHECK == 1)

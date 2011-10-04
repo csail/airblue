@@ -19,15 +19,9 @@ typedef enum {
   Waiting
 } PacketGenState deriving (Bits,Eq);
 
-interface PacketGen;
-  // These functions reveal stats about the generator
-  // for hooking up to the baseband
-  interface Get#(TXVector) txVector;
-  interface Get#(Bit#(8)) txData;
-endinterface
 
 // maybe parameterize by generation algorithm at some point
-module [CONNECTED_MODULE] mkPacketGen (PacketGen);
+module [CONNECTED_MODULE] mkPacketGen (Empty);
 
  ServerStub_PACKETGENRRR serverStub <- mkServerStub_PACKETGENRRR();
 
@@ -35,8 +29,11 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
  Reg#(Bit#(12)) sent  <- mkReg(0); 
  Reg#(PacketGenState) state <- mkReg(Idle);
  Reg#(Bit#(1)) enable <- mkReg(0);
- FIFO#(TXVector) txVectorFIFO <- mkFIFO; 
- FIFO#(Bit#(8))  txDataFIFO <- mkFIFO; 
+ // Some test benches require this extra vector to configure themselves
+ Connection_Send#(TXVector) txVectorFIFO <- mkConnection_Send("TXVector");
+ Connection_Send#(TXVector) txVectorTest <- mkConnectionSendOptional("TXVectorTest"); 
+ Connection_Send#(Bit#(8))  txDataFIFO <-   mkConnection_Send("TXData");
+ Connection_Send#(Bit#(1))  txEnd    <- mkConnection_Send("TXEnd");
  Reg#(Bit#(32))  packetsTXReg <- mkReg(0);
  Reg#(Bit#(32))  cycleCountReg <- mkReg(0);
  Reg#(Bit#(12))  lengthReg <- mkReg(1);
@@ -85,7 +82,8 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
           $display("PacketGen: starting packet gen size: %d",lengthReg);
         end
 
-      txVectorFIFO.enq(TXVector{header:HeaderInfo{length:lengthReg, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      txVectorFIFO.send(TXVector{header:HeaderInfo{length:lengthReg, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      txVectorTest.send(TXVector{header:HeaderInfo{length:lengthReg, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
       state <= Sending;
       delayCount <= delay;
    endrule
@@ -107,7 +105,7 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
 
    rule transmit;
       let data <- packetStore.readRsp();
-      txDataFIFO.enq(data);   
+      txDataFIFO.send(data);   
    endrule
 
    rule decrDelayCount(state == Waiting);
@@ -117,9 +115,6 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
           state <= Idle; 
         end
    endrule            
-
-  interface txVector = fifoToGet(txVectorFIFO);
-  interface txData = fifoToGet(txDataFIFO);
 
 endmodule
 

@@ -11,7 +11,8 @@ service PACKETCHECKRRR
        method GetPassedCRC (in UINT16[16] value, out UINT32[32] crc);  
        method GetMismatchedRX (in UINT16[16] value, out UINT32[32] ber);  
        method GetMatchedRX (in UINT16[16] value, out UINT32[32] ber);  
-       method GetPacketsRXCorrect (in UINT16[16] value, out UINT32[32] ber);        method GetByteBER (in UINT16[16] addr, out UINT32[32] value);  
+       method GetPacketsRXCorrect (in UINT16[16] value, out UINT32[32] ber); 
+       method GetByteBER (in UINT16[16] addr, out UINT32[32] value);  
        method GetTotalBER (in UINT16[16] addr, out UINT32[32] value);  
     };
 

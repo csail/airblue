@@ -8,16 +8,14 @@ import FIFOLevel::*;
 `include "asim/provides/soft_connections.bsh"
 `include "asim/rrr/remote_server_stub_PACKETGENRRR.bsh"
 
-interface PacketGen;
-  // for hooking up to the baseband
-  interface Get#(TXVector) txVector;
-  interface Get#(Bit#(8)) txData;
-endinterface
-
 // maybe parameterize by generation algorithm at some point
-module [CONNECTED_MODULE] mkPacketGen (PacketGen);
+module [CONNECTED_MODULE] mkPacketGen (Empty);
 
   ServerStub_PACKETGENRRR serverStub <- mkServerStub_PACKETGENRRR();
+
+  Connection_Send#(TXVector) txVectorFIFO <- mkConnection_Send("TXVector");
+  Connection_Send#(Bit#(8))  txDataFIFO <-   mkConnection_Send("TXData");
+  Connection_Send#(Bit#(1))  txEnd    <- mkConnection_Send("TXEnd");
 
   rule setRate;
     let rate <- serverStub.acceptRequest_SetRate();
@@ -34,9 +32,5 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
   rule setEnable;
     let enableNew <- serverStub.acceptRequest_SetEnable();
   endrule
-
-
-  interface txVector = ?; 
-  interface txData = ?; 
 
 endmodule

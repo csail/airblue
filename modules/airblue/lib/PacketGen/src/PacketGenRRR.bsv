@@ -10,26 +10,15 @@ import StmtFSM::*;
 `include "asim/provides/clocks_device.bsh"
 `include "asim/rrr/remote_server_stub_PACKETGENRRR.bsh"
 
-interface PacketGen;
-  // These functions reveal stats about the generator
-  //interface Reg#(Bit#(1)) enablePacketGen; 
-  //interface ReadOnly#(Bit#(32)) packetsTX;
-  //interface ReadOnly#(Bit#(32)) cycleCount;
-  //interface Reg#(Bit#(12)) minPacketLength;  
-  //interface Reg#(Bit#(12)) maxPacketLength;
-  //interface Reg#(Bit#(12)) packetLengthMask;
-  //interface Reg#(Bit#(24)) packetDelay;  
-  //interface Reg#(Bit#(3)) rate;
-
-  // for hooking up to the baseband
-  interface Get#(TXVector) txVector;
-  interface Get#(Bit#(8)) txData;
-endinterface
-
 // maybe parameterize by generation algorithm at some point
-module [CONNECTED_MODULE] mkPacketGen (PacketGen);
+module [CONNECTED_MODULE] mkPacketGen (Empty);
 
  ServerStub_PACKETGENRRR serverStub <- mkServerStub_PACKETGENRRR();
+
+ Connection_Send#(TXVector) txVectorFIFO <- mkConnection_Send("TXVector");
+ Connection_Send#(TXVector) txVectorTest <- mkConnectionSendOptional("TXVectorTest"); 
+ Connection_Send#(Bit#(8))  txDataFIFO <-   mkConnection_Send("TXData");
+ Connection_Send#(Bit#(1))  txEnd    <- mkConnection_Send("TXEnd");
 
  LFSR#(Bit#(16)) lfsr <- mkLFSR_16();
  Reg#(Bit#(12)) size  <- mkReg(0); 
@@ -37,8 +26,6 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
  Reg#(Bit#(8)) checksum <- mkReg(0); 
  Reg#(Bool) initialized <- mkReg(False);
  Reg#(Bit#(1)) enable <- mkReg(0);
- FIFO#(TXVector) txVectorFIFO <- mkFIFO; 
- FIFO#(Bit#(8))  txDataFIFO <- mkFIFO; 
  Reg#(Bit#(32))  packetsTXReg <- mkReg(0);
  Reg#(Bit#(32))  cycleCountReg <- mkReg(0);
  Reg#(Bit#(12))  minPacketLengthReg <- mkReg(1);
@@ -116,7 +103,8 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
           $display("PacketGen: starting packet gen size: %d",length);
         end
 
-      txVectorFIFO.enq(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      txVectorFIFO.send(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      txVectorTest.send(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
    endrule
    
    rule transmitData(count > 0 && count < zeroExtend(size) && enable == 1);
@@ -127,7 +115,7 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
 
       lfsr.next();
       count <= count + 1;
-      txDataFIFO.enq(truncate(count-1));   
+      txDataFIFO.send(truncate(count-1));   
       checksum <= checksum + truncate(count-1);
    endrule
 
@@ -137,7 +125,7 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
           $display("PacketGen: transmit data (checksum) %h", 0-checksum);
         end
 
-      txDataFIFO.enq(0-checksum);
+      txDataFIFO.send(0-checksum);
       packetsTXReg <= packetsTXReg + 1;   
     
       if(`DEBUG_PACKETGEN == 1) 
@@ -152,8 +140,6 @@ module [CONNECTED_MODULE] mkPacketGen (PacketGen);
       delayCount <= delayCount - 1;
    endrule            
 
-  interface txVector = fifoToGet(txVectorFIFO);
-  interface txData = fifoToGet(txDataFIFO);
 
 endmodule
 
