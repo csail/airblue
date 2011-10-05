@@ -85,34 +85,6 @@ void * ProcessPackets(void *inputComplete) {
 
     } else if (length > 8){
       printf("Received non-matching CRC %x\n", crc);
-
-      // If it's good, let's try to process the packet using kismet
-      kis_packet *kisPacketPtr = new kis_packet();
-      kis_datachunk *kisDataPtr = new kis_datachunk();
-      kis_fcs_bytes *kisFCS = new kis_fcs_bytes();
-      kisDataPtr->data = packetPtr;
-      kisDataPtr->length = length-4;
-      kisDataPtr->dlt = KDLT_IEEE802_11;
-      
-      kisFCS->fcs[0] = (guint8)*(packetPtr + length - 4);
-      kisFCS->fcs[1] = (guint8)*(packetPtr + length - 3);
-      kisFCS->fcs[2] = (guint8)*(packetPtr + length - 2);
-      kisFCS->fcs[3] = (guint8)*(packetPtr + length - 1);
-      kisFCS->fcsvalid = 1;
-
-      kisPacketPtr->insert(_PCM(PACK_COMP_80211FRAME), kisDataPtr);
-      kisPacketPtr->insert(_PCM(PACK_COMP_FCSBYTES), kisFCS);
-
-      dissector->ieee80211_dissector(kisPacketPtr);
-      // We should get a packet_info back!
-      kis_ieee80211_packinfo *kisInfo = (kis_ieee80211_packinfo *) kisPacketPtr->fetch(_PCM(PACK_COMP_80211));
-
-      // leaking these strings...
-      printf("Received Src: %s, Dest: %s\n", kisInfo->source_mac.Mac2String().c_str(),
-	     kisInfo->dest_mac.Mac2String().c_str());
- 
-      // This wipes out all the things in the packet....
-      delete kisPacketPtr;
     }
 
     // Deallocate stuff
