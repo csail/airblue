@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_usrp
+File=airblue_wifi_phy_rx_stats_usrp
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -26,10 +26,6 @@ model=HW/SW Hybrid Pipeline Build
 
 [Airblue cyclic prefix insertion]
 File=modules/airblue/lib/CPInsert/src/airblue_cyclic_prefix_insert.awb
-Packagehint=airblue
-
-[Airblue Shifted Registers]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
 Packagehint=airblue
 
 [Airblue Magnitude Estimator]
@@ -142,7 +138,7 @@ File=modules/airblue/lib/Drivers/ConnectedApp/airblue-driver.awb
 Packagehint=airblue
 
 [Airblue application/Requires]
-airblue_driver_application=RX USRP Test Driver
+airblue_driver_application=RX Stats Test Driver
 hw_only_application=WiFi Phy Only
 
 [WiFi Receiver Pipeline/Requires]
@@ -191,10 +187,10 @@ MAGIC_DESCRAMBLE_SEED=0
 [WiFi Phy Only/Requires]
 airblue_phy=WiFi Phy Transceiver
 airblue_types=Airblue types (no SoftHints)
-airblue_phy_packet_gen=Airblue Phy NULL PacketGen
+airblue_phy_packet_gen=Airblue Phy Fixed Packet Gen
 airblue_shared=Airblue Shared Libraries
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
-airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
+airblue_phy_packet_check=Airblue Phy Only PacketCheck Fixed
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
@@ -268,6 +264,10 @@ VITERBI_TB_MAX_PATH=0
 File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
 Packagehint=airblue
 
+[Airblue Shifted Registers]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
+Packagehint=airblue
+
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
 File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
 Packagehint=leap
@@ -275,26 +275,35 @@ Packagehint=leap
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
 MODEL_CLOCK_FREQ=25
 
-[Airblue Phy NULL PacketGen]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_gen_rx.awb
+[Airblue Phy Only PacketCheck Fixed]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_fixed_rrr.awb
 Packagehint=airblue
 
-[Airblue Phy RX RRR Packet Check]
-File=modules/airblue/lib/PacketGen/src/PacketOutput/airblue_phy_packet_check_rx.awb
-Packagehint=airblue
-
-[RX USRP Test Driver/Requires]
-airblue_environment=Airblue Environment
-airblue_soft_mac=Airblue Soft MAC
-
-[RX USRP Test Driver]
-File=modules/airblue/lib/Drivers/RXTest/rx-test-usrp.awb
-Packagehint=airblue
-
-[Airblue Soft MAC]
-File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
+[Airblue Phy Fixed Packet Gen]
+File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_gen_fixed.awb
 Packagehint=airblue
 
 [Soft Services Submodel]
 File=config/pm/leap/submodels/common/soft-services.apm
 Packagehint=leap
+
+[Airblue CRC Checker]
+File=modules/airblue/lib/MACCRC/src/airblue_crc_checker.awb
+Packagehint=airblue
+
+[CRC Library]
+File=modules/airblue/lib/CRC/src/crc.awb
+Packagehint=airblue
+
+[Airblue Phy Only PacketCheck Fixed/Requires]
+airblue_crc_checker=Airblue CRC Checker
+
+[Airblue CRC Checker/Requires]
+crc=CRC Library
+
+[RX Stats Test Driver]
+File=modules/airblue/lib/Drivers/RXStats/rx-stats.awb
+Packagehint=airblue
+
+[RX Stats Test Driver/Requires]
+airblue_environment=Airblue Environment

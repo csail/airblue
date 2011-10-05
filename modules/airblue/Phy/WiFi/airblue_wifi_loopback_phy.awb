@@ -15,10 +15,6 @@
 %sources -t BSV -v PUBLIC WiFiPhyLoopbackTest.bsv
 %sources -t RRR -v PUBLIC Loopback.rrr
 
-%generated -t VERILOG mkWiFiFFTIFFT.v
-%generated -t BA mkWiFiFFTIFFT.ba
-
-
 %sources -t DICT -v PUBLIC WiFiRegisterMap.dic
 
 %param SYNTH_BOUNDARY mkTransceiver "name of synthesis boundary"

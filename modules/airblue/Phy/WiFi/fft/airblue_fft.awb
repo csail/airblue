@@ -12,6 +12,8 @@
 %requires airblue_fft_library
 
 %sources -t BSV -v PUBLIC WiFiFFT.bsv
+%generated -t VERILOG mkWiFiFFTIFFT.v
+%generated -t BA mkWiFiFFTIFFT.ba
 
 
 %AWB_END

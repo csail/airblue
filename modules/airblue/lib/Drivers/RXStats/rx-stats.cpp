@@ -29,6 +29,7 @@ double timespecdiff(timespec start, timespec end)
 AIRBLUE_DRIVER_CLASS::AIRBLUE_DRIVER_CLASS(PLATFORMS_MODULE p) :
     DRIVER_MODULE_CLASS(p)
 {
+  sataStub = new SATARRR_CLIENT_STUB_CLASS(p);
   packetCheckStub = new PACKETCHECKRRR_CLIENT_STUB_CLASS(p); 
   packetGenStub = new PACKETGENRRR_CLIENT_STUB_CLASS(p); 
 }
@@ -56,14 +57,16 @@ AIRBLUE_DRIVER_CLASS::Main()
   UINT32 hintTotal = 0, countTotal = 0, hintRst = 0;
   timespec time_last, time_current;
   bool first = true; 
-
-                          
+  UINT64 realignRaw ;
+  UINT32 realign;
+  UINT32 odds;                     
+     
   printf("Enabling packet generation\n");
-  while(1){
-    UINT64 realignRaw = sataStub->GetRealign(0);
-    UINT32 realign = realignRaw & 0xffffffff;
+  while(1) {
+    realignRaw = sataStub->GetRealign(0);
+    realign = realignRaw & 0xffffffff;
     //UINT resets = (realignRaw >> 32) & 0xffff;
-    UINT32 odds = (realignRaw >> 32) & 0xffffffff;
+    odds = (realignRaw >> 32) & 0xffffffff;
 
     ber_last = ber;
     crc_last = crc;
@@ -94,12 +97,10 @@ AIRBLUE_DRIVER_CLASS::Main()
 	//        printf("Length:%d:%d\n",ber_raw.length,ber_raw.packet_no);
       }
 
-    }
-
     sample_dropped = sataStub->GetSampleDropped(0);
 
     if(sample_dropped != sample_dropped_last) {
-      printf("RX:%lluTX:%d Sent: %llu Dropped: %d Realign: %d Odd: %d errors: %d ber: %llu length: %d\n", sataStub->GetRXCount(0), sataStub->GetTXCount(0), sataStub->GetSampleSent(0), sataStub->GetSampleDropped(0), realign,  odds, sataStub->GetRXErrors(0), ber_raw.ber_est, ber_raw.length);
+      printf("RX:%lluTX:%d Sent: %llu Dropped: %d Realign: %d Odd: %d errors: %d \n", sataStub->GetRXCount(0), sataStub->GetTXCount(0), sataStub->GetSampleSent(0), sataStub->GetSampleDropped(0), realign,  odds, sataStub->GetRXErrors(0));
     }
 
     sample_dropped_last = sample_dropped;
