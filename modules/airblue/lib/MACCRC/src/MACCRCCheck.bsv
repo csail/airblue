@@ -15,7 +15,7 @@ import FShow::*;
 `include "asim/provides/crc.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/commit_fifo.bsh"
+`include "asim/provides/librl_bsv_storage.bsh"
 
 interface CRC_CHECKER;
    // CRC <-> Phy

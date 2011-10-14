@@ -39,7 +39,7 @@ Packagehint=airblue
 [Airblue Shared Libraries/Requires]
 airblue_special_fifos=Airblue Special FIFOs
 airblue_common=Airblue common library
-airblue_shift_regs=Airblue Shifted Registers
+airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
 
 [Airblue Convolutional Encoder]
 File=modules/airblue/lib/ConvEncoder/src/airblue_convolutional_encoder.awb
@@ -264,10 +264,6 @@ VITERBI_TB_MAX_PATH=0
 File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
 Packagehint=airblue
 
-[Airblue Shifted Registers]
-File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs.awb
-Packagehint=airblue
-
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
 File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
 Packagehint=leap
@@ -307,3 +303,7 @@ Packagehint=airblue
 
 [RX Stats Test Driver/Requires]
 airblue_environment=Airblue Environment
+
+[Airblue Shifted Registers FPGA-optimized]
+File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=airblue

@@ -55,8 +55,8 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    // Transmitter Connections
    /////
    Connection_Send#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Send("AnalogTransmit");
-   Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXData");
-   Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXVector");
+   Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXVector");
+   Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXData");
    Connection_Receive#(Bit#(1))  txEnd    <- mkConnection_Receive("TXEnd");
 
    mkConnection(wifiTransmitter.out,analogTX);

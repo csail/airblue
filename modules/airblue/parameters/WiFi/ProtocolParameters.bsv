@@ -93,10 +93,10 @@ instance IsEncoderCtrl#(TXGlobalCtrl);
 endinstance
 
 typedef 4  TXFPIPrec; // tx fixedpoint integer precision
-typedef 12 TXFPFPrec; // tx fixedpoint fractional precision
+typedef 14 TXFPFPrec; // tx fixedpoint fractional precision
 
 typedef 4  RXFPIPrec; // rx fixedpoint integer precision
-typedef 12 RXFPFPrec; // rx fixedpoint fractional precision
+typedef 14 RXFPFPrec; // rx fixedpoint fractional precision
 
 typedef struct {
    Bool firstSymbol; 

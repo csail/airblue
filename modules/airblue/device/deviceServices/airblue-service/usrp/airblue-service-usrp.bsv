@@ -209,7 +209,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     // correct baseband then this can be used to detect packet boundaries. 
     
 
-    Connection_Receive#(DACMesg#(FFTFPIPrec,FFTFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
+    Connection_Receive#(DACMesg#(TXFPIPrec,TXFPFPrec)) analogTX <- mkConnection_Receive("AnalogTransmit");
 
     Reg#(Bit#(TAdd#(1,TLog#(`MODEL_CLOCK_FREQ)))) counter <- mkReg(0); 
 
