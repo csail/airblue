@@ -14,6 +14,6 @@
 
 %sources -t BSV -v PUBLIC MACCRCCheck.bsv
 
-%param DEBUG_MACCRC 0 "Enable MACCRC"
+%param DEBUG_CRC_CHECKER 0 "Enable MACCRC"
 
 %AWB_END

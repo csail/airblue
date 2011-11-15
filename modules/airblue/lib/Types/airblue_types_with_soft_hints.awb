@@ -10,7 +10,7 @@
 
 %attributes airblue soft_hints
 
-%sources -t BSV -v PUBLIC DataTypes.bsv Controls.bsv Interfaces.bsv
+%sources -t BSV -v PUBLIC DataTypes.bsv Controls.bsv Interfaces.bsv Typeclasses.bsv
 
 %param SOFT_PHY_HINTS 1 "Enable SoftPHY by setting the macro SOFT_PHY_HINTS to any value"
 

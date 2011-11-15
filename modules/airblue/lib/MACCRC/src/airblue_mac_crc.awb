@@ -8,8 +8,6 @@
 %desc Airblue MAC CRC   
 %provides airblue_mac_crc
 
-%requires crc
-
 %attributes airblue
 
 %sources -t BSV -v PUBLIC MACCRC.bsv

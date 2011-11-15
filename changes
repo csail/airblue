@@ -1608,3 +1608,25 @@ Directory modules/airblue/lib/MACCRC/src
 
 
 Last few release changes.
+
+----------
+kfleming    Date: Tue Nov 15 18:15:50 EST 2011  CSN: CSN-airblue-410
+                  Tue Nov 15 23:15:50 UTC 2011
+
+
+Directory modules/airblue/Phy/WiFi
+ WiFiPhyLoopbackTest.bsv   Locally Modified          409 
+
+Directory modules/airblue/lib/Types
+ airblue_types.awb         Locally Modified          409 
+ Typeclasses.bsv           Locally Added               0 
+ airblue_types_with_soft_hints.awb Locally Modified          409 
+
+Directory modules/airblue/lib/MACCRC/src
+ MACCRCCheck.bsv           Locally Modified          409 
+ MACCRC.bsv                Locally Modified          409 
+ airblue_mac_crc.awb       Locally Modified          409 
+ airblue_crc_checker.awb   Locally Modified          409 
+
+
+Added some parameterization to the CRC checkers by way of a new typeclass.

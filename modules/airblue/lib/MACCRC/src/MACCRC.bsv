@@ -11,16 +11,16 @@ import FShow::*;
 `include "awb/provides/airblue_parameters.bsh"
 `include "awb/provides/librl_bsv_storage.bsh"
 
-interface MACCRC;
+interface MACCRC#(type rx_vector_t, type tx_vector_t);
    // CRC <-> Phy
-   interface Get#(BasicTXVector)      phy_txstart;  
-   interface Put#(BasicRXVector)      phy_rxstart;   
+   interface Get#(tx_vector_t)   phy_txstart;  
+   interface Put#(rx_vector_t)   phy_rxstart;   
    interface Get#(PhyData)       phy_txdata;     
    interface Put#(PhyData)       phy_rxdata;   
 
    // CRC <-> MAC
-   interface Put#(BasicTXVector)      mac_txstart;  
-   interface Get#(BasicRXVector)      mac_rxstart;   
+   interface Put#(tx_vector_t)   mac_txstart;  
+   interface Get#(rx_vector_t)   mac_rxstart;   
    interface Put#(PhyData)       mac_txdata;     
    interface Get#(PhyData)       mac_rxdata;   
 
@@ -43,10 +43,16 @@ typedef enum {
   TX
 } CRCState deriving (Bits,Eq);
 
-module mkMACCRC (MACCRC);
+module mkMACCRC (MACCRC#(rx_vector_t, tx_vector_t))
+   provisos (FShow#(rx_vector_t), 
+             HasByteLength#(rx_vector_t, SizeOf#(PhyPacketLength)),
+             Bits#(rx_vector_t, rx_vector_sz),
+             FShow#(tx_vector_t),	     
+             HasByteLength#(tx_vector_t, SizeOf#(PhyPacketLength)),
+             Bits#(tx_vector_t, tx_vector_sz));
 
-   Reg#(BasicRXVector) rxvector <- mkReg(?);  
-   Reg#(BasicTXVector) txvector <- mkReg(?);  
+   Reg#(rx_vector_t) rxvector <- mkReg(?);  
+   Reg#(tx_vector_t) txvector <- mkReg(?);  
    Reg#(PhyPacketLength) length <- mkReg(0);
    Reg#(PhyPacketLength) counter <- mkReg(0);
    Reg#(Bool)     rxFull <- mkReg(False); 
@@ -73,13 +79,13 @@ module mkMACCRC (MACCRC);
        end
    endrule
 
-   rule handleTXzero(state == TX && counter >= length && counter < txvector.length);
+   rule handleTXzero(state == TX && counter >= length && counter < byteLength(txvector));
      counter <= counter + 1;
      $display("MACCRC TX Zero Insert");
      crc.inputBits(0);
    endrule
 
-   rule handleTXCRC(state == TX && counter == txvector.length);
+   rule handleTXCRC(state == TX && counter == byteLength(txvector));
      // got all the TX data
      Vector#(TDiv#(SizeOf#(Bit#(32)),SizeOf#(PhyData)), PhyData) crcVec= unpack(reverseBits((~fromInteger(valueof(CRCPolyResult)))^crc.getRemainder));
      crcCount <= crcCount + 1;
@@ -120,7 +126,7 @@ module mkMACCRC (MACCRC);
 
    // CRC <-> Phy
    interface Get phy_txstart;  
-     method ActionValue#(BasicTXVector) get() if(txFull);
+     method ActionValue#(tx_vector_t) get() if(txFull);
        if(`DEBUG_MACCRC == 1)
          begin
            $display("TB Packet Past CRC");
@@ -131,13 +137,14 @@ module mkMACCRC (MACCRC);
    endinterface
 
    interface Put phy_rxstart;
-     method Action put(BasicRXVector vector) if(state == Idle && !rxFull);
-       BasicRXVector newVec = vector;
-       newVec.length = newVec.length - 4;
-       length <= vector.length;
+     method Action put(rx_vector_t vector) if(state == Idle && !rxFull);
+       PhyPacketLength packetLength = byteLength(vector);
+       rx_vector_t newVec = setByteLength(vector, packetLength - 4);
+       length <= byteLength(vector);
        rxvector <= newVec;
        state <= RX;
-       $display("TB MACCRC RX Vector start: %d",  vector.length);
+
+       $display("TB MACCRC RX Vector start: %d",  packetLength);
        counter <= 0;
        crcCount <= 0;
        crc.init;
@@ -175,29 +182,29 @@ module mkMACCRC (MACCRC);
 
    // CRC <-> MAC
    interface Put      mac_txstart;  
-     method Action put(BasicTXVector vector) if(state == Idle && !txFull);
+     method Action put(tx_vector_t vector) if(state == Idle && !txFull);
        crc.init();
        counter <= 0; 
        state <= TX;
+       PhyPacketLength packetLength = byteLength(vector);
        if(`DEBUG_MACCRC == 1)
          begin
-           $display("MACCRC TX Vector: %d",  vector.length);
+           $display("MACCRC TX Vector: %d",  packetLength);
          end
-       length <= vector.length;
-       BasicTXVector newVec = vector;
-       newVec.length = newVec.length + 4;
+       length <= packetLength;
+       tx_vector_t newVec = setByteLength(vector, packetLength + 4);
        txvector <= newVec;
        txFull <= True;
      endmethod
    endinterface
 
    interface Get mac_rxstart;   
-     method ActionValue#(BasicRXVector) get() if(rxFull);
+     method ActionValue#(rx_vector_t) get() if(rxFull);
        rxFull <= False;
-
+       PhyPacketLength packetLength = byteLength(rxvector);
        if(`DEBUG_MACCRC == 1)
          begin
-           $display("TB MACCRC RX Vector finish: %d",  rxvector.length);
+           $display("TB MACCRC RX Vector finish: %d",  packetLength);
          end
 
        return rxvector;

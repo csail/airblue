@@ -73,8 +73,8 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    /////
    // Transmitter Connections
    /////
-   Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXData");
-   Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXVector");
+   Connection_Receive#(TXVector) txVector <- mkConnection_Receive("TXVector");
+   Connection_Receive#(Bit#(8))  txData   <- mkConnection_Receive("TXData");
    Connection_Receive#(Bit#(1))  txEnd    <- mkConnection_Receive("TXEnd");
  
    SyncFIFOIfc#(TXVector) lengthFIFO <- mkSyncFIFOFromCC(16,clk20.clk);

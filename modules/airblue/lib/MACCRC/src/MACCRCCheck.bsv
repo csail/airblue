@@ -17,9 +17,10 @@ import FShow::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 
-interface CRC_CHECKER;
+
+interface CRC_CHECKER#(type vector);
    // CRC <-> Phy
-   interface Put#(RXVector)      phy_rxstart;   
+   interface Put#(vector)           phy_rxstart;   
    interface Put#(PhyData)            phy_rxdata;   
 
    // CRC <-> MAC
@@ -43,9 +44,12 @@ typedef enum {
   TX
 } CRCState deriving (Bits,Eq);
 
-module mkCRCChecker (CRC_CHECKER);
+module mkCRCChecker (CRC_CHECKER#(vector_t))
+   provisos (FShow#(vector_t), 
+             HasByteLength#(vector_t, SizeOf#(PhyPacketLength)),
+             Bits#(vector_t, vector_sz));
 
-   Reg#(RXVector) rxvector <- mkReg(?);  
+   Reg#(vector_t) rxvector <- mkReg(?);  
    Reg#(PhyPacketLength) length <- mkReg(0);
    Reg#(PhyPacketLength) counter <- mkReg(0);
    Reg#(CRCState) state <- mkReg(Idle);
@@ -58,7 +62,7 @@ module mkCRCChecker (CRC_CHECKER);
 
    rule checkDebug;
      debugCounter <= debugCounter + 1;
-     if(debugCounter == 0 && `DEBUG_MACCRC == 1)
+     if(debugCounter == 0 && `DEBUG_CRC_CHECKER == 1)
        begin
          $display("state", fshow(state));
          $display("rxvector", fshow(rxvector));
@@ -71,27 +75,24 @@ module mkCRCChecker (CRC_CHECKER);
      if(reverseBits(crc.getRemainder) == fromInteger(valueof(CRCPolyResult)))
        begin
          passedFIFO.enq(True);  
-         $display("MACCRC Packet RXed");
+         $display("CRC_CHECKER Packet RXed");
        end
      else 
        begin
          passedFIFO.enq(False);  
-         if(`DEBUG_MACCRC == 1)
+         if(`DEBUG_CRC_CHECKER == 1)
            begin
-             $display("MACCRC Shooting down packet expected: %b %h, got %h %h %h %h", expected,expected, crc.getRemainder, ~crc.getRemainder,reverseBits(crc.getRemainder), ~reverseBits(crc.getRemainder)  );
+             $display("CRC_CHECKER Shooting down packet expected: %b %h, got %h %h %h %h", expected,expected, crc.getRemainder, ~crc.getRemainder,reverseBits(crc.getRemainder), ~reverseBits(crc.getRemainder)  );
            end
        end
    endrule
 
 
    interface Put phy_rxstart;
-     method Action put(RXVector vector) if(state == Idle);
-       RXVector newVec = vector;
-       newVec.header.length = newVec.header.length - 4;
-       length <= vector.header.length;
-       rxvector <= newVec;
+     method Action put(vector_t vector) if(state == Idle);
+       length <= byteLength(vector);
+       rxvector <= vector;
        state <= RX;
-       $display("TB MACCRC RX Vector start: %d",  vector.header.length);
        counter <= 0;
        crcCount <= 0;
        crc.init;
@@ -103,10 +104,10 @@ module mkCRCChecker (CRC_CHECKER);
        crc.inputBits(data);
        counter <= counter + 1;
   
-       if(`DEBUG_MACCRC == 1)
+       if(`DEBUG_CRC_CHECKER == 1)
          begin 
-           $display("%m MACCRC RX data from PHY: %h",data);
-           $display("MACCRC Status: %b %h, got %b %h %h %h %h", expected,expected,crc.getRemainder,crc.getRemainder,~crc.getRemainder,reverseBits(crc.getRemainder), ~reverseBits(crc.getRemainder) );
+           $display("%m CRC_CHECKER RX data from PHY: %h",data);
+           $display("CRC_CHECKER Status: %b %h, got %b %h %h %h %h", expected,expected,crc.getRemainder,crc.getRemainder,~crc.getRemainder,reverseBits(crc.getRemainder), ~reverseBits(crc.getRemainder) );
          end
      endmethod
    endinterface
