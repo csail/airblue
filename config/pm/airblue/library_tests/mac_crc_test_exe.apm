@@ -4,7 +4,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=mac_crc_test
+File=mac_crc_test_exe
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -27,15 +27,13 @@ hw_only_application=Airblue MAC CRC Test
 File=modules/airblue/lib/MACCRC/src/airblue_mac_crc.awb
 Packagehint=airblue
 
-[Airblue MAC CRC/Requires]
-crc=CRC Library
-
 [Airblue MAC CRC Test/Requires]
 airblue_mac_crc=Airblue MAC CRC
 airblue_types=Airblue types (no SoftHints)
 airblue_parameters=Airblue WiFi parameters (with standard null SHIM)
 airblue_common=Airblue common library
 airblue_shift_regs=Airblue Shifted Registers FPGA-optimized
+crc=CRC Library
 
 [Airblue MAC CRC Test]
 File=modules/airblue/lib/MACCRC/test/airblue_mac_crc_test.awb

@@ -228,3 +228,45 @@ typedef struct{
    Rate      rate;
    PhyPacketLength length;
    } BasicRXVector deriving (Bits, Eq);
+
+
+instance HasByteLength#(RXVector, pplsize)
+   provisos (Bits#(PhyPacketLength, pplsize));
+   function Bit#(SizeOf#(PhyPacketLength)) byteLength(RXVector b) = b.header.length;
+   function RXVector setByteLength(RXVector b, Bit#(SizeOf#(PhyPacketLength)) length);
+      RXVector a = b;
+      a.header.length = length;
+      return a;
+   endfunction
+endinstance
+
+
+instance HasByteLength#(BasicRXVector, pplsize)
+   provisos (Bits#(PhyPacketLength, pplsize));
+   function Bit#(SizeOf#(PhyPacketLength)) byteLength(BasicRXVector b) = b.length;
+   function BasicRXVector setByteLength(BasicRXVector b, Bit#(SizeOf#(PhyPacketLength)) length);
+      BasicRXVector a = b;
+      a.length = length;
+      return a;
+   endfunction
+endinstance
+
+instance HasByteLength#(TXVector, pplsize)
+   provisos (Bits#(PhyPacketLength, pplsize));
+   function Bit#(SizeOf#(PhyPacketLength)) byteLength(TXVector b) = b.header.length;
+   function TXVector setByteLength(TXVector b, Bit#(SizeOf#(PhyPacketLength)) length);
+      TXVector a = b;
+      a.header.length = length;
+      return a;
+   endfunction
+endinstance
+
+instance HasByteLength#(BasicTXVector, pplsize)
+   provisos (Bits#(PhyPacketLength, pplsize));
+   function Bit#(SizeOf#(PhyPacketLength)) byteLength(BasicTXVector b) = b.length;
+   function BasicTXVector setByteLength(BasicTXVector b, Bit#(SizeOf#(PhyPacketLength)) length);
+      BasicTXVector a = b;
+      a.length = length;
+      return a;
+   endfunction
+endinstance

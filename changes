@@ -1630,3 +1630,26 @@ Directory modules/airblue/lib/MACCRC/src
 
 
 Added some parameterization to the CRC checkers by way of a new typeclass.
+
+----------
+kfleming    Date: Fri Nov 25 13:06:57 EST 2011  CSN: CSN-airblue-411
+                  Fri Nov 25 18:06:57 UTC 2011
+
+
+Directory config/pm/airblue/library_tests
+ mac_crc_test_exe.apm      Locally Modified          410 
+
+Directory modules/airblue/parameters/WiFi
+ BasicMACPhyParameters.bsv Locally Modified          410 
+
+Directory modules/airblue/lib/MACCRC/test
+ MACCRCTest.bsv            Locally Modified          410 
+ airblue_mac_crc_test.awb  Locally Modified          410 
+
+Directory modules/airblue/lib/MACCRC/src
+ MACCRC.bsv                Locally Modified          410 
+
+
+Fixed bug in 80211 MAC CRC code - for some reason the encoder was not
+80211 compatible.  I also upgraded the MAC testbenches based on last
+week's parameterization.

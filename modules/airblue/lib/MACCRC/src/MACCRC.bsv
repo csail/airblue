@@ -79,15 +79,10 @@ module mkMACCRC (MACCRC#(rx_vector_t, tx_vector_t))
        end
    endrule
 
-   rule handleTXzero(state == TX && counter >= length && counter < byteLength(txvector));
-     counter <= counter + 1;
-     $display("MACCRC TX Zero Insert");
-     crc.inputBits(0);
-   endrule
-
-   rule handleTXCRC(state == TX && counter == byteLength(txvector));
+   rule handleTXCRC(state == TX && counter == length);
      // got all the TX data
-     Vector#(TDiv#(SizeOf#(Bit#(32)),SizeOf#(PhyData)), PhyData) crcVec= unpack(reverseBits((~fromInteger(valueof(CRCPolyResult)))^crc.getRemainder));
+     Vector#(TDiv#(SizeOf#(Bit#(32)),SizeOf#(PhyData)), PhyData) crcVec= unpack(crc.getRemainder);
+
      crcCount <= crcCount + 1;
      if(crcCount + 1 == 0)
        begin
@@ -95,10 +90,10 @@ module mkMACCRC (MACCRC#(rx_vector_t, tx_vector_t))
        end
      if(`DEBUG_MACCRC == 1)
        begin
-         $display("MACCRC TX: %h", crc.getRemainder);
-         $display("MACCRC PacketTX: %b %h", ~reverseBits(crcVec[crcCount]),~reverseBits(crcVec[crcCount]));
+         $display("MACCRC TX: got %h %h %h %h %h", crc.getRemainder, ~crc.getRemainder,reverseBits(crc.getRemainder), ~reverseBits(crc.getRemainder), pack(reverse(crcVec)));
+         $display("MACCRC PacketTX: %h %h", ~crcVec[crcCount],~reverseBits(crcVec[crcCount]));
        end
-     txBuffer.enq(~reverseBits(crcVec[crcCount]));
+     txBuffer.enq(~crcVec[crcCount]);
    endrule   
 
 
@@ -129,7 +124,7 @@ module mkMACCRC (MACCRC#(rx_vector_t, tx_vector_t))
      method ActionValue#(tx_vector_t) get() if(txFull);
        if(`DEBUG_MACCRC == 1)
          begin
-           $display("TB Packet Past CRC");
+           $display("MACCRC Sends TX Vector");
          end
        txFull <= False;
        return txvector;
@@ -186,6 +181,7 @@ module mkMACCRC (MACCRC#(rx_vector_t, tx_vector_t))
        crc.init();
        counter <= 0; 
        state <= TX;
+     
        PhyPacketLength packetLength = byteLength(vector);
        if(`DEBUG_MACCRC == 1)
          begin

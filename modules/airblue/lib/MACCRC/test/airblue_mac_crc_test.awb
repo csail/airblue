@@ -13,6 +13,7 @@
 %requires airblue_common
 %requires airblue_parameters
 %requires airblue_shift_regs
+%requires crc
 
 %attributes airblue
 

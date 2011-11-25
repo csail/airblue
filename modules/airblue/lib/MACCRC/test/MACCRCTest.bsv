@@ -16,13 +16,14 @@ import FShow::*;
 `include "asim/provides/airblue_mac_crc.bsh"
 `include "asim/provides/airblue_types.bsh"
 `include "asim/provides/airblue_parameters.bsh"
+`include "asim/provides/airblue_common.bsh"
 
 // (* synthesize *) 
 // module mkMACCRCTest(Empty);
    
 module mkHWOnlyApplication (Empty);   
 
-   MACCRC maccrc <- mkMACCRC;
+   MACCRC#(BasicRXVector,BasicTXVector) maccrc <- mkMACCRC;
    FIFOF#(PhyData) turnFIFO <- mkSizedFIFOF(4096);
    FIFOF#(PhyData) expectedFIFO <- mkSizedFIFOF(4096);
    FIFOF#(BasicTXVector) vectorFIFO <- mkSizedFIFOF(1);
