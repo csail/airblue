@@ -80,8 +80,6 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
    Connection_Receive#(SynchronizerMesg#(RXFPIPrec,RXFPFPrec)) analogRX <- mkConnection_Receive("AnalogReceive");
 
    mkConnection(analogRX,wifiReceiver.in); 
-//   mkConnection(abortReq,wifiReceiver.abortReq); 
-//   mkConnection(wifiReceiver.abortAck, abortAck); 
    mkConnection(wifiReceiver.outData, outData); 
    mkConnection(wifiReceiver.outRXVector, outVector); 
 

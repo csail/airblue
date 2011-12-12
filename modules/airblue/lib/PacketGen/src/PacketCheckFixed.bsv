@@ -31,7 +31,7 @@ typedef enum {
 // this one only checks packets for correctness, not 
 // for sequence errors - might want to do that at some point
 // even if it takes a while to re-sync
-module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
+module [CONNECTED_MODULE] mkPacketCheck (Empty);
 
  ServerStub_PACKETCHECKRRR serverStub <- mkServerStub_PACKETCHECKRRR();
 
@@ -44,14 +44,14 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  Reg#(Bit#(13)) count <- mkReg(0);
  Reg#(Bit#(12)) expectedIndex <- mkReg(0);
 
- FIFO#(RXVector) rxVectorFIFO <- mkFIFO; 
- FIFO#(Bit#(8))  rxDataFIFO <- mkFIFO; 
+ Connection_Receive#(RXVector) rxVectorFIFO <- mkConnection_Receive("RXVector"); 
+ Connection_Receive#(Bit#(8))  rxDataFIFO <- mkConnection_Receive("RXData"); 
+ Connection_Send#(Bit#(1))  abortReqFIFO <-mkConnection_Send("AbortReq");
+ Connection_Receive#(Bit#(1))  abortAckFIFO <- mkConnection_Receive("AbortAck");  
  FIFO#(Bit#(8))  rxTransferFIFO <- mkFIFO; 
- FIFO#(Bit#(0))  abortReqFIFO <- mkFIFO;
- FIFO#(Bit#(0))  abortAckFIFO <- mkFIFO;  
  FIFOF#(ByteBERToken)  byteBERFIFO <- mkFIFOF;  
 
- CRC_CHECKER crcChecker <- mkCRCChecker;
+ CRC_CHECKER#(PhyPacketLength) crcChecker <- mkCRCChecker;
 
  Reg#(Bit#(32)) packetsRXReg <- mkReg(0);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
@@ -152,13 +152,13 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
 
  rule startPacketCheck(count == 0 && initialized);
    rxVectorFIFO.deq;
-   crcChecker.phy_rxstart.put(rxVectorFIFO.first);
-   size <= rxVectorFIFO.first.header.length;
+   crcChecker.phy_rxstart.put(rxVectorFIFO.receive);
+   size <= rxVectorFIFO.receive.header.length;
    expectedIndex <= 0;
    count <= 1;
    if(`DEBUG_PACKETCHECK == 1)
      begin
-       $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+       $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.receive.header.length, cycleCountReg);
      end
    
  endrule
@@ -172,9 +172,9 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       rxDataFIFO.deq;
       if(`DEBUG_PACKETCHECK == 1)
         begin
-          $display("PacketCheck: rxDataFIFO.first %d",rxDataFIFO.first);
+          $display("PacketCheck: rxDataFIFO.receive %d",rxDataFIFO.receive);
         end
-      crcChecker.phy_rxdata.put(rxDataFIFO.first);
+      crcChecker.phy_rxdata.put(rxDataFIFO.receive);
       count <= count + 1;
 
       if(size != expectedSize)
@@ -188,7 +188,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
         begin                      
             expectedPacket.readReq(truncate(count - 1));           
             byteBER.readReq(truncate(count - 1));
-            rxTransferFIFO.enq(rxDataFIFO.first);                        
+            rxTransferFIFO.enq(rxDataFIFO.receive);                        
             byteBERFIFO.enq(DataPath);
          end
  endrule
@@ -198,7 +198,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    let byteBERPrev <- byteBER.readRsp();
    byteBERFIFO.deq();
    rxTransferFIFO.deq;
-   Bit#(32) thisBER = zeroExtend(pack(countOnes(expected^rxTransferFIFO.first())));
+   Bit#(32) thisBER = zeroExtend(pack(countOnes(expected^rxTransferFIFO.receive())));
    byteBER.write(expectedIndex,byteBERPrev + thisBER);    
    expectedIndex <= expectedIndex + 1;
    packetBerReg <= packetBerReg + thisBER;
@@ -257,12 +257,5 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
         end
 
    endrule
-
-  
-
-  interface rxVector = fifoToPut(rxVectorFIFO);
-  interface rxData = fifoToPut(rxDataFIFO);
-  interface abortReq = fifoToGet(abortReqFIFO);
-  interface abortAck = fifoToPut(abortAckFIFO);    
 
 endmodule

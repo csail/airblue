@@ -51,31 +51,6 @@ module [CONNECTED_MODULE] mkHWOnlyApplication (Empty);
    let packetGen <- mkPacketGen;
    let packetCheck <- mkPacketCheck;
 
-   // Receiver Side   
-   Connection_Receive#(Bit#(1)) abortAck <- mkConnection_Receive("AbortAck");
-   Connection_Send#(Bit#(1)) abortReq <- mkConnection_Send("AbortReq");
-   Connection_Receive#(Bit#(8)) outData <- mkConnection_Receive("RXData");   
-   Connection_Receive#(RXVector) outVector <- mkConnection_Receive("RXVector");   
-
-
-   rule rxData;
-      let data = outData.receive();
-      outData.deq();
-      packetCheck.rxData.put(data);
-   endrule
-
-   mkConnection(packetCheck.rxVector,outVector);
-   
-   rule connectAbortAck (True);
-      packetCheck.abortAck().put(0);
-      abortAck.deq();
-   endrule
-
-   rule connectAbortReq (True);
-      let dont_care <- packetCheck.abortReq.get;
-      abortReq.send(0);
-   endrule
-
 endmodule
 
 

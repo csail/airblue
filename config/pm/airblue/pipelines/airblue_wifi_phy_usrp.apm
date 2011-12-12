@@ -177,9 +177,7 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=airblue
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Airblue Services
 connected_application=Airblue application
-soft_services=Soft Services Submodel
 
 [Soft Services Hybrid Application Environment]
 File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
@@ -198,45 +196,6 @@ airblue_phy_packet_check=Airblue Phy RX RRR Packet Check
 
 [WiFi Phy Only]
 File=modules/airblue/PhyOnly/WiFi/airblue_wifi_phyonly.awb
-Packagehint=airblue
-
-[Common Services/Requires]
-stats_service=Stats Service
-assertions_service=Assertions Service
-debug_scan_service=Debug Scan Services
-streams_service=Streams Service
-dynamic_parameters_service=Dynamic Parameter Service
-
-[Streams Service]
-File=modules/leap/libraries/platform-services/common-services/streams-service/streams-service.awb
-Packagehint=leap
-
-[Stats Service]
-File=modules/leap/libraries/platform-services/common-services/stats-service/stats-service.awb
-Packagehint=leap
-
-[Common Services]
-File=modules/leap/libraries/platform-services/common-services/common-services-standard.awb
-Packagehint=leap
-
-[Assertions Service]
-File=modules/leap/libraries/platform-services/common-services/assertions-service/assertions-service.awb
-Packagehint=leap
-
-[Airblue Services/Requires]
-common_services=Common Services
-airblue_service=Airblue Service (USRP)
-
-[Debug Scan Services]
-File=modules/leap/libraries/platform-services/common-services/debug-scan-service/debug-scan-service.awb
-Packagehint=leap
-
-[Dynamic Parameter Service]
-File=modules/leap/libraries/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
-Packagehint=leap
-
-[Airblue Services]
-File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=airblue
 
 [Airblue Viterbi (no SoftHints)]
@@ -263,10 +222,6 @@ Packagehint=airblue
 
 [Airblue Viterbi (no SoftHints)/Params]
 VITERBI_TB_MAX_PATH=0
-
-[Airblue Service (USRP)]
-File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
-Packagehint=airblue
 
 [Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
 File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
@@ -295,6 +250,3 @@ Packagehint=airblue
 File=modules/airblue/MAC/WiFi/softMAC/airblue-softmac.awb
 Packagehint=airblue
 
-[Soft Services Submodel]
-File=config/pm/leap/submodels/common/soft-services.apm
-Packagehint=leap

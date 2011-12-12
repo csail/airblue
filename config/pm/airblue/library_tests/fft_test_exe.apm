@@ -4,7 +4,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=HAsim
-File=fft_test
+File=fft_test_exe
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
@@ -51,9 +51,7 @@ File=modules/leap/build-support/project/application-env/soft-services/applicatio
 Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Standard Platform Services
 connected_application=HW only hybrid application
-soft_services=Soft Services Submodel
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
@@ -63,10 +61,6 @@ Packagehint=leap
 project_common=Default Hybrid Project Common Utilities
 fpgaenv=Hybrid Simulation FPGA Environment
 application_env=Soft Services Hybrid Application Environment
-
-[Standard Platform Services]
-File=config/pm/leap/submodels/platform-services/standard-platform-services.apm
-Packagehint=leap
 
 [WiFi Shared FFT]
 File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
@@ -86,10 +80,6 @@ airblue_fft_library=Airblue Folded FFT/IFFT
 [Airblue Folded FFT/IFFT]
 File=modules/airblue/lib/FFT/src/airblue_folded_fft.awb
 Packagehint=airblue
-
-[Soft Services Submodel]
-File=config/pm/leap/submodels/common/soft-services.apm
-Packagehint=leap
 
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb

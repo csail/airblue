@@ -16,7 +16,6 @@ module [CONNECTED_MODULE] mkPacketGen (Empty);
  ServerStub_PACKETGENRRR serverStub <- mkServerStub_PACKETGENRRR();
 
  Connection_Send#(TXVector) txVectorFIFO <- mkConnection_Send("TXVector");
- Connection_Send#(TXVector) txVectorTest <- mkConnectionSendOptional("TXVectorTest"); 
  Connection_Send#(Bit#(8))  txDataFIFO <-   mkConnection_Send("TXData");
  Connection_Send#(Bit#(1))  txEnd    <- mkConnection_Send("TXEnd");
 
@@ -104,7 +103,7 @@ module [CONNECTED_MODULE] mkPacketGen (Empty);
         end
 
       txVectorFIFO.send(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
-      txVectorTest.send(TXVector{header:HeaderInfo{length:length, rate: unpack(rateReg), power:0, has_trailer: False}, pre_data:tagged Valid 0, post_data: tagged Valid 0});
+      
    endrule
    
    rule transmitData(count > 0 && count < zeroExtend(size) && enable == 1);

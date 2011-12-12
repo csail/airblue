@@ -1653,3 +1653,45 @@ Directory modules/airblue/lib/MACCRC/src
 Fixed bug in 80211 MAC CRC code - for some reason the encoder was not
 80211 compatible.  I also upgraded the MAC testbenches based on last
 week's parameterization.
+
+----------
+kfleming    Date: Mon Dec 12 17:30:56 EST 2011  CSN: CSN-airblue-412
+                  Mon Dec 12 22:30:56 UTC 2011
+
+
+Directory config/pm/airblue/library_tests
+ viterbi_test_exe.apm      Locally Modified          411 
+ mac_crc_test_exe.apm      Locally Modified          411 
+ puncturer_test_exe.apm    Locally Modified          411 
+ deinterleaver_test_exe.apm Locally Modified          411 
+ bit_stream_fifo_test_exe.apm Locally Modified          411 
+ synchronizer_test_exe.apm Locally Modified          411 
+ channel_estimator_test_exe.apm Locally Modified          411 
+ fft_test_exe.apm          Locally Modified          411 
+ bcjr_test_exe.apm         Locally Modified          411 
+ interleaver_test_exe.apm  Locally Modified          411 
+ inv_sq_root_test_exe.apm  Locally Modified          411 
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_usrp.apm Locally Modified          411 
+ airblue_wifi_phy_rx_exe.apm Locally Modified          411 
+ airblue_wifi_phy_loopback_exe.apm Locally Modified          411 
+ airblue_wifi_phy_rx_stats_usrp.apm Locally Modified          411 
+ airblue_wifi_phy_rx_xupv5.apm Locally Modified          411 
+
+Directory modules/airblue/Phy/WiFi
+ WiFiTransceiver.bsv       Locally Modified          411 
+
+Directory modules/airblue/PhyOnly/WiFi
+ Transceiver.bsv           Locally Modified          411 
+
+Directory modules/airblue/lib/PacketGen/src
+ PacketGenRRR.bsv          Locally Modified          411 
+ PacketCheckRRR.bsv        Locally Modified          411 
+ PacketCheckFixed.bsv      Locally Modified          411 
+
+
+Re-racked apm to reflect new LEAP organization. 
+
+Changed PacketCheck to use soft connections.
+Removed bug in PacketGen that was causing deadlock.

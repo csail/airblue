@@ -15,28 +15,11 @@ import StmtFSM::*;
 `include "asim/provides/clocks_device.bsh"
 `include "asim/rrr/remote_server_stub_PACKETCHECKRRR.bsh"
 
-interface PacketCheck;
-  // These functions reveal stats about the generator
-  //interface ReadOnly#(Bit#(32)) packetsRX;
-  //interface ReadOnly#(Bit#(32)) packetsRXCorrect;
-  //interface ReadOnly#(Bit#(32)) bytesRX;
-  //interface ReadOnly#(Bit#(32)) bytesRXCorrect;
-  //interface ReadOnly#(Bit#(32)) cycleCount;
-  //interface ReadOnly#(Bit#(32)) ber;
-
-  // for hooking up to the baseband
-  interface Put#(RXVector) rxVector;
-  interface Put#(Bit#(8))  rxData;
-  interface Put#(Bit#(0))  abortAck;
-  interface Get#(Bit#(0))  abortReq; 
-endinterface
-
-
 
 // this one only checks packets for correctness, not 
 // for sequence errors - might want to do that at some point
 // even if it takes a while to re-sync
-module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
+module [CONNECTED_MODULE] mkPacketCheck (Empty);
 
  ServerStub_PACKETCHECKRRR serverStub <- mkServerStub_PACKETCHECKRRR();
 
@@ -45,10 +28,10 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
  Reg#(Bit#(13)) count <- mkReg(0);
  Reg#(Bit#(8)) checksum <- mkReg(0); 
  Reg#(Bool) initialized <- mkReg(False);
- FIFO#(RXVector) rxVectorFIFO <- mkFIFO; 
- FIFO#(Bit#(8))  rxDataFIFO <- mkFIFO; 
- FIFO#(Bit#(0))  abortReqFIFO <- mkFIFO;
- FIFO#(Bit#(0))  abortAckFIFO <- mkFIFO;  
+ Connection_Receive#(RXVector) rxVectorFIFO <- mkConnection_Receive("RXVector"); 
+ Connection_Receive#(Bit#(8))  rxDataFIFO <- mkConnection_Receive("RXData"); 
+ Connection_Send#(Bit#(1))  abortReqFIFO <-mkConnection_Send("AbortReq");
+ Connection_Receive#(Bit#(1))  abortAckFIFO <- mkConnection_Receive("AbortAck");  
 
  Reg#(Bit#(32)) packetsRXReg <- mkReg(0);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
@@ -93,27 +76,27 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
    
    rule startPacketCheck(count == 0);
       rxVectorFIFO.deq;
-      if (!rxVectorFIFO.first.is_trailer) // only check if not trailer
+      if (!rxVectorFIFO.receive.is_trailer) // only check if not trailer
          begin
 //            dropPacket <= !dropPacket;
             if (!dropPacket)
                begin
                   lfsr.next();
-                  size <= rxVectorFIFO.first.header.length;
+                  size <= rxVectorFIFO.receive.header.length;
                   count <= count + 1;
                   checksum <= 0;
                   if(`DEBUG_PACKETCHECK == 1)
                     begin
-                      $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+                      $display("PacketCheck: starting packet check size: %d @ %d", rxVectorFIFO.receive.header.length, cycleCountReg);
                     end
                end
             else
                begin
                   waitAck <= True;
-                  abortReqFIFO.enq(?);
+                  abortReqFIFO.send(?);
                   if(`DEBUG_PACKETCHECK == 1)
                     begin
-                      $display("PacketCheck: abort the packet: %d @ %d", rxVectorFIFO.first.header.length, cycleCountReg);
+                      $display("PacketCheck: abort the packet: %d @ %d", rxVectorFIFO.receive.header.length, cycleCountReg);
                     end
                end
          end
@@ -124,7 +107,7 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       rxDataFIFO.deq;
       if(`DEBUG_PACKETCHECK == 1)
         begin
-          $display("PacketCheck: drop data %d while waiting for ack @%d", rxDataFIFO.first, cycleCountReg);
+          $display("PacketCheck: drop data %d while waiting for ack @%d", rxDataFIFO.receive, cycleCountReg);
         end
    endrule
    
@@ -141,29 +124,29 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       rxDataFIFO.deq;
       if(`DEBUG_PACKETCHECK == 1)
         begin
-          $display("PacketCheck: rxDataFIFO.first %d",rxDataFIFO.first);
+          $display("PacketCheck: rxDataFIFO.receive %d",rxDataFIFO.receive);
         end
 
       count <= count + 1;
       if(count == zeroExtend(size))
          begin
-            packetBerReg <= packetBerReg + pack(zeroExtend(countOnes((~checksum + 1)^rxDataFIFO.first)));  
-            berReg <= berReg + pack(zeroExtend(countOnes((~checksum + 1)^rxDataFIFO.first))); 
+            packetBerReg <= packetBerReg + pack(zeroExtend(countOnes((~checksum + 1)^rxDataFIFO.receive)));  
+            berReg <= berReg + pack(zeroExtend(countOnes((~checksum + 1)^rxDataFIFO.receive))); 
             if(`DEBUG_PACKETCHECK == 1)
               begin 
-                $display("PacketCheck: receive data (checksum): %h @ %d",rxDataFIFO.first,cycleCountReg); 
+                $display("PacketCheck: receive data (checksum): %h @ %d",rxDataFIFO.receive,cycleCountReg); 
               end
          end
       else
          begin
-            packetBerReg <= packetBerReg + pack(zeroExtend(countOnes(truncate(count-1)^rxDataFIFO.first)));  
-            berReg <= berReg + pack(zeroExtend(countOnes(truncate(count-1)^rxDataFIFO.first)));  
+            packetBerReg <= packetBerReg + pack(zeroExtend(countOnes(truncate(count-1)^rxDataFIFO.receive)));  
+            berReg <= berReg + pack(zeroExtend(countOnes(truncate(count-1)^rxDataFIFO.receive)));  
             if(`DEBUG_PACKETCHECK == 1)
               begin
-                $display("PacketCheck: receive data: %h @ %d",rxDataFIFO.first,cycleCountReg);
+                $display("PacketCheck: receive data: %h @ %d",rxDataFIFO.receive,cycleCountReg);
               end
          end
-      checksum <= checksum + rxDataFIFO.first;
+      checksum <= checksum + rxDataFIFO.receive;
    endrule
    
    rule checkCheckSum(count > 0 && (count == zeroExtend(size) + 1));
@@ -195,10 +178,5 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
         end
 
    endrule
-
-  interface rxVector = fifoToPut(rxVectorFIFO);
-  interface rxData = fifoToPut(rxDataFIFO);
-  interface abortReq = fifoToGet(abortReqFIFO);
-  interface abortAck = fifoToPut(abortAckFIFO);    
 
 endmodule

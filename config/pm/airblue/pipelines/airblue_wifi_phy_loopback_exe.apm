@@ -8,7 +8,7 @@ SaveParameters=0
 DefaultBenchmark=
 Version=2.2
 Type=Leap
-File=airblue_wifi_phy_loopback
+File=airblue_wifi_phy_loopback_exe
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
@@ -164,9 +164,7 @@ File=modules/airblue/Phy/WiFi/rx/airblue_receiver.awb
 Packagehint=airblue
 
 [Soft Services Hybrid Application Environment/Requires]
-platform_services=Standard Platform Service (No Memory Service)
 connected_application=Airblue application
-soft_services=Soft Services Submodel
 
 [Soft Services Hybrid Application Environment]
 File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
@@ -223,10 +221,6 @@ Packagehint=airblue
 File=modules/airblue/lib/Drivers/RXTXSimulation/rxtx-simulation.awb
 Packagehint=airblue
 
-[Standard Platform Service (No Memory Service)]
-File=config/pm/leap/submodels/platform-services/standard-platform-null-mem.apm
-Packagehint=leap
-
 [WiFi Phy Loopback Test]
 File=modules/airblue/Phy/WiFi/airblue_wifi_loopback_phy.awb
 Packagehint=airblue
@@ -247,10 +241,12 @@ Packagehint=airblue
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_rrr.awb
 Packagehint=airblue
 
-[Soft Services Submodel]
-File=config/pm/leap/submodels/common/soft-services.apm
-Packagehint=leap
-
 [Hybrid Simulation FPGA Environment]
 File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap
+
+[Airblue Phy Only RRR PacketCheck/Params]
+DEBUG_PACKETCHECK=1
+
+[Airblue Phy Only RRR PacketGen/Params]
+DEBUG_PACKETGEN=1
