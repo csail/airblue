@@ -1,4 +1,5 @@
 import GetPut::*;
+import Connectable::*;
 import LFSR::*;
 import FIFO::*;
 import FIFOLevel::*;
@@ -13,16 +14,6 @@ import StmtFSM::*;
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 
-interface PacketCheck;
-  // These functions reveal stats about the generator
-  // for hooking up to the baseband
-  interface Put#(RXVector) rxVector;
-  interface Put#(Bit#(8))  rxData;
-  interface Put#(Bit#(0))  abortAck;
-  interface Get#(Bit#(0))  abortReq; 
-endinterface
-
-
 // Communications Enum
 typedef enum { 
   HEADER = 0,
@@ -34,23 +25,36 @@ typedef 8192 DataFIFOSize;
 // this one only checks packets for correctness, not 
 // for sequence errors - might want to do that at some point
 // even if it takes a while to re-sync
-module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
+module [CONNECTED_MODULE] mkPacketCheck (Empty);
 
  ServerStub_PACKETCHECKRRR serverStub <- mkServerStub_PACKETCHECKRRR();
  ClientStub_PACKETCHECKRRR clientStub <- mkClientStub_PACKETCHECKRRR();
+
+ Connection_Receive#(RXVector) rxVectorFIFOConn <- mkConnection_Receive("RXVector"); 
+ Connection_Receive#(Bit#(8))  rxDataFIFOConn <- mkConnection_Receive("RXData"); 
+ Connection_Send#(Bit#(1))  abortReqFIFO <-mkConnection_Send("AbortReq");
+ Connection_Receive#(Bit#(1))  abortAckFIFO <- mkConnection_Receive("AbortAck");  
 
  // 8192 should be big enough for a few packets
  FIFOCountIfc#(Bit#(8),DataFIFOSize) rxDataFIFOIn <- mkSizedBRAMFIFOCount();
  FIFOCountIfc#(Bit#(8),DataFIFOSize) rxDataFIFOOut <- mkSizedBRAMFIFOCount();
  FIFOCountIfc#(RXVector,2048) rxVectorFIFO <- mkSizedBRAMFIFOCount();
 
+ rule connectVector;
+   rxVectorFIFOConn.deq;
+   rxVectorFIFO.enq(rxVectorFIFOConn.receive);
+ endrule
+
+ rule connectData;
+   rxDataFIFOConn.deq;
+   rxDataFIFOIn.enq(rxDataFIFOConn.receive);
+ endrule
+
  LFSR#(Bit#(16)) lfsr <- mkLFSR_16();
  Reg#(Bit#(12)) size  <- mkReg(0); 
  Reg#(Bit#(13)) count <- mkReg(0);
  Reg#(Bit#(8)) checksum <- mkReg(0); 
  Reg#(Bool) initialized <- mkReg(False);
- FIFO#(Bit#(0))  abortReqFIFO <- mkFIFO;
- FIFO#(Bit#(0))  abortAckFIFO <- mkFIFO;  
 
  Reg#(Bit#(32)) packetsRXReg <- mkReg(0);
  Reg#(Bit#(32)) packetsCorrectReg <- mkReg(0);
@@ -147,10 +151,5 @@ module [CONNECTED_MODULE] mkPacketCheck (PacketCheck);
       count <= 0;
       dropThisPacket <= False;
    endrule
-
-  interface rxVector = toPut(rxVectorFIFO);
-  interface rxData = toPut(rxDataFIFOIn);
-  interface abortReq = fifoToGet(abortReqFIFO);
-  interface abortAck = fifoToPut(abortAckFIFO);    
 
 endmodule

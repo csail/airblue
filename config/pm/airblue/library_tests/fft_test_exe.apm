@@ -2,15 +2,13 @@
 [Global]
 SaveParameters=0
 DefaultBenchmark=
-Version=2.2
+Version=2.1
 Type=HAsim
 File=fft_test_exe
 Class=Asim::Model
 Name=airblue_wifi_phy_only_loopback_exe
 Description=Pure simulation based Airblue WiFi Phy Only Loopback testbench. It connects a pair of TX and RX in loopback configuration 
 DefaultRunOpts=
-RootName=HW/SW Hybrid Pipeline Build
-RootProvides=model
 
 [Model]
 DefaultAttributes=airblue
@@ -52,27 +50,21 @@ Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 connected_application=HW only hybrid application
+platform_services=Platform Services with No Memory Service
+soft_services=Soft Services
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
 Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Default Hybrid Project Common Utilities
-fpgaenv=Hybrid Simulation FPGA Environment
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [WiFi Shared FFT]
 File=modules/airblue/Phy/WiFi/fft/airblue_fft.awb
 Packagehint=airblue
-
-[Hybrid Simulation FPGA Environment]
-File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
-Packagehint=leap
-
-[Default Hybrid Project Common Utilities]
-File=config/pm/leap/submodels/common/project-common-default.apm
-Packagehint=leap
 
 [WiFi Shared FFT/Requires]
 airblue_fft_library=Airblue Folded FFT/IFFT
@@ -84,3 +76,19 @@ Packagehint=airblue
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
 Packagehint=airblue
+
+[Hybrid Project Common Utilities]
+File=config/pm/leap/submodels/common/project-common-default.apm
+Packagehint=leap
+
+[FPGA Environment]
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
+Packagehint=leap
+
+[Platform Services with No Memory Service]
+File=config/pm/leap/submodels/platform-services/standard-platform-null-mem.apm
+Packagehint=leap
+
+[Soft Services]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap

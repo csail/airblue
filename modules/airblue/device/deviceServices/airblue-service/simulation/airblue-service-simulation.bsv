@@ -49,11 +49,11 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
   rule handleRX;
     let data <-  rx_server_stub.acceptRequest_IQStream();
     // we might need some AGC here at some point
-    SynchronizerMesg#(RXFPIPrec,RXFPFPrec) sample = 
-      Complex{img: unpack(truncateLSB(data[31:16])),
-              rel: unpack(truncateLSB(data[15:0]))};
+    FPComplex#(2,14) sample = 
+      Complex{img: unpack(data[31:16]),
+              rel: unpack(data[15:0])};
 
-    dataBuffer.enq(sample);
+    dataBuffer.enq(fpcmplxSignExtendI(fpcmplxTruncateF(sample)));
   endrule
 
   rule buffer;

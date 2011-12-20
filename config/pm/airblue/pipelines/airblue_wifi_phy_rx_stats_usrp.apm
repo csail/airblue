@@ -6,15 +6,13 @@ Packagehint=airblue
 [Global]
 SaveParameters=0
 DefaultBenchmark=
-Version=2.2
+Version=2.1
 Type=Leap
 File=airblue_wifi_phy_rx_stats_usrp
 Class=Asim::Model
 Name=WiFi Phy RX Testbench
 Description=Wifi Phy RX Testbench 
 DefaultRunOpts=
-RootName=HW/SW Hybrid Pipeline Build
-RootProvides=model
 
 [Airblue Descrambler]
 File=modules/airblue/lib/Scrambler/src/airblue_descrambler.awb
@@ -156,8 +154,8 @@ File=modules/leap/build-support/project/project-pipeline.awb
 Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Default Hybrid Project Common Utilities
-fpgaenv=Hybrid XUP-v5 PCIE SATA FPGA Test Environment
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
 [Airblue Environment]
@@ -174,6 +172,8 @@ Packagehint=airblue
 
 [Soft Services Hybrid Application Environment/Requires]
 connected_application=Airblue application
+platform_services=Airblue Services
+soft_services=Soft Services
 
 [Soft Services Hybrid Application Environment]
 File=modules/leap/build-support/project/application-env/soft-services/application-env-hybrid-soft-service.awb
@@ -201,10 +201,6 @@ Packagehint=airblue
 [Airblue Viterbi (no SoftHints)/Requires]
 airblue_convolutional_decoder_common=Airblue Convolutional Decoder Common
 
-[Default Hybrid Project Common Utilities]
-File=config/pm/leap/submodels/common/project-common-default.apm
-Packagehint=leap
-
 [WiFi Shared FFT/Requires]
 airblue_fft_library=Airblue Folded FFT/IFFT
 
@@ -218,13 +214,6 @@ Packagehint=airblue
 
 [Airblue Viterbi (no SoftHints)/Params]
 VITERBI_TB_MAX_PATH=0
-
-[Hybrid XUP-v5 PCIE SATA FPGA Test Environment]
-File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
-Packagehint=leap
-
-[Hybrid XUP-v5 PCIE SATA FPGA Test Environment/Params]
-MODEL_CLOCK_FREQ=25
 
 [Airblue Phy Only PacketCheck Fixed]
 File=modules/airblue/lib/PacketGen/src/airblue_phy_packet_check_fixed_rrr.awb
@@ -257,4 +246,62 @@ airblue_environment=Airblue Environment
 
 [Airblue Shifted Registers FPGA-optimized]
 File=modules/airblue/lib/ShiftRegs/src/airblue_shift_regs_new.awb
+Packagehint=airblue
+
+[Common Services/Requires]
+stats_service=Stats Service
+assertions_service=Assertions Service
+debug_scan_service=Debug Scan Services
+streams_service=Streams Service
+dynamic_parameters_service=Dynamic Parameter Service
+
+[FPGA Environment]
+File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-xup-v5-pcie-sata.apm
+Packagehint=leap
+
+[Streams Service]
+File=modules/leap/libraries/platform-services/common-services/streams-service/streams-service.awb
+Packagehint=leap
+
+[Stats Service]
+File=modules/leap/libraries/platform-services/common-services/stats-service/stats-service.awb
+Packagehint=leap
+
+[Common Services]
+File=modules/leap/libraries/platform-services/common-services/common-services-standard.awb
+Packagehint=leap
+
+[Assertions Service]
+File=modules/leap/libraries/platform-services/common-services/assertions-service/assertions-service.awb
+Packagehint=leap
+
+[Airblue Services/Requires]
+common_services=Common Services
+airblue_service=Airblue Service (USRP)
+
+[Airblue Service (USRP)]
+File=modules/airblue/device/deviceServices/airblue-service/usrp/airblue-service.awb
+Packagehint=airblue
+
+[Debug Scan Services]
+File=modules/leap/libraries/platform-services/common-services/debug-scan-service/debug-scan-service.awb
+Packagehint=leap
+
+[Dynamic Parameter Service]
+File=modules/leap/libraries/platform-services/common-services/dynamic-parameters-service/dynamic-parameters-service.awb
+Packagehint=leap
+
+[Hybrid Project Common Utilities]
+File=config/pm/leap/submodels/common/project-common-default.apm
+Packagehint=leap
+
+[FPGA Environment/Params]
+MODEL_CLOCK_FREQ=25
+
+[Soft Services]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
+
+[Airblue Services]
+File=modules/airblue/device/deviceServices/airblue-services.awb
 Packagehint=airblue

@@ -6,15 +6,13 @@ Packagehint=leap
 [Global]
 SaveParameters=0
 DefaultBenchmark=config/bm/bsv-libraries/pass_check.cfx/benchmarks/pass_check.cfg
-Version=2.2
+Version=2.1
 Type=HAsim
 File=synchronizer_test_exe
 Class=Asim::Model
 Name=Airblue Synchronizer Test
 Description=Airblue Synchronizer Test
 DefaultRunOpts=
-RootName=HW/SW Hybrid Pipeline Build
-RootProvides=model
 
 [Model]
 DefaultAttributes=airblue
@@ -89,21 +87,30 @@ Packagehint=leap
 
 [Soft Services Hybrid Application Environment/Requires]
 connected_application=HW only hybrid application
+platform_services=Platform Services with No Memory Service
+soft_services=Soft Services
 
 [HW/SW Hybrid Pipeline Build]
 File=modules/leap/build-support/project/project-pipeline.awb
 Packagehint=leap
 
 [HW/SW Hybrid Pipeline Build/Requires]
-project_common=Default Hybrid Project Common Utilities
-fpgaenv=Hybrid Simulation FPGA Environment
+project_common=Hybrid Project Common Utilities
+fpgaenv=FPGA Environment
 application_env=Soft Services Hybrid Application Environment
 
-[Default Hybrid Project Common Utilities]
+[Hybrid Project Common Utilities]
 File=config/pm/leap/submodels/common/project-common-default.apm
 Packagehint=leap
 
-[Hybrid Simulation FPGA Environment]
+[FPGA Environment]
 File=config/pm/leap/submodels/fpgaenv/fpgaenv-hybrid-exe.apm
 Packagehint=leap
 
+[Platform Services with No Memory Service]
+File=config/pm/leap/submodels/platform-services/standard-platform-null-mem.apm
+Packagehint=leap
+
+[Soft Services]
+File=config/pm/leap/submodels/common/soft-services.apm
+Packagehint=leap
