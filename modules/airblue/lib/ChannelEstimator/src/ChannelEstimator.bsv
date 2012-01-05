@@ -144,6 +144,12 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    Integer out_no   = valueOf(CEstOutN); // no. output values
    Bit#(CEstOutSz) max_idx = fromInteger(out_no-1);
    Bit#(CEstOutSz) next_p  = fromInteger(out_no/4);
+
+   // Control channel estimator modes
+   let serverStub <- mkServerStub_CHANNELESTIMATORRRR();
+
+   Reg#(Bool) doMagAdjust <- mkReg(True);
+   Reg#(Bool) doFreqAdjust <- mkReg(True);
                            
    // state elements
    Reg#(Bool)                                                                   can_interpolate <- mkReg(False);
@@ -177,6 +183,19 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    Vector#(CEstOutN,Tuple2#(Bit#(CEstPBSz),FixedPoint#(CEstIPrec,CEstFPrec))) affine_coef_vec      = removePilotsAndGuards(affine_coef_full_vec);
    Bit#(CEstPBSz)                                                             affine_idx           = tpl_1(affine_coef_vec[interpolate_idx]);
    FixedPoint#(CEstIPrec,CEstFPrec)                                           affine_coef          = tpl_2(affine_coef_vec[interpolate_idx]);
+
+   // Handle mode control
+   rule setFreqMode;
+      let mode <- serverStub.acceptRequest_SetFrequencyAdjust();
+      serverStub.sendResponse_SetFrequencyAdjust(0);
+      doFreqAdjust <= unpack(truncate(mode));
+   endrule
+
+   rule setMagMode;
+      let mode <- serverStub.acceptRequest_SetMagnitudeAdjust();
+      serverStub.sendResponse_SetMagnitudeAdjust(0);
+      doMagAdjust <= unpack(truncate(mode));
+   endrule
                                                
    // get the inverse of the channel at pilot subcarriers
    rule estimatePilot_put(can_est_pilot);
@@ -281,7 +300,8 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
       angle_adjust_q.enq(angle_adjustment);
       
       // mag
-      FPComplex#(TAdd#(1,TAdd#(TAdd#(CEstIPrec,CEstFPrec),CEstIPrec)),TAdd#(CEstFPrec,CEstFPrec)) mag_adjusted = fpcmplxScale(mag_q.first, out_reg.data[out_read_idx]);
+      let scaleValue = (doMagAdjust)?mag_q.first:1;
+      FPComplex#(TAdd#(1,TAdd#(TAdd#(CEstIPrec,CEstFPrec),CEstIPrec)),TAdd#(CEstFPrec,CEstFPrec)) mag_adjusted = fpcmplxScale(scaleValue, out_reg.data[out_read_idx]);
       FPComplex#(CEstIPrec,CEstFPrec) mag_adjusted_trunc = fpcmplxTruncate(mag_adjusted);
 
       // Check for overflow. On overflow, ditch
@@ -312,7 +332,7 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    // perform correction
    rule correct(True);
       let o_data     = out_reg.data;
-      let adj_data   = mag_adjusted_q.first * angle_adjust_q.first; // adjust according to pilot
+      let adj_data   = (doFreqAdj) ? mag_adjusted_q.first * angle_adjust_q.first : mag_adjusted_q.first; // adjust according to pilot
       if(`DEBUG_CHANNEL_ESTIMATOR == 1)
          begin
             $write("ChannelEstMod %d: ",out_write_idx);

@@ -1,0 +1,11 @@
+service CHANNELESTIMATORRRR
+{
+    server hw (bsv, connection) <- sw (cpp, method)
+    {
+
+        method SetMagnitudeAdjust (in UINT8[8] mode, out UINT8[8] mode);  
+        method SetFrequencyAdjust (in UINT8[8] mode, out UINT8[8] mode);  
+
+    };
+
+};
