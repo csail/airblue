@@ -67,6 +67,15 @@ module [CONNECTED_MODULE] mkPacketCheck (Empty);
  Reg#(Bool)     dropThisPacket <- mkReg(False); // dropped alternate packet
  Reg#(Bool)     waitAck <- mkReg(False);
 
+ rule metaIn; 
+   rxVectorFIFO.enq(rxVectorFIFOConn.receive);
+   rxVectorFIFOConn.deq;
+ endrule
+
+ rule dataIn; 
+   rxDataFIFOIn.enq(rxDataFIFOConn.receive);
+   rxDataFIFOConn.deq;
+ endrule
 
  rule getBER;
    let dummy <- serverStub.acceptRequest_GetBER();

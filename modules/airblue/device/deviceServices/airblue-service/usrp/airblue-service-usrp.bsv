@@ -65,7 +65,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
-   Integer fifo_sz =4096;
+   Integer fifo_sz =4096*8;
    FIFOF#(Bit#(32)) sampleStream <- mkStreamCaptureFIFOF(fifo_sz);
 
 
@@ -136,8 +136,8 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
    rule getSample;
      let dummy <- serverStub.acceptRequest_GetSample();
-     //sampleStream.deq();
-     serverStub.sendResponse_GetSample(?);//sampleStream.first);
+     sampleStream.deq();
+     serverStub.sendResponse_GetSample(sampleStream.first);
    endrule
 
    rule processIPart (processI);
@@ -201,7 +201,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     endrule
 
     rule toStreamCapture(toAnalogDeq.wget() matches (tagged Valid .sample));
-       //sampleStream.enq(sample);
+       sampleStream.enq(sample);
     endrule
 
     // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -

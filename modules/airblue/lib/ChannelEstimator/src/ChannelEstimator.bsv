@@ -39,6 +39,8 @@
 // Local Includes
 `include "asim/provides/airblue_common.bsh"
 `include "asim/provides/airblue_types.bsh"
+`include "asim/provides/soft_services.bsh"
+`include "awb/rrr/remote_server_stub_CHANNELESTIMATORRRR.bsh"
 `include "asim/provides/airblue_inverse_sq_root.bsh"
 
 // standard Bluespec libraries
@@ -114,7 +116,7 @@ endfunction
 /////////////////////////////////////////////////////////////////////////
 // Implementation of PathMetricUnit
 
-module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool) 
+module  [CONNECTED_MODULE] mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool) 
                                                resetPilot(ctrl_t ctrl),
                                             function Tuple2#(Symbol#(CEstPNo,CEstIPrec,CEstFPrec),
                                                              Symbol#(CEstOutN,CEstIPrec,CEstFPrec)) 
@@ -332,7 +334,7 @@ module  mkPiecewiseConstantChannelEstimator#(function Tuple2#(Bool,Bool)
    // perform correction
    rule correct(True);
       let o_data     = out_reg.data;
-      let adj_data   = (doFreqAdj) ? mag_adjusted_q.first * angle_adjust_q.first : mag_adjusted_q.first; // adjust according to pilot
+      let adj_data   = (doFreqAdjust) ? mag_adjusted_q.first * angle_adjust_q.first : mag_adjusted_q.first; // adjust according to pilot
       if(`DEBUG_CHANNEL_ESTIMATOR == 1)
          begin
             $write("ChannelEstMod %d: ",out_write_idx);

@@ -49,6 +49,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
   rule handleRX;
     let data <-  rx_server_stub.acceptRequest_IQStream();
     // we might need some AGC here at some point
+
     FPComplex#(2,14) sample = 
       Complex{img: unpack(data[31:16]),
               rel: unpack(data[15:0])};
@@ -58,7 +59,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
 
   rule buffer;
     dataBuffer.deq;
-    analogRX.send(dataBuffer.first);
+    analogRX.send(fpcmplxSignExtend(dataBuffer.first));
   endrule
 
   rule probeBuffer;

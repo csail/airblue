@@ -217,8 +217,12 @@ module [CONNECTED_MODULE] mkTransceiver (Empty);
     // This rule _must_ fire every cycle
     rule handleRX;
       rxSunkData.send;
-//      $display("RX data: %h", dataTrans);
-      rxfifo.enq(dataTrans);
+      // We need to truncate the data to ensure that we mimic usrp behavior
+      FPComplex#(2,14) clipped = fpcmplxTruncate(dataTrans);
+      Int#(16) relVal = unpack(pack(clipped.rel));
+      Int#(16) imgVal = unpack(pack(clipped.img));
+
+      rxfifo.enq(fpcmplxSignExtend(clipped));
     endrule
 
     rule stepCount;

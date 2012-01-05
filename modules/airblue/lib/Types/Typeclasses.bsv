@@ -43,3 +43,6 @@ instance HasByteLength#(Bit#(m), m);
 endinstance
 
 
+typeclass EqualizerCtrl#(type a);
+   function Bool initializeEqualizer(a value);
+endtypeclass
