@@ -1705,3 +1705,22 @@ Directory admin/packages
  airblue                   Locally Modified          420 
 
 Mark package as a 'prerelease'.
+
+----------
+kfleming    Date: Wed Feb  1 11:47:00 EST 2012  CSN: CSN-airblue-422
+                  Wed Feb  1 16:47:00 UTC 2012
+
+
+Directory config/pm/airblue/pipelines
+ airblue_wifi_phy_usrp.apm Locally Modified          421 
+
+Directory modules/airblue/device/deviceServices/airblue-service/usrp
+ airblue-service-usrp.bsv  Locally Modified          421 
+ airblue-service-usrp.rrr  Locally Modified          421 
+
+Directory modules/airblue/Phy/WiFi/rx
+ airblue_receiver.awb      Locally Modified          421 
+ Receiver.bsv              Locally Modified          421 
+
+
+Added a couple of RRR methods.  Also, fixed main line receiver to compile with new channel estimator hooks.

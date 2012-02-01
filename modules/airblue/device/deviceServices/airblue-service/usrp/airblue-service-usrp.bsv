@@ -66,10 +66,15 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    ServerStub_SATARRR serverStub <- mkServerStub_SATARRR();
 
    Integer fifo_sz =4096*8;
-   FIFOF#(Bit#(32)) sampleStream <- mkStreamCaptureFIFOF(fifo_sz);
+   FIFOF#(Bit#(32)) rxStreamBuffer     <- mkStreamCaptureFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
+   SyncFIFOIfc#(Bit#(32)) rxStream     <- mkSyncFIFOToCC(16,rxClk, rxRst);
+   RWire#(Bit#(32)) toSampleRX <- mkRWire(clocked_by rxClk, reset_by rxRst);
+   RWire#(Bit#(32)) toSampleTX <- mkRWire;
 
+   FIFOF#(Bit#(32)) txStream     <- mkStreamCaptureFIFOF(fifo_sz);
 
-   FIFOF#(SynchronizerMesg#(2,14)) serdes_word_fifo <- mkSizedBRAMFIFOF(fifo_sz, clocked_by rxClk, reset_by rxRst);
+   // this fifo MUST be small, particularly if the decoder is slow. 
+   FIFOF#(SynchronizerMesg#(2,14)) serdes_word_fifo <- mkSizedBRAMFIFOF(1024, clocked_by rxClk, reset_by rxRst);
    SyncFIFOIfc#(SynchronizerMesg#(2,14)) serdes_word_sync_fifo <- mkSyncFIFOToCC(16,rxClk, rxRst);
 
 
@@ -109,7 +114,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      rxErrorsCC <= sataDriver.errors0;
    endrule
 
-   rule getSampleRX;
+   rule getRXCount;
      let dummy <- serverStub.acceptRequest_GetRXCount();
      serverStub.sendResponse_GetRXCount(zeroExtend(rxCountCC));
    endrule
@@ -134,10 +139,16 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetRealign(pack(realignCC));
    endrule
 
-   rule getSample;
-     let dummy <- serverStub.acceptRequest_GetSample();
-     sampleStream.deq();
-     serverStub.sendResponse_GetSample(sampleStream.first);
+   rule getSampleRX;
+     let dummy <- serverStub.acceptRequest_GetSampleRX();
+     rxStream.deq();
+     serverStub.sendResponse_GetSampleRX(rxStream.first);
+   endrule
+
+   rule getSampleTX;
+     let dummy <- serverStub.acceptRequest_GetSampleTX();
+     txStream.deq();
+     serverStub.sendResponse_GetSampleTX(txStream.first);
    endrule
 
    rule processIPart (processI);
@@ -163,6 +174,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
            FixedPoint#(2,14) dataT = data;
            serdes_word_fifo.enq(cmplx(iPart,dataT));
            processI <= True;
+           toSampleRX.wset(pack(cmplx(iPart,dataT)));  
          end 
        else if(dataIn == sampleSyncWord) // In this case we should be receiving a real next
          begin
@@ -182,6 +194,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
            processI <= True;
            FixedPoint#(2,14) dataT = data;
            iPart <= data;
+           toSampleRX.wset(pack(cmplx(iPart,dataT)));  
          end
     endrule
 
@@ -191,17 +204,28 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        serdes_word_sync_fifo.enq(serdes_word_fifo.first());       
     endrule
 
-    RWire#(Bit#(32)) toAnalogDeq <- mkRWire;
 
-    rule toAnalog;
+    FIFOF#(Bit#(1)) creditfifo <- mkSizedFIFOF(`SAMPLE_RATE);  // A basic credit scheme to avoid the need for complex flow control with the usrp.
+    
+
+    rule toAnalog (!creditfifo.notFull);
        serdes_word_sync_fifo.deq;
-       toAnalogDeq.wset(pack(serdes_word_sync_fifo.first()));  
        //let temp = fpcmplxSignExtend(serdes_word_sync_fifo.first());     
-       analogRX.send(fpcmplxSignExtendI(fpcmplxTruncateF(serdes_word_sync_fifo.first())));       
+       analogRX.send(fpcmplxSignExtendI(fpcmplxTruncateF(serdes_word_sync_fifo.first())));      
     endrule
 
-    rule toStreamCapture(toAnalogDeq.wget() matches (tagged Valid .sample));
-       sampleStream.enq(sample);
+    rule toStreamCaptureRX(toSampleRX.wget() matches (tagged Valid .sample));
+       rxStreamBuffer.enq(sample);
+    endrule
+  
+    rule transferBuffer;
+       rxStream.enq(rxStreamBuffer.first);
+       rxStreamBuffer.deq;
+    endrule
+
+
+    rule toStreamCaptureTX(toSampleTX.wget() matches (tagged Valid .sample));
+       txStream.enq(sample);
     endrule
 
     // Handle the TX side.  The general strategy is to create a XMHz channel and apply Little's law -
@@ -214,7 +238,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
     Reg#(Bit#(TAdd#(1,TLog#(`MODEL_CLOCK_FREQ)))) counter <- mkReg(0); 
 
     FIFOF#(SynchronizerMesg#(2,14)) intxfifo <- mkSizedFIFOF(32);  
-    FIFO#(Bit#(1)) creditfifo <- mkSizedFIFO(`SAMPLE_RATE);  // A basic credit scheme to avoid the need for complex flow control
+
     SyncFIFOIfc#(USRPPacket) outtxfifo <- mkSyncFIFOFromCC(32, txClk);  // this one goes to serdes
      // USRP expects a packetized data stream with a two word heade
      // and tied off by an end of buffer tag.
@@ -241,7 +265,7 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
    endrule
 
 
-   rule tickCredit;
+   rule tickCredit(creditfifo.notFull);
      if(counter + 1 == `MODEL_CLOCK_FREQ)
        begin
          counter <= 0;
@@ -256,13 +280,15 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
        end
    endrule
 
+
+
    rule setUSRPHeader;
      let dummy <- serverStub.acceptRequest_SetUSRPHeader();
      usrpMagic0 <= unpack(pack(dummy.magic0));
      usrpMagic1 <= unpack(pack(dummy.magic1));
    endrule
 
-   rule getSampleTX;
+   rule getTXCount;
      let dummy <- serverStub.acceptRequest_GetTXCount();
      serverStub.sendResponse_GetTXCount(zeroExtend(txCountCC));
    endrule
@@ -272,11 +298,25 @@ module [CONNECTED_MODULE] mkAirblueService#(PHYSICAL_DRIVERS drivers) ();
      serverStub.sendResponse_GetTXCountIn(zeroExtend(txCountIn));
    endrule
 
+   Reg#(FixedPoint#(2,14)) digitalScale <- mkReg(1);
+
+   rule setDigitalScale;
+     let value <- serverStub.acceptRequest_SetDigitalScale();
+     serverStub.sendResponse_SetDigitalScale(0);
+     digitalScale <= unpack(value);
+   endrule
+
+
+
     rule forwardToLL; 
       analogTX.deq();
       txCountIn <= txCountIn + 1;
-      //let temp = fpcmplxSignExtend(analogTX.receive);     
-      intxfifo.enq(fpcmplxSignExtendF(fpcmplxTruncateI(analogTX.receive)));
+      //let temp = fpcmplxSignExtend(analogTX.receive);
+      FPComplex#(2,14) usrpSample = fpcmplxSignExtendF(fpcmplxTruncateI(analogTX.receive));  
+      let scaleValue = fpcmplxScale(digitalScale, usrpSample); 
+      FPComplex#(2,14) sampleSend = fpcmplxTruncate(scaleValue); 
+      intxfifo.enq(usrpSample);
+      toSampleTX.wset(pack(usrpSample));  
     endrule
 
 
