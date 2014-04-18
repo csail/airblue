@@ -1,0 +1,20 @@
+
+# /
+/Makefile
+/config.log
+/config.status
+/autom4te.cache
+/build-arch-stamp
+/build-indep-stamp
+/config.guess
+/config.sub
+
+# /debian/
+/debian/files
+/debian/airblue
+/debian/airblue.debhelper.log
+/debian/airblue.substvars
+
+# /include/
+/include/stamp-h1
+/include/config.h
