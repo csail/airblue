@@ -29,6 +29,7 @@ import Vector::*;
 
 // Local includes
 import AirblueCommon::*;
+import Controls::*;
 
 //`include <../WiFiFPGA/Macros.bsv>
 
