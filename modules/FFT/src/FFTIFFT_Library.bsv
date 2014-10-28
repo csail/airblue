@@ -43,8 +43,8 @@ import Vector::*;
 // import Debug::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 function Action fpcmplxVecWrite(Integer fwidth, Vector#(length,FPComplex#(i_sz,f_sz)) dataVec)
 provisos(Add#(1,xxA,i_sz),
