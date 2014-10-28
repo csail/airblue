@@ -31,9 +31,9 @@ import FIFO::*;
 import FIFOF::*;
 import FIFOLevel::*;
 
-`include "asim/provides/librl_bsv_storage.bsh"
-`include "asim/provides/librl_bsv_base.bsh"
-`include "asim/provides/fpga_components.bsh"
+//`include "asim/provides/librl_bsv_storage.bsh"
+//`include "asim/provides/librl_bsv_base.bsh"
+//`include "asim/provides/fpga_components.bsh"
 
 interface ShiftRegs#(numeric type size, type data_t);
   method Action enq(data_t x);              // put the element at the last position of the queue 
