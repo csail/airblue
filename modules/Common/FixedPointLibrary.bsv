@@ -35,6 +35,7 @@
 
 import FIFO::*;
 import SpecialFIFOs::*;
+import CBus::*; // extendNP and friends
 
 // Project foundation imports.
 

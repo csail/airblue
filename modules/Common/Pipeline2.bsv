@@ -30,13 +30,13 @@ import GetPut::*;
 import List::*;
 import RWire::*;
 import Vector::*;
-//import EHRReg::*;
+import EHRReg::*;
 //import Debug::*;
 
 `ifndef DEBUG_PIPELINE
-typedef False DebugPipeline;
+Bool debugPipeline=False;
 `else
-typedef `DEBUG_PIPELINE DebugPipeline;
+Bool debugPipeline=`DEBUG_PIPELINE;
 `endif
 
 interface Pipeline2#(type a);
@@ -199,7 +199,7 @@ module [m] mkPipeline2_Time#(function m#(Pipeline2#(Vector#(psz,a))) mkP)
       inBuffers[putStage].deq;
       stageFU.in.put(mesg);
       putStage <= (putStage == maxStage) ? 0 : putStage + 1;
-      if(DebugPipeline)
+      if(debugPipeline)
         begin
           $display("time.startExec: putStage: %d",putStage);
         end
@@ -211,7 +211,7 @@ module [m] mkPipeline2_Time#(function m#(Pipeline2#(Vector#(psz,a))) mkP)
       let mesg <- stageFU.out.get;
       outBuffers[getStage].enq(mesg);
       getStage <= (getStage == maxStage) ? 0 : getStage + 1;
-      if(DebugPipeline)
+      if(debugPipeline)
         begin
           $display("time.finishExec: getStage: %d",getStage);
         end
@@ -288,7 +288,7 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
       putStage <= (putStage == maxStage) ? 0 : putStage + 1;
       if(putStage == maxStage) 
         begin
-          if(DebugPipeline)
+          if(debugPipeline)
             begin
               $display("Calling in buffer deq");
             end
@@ -296,7 +296,7 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
           inBuffer.deq;
         end
 
-      if(DebugPipeline)
+      if(debugPipeline)
         begin
           $display("time.startExec: putStage: %d",putStage);
         end
@@ -314,7 +314,7 @@ module [m] mkPipeline2_TimeControl#(function m#(Pipeline2#(Tuple3#(ctrl_t,Bit#(s
       outRegs[getStage] <= dataOut; 
       getStage <= (getStage == maxStage) ? 0 : getStage + 1;
       
-      if(DebugPipeline)
+      if(debugPipeline)
         begin
           $display("time.finishExec: getStage: %d ctrl: %d num: %d",getStage, ctrl, num);
         end

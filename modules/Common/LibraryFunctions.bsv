@@ -25,7 +25,7 @@
 //----------------------------------------------------------------------//
 
 import Vector::*;
-//import FPComplex::*;
+import FPComplex::*;
 import Complex::*;
 import FixedPoint::*;
 import GetPut::*;
