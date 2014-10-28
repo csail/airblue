@@ -35,9 +35,9 @@ import Vector::*;
 // import FFTParameters::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_parameters.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
+//`include "asim/provides/airblue_parameters.bsh"
 
 // from parameters file
 typedef FFTIFFTSz      FFTSz;

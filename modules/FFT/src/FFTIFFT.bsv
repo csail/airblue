@@ -47,15 +47,13 @@ import Vector::*;
 // Local includes
 import AirblueCommon::*;
 import AirblueTypes::*;
+import FFTInterface::*;
 
-interface FFTIFFT;
-	// input
-	method Action putInput(FFTControl isIFFT, 
-			       FFTDataVec fpcmplxVec);
-	// output
-	method ActionValue#(FFTDataVec) getOutput();
-endinterface
-
+`ifndef DEBUG_FFT
+typedef  False DebugFFT;
+`else
+Bool `DEBUG_FFT DebugFFT;
+`endif
 
 (*synthesize*)
 module [Module] mkFFTIFFTNoOmega(FFTIFFT);
@@ -255,7 +253,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    RWire#(FFTMesg#(DualFFTIFFTControl#(fft_ctrl_t,ifft_ctrl_t),FFTSz,ISz,FSz)) resultWire <- mkRWire; 
   
    rule putInputFFT(preference == FFT || !inQIFFT.notEmpty || !ifftRespTokens.notFull);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual FFT input");
             for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
@@ -274,7 +272,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    endrule
    
    rule putInputIFFT(preference == IFFT || !inQFFT.notEmpty || !fftRespTokens.notFull);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual IFFT input");
          end
@@ -290,7 +288,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
  
    
    rule getOutput(True);
-       if(`DEBUG_FFT == 1)
+       if(DebugFFT)
          begin
             $display("Dual deq @ %d", $time);
          end
@@ -301,7 +299,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
 
 
    rule getOutputFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged FFTCtrl .ctrl);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq fft @ %d", $time);
          end
@@ -313,7 +311,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
    endrule
 
    rule getOutputIFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged IFFTCtrl .ctrl);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq ifft @ %d", $time);
          end
@@ -325,7 +323,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
      interface in = fifoToPut(fifofToFifo(inQIFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get();
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual IFFT output");   
              end
@@ -341,7 +339,7 @@ module [Module] mkDualFFTIFFT(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FSz)
      interface in = fifoToPut(fifofToFifo(inQFFT));
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get();
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual FFT output");   
              end
@@ -383,7 +381,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
   
    
    rule getOutput(True);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq @ %d", $time);
          end
@@ -394,7 +392,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
 
 
    rule getOutputFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged FFTCtrl .ctrl);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq fft @ %d", $time);
          end
@@ -406,7 +404,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
    endrule
 
    rule getOutputIFFT(resultWire.wget matches tagged Valid .result &&& result.control matches tagged IFFTCtrl .ctrl);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq ifft @ %d", $time);
          end
@@ -422,7 +420,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == IFFT );
-            if(`DEBUG_FFT == 1)
+            if(DebugFFT)
                begin
                   $display("Dual IFFT input");           
                end
@@ -437,7 +435,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
 
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get();
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual IFFT output");   
              end
@@ -453,7 +451,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg) if(preference == FFT);
-            if(`DEBUG_FFT == 1)
+            if(DebugFFT)
                begin
                   $display("Dual FFT input");
                   for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
@@ -471,7 +469,7 @@ module [Module] mkDualFFTIFFTRR(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,ISz,FS
 
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get();
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual FFT output");   
              end
@@ -571,7 +569,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
    FIFOF#(Bit#(0)) respTokens <- mkSizedFIFOF(valueof(DualFIFODepth));
 
    rule getOutput(True);
-      if(`DEBUG_FFT == 1)
+      if(DebugFFT)
          begin
             $display("Dual deq @ %d", $time);
          end
@@ -584,7 +582,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
      
      interface Put in;
          method Action put(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz) mesg);
-            if(`DEBUG_FFT == 1)
+            if(DebugFFT)
                begin
                   $display("Dual IFFT input");           
                end
@@ -599,7 +597,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
 
      interface Get out;
        method ActionValue#(FFTMesg#(ifft_ctrl_t,FFTSz,ISz,FSz)) get() if(outQ.first.control matches tagged IFFTCtrl .ctrl);
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual IFFT output");   
              end
@@ -615,7 +613,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
    
      interface Put in;
          method Action put(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz) mesg);
-            if(`DEBUG_FFT == 1)
+            if(DebugFFT)
                begin
                   $display("Dual FFT input");                      
                   for(Integer i=0; i<valueOf(FFTSz) ; i=i+1)
@@ -633,7 +631,7 @@ module [Module] mkDualFFTIFFTSharedIO(DualFFTIFFT#(fft_ctrl_t,ifft_ctrl_t,FFTSz,
 
      interface Get out;
        method ActionValue#(FFTMesg#(fft_ctrl_t,FFTSz,ISz,FSz)) get() if(outQ.first.control matches tagged FFTCtrl .ctrl);
-          if(`DEBUG_FFT == 1)
+          if(DebugFFT)
              begin
                 $display("Dual FFT output");   
              end
