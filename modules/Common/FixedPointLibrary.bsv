@@ -38,9 +38,9 @@ import SpecialFIFOs::*;
 
 // Project foundation imports.
 
-`include "awb/provides/librl_bsv_base.bsh"
-`include "awb/provides/librl_bsv_storage.bsh"
-`include "awb/provides/fpga_components.bsh"
+//`include "awb/provides/librl_bsv_base.bsh"
+//`include "awb/provides/librl_bsv_storage.bsh"
+//`include "awb/provides/fpga_components.bsh"
 
 
 import FixedPoint::*;
