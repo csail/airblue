@@ -28,7 +28,7 @@ import FShow::*;
 import Vector::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 
 //`include <../WiFiFPGA/Macros.bsv>
 
