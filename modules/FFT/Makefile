@@ -1,6 +1,6 @@
 
 CommonDir=../Common
-CommonBsvFiles = $(CommonDir)/FPComplex.bsv Prelude.bsv
+CommonBsvFiles = ../ShiftRegs/src/ShiftRegs.bsv ../Types/AirblueTypes.bsv $(CommonDir)/FPComplex.bsv
 
 S2H = FFTRequest
 H2S = FFTIndication

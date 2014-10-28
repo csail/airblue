@@ -32,8 +32,8 @@ import GetPut::*;
 import Connectable::*;
 import FIFO::*;
 import FIFOLevel::*;
+import ShiftRegs::*;
 
-//`include "awb/provides/airblue_shift_regs.bsh"
 
 //Given a Bit#(n) returns it's parity
 function Bit#(1) getParity(Bit#(n) v) provisos(Add#(1, k, n));
