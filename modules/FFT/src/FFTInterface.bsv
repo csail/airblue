@@ -24,6 +24,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
+import AirblueCommon::*;
+import AirblueTypes::*;
+import ProtocolParameters::*;
+import FFTParameters::*;
 import FParams::*;
 
 interface FFTRequest;

@@ -31,8 +31,8 @@ import Vector::*;
 // import CORDIC::*;
 // import DataTypes::*;
 // import FPComplex::*;
-// import ProtocolParameters::*;
-// import FFTParameters::*;
+import ProtocolParameters::*;
+import FFTParameters::*;
 
 // Local includes
 import AirblueCommon::*;

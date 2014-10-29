@@ -37,7 +37,7 @@ import Vector::*;
 // import DataTypes::*;
 // import CORDIC::*;
 // import FixedPointLibrary::*;
-// import FParams::*;
+import FParams::*;
 // import LibraryFunctions::*;
 // import Pipeline2::*;
 // import Debug::*;
@@ -45,6 +45,12 @@ import Vector::*;
 // Local includes
 import AirblueCommon::*;
 import AirblueTypes::*;
+
+`ifndef DEBUG_FFT
+Bool debugFFT=False;
+`else
+Bool debugFFT=(`DEBUG_FFT>0);
+`endif
 
 function Action fpcmplxVecWrite(Integer fwidth, Vector#(length,FPComplex#(i_sz,f_sz)) dataVec)
 provisos(Add#(1,xxA,i_sz),
@@ -201,7 +207,7 @@ endfunction
 function ActionValue#(FFTBflyMesg) fftBflys(FFTBflyMesg inMesg); 
     actionvalue
       let outData <- mapM(fftRadix2BflyCheckClipped, inMesg);
-      if(`DEBUG_FFT > 0) 
+      if(debugFFT) 
         begin
           $write("fftO_omegas = [");
     	  fpcmplxVecWrite(4, map(tpl_1,inMesg));
@@ -213,7 +219,7 @@ function ActionValue#(FFTBflyMesg) fftBflys(FFTBflyMesg inMesg);
 
      Vector#(NoBfly,FFTData) dummyOmegas = newVector;
 
-      if(`DEBUG_FFT > 0) 
+      if(debugFFT) 
         begin
           $write("fftO_output = [");
           fpcmplxVecWrite(4, concat(map(tuple2Vec,outData)));
@@ -230,7 +236,7 @@ function ActionValue#(FFTBflyMesgNoOmega) fftBflysNoOmega(ROM#(FFTStep,Vector#(N
       match {.stage,.step,.data} = inMesg; 
       let omegas = omegaROM.read({stage,step});
 
-      if(`DEBUG_FFT > 0) 
+      if(debugFFT) 
         begin
           $display("stage: %d, step: %d, index: %d", stage, step, {stage,step});
           $write("fftNO_omegas[%d] = [",{stage,step});
@@ -243,7 +249,7 @@ function ActionValue#(FFTBflyMesgNoOmega) fftBflysNoOmega(ROM#(FFTStep,Vector#(N
 
       let outData = map(fftRadix2Bfly, zip(omegas,data));
 
-      if(`DEBUG_FFT > 0) 
+      if(debugFFT) 
         begin
           $write("fftNO_output = [");
           fpcmplxVecWrite(4, concat(map(tuple2Vec,outData)));
@@ -310,7 +316,7 @@ module [Module] mkOneStage(Pipeline2#(FFTTuples));
 	 let omgs = genOmegaVecs[inStage];  
 	 let inVec = zip(omgs,dataVec);
 	 stageFU.in.put(inVec);
-         if(`DEBUG_FFT > 0) 
+         if(debugFFT) 
            begin
              $write("fftO_stage_%d = [",inStage);
              fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec)));
@@ -348,7 +354,7 @@ module [Module] mkOneStageNoOmega(Pipeline2#(FFTTuples));
 	 let inVec = tuple2(inStage,dataVec); // must determine how many folds occur
 	 stageFU.in.put(inVec);
 
-         if(`DEBUG_FFT > 0) 
+         if(debugFFT) 
            begin
              $write("fftNO_stage_%d = [",inStage);
              fpcmplxVecWrite(4, concat(map(tuple2Vec,dataVec)));
