@@ -13,6 +13,3 @@ FixedPoint#(numeric type isize, numeric type fsize )
 deriving( Eq ) ;
 
 typedef 32 FFTIFFTSz;
-
-typedef 4  TXFPFPrec;
-typedef 14  TXFPIPrec;
