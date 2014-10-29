@@ -10,16 +10,15 @@ import Vector::*;
 // import FPComplex::*;
 // import DataTypes::*;
 // import CORDIC::*;
-// import FParams::*;
-// import FFTIFFT_Library::*;
-// import FFTIFFT::*;
+import FParams::*;
+import FFTIFFT_Library::*;
+import FFTIFFT::*;
 // import RandomGen::*;
 // import Interfaces::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_fft.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 
 (* synthesize *) 
