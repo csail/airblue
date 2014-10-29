@@ -25,6 +25,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
+import FixedPoint::*;
+
 import AirblueCommon::*;
 import AirblueTypes::*;
 import ProtocolParameters::*;
@@ -40,7 +42,7 @@ interface FFTRequest;
 endinterface
 
 interface FFTIndication;
-   method Action getOutput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
-   method Action generateFFTValues(int fftSize, int realBitSize, int imagBitSize);
+   method Action checkOutput(Bit#(32) i, FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
+   method Action generateFFTValues(Bit#(32) fftSize, Bit#(32) realBitSize, Bit#(32) imagBitSize);
    method Action freeLast();
 endinterface

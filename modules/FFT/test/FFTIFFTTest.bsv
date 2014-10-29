@@ -32,35 +32,36 @@ import FixedPoint::*;
 import FShow::*;
 import GetPut::*;
 import Vector::*;
+import StmtFSM::*;
+
+import Pipe::*;
 
 // import FPComplex::*;
 // import DataTypes::*;
 // import CORDIC::*;
-// import FParams::*;
-// import FFTIFFT_Library::*;
-// import FFTIFFTTestLib::*;
-// import FFTIFFT::*;
+import FParams::*;
+import FFTIFFT_Library::*;
+import FFTIFFTTestLib::*;
+import FFTIFFT::*;
 // import Interfaces::*;
+import FFTInterface::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_fft.bsh"
-`include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_fft_library.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
+//`include "asim/provides/airblue_fft.bsh"
+//`include "asim/provides/airblue_parameters.bsh"
+//`include "asim/provides/airblue_fft_library.bsh"
 
 
-import "BDPI" function Action generateFFTValues(int fftSize, int realBitSize, int imagBitSize);
-import "BDPI" function ActionValue#(FixedPoint#(16,16)) getRealInput(int index);
-import "BDPI" function ActionValue#(Bool) checkRealResult(int index, int result);
-import "BDPI" function ActionValue#(FixedPoint#(16,16)) getImagInput(int index);
-import "BDPI" function ActionValue#(Bool) checkImagResult(int index, int result);
-import "BDPI" function Action freeLast();
+// import "BDPI" function Action generateFFTValues(int fftSize, int realBitSize, int imagBitSize);
+// import "BDPI" function ActionValue#(FixedPoint#(16,16)) getRealInput(int index);
+// import "BDPI" function ActionValue#(Bool) checkRealResult(int index, int result);
+// import "BDPI" function ActionValue#(FixedPoint#(16,16)) getImagInput(int index);
+// import "BDPI" function ActionValue#(Bool) checkImagResult(int index, int result);
+// import "BDPI" function Action freeLast();
 
-// (* synthesize *)
-// module mkFFTIFFTTest(Empty);
-   
-module mkHWOnlyApplication (Empty);
+module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    
    //FFTIFFT            fft     <- mkFFTIFFT;
    //FFTIFFT            ifft    <- mkFFTIFFT;
@@ -79,27 +80,23 @@ module mkHWOnlyApplication (Empty);
    Reg#(Bit#(32))     cycle <- mkReg(0);
    let tempFIFO <- mkFIFO;
 
-   rule putFFT(True);
-      // need to scale down fp value
-      FFTDataVec newDataVec = newVector;
-      FFTDataVec newAnsVec = newVector;
-      $display("Attempting to generatFFT values\n");
-      // use1 for ISz so as no to make things 
-      generateFFTValues(fromInteger(valueof(FFTSz)),1,16);
+   let fsm = seq
+		$display("Attempting to generatFFT values\n");
+		// use1 for ISz so as no to make things
+		indication.generateFFTValues(fromInteger(valueof(FFTSz)),1,16);
+	     endseq;
 
-      for(Integer i = 0; i < valueof(FFTSz); i = i+1) 
-        begin
-          Vector#(1,FPComplex#(FFTISz,FSz)) newfpcmplx = newVector; 
-          let newRel <- getRealInput(fromInteger(i));
-          let newImg <- getImagInput(fromInteger(i));
-          newfpcmplx[0].rel = fxptTruncate(newRel);
-          newfpcmplx[0].img = fxptTruncate(newImg);          
-          newDataVec[i] = newfpcmplx[0];        
-          
-          $write("BSV FFT Input %d ",i);
-          fpcmplxVecWrite(4,newfpcmplx);
-          $display(""); 
-        end
+   FIFOF#(Complex#(FixedPoint#(16,16))) inputFifo <- mkFIFOF();
+   PipeOut#(Complex#(FixedPoint#(16,16))) inputPipe = toPipeOut(inputFifo);
+   function FPComplex#(FFTISz,FSz) toFpComplex(Complex#(FixedPoint#(16,16)) in);
+      return Complex { rel: fxptTruncate(in.rel), img: fxptTruncate(in.rel) };
+   endfunction
+   PipeOut#(Vector#(1,FPComplex#(FFTISz,FSz))) newDataElementPipe = mapPipe(replicate, mapPipe(toFpComplex, inputPipe));
+   PipeOut#(Vector#(FFTSz, FPComplex#(FFTISz,FSz))) newDataVecPipe <- mkUnfunnel(newDataElementPipe);
+
+   rule putInputData;
+      // need to scale down fp value
+      FFTDataVec newDataVec <- toGet(newDataVecPipe).get();
 
       fftInValue.enq(newDataVec);
       putfftCnt <= putfftCnt + 1;
@@ -123,29 +120,36 @@ module mkHWOnlyApplication (Empty);
       
       let dualMesg <- dualFFTIFFT.fft.out.get;
       tempFIFO.enq(dualMesg);
-      let fftMesg <- fftFull.out.get;
+   endrule
 
-      // check intermediate results
-      $display("FFT intermediate result %d: ",putifftCnt);
-      Bool error  = False ;
-      for(Integer i = 0; i < valueof(FFTSz); i = i+1)
-        begin
-         FixedPoint#(16,16) rel = fxptSignExtend(fftMesg.data[i].rel);
-         FixedPoint#(16,16) img = fxptSignExtend(fftMesg.data[i].img);
-         let realAcc <- checkRealResult(fromInteger(i),unpack(pack(rel)));
-         let imagAcc <- checkImagResult(fromInteger(i),unpack(pack(img)));
-         error = error || realAcc || imagAcc;
-        end
+   PipeOut#(FFTMesg#(Bit#(0),FFTSz,ISz,FSz)) fftFullOutPipe <- mkPipeOut(fftFull.out.get);
+   Vector#(2, PipeOut#(FFTMesg#(Bit#(0),FFTSz,ISz,FSz))) fftFullOutPipes <- mkForkVector(fftFullOutPipe);
+   function Vector#(FFTSz,FPComplex#(ISz,FSz)) fftMesgData(FFTMesg#(Bit#(0),FFTSz,ISz,FSz) in);
+      return in.data;
+   endfunction
+   function Vector#(n,Tuple2#(Bit#(TLog#(n)),a)) indexElts(Vector#(n,a) vec);
+      function Tuple2#(Bit#(TLog#(n)),a) indexElt(Integer i);
+	 return tuple2(fromInteger(i), vec[i]);
+      endfunction
+      return genWith(indexElt);
+   endfunction
+   PipeOut#(Vector#(FFTSz,Tuple2#(Bit#(TLog#(FFTSz)),FPComplex#(ISz,FSz)))) fftOutDataPipe = mapPipe(indexElts, mapPipe(fftMesgData, fftFullOutPipes[0]));
+   PipeOut#(Tuple2#(Bit#(TLog#(FFTSz)),FPComplex#(ISz,FSz))) fftOutElementsPipe <- mkFunnel1(fftOutDataPipe);
 
-      if(error) 
-        begin
-          $display("Error in IFFT");
-          $finish;
-        end
-      freeLast;
+   rule checkFftFull;
+      let pair <- toGet(fftOutElementsPipe).get();
+      let i = tpl_1(pair);
+      let cx = tpl_2(pair);
+      FixedPoint#(16,16) rel = fxptSignExtend(cx.rel);
+      FixedPoint#(16,16) img = fxptSignExtend(cx.img);
+      indication.checkOutput(extend(i),unpack(pack(rel)),unpack(pack(img)));
+      //FIXME
+      //indication.freeLast();
+   endrule
+
+   rule putIfftFullIn;
+      let fftMesg <- toGet(fftFullOutPipes[1]).get();
       ifftFull.in.put(fftMesg);
-      //let fftSharedMesg <- fftShared.fft.out.get;
-      //ifftShared.ifft.in.put(fftSharedMesg);
    endrule
 
    rule putIFFTrR;
@@ -157,40 +161,40 @@ module mkHWOnlyApplication (Empty);
       fftInValue.deq;
      
       let dualMesg <- dualFFTIFFT.ifft.out.get;
-      Vector#(64,FPComplex#(9,FSz)) dualMesgExt = map(fpcmplxSignExtend,dualMesg.data);
+      Vector#(FFTSz,FPComplex#(FFTISz,FSz)) dualMesgExt = map(fpcmplxSignExtend,dualMesg.data);
       let ifftMesg <- ifftFull.out.get;
-      Vector#(64,FPComplex#(9,FSz)) ifftMesgExt = map(fpcmplxSignExtend,ifftMesg.data);
+      Vector#(FFTSz,FPComplex#(FFTISz,FSz)) ifftMesgExt = map(fpcmplxSignExtend,ifftMesg.data);
       //let ifftSharedMesg <- ifftShared.ifft.out.get;
-      //Vector#(64,FPComplex#(9,FSz)) ifftSharedMesgExt = map(fpcmplxSignExtend,ifftSharedMesg.data);
+      //Vector#(64,FPComplex#(FFTISz,FSz)) ifftSharedMesgExt = map(fpcmplxSignExtend,ifftSharedMesg.data);
 
-      Vector#(3,Vector#(64,FPComplex#(9,FSz))) mesgData = newVector();
+      Vector#(2,Vector#(FFTSz,FPComplex#(FFTISz,FSz))) mesgData = newVector();
       
       mesgData[1] = dualMesgExt;
       mesgData[0] = ifftMesgExt;
-     // mesgData[2] = ifftSharedMesgExt;
       getifftCnt <= getifftCnt + 1;
       $write("ifft_out_%d [",getifftCnt);
 
       // Compare results
       Bool finishNow = False;
-      for(Integer j =0 ; j < 2; j=j+1)
-        begin
-          for( Integer i = 0; i < valueof(FFTSz);i=i+1) 
-           begin
-            // have to check the real/imag independently. 255 works
-            if((fftInValue.first[i].rel > 155*epsilon + mesgData[j][i].rel) ||
-               (fftInValue.first[i].rel < mesgData[j][i].rel - 155*epsilon) ||
-               (fftInValue.first[i].img > 155*epsilon + mesgData[j][i].img) ||
-               (fftInValue.first[i].img < mesgData[j][i].img - 155*epsilon ))
-              begin
-                $write("FFT mismatch: ");
-                fpcmplxWrite(5,fftInValue.first[i]);
-                fpcmplxWrite(5,mesgData[j][i]);
-                $display("");
-                finishNow = True;
-              end
-          end
-        end
+      // FIXME: rewrite so it does not take so much static elaboration. -jamey
+      // for(Integer j =0 ; j < 2; j=j+1)
+      //   begin
+      //     for( Integer i = 0; i < valueof(FFTSz);i=i+1) 
+      //      begin
+      //       // have to check the real/imag independently. 255 works
+      //       if((fftInValue.first[i].rel > 155*epsilon + mesgData[j][i].rel) ||
+      //          (fftInValue.first[i].rel < mesgData[j][i].rel - 155*epsilon) ||
+      //          (fftInValue.first[i].img > 155*epsilon + mesgData[j][i].img) ||
+      //          (fftInValue.first[i].img < mesgData[j][i].img - 155*epsilon ))
+      //         begin
+      //           $write("FFT mismatch: ");
+      //           fpcmplxWrite(5,fftInValue.first[i]);
+      //           fpcmplxWrite(5,mesgData[j][i]);
+      //           $display("");
+      //           finishNow = True;
+      //         end
+      //     end
+      //   end
      
       if(finishNow) 
         begin
@@ -212,8 +216,8 @@ module mkHWOnlyApplication (Empty);
       $display("cycle: %d",cycle);
    endrule
    
-endmodule // mkFFTTest
 
-
-
-
+   method Action putInput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
+      inputFifo.enq(Complex { rel: rv, img: iv });
+   endmethod
+endmodule
