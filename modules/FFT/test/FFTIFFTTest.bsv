@@ -119,6 +119,7 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
 
    rule putIFFT(True);
       //let mesg <- fft.getOutput;
+      $display("putIFFT");
       putifftCnt <= putifftCnt + 1;
       
       let dualMesg <- dualFFTIFFT.fft.out.get;
@@ -151,16 +152,19 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    endrule
 
    rule putIfftFullIn;
+      $display("putIfftFullIn");
       let fftMesg <- toGet(fftFullOutPipes[1]).get();
       ifftFull.in.put(fftMesg);
    endrule
 
    rule putIFFTrR;
+      $display("putIFFTrR");
      tempFIFO.deq;
      dualFFTIFFT.ifft.in.put(tempFIFO.first);     
    endrule
 
    rule getIFFT(True);
+      $display("getIFFT");
       fftInValue.deq;
      
       let dualMesg <- dualFFTIFFT.ifft.out.get;
@@ -212,6 +216,10 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
             $display("PASS");
             $finish(0);
           end
+	// else
+	//    begin
+	//       started <= False;
+	//    end
    endrule
    
    rule tick(True);
@@ -222,6 +230,7 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    
 
    method Action putInput(FX1616 rv, FX1616 iv);
+      $display("received input %x %x", rv, iv);
       inputFifo.enq(Complex { rel: toFixedPoint(rv), img: toFixedPoint(iv) });
    endmethod
 endmodule
