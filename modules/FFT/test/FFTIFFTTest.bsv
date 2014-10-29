@@ -80,11 +80,13 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    Reg#(Bit#(32))     cycle <- mkReg(0);
    let tempFIFO <- mkFIFO;
 
-   let fsm = seq
-		$display("Attempting to generatFFT values\n");
-		// use1 for ISz so as no to make things
-		indication.generateFFTValues(fromInteger(valueof(FFTSz)),1,16);
-	     endseq;
+   Reg#(Bool) started <- mkReg(False);
+   rule start if (!started);
+      $display("Attempting to generatFFT values\n");
+      // use1 for ISz so as no to make things
+      indication.generateFFTValues(fromInteger(valueof(FFTSz)),1,16);
+      started <= True;
+   endrule
 
    FIFOF#(Complex#(FixedPoint#(16,16))) inputFifo <- mkFIFOF();
    PipeOut#(Complex#(FixedPoint#(16,16))) inputPipe = toPipeOut(inputFifo);
@@ -96,6 +98,7 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
 
    rule putInputData;
       // need to scale down fp value
+      $display("received newDataVec");
       FFTDataVec newDataVec <- toGet(newDataVecPipe).get();
 
       fftInValue.enq(newDataVec);
@@ -213,11 +216,12 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    
    rule tick(True);
       cycle <= cycle + 1;
-      $display("cycle: %d",cycle);
+      if (cycle % 10000 == 0)
+	 $display("cycle: %d",cycle);
    endrule
    
 
-   method Action putInput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
-      inputFifo.enq(Complex { rel: rv, img: iv });
+   method Action putInput(FX1616 rv, FX1616 iv);
+      inputFifo.enq(Complex { rel: toFixedPoint(rv), img: toFixedPoint(iv) });
    endmethod
 endmodule

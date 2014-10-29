@@ -1,6 +1,8 @@
 
+THISDIR=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
 CommonDir=../Common
-CommonBsvFiles = ../Parameters/WiFi/FFTParameters.bsv ../ShiftRegs/src/ShiftRegs.bsv ../Types/AirblueTypes.bsv $(CommonDir)/FPComplex.bsv
+#CommonBsvFiles = ../Parameters/WiFi/FFTParameters.bsv ../Parameters/WiFi/ProtocolParameters.bsv ../ShiftRegs/src/ShiftRegs.bsv ../Types/AirblueTypes.bsv $(CommonDir)/FPComplex.bsv
 
 S2H = FFTRequest
 H2S = FFTIndication

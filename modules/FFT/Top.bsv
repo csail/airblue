@@ -19,19 +19,17 @@ import FFTRequestWrapper::*;
 // defined by user
 import FFTIFFTTest::*;
 
-typedef enum {FFTIndication, FFTRequest} IfcNames deriving (Eq,Bits);
-
 module mkConnectalTop(StdConnectalTop#(PhysAddrWidth));
 
    // instantiate user portals
-   FFTIndicationProxy simpleIndicationProxy <- mkFFTIndicationProxy(FFTIndication);
-   FFTRequest simpleRequest <- mkFFTRequest(simpleIndicationProxy.ifc);
-   FFTRequestWrapper simpleRequestWrapper <- mkFFTRequestWrapper(FFTRequest,simpleRequest);
+   FFTIndicationProxy fftIndicationProxy <- mkFFTIndicationProxy(FFTIndicationPortal);
+   FFTRequest fftRequest <- mkFFTRequest(fftIndicationProxy.ifc);
+   FFTRequestWrapper fftRequestWrapper <- mkFFTRequestWrapper(FFTRequestPortal,fftRequest);
    
    Vector#(2,StdPortal) portals;
-   portals[0] = simpleRequestWrapper.portalIfc;
-   portals[1] = simpleIndicationProxy.portalIfc;
-   
+   portals[0] = fftRequestWrapper.portalIfc;
+   portals[1] = fftIndicationProxy.portalIfc;
+
    // instantiate system directory
    StdDirectory dir <- mkStdDirectory(portals);
    let ctrl_mux <- mkSlaveMux(dir,portals);

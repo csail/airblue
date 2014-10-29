@@ -35,14 +35,21 @@ import FParams::*;
 
 typedef enum {
    FFTRequestPortal, FFTIndicationPortal
-   } IfcNames;
+   } IfcNames deriving (Bits);
+
+typedef struct {
+   Bit#(16) i;
+   Bit#(16) f;
+   } FX1616 deriving (Bits);
+
+function FixedPoint#(16,16) toFixedPoint(FX1616 v); return FixedPoint { i: v.i, f: v.f }; endfunction
 
 interface FFTRequest;
-   method Action putInput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
+   method Action putInput(FX1616 rv, FX1616 iv);
 endinterface
 
 interface FFTIndication;
-   method Action checkOutput(Bit#(32) i, FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
+   method Action checkOutput(Bit#(32) i, FX1616 rv, FX1616 iv);
    method Action generateFFTValues(Bit#(32) fftSize, Bit#(32) realBitSize, Bit#(32) imagBitSize);
    method Action freeLast();
 endinterface

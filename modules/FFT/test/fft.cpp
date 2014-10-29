@@ -1,7 +1,15 @@
+
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+
+#include <pthread.h>
+#include <semaphore.h>
+
+#include <GeneratedTypes.h>
+#include <FFTRequestProxy.h>
+#include <FFTIndicationWrapper.h>
 
 #undef DEBUG
 #define DEBUG
@@ -190,6 +198,7 @@ int getRealInput(int index) {
 }
 
 int checkRealResult(int index, int result) {
+  int *realValues = tail->realValues;
   double *realResult = tail->realResult;
   int intSize = tail->intSize;
   int fracSize = tail->fracSize;
@@ -197,7 +206,7 @@ int checkRealResult(int index, int result) {
  
   #ifdef DEBUG
   printf("Index shift: %d\n", indexShift);
-  printf("Real result[%d]: %f, expect %f ", index, result/((double) (1<<fracSize)), realResult[indexShift]);
+  printf("Real result[%d]: %f, expect %f (%x expect %x) ", index, result/((double) (1<<fracSize)), realResult[indexShift], result, realValues[indexShift]);
   #endif
   if((realResult[indexShift] - ((float)2048)/(1<<fracSize) < result/((double) (1<<fracSize))) &&
      (realResult[indexShift] + ((float)2048)/(1<<fracSize) > result/((double) (1<<fracSize)))) {
@@ -244,4 +253,55 @@ void freeLast() {
     tail = old->previous;
     freeFFT(old);
   }
+}
+
+
+
+static sem_t sem;
+
+class FFTIndication : public FFTIndicationWrapper {
+
+public:
+  FFTIndication(int id, PortalPoller *poller = 0) : FFTIndicationWrapper(id, poller) { }
+  virtual void checkOutput ( const uint32_t i, const FX1616 rv, const FX1616 iv ) {
+    fprintf(stderr, "checkOutput %d %08x %08x\n", i, *(int *)&rv, *(int *)&iv);
+    checkRealResult(i, *(int *)&rv);
+    checkImagResult(i, *(int *)&iv);
+    if (i == tail->fftLength - 1)
+      sem_post(&sem);
+  }
+  virtual void generateFFTValues ( const uint32_t fftSize, const uint32_t realBitSize, const uint32_t imagBitSize ) {
+    fprintf(stderr, "generateFFTValues size=%d %d %d\n", fftSize, realBitSize, imagBitSize);
+    ::generateFFTValues(fftSize, realBitSize, imagBitSize);
+    sem_post(&sem);
+  }
+  virtual void freeLast (  ) {
+  }
+};
+
+int main(int argc, const char **argv)
+{
+  FFTRequestProxy *request = new FFTRequestProxy(IfcNames_FFTRequestPortal);
+  FFTIndication *ind = new FFTIndication(IfcNames_FFTIndicationPortal);
+  
+  sem_init(&sem, 0, 0);
+
+  portalExec_start();
+
+  // wait for generateFFTValues indication
+  sem_wait(&sem);
+  
+  // now send input to hardware
+  FFT *fft = head;
+  for (int i = 0; i < fft->fftLength; i++) {
+    FX1616 rv = *(FX1616*)&fft->realValues[i];
+    FX1616 iv = *(FX1616*)&fft->imagValues[i];
+    fprintf(stderr, "wrote input %d %x %x\n", i, *(int*)&rv, *(int*)&iv);
+    request->putInput(rv, iv);
+  }
+
+
+  // wait for values to be checked
+  sem_wait(&sem);
+
 }
