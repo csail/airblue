@@ -91,7 +91,7 @@ module mkFFTRequest#(FFTIndication indication)(FFTRequest);
    FIFOF#(Complex#(FixedPoint#(16,16))) inputFifo <- mkFIFOF();
    PipeOut#(Complex#(FixedPoint#(16,16))) inputPipe = toPipeOut(inputFifo);
    function FPComplex#(FFTISz,FSz) toFpComplex(Complex#(FixedPoint#(16,16)) in);
-      return Complex { rel: fxptTruncate(in.rel), img: fxptTruncate(in.rel) };
+      return Complex { rel: fxptTruncate(in.rel), img: fxptTruncate(in.img) };
    endfunction
    PipeOut#(Vector#(1,FPComplex#(FFTISz,FSz))) newDataElementPipe = mapPipe(replicate, mapPipe(toFpComplex, inputPipe));
    PipeOut#(Vector#(FFTSz, FPComplex#(FFTISz,FSz))) newDataVecPipe <- mkUnfunnel(newDataElementPipe);
