@@ -146,36 +146,26 @@ void generateFFTValues (int fftSize, int intBitSize, int fracBitSize) {
     printf("C Input\n");
   #endif
   for(i = 0; i < fftSize; i++) {
-    int period = ((rand()%8)==0)?1:0;
-    int mag = (rand()%(1<<(intSize+fracSize-1)));
-    realValues[i] = period * mag;
-    imagValues[i] = 0;
-     
-      /*if(realValues[i] > ((1<<(intSize+fracSize-1))-1)) {
-      realResult[i] = ((realValues[i])/((float)(1<<fracSize)) - (1<<(intSize)))/fftSize;    
-      realValues[i] = realValues[i] - (1<<(intSize+fracSize));      
-      
-      } else*/ {
-      realResult[i] = (realValues[i]/((float)(1<<fracSize)))/fftSize;
+    if (i == 0) {
+      realValues[i] = fftSize << fracSize;
+      imagValues[i] = 8*fftSize << fracSize;
+    } else {
+      realValues[i] = 0;
+      imagValues[i] = 0;
     }
 
-    /*if(imagValues[i] > ((1<<(intSize+fracSize-1))-1)) {
-      imagResult[i] = (imagValues[i]/((float)(1<<fracSize))- (1<<(intSize)))/fftSize;
-      imagValues[i] = imagValues[i] - (1<<(intSize+fracSize)); 
-      } else*/ {
-      imagResult[i] = (imagValues[i]/((float)(1<<fracSize)))/fftSize;    
-    }
+    realInput[i] = (realValues[i]/((float)(1<<fracSize)));
+    imagInput[i] = (imagValues[i]/((float)(1<<fracSize)));
 
-    realValues[i] = realValues[i]/fftSize;
-    imagValues[i] = imagValues[i]/fftSize;
-    realInput[i] = realResult[i];
-    imagInput[i] = imagResult[i];
-    realInverse[i] = realResult[i];
-    imagInverse[i] = imagResult[i];
+    // copy to realResult, and then we'll compute the DFT in place
+    realResult[i] = realInput[i];
+    imagResult[i] = imagInput[i];
 
-    
+    realInverse[i] = realInput[i];
+    imagInverse[i] = imagInput[i];
+
     #ifdef DEBUG
-      printf("C Input [%d]  %f+%fi  \n",i,realResult[i],imagResult[i]);
+      printf("C Input [%d]  %f+%fi  \n",i,realInput[i],imagInput[i]);
     #endif
   }
 
@@ -223,14 +213,16 @@ int getImagInput(int index) {
 }
 
 int checkImagResult(int index, int result ) {
+  int *imagValues = tail->imagValues;
   double *imagResult = tail->imagResult;
   int intSize = tail->intSize;
   int fracSize = tail->fracSize;
   int indexShift = (index >= tail->fftLength/2)?index - tail->fftLength/2:index + tail->fftLength/2; 
   
   #ifdef DEBUG
-  printf("Imag result[%d]: %f,  expect %f max delta: %f ", index, result/((double) (1<<fracSize)), imagResult[indexShift],
-  ((float)2048)/(1<<fracSize));  
+  printf("Imag result[%d]: %f,  expect %f max delta: %f (%x expect %x)", index, result/((double) (1<<fracSize)), imagResult[indexShift],
+	 ((float)2048)/(1<<fracSize),
+	 result, imagValues[indexShift]);
   #endif
   if((imagResult[indexShift] - ((float)2048)/(1<<fracSize) < result/((double) (1<<fracSize))) &&
      (imagResult[indexShift] + ((float)2048)/(1<<fracSize) > result/((double) (1<<fracSize)))) {
@@ -267,8 +259,10 @@ public:
     fprintf(stderr, "checkOutput %d %08x %08x\n", i, *(int *)&rv, *(int *)&iv);
     checkRealResult(i, *(int *)&rv);
     checkImagResult(i, *(int *)&iv);
-    if (i == tail->fftLength - 1)
+    if (i == tail->fftLength - 1) {
+      ::freeLast();
       sem_post(&sem);
+    }
   }
   virtual void generateFFTValues ( const uint32_t fftSize, const uint32_t realBitSize, const uint32_t imagBitSize ) {
     fprintf(stderr, "generateFFTValues size=%d %d %d\n", fftSize, realBitSize, imagBitSize);
@@ -304,4 +298,5 @@ int main(int argc, const char **argv)
   // wait for values to be checked
   sem_wait(&sem);
 
+  //while(true){sleep(2);}
 }
