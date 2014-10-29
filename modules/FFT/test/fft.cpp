@@ -8,8 +8,8 @@
 #include <semaphore.h>
 
 #include <GeneratedTypes.h>
-#include <FFTRequestProxy.h>
-#include <FFTIndicationWrapper.h>
+#include <FFTRequest.h>
+#include <FFTIndication.h>
 
 #undef DEBUG
 #define DEBUG
