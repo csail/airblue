@@ -2,6 +2,7 @@
 // The MIT License 
 // 
 // Copyright (c) 2007 Alfred Man Cheuk Ng, mcn02@mit.edu 
+// Copyright (c) 2014 Quanta Research Cambridge, Inc.
 // 
 // Permission is hereby granted, free of charge, to any person 
 // obtaining a copy of this software and associated documentation 
@@ -30,11 +31,16 @@ import ProtocolParameters::*;
 import FFTParameters::*;
 import FParams::*;
 
+typedef enum {
+   FFTRequestPortal, FFTIndicationPortal
+   } IfcNames;
+
 interface FFTRequest;
-	method Action putInput(FFTControl isIFFT, 
-			       FFTDataVec fpcmplxVec);
+   method Action putInput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
 endinterface
 
 interface FFTIndication;
-	method Action getOutput(FFTDataVec out);
+   method Action getOutput(FixedPoint#(16,16) rv, FixedPoint#(16,16) iv);
+   method Action generateFFTValues(int fftSize, int realBitSize, int imagBitSize);
+   method Action freeLast();
 endinterface
