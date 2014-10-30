@@ -39,15 +39,24 @@ import Vector::*;
 // import Interfaces::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_convolutional_encoder.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
+import ConvEncoder::*;
 
+typedef enum {
+   ConvEncoderRequestPortal,
+   ConvEncoderIndicationPortal
+   } IfcNames deriving (Bits);
 
-// (* synthesize *)
-// module mkConvEncoderTest(Empty);
+interface ConvEncoderRequest;
+   method Action putInput(Bit#(12) data);
+endinterface
+
+interface ConvEncoderIndication;
+   method Action putOutput(Bit#(20) control, Bit#(12) data);
+endinterface
    
-module mkHWOnlyApplication (Empty);   
+module mkHConvEncoderTest#(ConvEncoderIndication indication)(ConvEncoderRequest);
    // constants
    Vector#(2,Bit#(7)) gen_polys = newVector;
    gen_polys[0] = 7'b1011011;
@@ -56,29 +65,26 @@ module mkHWOnlyApplication (Empty);
    // state elements
    ConvEncoder#(Bit#(1),12,1,24,2) conv_encoder;
    conv_encoder <- mkConvEncoder(gen_polys);
-   Reg#(Bit#(12)) data  <- mkReg(?);
    Reg#(Bit#(32)) cycle <- mkReg(0);
+
+   rule getOutput;
+      let mesg <- conv_encoder.out.get;
+      $display("output: data: %b",mesg.data);
+      indication.putOutput(pack(mesg.control),
+			   pack(mesg.data));
+   endrule
    
-   rule putInput(True);
+   rule tick;
+      cycle <= cycle + 1;
+   endrule
+  
+   method Action putInput(Bit#(12) data);
       let mesg = Mesg{control: ?,
                       data: data};
       conv_encoder.in.put(mesg);
-      data <= data + 1;
       $display("input: data: %b",data);
-   endrule
+   endmethod
 
-   rule getOutput(True);
-      let mesg <- conv_encoder.out.get;
-      $display("output: data: %b",mesg.data);
-   endrule
-   
-   rule tick(True);
-      cycle <= cycle + 1;
-      if (cycle == 100000)
-	 $finish;
-      $display("Cycle: %d",cycle);
-   endrule
-  
 endmodule
 
 
