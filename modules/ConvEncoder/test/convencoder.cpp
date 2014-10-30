@@ -38,7 +38,7 @@ int main(int argc, const char **argv)
   // send input to hardware
   for (int i = 0; i < 1000; i++) {
 
-    request->putInput(i);
+    request->putInput((i == 0), i);
     // wait for values to be checked
     sem_wait(&sem);
   }

@@ -32,16 +32,15 @@ import GetPut::*;
 import Vector::*;
 
 // import project libraries
-// import Controls::*;
-// import ConvEncoder::*;
-// import DataTypes::*;
+import Controls::*;
+import ConvEncoder::*;
+import DataTypes::*;
 // import FPComplex::*;
-// import Interfaces::*;
+import Interfaces::*;
 
 // Local includes
 import AirblueCommon::*;
 import AirblueTypes::*;
-import ConvEncoder::*;
 
 typedef enum {
    ConvEncoderRequestPortal,
@@ -49,14 +48,20 @@ typedef enum {
    } IfcNames deriving (Bits);
 
 interface ConvEncoderRequest;
-   method Action putInput(Bit#(12) data);
+   method Action putInput(Bit#(1) isFirst, Bit#(12) data);
 endinterface
 
 interface ConvEncoderIndication;
-   method Action putOutput(Bit#(20) control, Bit#(12) data);
+   method Action putOutput(Bit#(1) control, Bit#(24) data);
 endinterface
    
-module mkHConvEncoderTest#(ConvEncoderIndication indication)(ConvEncoderRequest);
+instance IsEncoderCtrl#(Bit#(1));
+   function Bool isFirstMesg(Bit#(1) ctrl);
+      return ctrl == 1;
+   endfunction
+endinstance
+
+module mkConvEncoderTest#(ConvEncoderIndication indication)(ConvEncoderRequest);
    // constants
    Vector#(2,Bit#(7)) gen_polys = newVector;
    gen_polys[0] = 7'b1011011;
@@ -78,8 +83,8 @@ module mkHConvEncoderTest#(ConvEncoderIndication indication)(ConvEncoderRequest)
       cycle <= cycle + 1;
    endrule
   
-   method Action putInput(Bit#(12) data);
-      let mesg = Mesg{control: ?,
+   method Action putInput(Bit#(1) isFirst, Bit#(12) data);
+      let mesg = Mesg{control: isFirst,
                       data: data};
       conv_encoder.in.put(mesg);
       $display("input: data: %b",data);
