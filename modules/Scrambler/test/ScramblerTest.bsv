@@ -32,6 +32,7 @@ import Vector::*;
 // import FPComplex::*;
 // import Interfaces::*;
 import Scrambler::*;
+import Descrambler::*;
 
 // Local includes
 import AirblueCommon::*;
@@ -48,38 +49,47 @@ typedef enum {
    } IfcNames deriving (Bits);
 
 interface ScramblerRequest;
-   method Action putInput(Bit#(12) data);
+   method Action scramblerInput(Bit#(12) data);
 endinterface
 
 interface ScramblerIndication;
-   method Action putOutput(Bit#(20) control, Bit#(12) data);
+   method Action scramblerOutput(Bit#(20) control, Bit#(12) data);
+   method Action descramblerOutput(Bit#(20) control, Bit#(12) data);
 endinterface
 
 module mkScramblerTest#(ScramblerIndication indication)(ScramblerRequest);
    
    // state elements
-   Scrambler#(ScramblerCtrl#(12,7),ScramblerCtrl#(12,7),12,12) scrambler;
-   scrambler <- mkScrambler(idFunc,idFunc,7'b1001000);
+   Scrambler#(ScramblerCtrl#(12,7),ScramblerCtrl#(12,7),12,12) scrambler <- mkScrambler(idFunc,idFunc,7'b1001000);
+   Descrambler#(ScramblerCtrl#(12,7),12,12) descrambler <- mkDescrambler(idFunc,7'b1001000);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
-   rule getOutput(True);
+   rule scramblerOutput;
       let mesg <- scrambler.out.get;
-      $display("output: data: %b",mesg.data);
-      indication.putOutput(pack(mesg.control),
-			   pack(mesg.data));
+      $display("  scrambler output: data: %b",mesg.data);
+      indication.scramblerOutput(pack(mesg.control),
+				 pack(mesg.data));
+      descrambler.in.put(mesg);
    endrule
    
+   rule descramblerOutput;
+      let mesg <- descrambler.out.get;
+      $display("descrambler output: data: %b",mesg.data);
+      indication.descramblerOutput(pack(mesg.control),
+				   pack(mesg.data));
+   endrule
+
    rule tick(True);
       cycle <= cycle + 1;
    endrule
   
-   method Action putInput(Bit#(12) data);
+   method Action scramblerInput(Bit#(12) data);
       let mesg = Mesg { control: ScramblerCtrl
 		       {bypass: 0,
 			seed: (data[4:0] == 0) ? tagged Valid 127 : Invalid},
 	   	        data: data};
       scrambler.in.put(mesg);
-      $display("input: data: %b",data);
+      $display("  scrambler input: data: %b",data);
    endmethod
 
 endmodule

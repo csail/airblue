@@ -45,8 +45,11 @@ class ScramblerIndication : public ScramblerIndicationWrapper {
 
 public:
   ScramblerIndication(int id, PortalPoller *poller = 0) : ScramblerIndicationWrapper(id, poller) { }
-  virtual void putOutput (uint32_t control, uint32_t data) {
-    fprintf(stderr, "putOutput control=%x data=%x\n", control, data);
+  virtual void scramblerOutput (uint32_t control, uint32_t data) {
+    fprintf(stderr, "  scramblerOutput control=%x data=%x\n", control, data);
+  }
+  virtual void descramblerOutput (uint32_t control, uint32_t data) {
+    fprintf(stderr, "descramblerOutput control=%x data=%x\n", control, data);
     sem_post(&sem);
   }
 };
@@ -63,7 +66,7 @@ int main(int argc, const char **argv)
   // send input to hardware
   for (int i = 0; i < 1000; i++) {
 
-    request->putInput(i);
+    request->scramblerInput(i);
     // wait for values to be checked
     sem_wait(&sem);
   }
