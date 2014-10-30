@@ -29,13 +29,13 @@ import GetPut::*;
 import Vector::*;
 
 // import DataTypes::*;
-// import Interfaces::*;
+import Interfaces::*;
 // import Controls::*;
 // import LibraryFunctions::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 function a choose(Bool b, a x, a y);
    return b ? x : y;
