@@ -41,15 +41,18 @@
 
 static sem_t sem;
 
+int error = 0;
+
 class ScramblerIndication : public ScramblerIndicationWrapper {
 
 public:
   ScramblerIndication(int id, PortalPoller *poller = 0) : ScramblerIndicationWrapper(id, poller) { }
-  virtual void scramblerOutput (uint32_t control, uint32_t data) {
-    fprintf(stderr, "  scramblerOutput control=%x data=%x\n", control, data);
-  }
-  virtual void descramblerOutput (uint32_t control, uint32_t data) {
-    fprintf(stderr, "descramblerOutput control=%x data=%x\n", control, data);
+  virtual void putOutput (uint32_t inputControl, uint32_t inputData, uint32_t scrambledControl, uint32_t scrambledData, uint32_t descrambledControl, uint32_t descrambledData) {
+    if (scrambledData == inputData || descrambledData != inputData) {
+      fprintf(stderr, "Error!\n");
+      fprintf(stderr, "descramblerOutput input=%x.%x scrambled=%x.%x descrambled=%x.%x\n", inputControl, inputData, scrambledControl, scrambledData, descrambledControl, descrambledData);
+      error = 1;
+    }
     sem_post(&sem);
   }
 };
@@ -64,12 +67,18 @@ int main(int argc, const char **argv)
   portalExec_start();
 
   // send input to hardware
-  for (int i = 0; i < 1000; i++) {
+  int limit = 4096;
+  int step = 17;
+  fprintf(stderr, "Running test in input values between 0 and %d stepping by %d\n", limit, step);
+  for (int i = 0; i < limit; i += step) {
 
-    request->scramblerInput(i);
+    if ((i % 128) == 0)
+      fprintf(stderr, "running test on i=%d\n", i);
+    request->putInput(i);
     // wait for values to be checked
     sem_wait(&sem);
   }
 
   //while(true){sleep(2);}
+  return error;
 }

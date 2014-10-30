@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------//
 
+import FIFO::*;
 import GetPut::*;
 import Vector::*;
 
@@ -49,12 +50,11 @@ typedef enum {
    } IfcNames deriving (Bits);
 
 interface ScramblerRequest;
-   method Action scramblerInput(Bit#(12) data);
+   method Action putInput(Bit#(12) data);
 endinterface
 
 interface ScramblerIndication;
-   method Action scramblerOutput(Bit#(20) control, Bit#(12) data);
-   method Action descramblerOutput(Bit#(20) control, Bit#(12) data);
+   method Action putOutput(Bit#(20) inputControl, Bit#(12) inputData, Bit#(20) scramblerControl, Bit#(12) scramblerData, Bit#(20) descramblerControl, Bit#(12) descramblerData);
 endinterface
 
 module mkScramblerTest#(ScramblerIndication indication)(ScramblerRequest);
@@ -63,33 +63,41 @@ module mkScramblerTest#(ScramblerIndication indication)(ScramblerRequest);
    Scrambler#(ScramblerCtrl#(12,7),ScramblerCtrl#(12,7),12,12) scrambler <- mkScrambler(idFunc,idFunc,7'b1001000);
    Descrambler#(ScramblerCtrl#(12,7),12,12) descrambler <- mkDescrambler(idFunc,7'b1001000);
    Reg#(Bit#(32)) cycle <- mkReg(0);
+   FIFO#(ScramblerMesg#(ScramblerCtrl#(12,7),12)) dataFifo <- mkFIFO();
+   FIFO#(EncoderMesg#(ScramblerCtrl#(12,7),12)) scrambledFifo <- mkFIFO();
    
    rule scramblerOutput;
       let mesg <- scrambler.out.get;
-      $display("  scrambler output: data: %b",mesg.data);
-      indication.scramblerOutput(pack(mesg.control),
-				 pack(mesg.data));
+      //$display("  scrambler output: data: %b",mesg.data);
       descrambler.in.put(mesg);
+      scrambledFifo.enq(mesg);
    endrule
    
    rule descramblerOutput;
       let mesg <- descrambler.out.get;
-      $display("descrambler output: data: %b",mesg.data);
-      indication.descramblerOutput(pack(mesg.control),
-				   pack(mesg.data));
+      //$display("descrambler output: data: %b",mesg.data);
+      let dataMesg <- toGet(dataFifo).get();
+      let scrambledMesg <- toGet(scrambledFifo).get();
+      indication.putOutput(pack(dataMesg.control),
+			   pack(dataMesg.data),
+			   pack(scrambledMesg.control),
+			   pack(scrambledMesg.data),
+			   pack(mesg.control),
+			   pack(mesg.data));
    endrule
 
    rule tick(True);
       cycle <= cycle + 1;
    endrule
   
-   method Action scramblerInput(Bit#(12) data);
+   method Action putInput(Bit#(12) data);
       let mesg = Mesg { control: ScramblerCtrl
 		       {bypass: 0,
 			seed: (data[4:0] == 0) ? tagged Valid 127 : Invalid},
 	   	        data: data};
       scrambler.in.put(mesg);
-      $display("  scrambler input: data: %b",data);
+      dataFifo.enq(mesg);
+      //$display("  scrambler input: data: %b",data);
    endmethod
 
 endmodule
