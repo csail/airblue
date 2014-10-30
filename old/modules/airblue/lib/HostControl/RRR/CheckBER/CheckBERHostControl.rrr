@@ -1,8 +1,0 @@
-service CHECKBERHOSTCONTROLRRR
-{
-    server sw (cpp, method) <- hw (bsv, connection) 
-    {
-       method CheckBER (out UINT64[64] dummy, in UINT64[64] errors, in UINT64[64] total);
-    };
-
- };

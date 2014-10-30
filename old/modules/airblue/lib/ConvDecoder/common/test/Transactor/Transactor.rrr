@@ -1,9 +1,0 @@
-service TRANSACTORRRR
-{
-    server sw (cpp, method) <- hw (bsv, connection) 
-    {
-       method GetXactorType (out UINT8[8] xactor_type, in UINT8[8] dummy);
-       method GetXactorClkCtrl (out UINT32[32] cycles, in UINT32[32] dummy);
-    };
-
- };

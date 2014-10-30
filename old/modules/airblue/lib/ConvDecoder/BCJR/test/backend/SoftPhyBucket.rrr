@@ -1,9 +1,0 @@
-service SOFT_PHY_BUCKET_RRR
-{
-    server sw (cpp, method) <- hw (bsv, connection) 
-    {
-
-       method SendBucket(out UINT32[32] dummy, in UINT32[32] bucket, in UINT64[64] errors, in UINT64[64] total);
-   
-    };
-};
