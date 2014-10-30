@@ -1,8 +1,0 @@
-%name RX Packet Check Driver
-%desc Drives the simple PHY pipeline test
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  rx-packet-check.h
-%private rx-packet-check.cpp

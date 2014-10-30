@@ -1,9 +1,0 @@
-%name RX Fixed Test Driver
-%desc Sends fixed length packets
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  rx-fixed.h
-%private rx-fixed.cpp
-

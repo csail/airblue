@@ -1,8 +1,0 @@
-%name TX Test Driver USRP
-%desc Drives Fixed Phy test bench
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  tx-simulation.h
-%private tx-simulation.cpp

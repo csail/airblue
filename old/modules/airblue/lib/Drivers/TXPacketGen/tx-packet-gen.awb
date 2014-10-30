@@ -1,8 +1,0 @@
-%name TX Packet Gen Driver
-%desc Drives the simple PHY pipeline test
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  tx-packet-gen.h
-%private tx-packet-gen.cpp

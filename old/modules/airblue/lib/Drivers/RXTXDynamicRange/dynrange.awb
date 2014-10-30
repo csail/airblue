@@ -1,8 +1,0 @@
-%name RXTX Dynamic range test
-%desc Sends fixed length packets while stepping the dynamic range
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  dynrange.h
-%private dynrange.cpp

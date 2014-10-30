@@ -1,9 +1,0 @@
-%name RX Stats Test Driver
-%desc Dumps receiver statistics
-
-%provides airblue_driver_application
-%requires airblue_environment
-
-%public  rx-stats.h
-%private rx-stats.cpp
-
