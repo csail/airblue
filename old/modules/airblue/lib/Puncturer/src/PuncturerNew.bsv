@@ -34,7 +34,7 @@ import Vector::*;
 // import BitStreamFIFO::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 
 // for generating parallel functions

@@ -34,7 +34,7 @@ import Vector::*;
 // import ReedDecoder::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_reed_encoder.bsh"
 `include "asim/provides/airblue_reed_decoder.bsh"
 

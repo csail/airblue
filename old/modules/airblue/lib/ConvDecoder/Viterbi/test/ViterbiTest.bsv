@@ -41,7 +41,7 @@ import Vector::*;
 
 // Local includes
 `include "asim/provides/soft_connections.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_convolutional_decoder.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"

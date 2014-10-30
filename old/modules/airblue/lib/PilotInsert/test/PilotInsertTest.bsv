@@ -35,8 +35,8 @@ import Vector::*;
 // import PilotInsert::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_pilot_insert.bsh"
 
 function t idFunc (t in);

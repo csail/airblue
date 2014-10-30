@@ -34,8 +34,8 @@ import GetPut::*;
 // import Scrambler::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_scrambler.bsh"
 
 module mkDescrambler#(function ScramblerCtrl#(n,shifter_sz) 

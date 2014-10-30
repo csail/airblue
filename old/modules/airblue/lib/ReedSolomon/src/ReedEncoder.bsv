@@ -32,7 +32,7 @@ import Vector::*;
 import GetPut::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 
 module mkReedEncoder#(function ReedSolomonCtrl#(8) mapCtrl(ctrl_t ctrl))
    (ReedEncoder#(ctrl_t,sz,sz))

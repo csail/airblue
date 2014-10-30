@@ -44,7 +44,7 @@ import Vector::*;
 //`include "../../../WiFiFPGA/Macros.bsv"
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_base.bsh"

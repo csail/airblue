@@ -38,8 +38,8 @@ import Vector::*;
 // import StreamFIFO::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/librl_bsv_base.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"

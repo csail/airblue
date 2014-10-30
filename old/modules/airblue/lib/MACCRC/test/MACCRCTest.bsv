@@ -14,9 +14,9 @@ import FShow::*;
 
 // Local include
 `include "asim/provides/airblue_mac_crc.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 
 // (* synthesize *) 
 // module mkMACCRCTest(Empty);

@@ -29,8 +29,8 @@ import GetPut::*;
 import Vector::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_interleaver.bsh"
 
 module mkDeinterleaver#(function Modulation mapCtrl(ctrl_t ctrl),

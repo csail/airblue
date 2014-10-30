@@ -36,8 +36,8 @@ import Vector::*;
 // import Demapper::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/airblue_interleaver.bsh"
 `include "asim/provides/airblue_deinterleaver.bsh"
 `include "asim/provides/airblue_mapper.bsh"

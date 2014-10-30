@@ -11,7 +11,7 @@ import StmtFSM::*;
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/register_library.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 
 interface MACPacketGen;
   // These functions reveal stats about the generator

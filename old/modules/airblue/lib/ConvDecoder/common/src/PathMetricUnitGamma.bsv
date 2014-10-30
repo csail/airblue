@@ -41,7 +41,7 @@ import FShow::*;
 // import VParams::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_parameters.bsh"
 
 //`define isDebug True // uncomment this line to display error

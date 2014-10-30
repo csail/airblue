@@ -38,8 +38,8 @@ import Vector::*;
 // import LibraryFunctions::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 /////////////////////////////////////////////////////////////////////////
 // Definitions of Auxiliary Functions

@@ -33,8 +33,8 @@ import GetPut::*;
 import StmtFSM::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/client_server_utils.bsh"
 `include "asim/provides/register_mapper.bsh"

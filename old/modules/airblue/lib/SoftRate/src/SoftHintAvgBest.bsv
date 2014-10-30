@@ -3,7 +3,7 @@ import FIFO::*;
 import SpecialFIFOs::*;
 
 // local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 
 typedef struct {

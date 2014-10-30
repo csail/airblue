@@ -11,8 +11,8 @@ import FixedPoint::*;
 `include "asim/provides/debug_utils.bsh"
 `include "asim/provides/stream_capture_fifo.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/airblue_synchronizer.bsh" // try to get rid of, it only need to know some type exported by the synchronizer for now
 `include "asim/provides/c_bus_utils.bsh"
 `include "asim/provides/fifo_utils.bsh"

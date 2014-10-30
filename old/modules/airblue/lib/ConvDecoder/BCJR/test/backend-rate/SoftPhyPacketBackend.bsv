@@ -39,9 +39,9 @@ import FixedPoint::*;
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 `include "asim/provides/airblue_convolutional_decoder_test_common.bsh"

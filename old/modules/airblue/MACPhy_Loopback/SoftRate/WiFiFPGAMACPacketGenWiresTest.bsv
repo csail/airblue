@@ -37,8 +37,8 @@ import GetPut::*;
 
 
 // local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_channel.bsh"
 `include "asim/provides/avalon.bsh"

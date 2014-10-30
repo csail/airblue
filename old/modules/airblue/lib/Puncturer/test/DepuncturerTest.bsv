@@ -33,7 +33,7 @@ import Vector::*;
 // import Depuncturer::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_puncturer.bsh"
 `include "asim/provides/airblue_depuncturer.bsh"
 

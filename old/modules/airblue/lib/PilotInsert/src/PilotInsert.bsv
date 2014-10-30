@@ -33,8 +33,8 @@ import GetPut::*;
 // import LibraryFunctions::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 module mkPilotInsert#(function PilotInsertCtrl 
 			 mapCtrl(ctrl_t ctrl), 

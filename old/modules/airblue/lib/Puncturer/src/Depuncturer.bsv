@@ -35,8 +35,8 @@ import Vector::*;
 // import VectorLibrary::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 
 typedef Vector#(r_sz,DepunctData#(c_sz))

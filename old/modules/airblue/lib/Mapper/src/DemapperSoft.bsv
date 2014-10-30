@@ -41,8 +41,8 @@ import Vector::*;
 // import VectorLibrary::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 // check the input values and convert them to range=[-1,1)
 function FixedPoint#(1,af) convertRange(FixedPoint#(ai,af) fp)

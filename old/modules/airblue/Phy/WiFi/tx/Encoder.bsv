@@ -36,7 +36,7 @@ import Connectable::*;
 // import Puncturer::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_encoder.bsh"
 `include "asim/provides/airblue_puncturer.bsh"

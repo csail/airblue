@@ -42,8 +42,8 @@ import Vector::*;
 // import VectorLibrary::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 // assume no overflow
 function FixedPoint#(ai,af) demapMult(Integer m, FixedPoint#(ai,af) fp)

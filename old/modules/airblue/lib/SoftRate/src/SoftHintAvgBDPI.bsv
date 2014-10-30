@@ -4,7 +4,7 @@ import Vector::*;
 
 
 // local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 
 // C functions
 import "BDPI" function Action update_softphy(Bit#(32) hint);

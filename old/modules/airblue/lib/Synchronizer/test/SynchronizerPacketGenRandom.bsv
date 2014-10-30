@@ -29,7 +29,7 @@ import GetPut::*;
 import LFSR::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_parameters.bsh"
 
 import "BDPI" nextRandData = 

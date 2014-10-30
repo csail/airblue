@@ -30,7 +30,7 @@ import GetPut::*;
 import Vector::*;
 
 // Local includes
-//`include "asim/provides/airblue_common.bsh"
+//import AirblueCommon::*;
 
 // Generic OFDM Module Interface
 interface Block#(type in_t, type out_t);

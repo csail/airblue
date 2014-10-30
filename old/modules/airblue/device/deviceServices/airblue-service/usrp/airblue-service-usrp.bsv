@@ -33,8 +33,8 @@ import Complex::*;
 `include "asim/provides/soft_clocks.bsh"
 `include "asim/provides/clocks_device.bsh"
 `include "asim/provides/fpga_components.bsh"
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 `include "asim/provides/librl_bsv_base.bsh"

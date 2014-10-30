@@ -13,7 +13,7 @@ import FShow::*;
 
 // Local include
 `include "asim/provides/crc.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/librl_bsv_storage.bsh"
 

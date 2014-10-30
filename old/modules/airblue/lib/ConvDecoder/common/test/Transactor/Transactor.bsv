@@ -36,8 +36,8 @@ import Vector::*;
 `include "asim/provides/soft_connections.bsh"
 `include "asim/provides/fpga_components.bsh"
 
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/rrr/client_stub_TRANSACTORRRR.bsh"
 
 typedef enum {

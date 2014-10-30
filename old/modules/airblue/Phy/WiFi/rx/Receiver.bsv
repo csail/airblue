@@ -28,8 +28,8 @@ import Connectable::*;
 import GetPut::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_descrambler.bsh"
 `include "asim/provides/airblue_deinterleaver.bsh"

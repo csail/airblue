@@ -39,7 +39,7 @@ import Connectable::*;
 // import FIFOUtility::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_receiver.bsh"
 `include "asim/provides/airblue_depuncturer.bsh"

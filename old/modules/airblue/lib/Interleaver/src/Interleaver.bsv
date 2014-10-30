@@ -34,8 +34,8 @@ import Vector::*;
 // import LibraryFunctions::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 function Vector#(sz,data_t) permute(function Integer getIdx(Integer k), 
 				    Vector#(sz,data_t) inVec)

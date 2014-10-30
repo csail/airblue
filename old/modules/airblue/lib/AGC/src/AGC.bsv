@@ -12,8 +12,8 @@ import FIFOF::*;
 `include "asim/provides/fpga_components.bsh"
 `include "asim/provides/clocks_device.bsh"
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_magnitude_estimator.bsh"
 `include "asim/provides/agc_parameters.bsh"
 

@@ -30,7 +30,7 @@ import LFSR::*;
 import RegFile::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_parameters.bsh"
 
 interface PacketGenerator;

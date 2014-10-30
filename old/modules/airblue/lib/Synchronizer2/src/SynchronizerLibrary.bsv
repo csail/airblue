@@ -40,9 +40,9 @@ import Vector::*;
 
 // Local includes
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_shift_regs.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 
 // adjust DC offset by doing a high-pass filter
 function FPComplex#(ai,af)highPassFilter(FPComplex#(ai,af) alpha,

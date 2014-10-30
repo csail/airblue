@@ -34,8 +34,8 @@ import Vector::*;
 // import ReedEncoder::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/airblue_reed_encoder.bsh"
 
 typedef enum {R0, R1, R2, R3, R4, R5, R6} Rate deriving(Eq, Bits);

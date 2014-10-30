@@ -2,9 +2,9 @@ import GetPut::*;
 import Vector::*;
 
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_shift_regs.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/register_library.bsh"
 `include "asim/provides/c_bus_utils.bsh"
 

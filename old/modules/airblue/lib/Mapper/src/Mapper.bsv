@@ -37,8 +37,8 @@ import Vector::*;
 // import LibraryFunctions::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 // mkMapper definition, 
 // i_n must be multiple of 12

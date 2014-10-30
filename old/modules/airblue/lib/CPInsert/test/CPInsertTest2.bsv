@@ -35,8 +35,8 @@ import Vector::*;
 // import WiFiPreambles::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_cyclic_prefix_insert.bsh"
 

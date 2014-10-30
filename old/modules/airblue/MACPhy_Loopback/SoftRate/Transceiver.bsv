@@ -35,8 +35,8 @@ import Clocks::*;
 
 
 // local includes
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/airblue_transmitter.bsh"
 `include "asim/provides/airblue_receiver.bsh"

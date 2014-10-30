@@ -32,7 +32,7 @@ import GetPut::*;
 // import Puncturer::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_puncturer.bsh"
 
 // test

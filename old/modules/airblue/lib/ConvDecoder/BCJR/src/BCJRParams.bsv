@@ -10,7 +10,7 @@ import FShow::*;
 
 // Local includes
 `include "asim/provides/librl_bsv_storage.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_convolutional_decoder_common.bsh"
 

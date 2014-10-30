@@ -33,8 +33,8 @@ import GetPut::*;
 import Vector::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_synchronizer.bsh"
 `include "asim/provides/airblue_parameters.bsh"
 `include "asim/provides/airblue_synchronizer_packetgen.bsh"

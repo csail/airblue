@@ -5,8 +5,8 @@ import GetPut::*;
 import Vector::*;
 
 // local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/rrr/client_stub_CHANNEL_RRR.bsh"
 //`include "asim/rrr/server_stub_CHANNEL_RRR.bsh"

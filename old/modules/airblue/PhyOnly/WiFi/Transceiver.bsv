@@ -34,8 +34,8 @@ import ClientServer::*;
 import Clocks::*;
 
 // Local includes
-`include "asim/provides/airblue_types.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueTypes::*;
+import AirblueCommon::*;
 `include "asim/provides/soft_services.bsh"
 `include "asim/provides/soft_clocks.bsh"
 `include "asim/provides/soft_connections.bsh"

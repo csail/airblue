@@ -28,7 +28,7 @@
 import Vector::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 
 interface FIFOD#(numeric type sz,   // buffer size
 		 numeric type i_sz, // input size

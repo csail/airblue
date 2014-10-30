@@ -37,8 +37,8 @@
 // import InverseSqRoot::*;
 
 // Local Includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 `include "asim/provides/soft_services.bsh"
 `include "awb/rrr/remote_server_stub_CHANNELESTIMATORRRR.bsh"
 `include "asim/provides/airblue_inverse_sq_root.bsh"

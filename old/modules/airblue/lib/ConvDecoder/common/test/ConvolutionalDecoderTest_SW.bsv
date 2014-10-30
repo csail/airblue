@@ -36,9 +36,9 @@ import Connectable::*;
 // Local includes
 `include "asim/provides/soft_connections.bsh"
 
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/airblue_parameters.bsh"
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 `include "asim/provides/airblue_special_fifos.bsh"
 `include "asim/provides/airblue_fft.bsh"
 `include "asim/provides/airblue_convolutional_encoder.bsh"

@@ -28,7 +28,7 @@ import Complex::*;
 import GetPut::*;
 import Vector::*;
 
-`include "asim/provides/airblue_types.bsh"
+import AirblueTypes::*;
 `include "asim/provides/arblue_common.bsh"
 `include "asim/provides/airblue_pilot_insert.bsh"
 `include "asim/provides/airblue_channel_estimator.bsh"

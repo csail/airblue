@@ -29,7 +29,7 @@ import Vector::*;
 import GetPut::*;
 
 // Local includes
-`include "asim/provides/airblue_common.bsh"
+import AirblueCommon::*;
 
 /////////////////////////////////////////////////////////////
 // Interface

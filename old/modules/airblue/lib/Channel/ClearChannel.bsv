@@ -2,8 +2,8 @@ import FIFO::*;
 import GetPut::*;
 
 // local includes
-`include "asim/provides/airblue_common.bsh"
-`include "asim/provides/airblue_types.bsh"
+import AirblueCommon::*;
+import AirblueTypes::*;
 
 interface Channel#(type ai, type af);
    interface Put#(FPComplex#(ai, af)) in;
