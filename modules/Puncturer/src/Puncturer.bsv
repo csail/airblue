@@ -29,13 +29,12 @@ import GetPut::*;
 import Vector::*;
 
 // import Controls::*;
-// import DataTypes::*;
+import DataTypes::*;
 // import Interfaces::*;
-// import StreamFIFO::*;
+import StreamFIFO::*;
 
 // Local includes
 import AirblueTypes::*;
-`include "asim/provides/airblue_special_fifos.bsh"
 
 // for generating parallel functions
 function Vector#(f_sz, Bit#(o_sz)) 
