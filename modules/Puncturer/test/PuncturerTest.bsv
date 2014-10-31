@@ -27,13 +27,12 @@
 import GetPut::*;
 
 // import Controls::*;
-// import DataTypes::*;
+import DataTypes::*;
 // import Interfaces::*;
-// import Puncturer::*;
+import Puncturer::*;
 
 // Local includes
 import AirblueTypes::*;
-`include "asim/provides/airblue_puncturer.bsh"
 
 // test
 function PuncturerCtrl mapCtrl(Bit#(3) rate);
@@ -76,19 +75,36 @@ module mkWiMaxPuncturer (Puncturer#(Bit#(3),8,8,24,24));
    
 endmodule
    
-// (* synthesize *)
-// module mkPuncturerTest (Empty);
+typedef enum {
+   PuncturerTestRequestPortal, PuncturerTestIndicationPortal
+   } IfcNames deriving (Bits);
+
+interface PuncturerTestRequest;
+   method Action putNewRate(Bit#(3) rate, Bit#(8) data);
+   method Action putNewData(Bit#(8) data);
+endinterface
    
-module mkHWOnlyApplication (Empty);
+interface PuncturerTestIndication;
+   method Action putOutput(Bit#(3) control, Bit#(8) data);
+   method Action putDataCount(Bit#(3) newCount);
+endinterface
+
+module mkPuncturerTest#(PuncturerTestIndication indication)(PuncturerTestRequest);
    Puncturer#(Bit#(3),8,8,24,24) puncturer <- mkWiMaxPuncturer;
    Reg#(Bit#(3)) rate <- mkReg(0);
-   Reg#(Bit#(3)) counter <- mkReg(0);
-   Reg#(Bit#(8)) inData <- mkReg(0);
    Reg#(Bit#(32)) cycle <- mkReg(0);
    
-   rule putNewRate(counter == 0);
-      let newRate = (rate == 6) ? 0 : rate + 1;
-      let newData = inData + 1;
+   rule getData(True);
+      let outMesg <- puncturer.out.get;
+      $display("Out Mesg: ctrl: %d,  data: %b",outMesg.control,outMesg.data);
+      indication.putOutput(outMesg.control, outMesg.data);
+   endrule
+
+   rule tick(True);
+      cycle <= cycle + 1;
+   endrule
+
+   method Action putNewRate(Bit#(3) newRate, Bit#(8) newData);
       let newMesg = Mesg { control: newRate,
 			   data: newData};
       Bit#(3) newCounter = case (newRate)
@@ -101,34 +117,18 @@ module mkHWOnlyApplication (Empty);
 			      6: 4;
 			   endcase;
       rate <= newRate;
-      inData <= newData;
-      counter <= newCounter;
       puncturer.in.put(newMesg);
-      $display("In Mesg: ctrl: %d,  data: %b, counter:%d",newMesg.control,newMesg.data,newCounter);
-   endrule
+      indication.putDataCount(newCounter);
+      $display("NewRate In Mesg: ctrl: %d,  data: %b need %d samples",newMesg.control,newMesg.data, newCounter);
+   endmethod
 
-   rule putNewData(counter > 0);
+   method Action putNewData(Bit#(8) newData);
       let newRate = rate;
-      let newData = inData + 1;
       let newMesg = Mesg { control: newRate,
 			   data: newData};
-      inData <= newData;
-      counter <= counter - 1;
       puncturer.in.put(newMesg);
-      $display("In Mesg: ctrl: %d,  data: %b, counter:%d",newMesg.control,newMesg.data,counter - 1);
-   endrule
-   
-   rule getData(True);
-      let outMesg <- puncturer.out.get;
-      $display("Out Mesg: ctrl: %d,  data: %b",outMesg.control,outMesg.data);
-   endrule
-   
-   rule tick(True);
-      cycle <= cycle + 1;
-      if (cycle == 10000)
-	 $finish;
-      $display("Cycle: %d",cycle);
-   endrule
+      $display("NewData In Mesg: ctrl: %d,  data: %b",newMesg.control,newMesg.data);
+   endmethod
    
 endmodule
    
