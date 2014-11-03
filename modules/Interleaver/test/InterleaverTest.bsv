@@ -31,12 +31,11 @@ import Vector::*;
 // import DataTypes::*;
 // import FPComplex::*;
 // import Interfaces::*;
-// import Interleaver::*;
+import Interleaver::*;
 
 // Local includes
 import AirblueCommon::*;
 import AirblueTypes::*;
-`include "asim/provides/airblue_interleaver.bsh"
 
 function t idFunc (t in);
    return in;
