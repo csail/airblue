@@ -29,8 +29,7 @@ MODULESDIR=$(THISDIR)/../..
 
 CommonDir=$(MODULESDIR)/Common
 
-S2H = ScramblerRequest
-H2S = ScramblerIndication
+INTERFACES = ScramblerRequest ScramblerIndication
 BSVFILES = ScramblerTest.bsv Top.bsv
 CPPFILES = scrambler.cpp
 NUMBER_OF_MASTERS =0

@@ -29,8 +29,7 @@ MODULESDIR=$(THISDIR)/../..
 
 CommonDir=$(MODULESDIR)/Common
 
-S2H = ConvEncoderRequest
-H2S = ConvEncoderIndication
+INTERFACES = ConvEncoderRequest ConvEncoderIndication
 BSVFILES = ConvEncoderTest.bsv Top.bsv
 CPPFILES = convencoder.cpp
 NUMBER_OF_MASTERS =0

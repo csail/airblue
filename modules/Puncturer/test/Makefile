@@ -29,8 +29,7 @@ MODULESDIR=$(THISDIR)/../..
 
 CommonDir=$(MODULESDIR)/Common
 
-S2H = PuncturerTestRequest
-H2S = PuncturerTestIndication
+INTERFACES = PuncturerTestRequest PuncturerTestIndication
 BSVFILES = PuncturerTest.bsv Top.bsv
 CPPFILES = puncturer.cpp
 NUMBER_OF_MASTERS =0
