@@ -24,8 +24,8 @@
 ## OTHER DEALINGS IN THE SOFTWARE.
 ##----------------------------------------------------------------------##
 
-THISDIR=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-MODULESDIR=$(THISDIR)/..
+THISDIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+MODULESDIR=$(realpath $(THISDIR)/..)
 
 CommonDir=$(MODULESDIR)/Common
 
@@ -34,5 +34,13 @@ BSVFILES = $(BsvFiles) $(CommonBsvFiles) src/FParams.bsv test/FFTInterface.bsv t
 CPPFILES=test/fft.cpp
 NUMBER_OF_MASTERS =0
 CONNECTALFLAGS += --bscflags=-p --bscflags=+:$(MODULESDIR)/Parameters/WiFi:$(MODULESDIR)/ShiftRegs/src:$(MODULESDIR)/Types:$(MODULESDIR)/Common
+
+dump:
+	@echo $$\{THISDIR\} = ${THISDIR}
+	@echo MODULESDIR = ${MODULESDIR}
+	@echo $$\{CommonDir\} = ${CommonDir}
+	@echo $(MAKEFILE_LIST)
+	@echo $(firstword $(MAKEFILE_LIST))
+	@echo $(realpath $(firstword $(MAKEFILE_LIST)))
 
 include $(CONNECTALDIR)/Makefile.connectal

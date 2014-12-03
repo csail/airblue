@@ -24,7 +24,7 @@
 ## OTHER DEALINGS IN THE SOFTWARE.
 ##----------------------------------------------------------------------##
 
-THISDIR=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+THISDIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 MODULESDIR=$(THISDIR)/../..
 
 CommonDir=$(MODULESDIR)/Common
