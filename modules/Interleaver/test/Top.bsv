@@ -33,7 +33,7 @@ import Connectable::*;
 import CtrlMux::*;
 import Portal::*;
 import Leds::*;
-import MemTypes::*;
+import HostInterface::*;
 import MemPortal::*;
 
 // defined by user
